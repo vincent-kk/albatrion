@@ -36,8 +36,8 @@ describe('static first load assembly', () => {
       },
     });
     loadFieldNodeAtMount(root, undefined, WriteOption.Overwrite);
-    expect(root.storedValue).toEqual({ nested: { b: 2, a: 'a' }, last: false });
-    expect(root.storedValue).toBe(root.storedOutputValue);
+    expect(root.__value__).toEqual({ nested: { b: 2, a: 'a' }, last: false });
+    expect(root.__value__).toBe(root.__outputValue__);
     expect(
       [...(root.runtime.deliveries ?? [])].map((node) => node.path),
     ).toEqual(['', '/nested', '/nested/b', '/nested/a', '/last']);
@@ -54,7 +54,7 @@ describe('static first load assembly', () => {
   it('preserves input priority, container defaults, suppression and dependent defaults', () => {
     const scalar = createTestTree({ type: 'string', default: 'scalar' }).root;
     loadFieldNodeAtMount(scalar, undefined, WriteOption.Overwrite);
-    expect(scalar.storedValue).toBe('scalar');
+    expect(scalar.__value__).toBe('scalar');
     const schema = {
       type: 'object' as const,
       properties: {
@@ -70,16 +70,16 @@ describe('static first load assembly', () => {
     };
     const { root } = createTestTree(schema);
     loadFieldNodeAtMount(root, { a: 9 }, WriteOption.Overwrite);
-    expect(root.storedValue).toEqual({ a: 9, group: { b: 'container' } });
+    expect(root.__value__).toEqual({ a: 9, group: { b: 'container' } });
     const suppressed = createTestTree(schema).root;
     loadFieldNodeAtMount(
       suppressed,
       undefined,
       WriteOption.DisableAutomaticWrites,
     );
-    expect(suppressed.childrenByName!.a.storedValue).toBeUndefined();
+    expect(suppressed.__childrenByName__!.a.__value__).toBeUndefined();
     expect(
-      suppressed.childrenByName!.group.childrenByName!.b.storedValue,
+      suppressed.__childrenByName__!.group.__childrenByName__!.b.__value__,
     ).toBeUndefined();
     const dependent = createTestTree({
       type: 'object',
@@ -89,15 +89,15 @@ describe('static first load assembly', () => {
       },
     }).root;
     loadFieldNodeAtMount(dependent, undefined, WriteOption.Overwrite);
-    expect(dependent.storedValue).toEqual({ a: 1, b: 2 });
+    expect(dependent.__value__).toEqual({ a: 1, b: 2 });
   });
 
   it('preserves revisions and pending delivery for an empty delivery commit', () => {
     const { root } = createTestTree({ type: 'string' });
     loadFieldNodeAtMount(root, 'same', WriteOption.Overwrite);
-    root.pendingDelivery = undefined;
+    root.__pendingDelivery__ = undefined;
     root.runtime.deliveries?.clear();
-    const revision = root.revisionLedger;
+    const revision = root.__revisionLedger__;
     const context = createSettlementContext(
       root,
       FieldNodeWriteKind.Input,
@@ -105,10 +105,10 @@ describe('static first load assembly', () => {
       getSettlementScratch(root.runtime),
     );
     markCommitDeliveries(context);
-    expect(root.storedValue).toBe('same');
+    expect(root.__value__).toBe('same');
     expect(root.runtime.deliveries?.size).toBe(0);
-    expect(root.revisionLedger).toBe(revision);
-    expect(root.pendingDelivery).toBeUndefined();
+    expect(root.__revisionLedger__).toBe(revision);
+    expect(root.__pendingDelivery__).toBeUndefined();
   });
 
   it('shares ungated declarations without building an occurrence path index', () => {
@@ -127,19 +127,23 @@ describe('static first load assembly', () => {
       },
     });
     loadFieldNodeAtMount(root, { items: ['a', 'b'] }, WriteOption.Overwrite);
-    expect(root.storedValue).toEqual({ items: ['a', 'b'], value: 'control' });
-    expect(readDefault(root.childrenByName!.value, new Map())).toBe('control');
+    expect(root.__value__).toEqual({ items: ['a', 'b'], value: 'control' });
+    expect(readDefault(root.__childrenByName__!.value, new Map())).toBe(
+      'control',
+    );
     expect(
-      readDefault(root.childrenByName!.items.children![1], new Map()),
+      readDefault(root.__childrenByName__!.items.children![1], new Map()),
     ).toBe('fallback');
     expect(root.runtime.committedDeclarationIds?.size ?? 0).toBe(0);
     writeFieldNode(
-      root.childrenByName!.value,
+      root.__childrenByName__!.value,
       'next',
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
-    expect(readDefault(root.childrenByName!.value, new Map())).toBe('control');
+    expect(readDefault(root.__childrenByName__!.value, new Map())).toBe(
+      'control',
+    );
     expect(root.runtime.committedDeclarationIds?.size ?? 0).toBe(0);
   });
 
@@ -155,21 +159,21 @@ describe('static first load assembly', () => {
       },
     });
     loadFieldNodeAtMount(root, undefined, WriteOption.Overwrite);
-    expect(root.storedValue).toEqual({ 'a/b': 7, group: { leaf: 'x' } });
+    expect(root.__value__).toEqual({ 'a/b': 7, group: { leaf: 'x' } });
     expect(root.children?.map((node) => node.name)).toEqual(['a/b', 'group']);
-    const child = root.childrenByName!['a/b'];
+    const child = root.__childrenByName__!['a/b'];
     expect(child.path).toBe('/a~1b');
-    const value = root.storedValue;
+    const value = root.__value__;
     const children = root.children;
-    const revision = child.revisionLedger[FieldNodeEventType.UpdateValue];
+    const revision = child.__revisionLedger__[FieldNodeEventType.UpdateValue];
     writeFieldNode(child, 7, FieldNodeWriteKind.Input, WriteOption.Overwrite);
-    expect(root.storedValue).toBe(value);
+    expect(root.__value__).toBe(value);
     expect(root.children).toBe(children);
     writeFieldNode(child, 8, FieldNodeWriteKind.Input, WriteOption.Overwrite);
-    expect(child.revisionLedger[FieldNodeEventType.UpdateValue]).toBe(
+    expect(child.__revisionLedger__[FieldNodeEventType.UpdateValue]).toBe(
       revision + 1,
     );
-    expect(root.childrenByName!['a/b']).toBe(child);
+    expect(root.__childrenByName__!['a/b']).toBe(child);
   });
 
   it('does not serialize empty pending-exit and latent lookups during static selection', () => {
@@ -191,7 +195,7 @@ describe('static first load assembly', () => {
     );
     // At most one committed declaration key is needed per child.
     expect(selectionCalls.length).toBeLessThanOrEqual(2);
-    expect(root.storedValue).toEqual({ a: 1, b: 2 });
+    expect(root.__value__).toEqual({ a: 1, b: 2 });
   });
 });
 

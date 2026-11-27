@@ -18,7 +18,10 @@ export const collectDeriveSourcePaths = <Self extends FieldNodeRecord<Self>>(
   context: SettlementContext<Self>,
 ): ReadonlySet<string> => {
   const paths = new Set<string>();
-  const aliases = context.root.runtime.blueprint.capabilities.hasAliasedDependencies ? getAliasedDependencyIndex(context) : undefined;
+  const aliases = context.root.runtime.blueprint.capabilities
+    .hasAliasedDependencies
+    ? getAliasedDependencyIndex(context)
+    : undefined;
   for (const owner of context.contextOwners ?? []) paths.add(owner);
   const dependencies = getDependencyIndex(context.root.runtime.blueprint);
   for (const changed of context.changedSource) {
@@ -35,14 +38,14 @@ export const collectDeriveSourcePaths = <Self extends FieldNodeRecord<Self>>(
   }
   for (const node of context.enteredNodes) {
     paths.add(node.path);
-    if (node.parent) paths.add(node.parent.path);
+    if (node.__parent__) paths.add(node.__parent__.path);
   }
   // A gate exit changes only the emitted tree, so readers of an exited subtree are hosts too.
   // Exits stay in pendingExits during the rounds; exitedNodes fills only after them.
   if (context.pendingExits.size) {
     const exits = new Set<Self>(context.pendingExits.values());
     for (const node of exits)
-      if (!node.parent || !exits.has(node.parent)) {
+      if (!node.__parent__ || !exits.has(node.__parent__)) {
         for (const owner of dependencies.affectedOwners(
           node.path,
           context.root,

@@ -12,10 +12,12 @@ export const getInjectToContext = <Self extends FieldNodeRecord<Self>>(
 ) => ({
   dataPath: source.path,
   schemaPath: source.blueprintNode.schemaPath,
-  jsonSchema: source.schema.schema,
-  parentValue: source.parent ? source.parent.storedOutputValue : null,
-  parentJSONSchema: source.parent ? source.parent.schema.schema : null,
-  rootValue: root.storedOutputValue,
-  rootJSONSchema: root.schema.schema,
+  jsonSchema: source.__schema__.schema,
+  parentValue: source.__parent__ ? source.__parent__.__outputValue__ : null,
+  parentJSONSchema: source.__parent__
+    ? source.__parent__.__schema__.schema
+    : null,
+  rootValue: root.__outputValue__,
+  rootJSONSchema: root.__schema__.schema,
   context: root.runtime.context,
 });

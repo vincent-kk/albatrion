@@ -42,7 +42,7 @@ export const publishPreparedSelection = <Self extends FieldNodeRecord<Self>>(
     frame.hasChanged = true;
   }
   preparedStatic.dynamicNames = names;
-  frame.node.childrenByName = preparedStatic.selectedChildrenByName;
+  frame.node.__childrenByName__ = preparedStatic.selectedChildrenByName;
   frame.node.children = captureFieldNodeChange(
     frame.node,
     'children',

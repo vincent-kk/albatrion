@@ -179,7 +179,7 @@ The guard follows AJV, not the specification, in these cases:
 
 `compileGuard` throws a native `GuardPointerNotSchemaError` when the pointer does not locate a schema (an object or boolean): a missing location, or a value such as `/type` or `/required`. Callers discriminate it by `group` (`'UNHANDLED_ERROR'`) and `code` (`'GUARD_POINTER_NOT_SCHEMA'`); `details` carries the root's `$id` (or `''`) and the pointer.
 
-Strict options on a bound instance, such as `strictTypes` and `strictRequired`, may make some `if` guards fail to compile. The affected gate becomes false and produces a `GUARD_FAILED` `onError` record. The plugin does not override the consumer's options, and strict mode is not the plugin default (VALIDATE-003, VALIDATE-005, VALIDATE-033, ERROR-041).
+Strict options on a bound instance, such as `strictTypes` and `strictRequired`, may make some `if` guards fail to compile. The affected condition applies neither `then` nor `else` and reports one `GUARD_FAILED` record through `onError`; a later write that re-evaluates the condition throws `GUARD_FAILED`, and a production build throws it at mount as well. The plugin does not override the consumer's options, and strict mode is not the plugin default (VALIDATE-003, VALIDATE-005, VALIDATE-033, ERROR-041).
 
 ### **Default Configuration**
 
@@ -218,6 +218,88 @@ This plugin supports the latest JSON Schema features:
 - **Draft 2019-09**: Modern schema composition and validation features
 - **Draft selection**: The default entry validates Draft-07, `/2019` validates Draft 2019-09 and Draft-07, and `/2020` validates Draft 2020-12. Older declared drafts are not enabled by default
 - **Advanced Keywords**: Support for `unevaluatedProperties`, `unevaluatedItems`, and more
+
+---
+
+## Custom AJV instance and custom keywords
+
+Give a Form your own AJV instance with `createValidator(ajv)`. Create the instance and the validator once at module scope, because a new validator object makes the Form rebuild its tree.
+
+```tsx
+import { Form, type JSONSchema } from '@canard/schema-form';
+import { createValidator } from '@canard/schema-form-ajv8-plugin';
+import Ajv from 'ajv';
+
+const ajv = new Ajv({ strict: false });
+ajv.addKeyword({
+  keyword: 'isEven',
+  schemaType: 'boolean',
+  validate: (schema: boolean, data: unknown) =>
+    typeof data === 'number' && (data % 2 === 0) === schema,
+});
+const validator = createValidator(ajv);
+
+const schema = {
+  type: 'object',
+  properties: { n: { type: 'number' } },
+  if: { type: 'object', properties: { n: { isEven: true } }, required: ['n'] },
+  then: { properties: { evenField: { type: 'string' } } },
+  else: { properties: { oddField: { type: 'string' } } },
+} satisfies JSONSchema;
+
+export const EvenOddForm = () => (
+  <Form jsonSchema={schema} defaultValue={{ n: 2 }} validatorFactory={validator} />
+);
+```
+
+To use the instance for every Form instead, bind it to the plugin and register the plugin:
+
+```ts
+import { registerPlugin } from '@canard/schema-form';
+import { plugin } from '@canard/schema-form-ajv8-plugin';
+
+plugin.validator.bind(ajv);
+registerPlugin(plugin);
+```
+
+The plugin validates and evaluates `if` conditions on private copies of the instance. Keywords and formats you add to the instance before the next compile apply to both, including a format added after `createValidator(ajv)` but before the Form mounts. In the form above, `evenField` exists while `n` is 2, and `oddField` replaces it when `n` becomes 3. The `/2019` and `/2020` entry points behave the same with `Ajv2019` and `Ajv2020` instances.
+
+### Choosing a `oneOf` or `anyOf` branch
+
+A branch is chosen in one of three ways:
+
+1. `controls.active` on the branch.
+2. `controls.discriminator` on the object, with `const` or `enum` tags in each branch.
+3. An `if` on the branch with `else: false`. The validator decides the `if`, so a custom keyword can choose the branch:
+
+```ts
+const schema = {
+  type: 'object',
+  properties: { n: { type: 'number' } },
+  oneOf: [
+    {
+      if: { type: 'object', properties: { n: { isEven: true } }, required: ['n'] },
+      then: { properties: { evenField: { type: 'string' } } },
+      else: false,
+    },
+    {
+      if: { type: 'object', properties: { n: { isEven: false } }, required: ['n'] },
+      then: { properties: { oddField: { type: 'string' } } },
+      else: false,
+    },
+  ],
+} satisfies JSONSchema;
+```
+
+A branch with none of the three is always part of the form. A keyword written directly in such a branch takes part in validation but does not choose the branch: when each branch only carries `n: { isEven: … }` beside its own field, both `evenField` and `oddField` stay in the form. See [composition and conditional gates](https://vincent-kk.github.io/albatrion/docs/canard/schema-form/schema-reference#composition) for `controls.active` and the discriminator.
+
+### Limits
+
+- Under `strict: true`, write `type: 'object'` beside `properties` and `required` in the condition. Without it, the guard fails AJV's strict type check when it compiles, even though whole validation of the root compiles.
+- A condition AJV cannot compile fails its guard, for example on a strict instance that lacks a keyword the condition uses. Neither `then` nor `else` applies, `onError` receives one `GUARD_FAILED` record (`FormErrorCode.GuardFailed`), and every later write that evaluates the condition again keeps its value but throws that error. A production build also raises the error, uncaught, when the Form mounts. Add every keyword before the Form compiles, or use `strict: false`, under which AJV ignores unknown keywords.
+- Guards are synchronous: a condition that uses an asynchronous keyword (`async: true`) fails to compile (`async keyword in sync schema`).
+- A guard receives only the value of the object that holds the `if`; a keyword that reads parent or root data, and `$data`, see only that value.
+- The plugin refuses an instance with `coerceTypes`, `useDefaults` or `removeAdditional` enabled. It does not refuse a keyword declared with `modifying: true`; keeping such a keyword from changing the form's values is your responsibility.
 
 ---
 

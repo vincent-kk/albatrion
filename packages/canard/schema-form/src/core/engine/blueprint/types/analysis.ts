@@ -65,6 +65,8 @@ export interface AnalysisContext {
   hasTemplateRecursion: boolean;
   /** A template is bound at more than its first data path. */
   hasTemplateAliases?: boolean;
+  /** A branch array has a terminal item or tuple candidate that its static declaration keeps from null. */
+  hasLeafItems?: boolean;
   /** Monotonic feature evidence collected together with authored declarations. */
   capabilities: { -readonly [Key in keyof Blueprint['capabilities']]: boolean };
   schema: BlueprintSchema;

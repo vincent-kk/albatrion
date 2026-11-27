@@ -13,13 +13,13 @@ export const getStaticDeclarationIds = <
     readonly name: string;
     readonly path: string;
     readonly blueprintNode: object;
-    readonly parent: Nullable<Self>;
+    readonly __parent__: Nullable<Self>;
     readonly runtime: { readonly blueprint?: object };
   },
 >(
   node: Self,
 ): Optional<readonly number[]> => {
-  const parent = node.parent;
+  const parent = node.__parent__;
   if (!parent) return undefined;
   const prepared = getHostDerived<
     'preparedStaticHost',

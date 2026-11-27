@@ -87,7 +87,7 @@ export const flushQueuedEvents = <Self extends FieldNodeRecord<Self>>(
         waves += 1;
         if (waves > 25) {
           for (const node of runtime.queuedNonSettleEvents)
-            node.pendingNonSettleDelivery = undefined;
+            node.__pendingNonSettleDelivery__ = undefined;
           runtime.queuedNonSettleEvents = undefined;
           if (!budgetReported)
             captureChainError(
@@ -102,14 +102,14 @@ export const flushQueuedEvents = <Self extends FieldNodeRecord<Self>>(
         }
         const pending: [Self, FieldNodeDelivery][] = [];
         for (const candidate of runtime.queuedNonSettleEvents) {
-          const delivery = candidate.pendingNonSettleDelivery;
-          candidate.pendingNonSettleDelivery = undefined;
+          const delivery = candidate.__pendingNonSettleDelivery__;
+          candidate.__pendingNonSettleDelivery__ = undefined;
           if (!delivery) continue;
           if (!isQueuedNode<Self>(candidate, runtime)) continue;
           const node = candidate;
           pending.push([node, delivery]);
-          node.revisionLedger = new FieldNodeRevisionLedger(
-            node.revisionLedger,
+          node.__revisionLedger__ = new FieldNodeRevisionLedger(
+            node.__revisionLedger__,
             delivery.type,
           );
         }

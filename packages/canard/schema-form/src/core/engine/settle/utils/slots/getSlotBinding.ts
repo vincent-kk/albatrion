@@ -19,8 +19,8 @@ export const getSlotBinding = <Self extends FieldNodeRecord<Self>>(
   if (
     overlay?.children?.has(entry) ||
     (!overlay?.isWhole &&
-      (host?.inactiveSlots?.has(entry) ||
-        host?.inactiveSlotOverlays?.has(entry)))
+      (host?.__inactiveSlots__?.has(entry) ||
+        host?.__inactiveSlotOverlays__?.has(entry)))
   )
     return entry;
   const token = getBlueprintNodeIdentity(entry.node);
@@ -31,13 +31,13 @@ export const getSlotBinding = <Self extends FieldNodeRecord<Self>>(
     )
       return binding;
   if (!overlay?.isWhole) {
-    for (const binding of host?.inactiveSlots?.keys() ?? [])
+    for (const binding of host?.__inactiveSlots__?.keys() ?? [])
       if (
         binding.name === entry.name &&
         getBlueprintNodeIdentity(binding.node) === token
       )
         return binding;
-    for (const binding of host?.inactiveSlotOverlays?.keys() ?? [])
+    for (const binding of host?.__inactiveSlotOverlays__?.keys() ?? [])
       if (
         binding.name === entry.name &&
         getBlueprintNodeIdentity(binding.node) === token

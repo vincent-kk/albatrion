@@ -17,12 +17,12 @@ export const keepsHostKeys = <Self extends FieldNodeRecord<Self>>(
   value: unknown,
   isMerge: boolean,
 ): boolean => {
-  const previousValue = node.storedValue;
+  const previousValue = node.__value__;
   if (node.behavior.type === 'array')
     return (
       isArray(value) &&
       isArray(previousValue) &&
-      previousValue.length === node.itemCount
+      previousValue.length === node.__itemCount__
     );
   if (!isPlain(value) || !isPlain(previousValue)) return false;
   const keys = Object.keys(value);

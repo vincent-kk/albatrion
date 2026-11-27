@@ -19,19 +19,19 @@ export const retireArraySources = <Self extends FieldNodeRecord<Self>>(
   const source = context.retainedSources?.get(host);
   const array = source?.array;
   if (!array) return;
-  if (host.itemCount >= previousCount) return;
-  array.retiredFrom = Math.min(array.retiredFrom, host.itemCount);
+  if (host.__itemCount__ >= previousCount) return;
+  array.retiredFrom = Math.min(array.retiredFrom, host.__itemCount__);
   if (source.shouldUseBaseline) selectRetiredArrayBaseline(host, context);
   for (const [entry, slot] of source.slots ?? []) {
-    if (Number(entry.name) < host.itemCount) continue;
+    if (Number(entry.name) < host.__itemCount__) continue;
     if (slot.postPolicyInput)
       supersedeCandidateInput(slot.postPolicyInput, true);
     slot.namedInput = slot.postPolicyInput = slot.writeOrder = undefined;
   }
   if (
-    host.inactiveSlots?.size ||
-    host.inactiveSlotOverlays?.size ||
-    host.inactiveSlotChildren?.size
+    host.__inactiveSlots__?.size ||
+    host.__inactiveSlotOverlays__?.size ||
+    host.__inactiveSlotChildren__?.size
   )
     pruneArraySlotTail(host, context);
 };

@@ -18,11 +18,13 @@ export const prepareFieldNodeValidation = <Self extends FieldNodeRecord<Self>>(
       (runtime.validationMode ?? ValidationMode.None) & ValidationMode.OnChange
     ) ||
     runtime.isValidationUnavailable ||
-    (!(hasOutputChanged ??
+    (!(
+      hasOutputChanged ??
       !sameValueZero(
         runtime.chainInitialOutputValue,
-        node.rootNode.storedOutputValue,
-      )) &&
+        node.rootNode.__outputValue__,
+      )
+    ) &&
       !runtime.validationTargets?.size)
   )
     return false;

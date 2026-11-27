@@ -60,10 +60,10 @@ export const runChildSelectionHistory = (
           path: node.path,
           identity: occurrences.indexOf(node),
           event,
-          revisions: node.revisionLedger,
+          revisions: node.__revisionLedger__,
           commit: node.runtime.commitNumber,
           value: node.value,
-          outputValue: node.storedOutputValue,
+          outputValue: node.__outputValue__,
         }),
       ),
     );
@@ -77,13 +77,13 @@ export const runChildSelectionHistory = (
         path: node.path,
         identity: occurrences.indexOf(node),
         kind: node.blueprintNode.kind,
-        names: Object.keys(node.childrenByName ?? {}),
+        names: Object.keys(node.__childrenByName__ ?? {}),
         children: node.children,
-        schema: node.schema,
+        schema: node.__schema__,
         source: node.source,
         extras: node.extras,
         value: node.value,
-        outputValue: node.storedOutputValue,
+        outputValue: node.__outputValue__,
         isActive: node.isActive,
         isDetached: node.isDetached,
         isVisible: node.isVisible,
@@ -91,15 +91,15 @@ export const runChildSelectionHistory = (
         isDisabled: node.isDisabled,
         isRequired: node.isRequired,
         errors: node.errors,
-        state: node.storedState,
-        revisions: node.revisionLedger,
-        pending: node.pendingDelivery,
+        state: node.__state__,
+        revisions: node.__revisionLedger__,
+        pending: node.__pendingDelivery__,
         referenceStable:
           node.value === node.value && node.children === node.children,
       });
       const children = node.children ?? [];
       for (let index = children.length - 1; index >= 0; index--)
-        if (children[index].parent === node) pending.push(children[index]);
+        if (children[index].__parent__ === node) pending.push(children[index]);
     }
     results.push(
       normalizeSelectionObservation({

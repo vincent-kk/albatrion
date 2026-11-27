@@ -25,13 +25,13 @@ export const assembleObjectBaseline: Behavior['assemble'] = (
   recalculated,
   hint,
 ) => {
-  const previous = node.storedValue;
+  const previous = node.__value__;
   const stable = STABLE_SHAPES.get(node);
   if (
     recalculated &&
     hint &&
     stable?.children === children &&
-    stable.schema === node.schema &&
+    stable.schema === node.__schema__ &&
     stable.extras === node.extras &&
     previous !== null &&
     typeof previous === 'object' &&
@@ -45,22 +45,22 @@ export const assembleObjectBaseline: Behavior['assemble'] = (
         typeof child !== 'object' ||
         !('name' in child) ||
         typeof child.name !== 'string' ||
-        !('storedOutputValue' in child)
+        !('__outputValue__' in child)
       ) {
         sameKeys = false;
         break;
       }
       const oldHasKey = hasOwnProperty(previous, child.name);
-      if ((child.storedOutputValue === undefined) === oldHasKey) {
+      if ((child.__outputValue__ === undefined) === oldHasKey) {
         sameKeys = false;
         break;
       }
       if (
         oldHasKey &&
-        !Object.is(child.storedOutputValue, Reflect.get(previous, child.name))
+        !Object.is(child.__outputValue__, Reflect.get(previous, child.name))
       ) {
         if (!patch) patch = { ...previous };
-        writeObjectKey(patch, child.name, child.storedOutputValue);
+        writeObjectKey(patch, child.name, child.__outputValue__);
       }
     }
     if (sameKeys) {
@@ -71,7 +71,7 @@ export const assembleObjectBaseline: Behavior['assemble'] = (
   }
   if (
     stable?.children === children &&
-    stable.schema === node.schema &&
+    stable.schema === node.__schema__ &&
     stable.extras === undefined &&
     node.extras === undefined &&
     previous !== null &&
@@ -95,22 +95,22 @@ export const assembleObjectBaseline: Behavior['assemble'] = (
           typeof child !== 'object' ||
           !('name' in child) ||
           typeof child.name !== 'string' ||
-          !('storedOutputValue' in child)
+          !('__outputValue__' in child)
         ) {
           sameKeys = false;
           break;
         }
         const oldHasKey = hasOwnProperty(previous, child.name);
-        if ((child.storedOutputValue === undefined) === oldHasKey) {
+        if ((child.__outputValue__ === undefined) === oldHasKey) {
           sameKeys = false;
           break;
         }
         if (
           oldHasKey &&
-          !Object.is(child.storedOutputValue, Reflect.get(previous, child.name))
+          !Object.is(child.__outputValue__, Reflect.get(previous, child.name))
         ) {
           if (!patch) patch = { ...previous };
-          writeObjectKey(patch, child.name, child.storedOutputValue);
+          writeObjectKey(patch, child.name, child.__outputValue__);
         }
       }
     }
@@ -119,7 +119,7 @@ export const assembleObjectBaseline: Behavior['assemble'] = (
       return patch ?? previous;
     }
   }
-  const preferred = getStaticChoices(node.schema).propertyOrder;
+  const preferred = getStaticChoices(node.__schema__).propertyOrder;
   const entries = node.blueprintNode.childEntries;
   if (
     previous === undefined &&
@@ -137,21 +137,21 @@ export const assembleObjectBaseline: Behavior['assemble'] = (
         typeof child !== 'object' ||
         !('name' in child) ||
         typeof child.name !== 'string' ||
-        !('storedOutputValue' in child) ||
+        !('__outputValue__' in child) ||
         entries[index].name !== child.name
       ) {
         aligned = false;
         break;
       }
-      if (child.storedOutputValue !== undefined) {
+      if (child.__outputValue__ !== undefined) {
         names.push(child.name);
-        writeObjectKey(result, child.name, child.storedOutputValue);
+        writeObjectKey(result, child.name, child.__outputValue__);
       }
     }
     if (aligned) {
       STABLE_SHAPES.set(node, {
         children,
-        schema: node.schema,
+        schema: node.__schema__,
         extras: node.extras,
         names,
       });
@@ -166,9 +166,9 @@ export const assembleObjectBaseline: Behavior['assemble'] = (
       typeof child === 'object' &&
       'name' in child &&
       typeof child.name === 'string' &&
-      'storedOutputValue' in child
+      '__outputValue__' in child
     )
-      childValues.set(child.name, child.storedOutputValue);
+      childValues.set(child.name, child.__outputValue__);
   const extra = node.extras;
   const extras =
     extra !== null && typeof extra === 'object' && !isArray(extra)
@@ -226,7 +226,7 @@ export const assembleObjectBaseline: Behavior['assemble'] = (
       }
       STABLE_SHAPES.set(node, {
         children,
-        schema: node.schema,
+        schema: node.__schema__,
         extras: node.extras,
         names,
       });
@@ -247,7 +247,7 @@ export const assembleObjectBaseline: Behavior['assemble'] = (
     );
   STABLE_SHAPES.set(node, {
     children,
-    schema: node.schema,
+    schema: node.__schema__,
     extras: node.extras,
     names,
   });

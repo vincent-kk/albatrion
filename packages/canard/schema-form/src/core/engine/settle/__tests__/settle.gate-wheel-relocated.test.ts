@@ -43,8 +43,8 @@ it.each(['record', 'skip', 'shadow'] as const)(
         },
         (root) =>
           expect(
-            root.childrenByName?.p?.childrenByName?.child !== undefined,
-          ).toBe(root.childrenByName?.later?.storedOutputValue === true),
+            root.__childrenByName__?.p?.__childrenByName__?.child !== undefined,
+          ).toBe(root.__childrenByName__?.later?.__outputValue__ === true),
       );
     } finally {
       engineModes.setMode('gateWheel', previousMode);
@@ -95,9 +95,10 @@ it.each(['record', 'skip', 'shadow'] as const)(
           engineModes.setMode('gateWheel', mode);
         },
         (root) => {
-          const current = root.childrenByName?.X?.childrenByName?.current;
-          expect(current?.childrenByName?.reader !== undefined).toBe(
-            current?.childrenByName?.a?.storedOutputValue === 'A',
+          const current =
+            root.__childrenByName__?.X?.__childrenByName__?.current;
+          expect(current?.__childrenByName__?.reader !== undefined).toBe(
+            current?.__childrenByName__?.a?.__outputValue__ === 'A',
           );
         },
       );
@@ -166,9 +167,10 @@ it.each([false, true])(
           engineModes.setMode('gateWheel', mode);
         },
         (root) => {
-          if (root.childrenByName?.mode?.storedOutputValue === 'x')
+          if (root.__childrenByName__?.mode?.__outputValue__ === 'x')
             expect(
-              root.childrenByName.p?.childrenByName?.child?.storedOutputValue,
+              root.__childrenByName__.p?.__childrenByName__?.child
+                ?.__outputValue__,
             ).toBe('P');
           return [...(root.runtime.committedDeclarationIds ?? [])];
         },
@@ -191,7 +193,8 @@ it.each([false, true])(
         },
         (root) =>
           expect(
-            root.childrenByName?.p?.childrenByName?.child?.storedOutputValue,
+            root.__childrenByName__?.p?.__childrenByName__?.child
+              ?.__outputValue__,
           ).toBe('P'),
       );
       const expected = run('record');

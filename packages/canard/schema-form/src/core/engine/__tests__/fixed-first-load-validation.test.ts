@@ -43,7 +43,7 @@ it('T9 selects synchronous guards while whole compilation stays deferred on the 
     ).length;
     expect(compile).not.toHaveBeenCalled();
     expect(compileGuard).toHaveBeenCalledTimes(1);
-    expect(root.childrenByName!.value.schema.schema).toMatchObject({
+    expect(root.__childrenByName__!.value.__schema__.schema).toMatchObject({
       minLength: 2,
     });
     const issues = await dispatchValidate(root);
@@ -61,9 +61,9 @@ it('T9 selects synchronous guards while whole compilation stays deferred on the 
       deliveries,
       selectedSlots,
       plan,
-      value: root.storedOutputValue,
-      schema: root.childrenByName!.value.schema.schema,
-      revision: root.revisionLedger,
+      value: root.__outputValue__,
+      schema: root.__childrenByName__!.value.__schema__.schema,
+      revision: root.__revisionLedger__,
       commit: root.runtime.commitNumber,
     };
   };

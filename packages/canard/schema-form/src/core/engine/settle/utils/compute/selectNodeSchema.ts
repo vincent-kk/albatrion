@@ -106,7 +106,7 @@ export const selectNodeSchema = <Self extends FieldNodeRecord<Self>>(
     );
   }
 
-  if (node.parent === null) {
+  if (node.__parent__ === null) {
     let hasActiveDeclaration = false;
     for (let index = 0, count = active.length; index < count; index++) {
       const declaration = active[index];
@@ -122,8 +122,8 @@ export const selectNodeSchema = <Self extends FieldNodeRecord<Self>>(
       hasActiveDeclaration,
     );
   }
-  if (node.schema === effective) return false;
-  node.schema = captureFieldNodeChange(node, 'schema', effective);
+  if (node.__schema__ === effective) return false;
+  node.__schema__ = captureFieldNodeChange(node, '__schema__', effective);
   context.changedNodes.add(node);
   return true;
 };

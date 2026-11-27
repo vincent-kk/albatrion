@@ -11,22 +11,22 @@ import { holeValue } from './holeValue';
  * Record the slot owners of this assembly so a later unchanged-shape write may patch it.
  * @param node - Array host just assembled
  * @param children - Ordered item nodes the assembly read
- * @returns Nothing; the runtime's stable-shape record holds the owners
+ * @returns Nothing; the host's `__arrayShape__` holds the owners
  */
 const rememberShape = <Self>(
   node: Pick<
     FieldNodeRecord<Self>,
-    'schema' | 'extras' | 'source' | 'itemCount' | 'runtime'
+    '__schema__' | 'extras' | 'source' | '__itemCount__' | '__arrayShape__'
   >,
-  children: readonly unknown[],
+  children: readonly Self[],
 ): void => {
-  (node.runtime.arrayShapes ??= new WeakMap()).set(node, {
+  node.__arrayShape__ = {
     children,
-    schema: node.schema,
+    schema: node.__schema__,
     extras: node.extras,
     source: node.source,
-    itemCount: node.itemCount,
-  });
+    itemCount: node.__itemCount__,
+  };
 };
 
 /**
@@ -44,13 +44,13 @@ export const assembleArray: Behavior['assemble'] = (
   hint,
 ) => {
   if (node.source === null) return null;
-  const previous = isArray(node.storedValue) ? node.storedValue : undefined;
+  const previous = isArray(node.__value__) ? node.__value__ : undefined;
   const remainingItemCount = hint?.remainingItemCount;
   if (
     hint &&
     remainingItemCount !== undefined &&
     previous &&
-    node.itemCount === remainingItemCount &&
+    node.__itemCount__ === remainingItemCount &&
     (previous.length === remainingItemCount + 1 ||
       previous.length === remainingItemCount)
   ) {
@@ -65,7 +65,7 @@ export const assembleArray: Behavior['assemble'] = (
     hint &&
     previousItemCount !== undefined &&
     previous &&
-    node.itemCount === previousItemCount + 1 &&
+    node.__itemCount__ === previousItemCount + 1 &&
     (previous.length === previousItemCount ||
       previous.length === previousItemCount + 1)
   ) {
@@ -88,10 +88,10 @@ export const assembleArray: Behavior['assemble'] = (
       return result;
     }
     const template = getArrayItemTemplate(node, previousItemCount);
-    const child = node.childrenByName?.['' + previousItemCount];
+    const child = node.__childrenByName__?.['' + previousItemCount];
     if (template && child !== null && typeof child === 'object') {
       const outputValue =
-        'storedOutputValue' in child ? child.storedOutputValue : undefined;
+        '__outputValue__' in child ? child.__outputValue__ : undefined;
       const value =
         outputValue === undefined
           ? holeValue(template.kind, previous[previousItemCount])
@@ -110,15 +110,15 @@ export const assembleArray: Behavior['assemble'] = (
       return result;
     }
   }
-  const stable = node.runtime.arrayShapes?.get(node);
+  const stable = node.__arrayShape__;
   if (
     recalculated &&
-    previous?.length === node.itemCount &&
+    previous?.length === node.__itemCount__ &&
     stable?.children === children &&
-    stable.schema === node.schema &&
+    stable.schema === node.__schema__ &&
     stable.extras === node.extras &&
     stable.source === node.source &&
-    stable.itemCount === node.itemCount
+    stable.itemCount === node.__itemCount__
   ) {
     let patch: Optional<unknown[]>;
     let valid = true;
@@ -128,7 +128,7 @@ export const assembleArray: Behavior['assemble'] = (
         typeof child !== 'object' ||
         !('name' in child) ||
         typeof child.name !== 'string' ||
-        !('storedOutputValue' in child)
+        !('__outputValue__' in child)
       ) {
         valid = false;
         break;
@@ -137,8 +137,8 @@ export const assembleArray: Behavior['assemble'] = (
       if (
         !Number.isInteger(index) ||
         index < 0 ||
-        index >= node.itemCount ||
-        node.childrenByName?.[child.name] !== child
+        index >= node.__itemCount__ ||
+        node.__childrenByName__?.[child.name] !== child
       ) {
         valid = false;
         break;
@@ -148,7 +148,7 @@ export const assembleArray: Behavior['assemble'] = (
         valid = false;
         break;
       }
-      const outputValue = child.storedOutputValue;
+      const outputValue = child.__outputValue__;
       const value =
         outputValue === undefined
           ? holeValue(template.kind, previous[index])

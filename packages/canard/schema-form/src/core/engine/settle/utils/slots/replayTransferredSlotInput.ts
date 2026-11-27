@@ -15,17 +15,17 @@ export const replayTransferredSlotInput = <Self extends FieldNodeRecord<Self>>(
   node: Self,
   context: SettlementContext<Self>,
 ): boolean => {
-  const host = node.parent;
+  const host = node.__parent__;
   if (!host) return false;
   const entry = getRetainedChildEntry(host, node.name, node.blueprintNode);
   if (!entry) return false;
   const binding = getSlotBinding(host, entry);
-  const instance = host.inactiveSlots?.get(binding);
-  const overlay = host.inactiveSlotOverlays?.get(binding);
+  const instance = host.__inactiveSlots__?.get(binding);
+  const overlay = host.__inactiveSlotOverlays__?.get(binding);
   if (!instance && !overlay) return false;
   restoreTransferredSlotSource(node, instance, overlay, context);
   markSlotChange(host, binding, undefined, context);
-  host.inactiveSlots?.delete(binding);
-  host.inactiveSlotOverlays?.delete(binding);
+  host.__inactiveSlots__?.delete(binding);
+  host.__inactiveSlotOverlays__?.delete(binding);
   return true;
 };

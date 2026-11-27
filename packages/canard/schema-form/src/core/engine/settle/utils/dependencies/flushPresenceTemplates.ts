@@ -72,9 +72,9 @@ export const flushPresenceTemplates = <Self extends FieldNodeRecord<Self>>(
       if (!live) continue;
       if (
         features.stateKeyNodes.has(live.blueprintNode.id) ||
-        (live.parent &&
+        (live.__parent__ &&
           features.stateKeyChildren
-            .get(live.parent.blueprintNode.id)
+            .get(live.__parent__.blueprintNode.id)
             ?.has(live.name))
       ) {
         context.dependencyOwnerPaths.add(owner);

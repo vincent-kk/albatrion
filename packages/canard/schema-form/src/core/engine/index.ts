@@ -63,7 +63,7 @@ export {
 } from './settle';
 export { ValidationMode, FieldNodeState } from './types/state';
 export { WriteOption } from './types/value';
-export { BEHAVIORS, interpret, isMember } from './behaviors';
+export { interpret, isMember, selectBehavior } from './behaviors';
 export { find, findNodes } from './navigation';
 export { PathKeyedMap } from './utils/pathIndex/PathKeyedMap';
 export { PathKeyedSet } from './utils/pathIndex/PathKeyedSet';

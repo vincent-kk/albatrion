@@ -39,10 +39,10 @@ describe('union fold pending exits and retained source', () => {
         FieldNodeWriteKind.CallerPartial,
         WriteOption.Merge,
       );
-      expect(root.childrenByName?.shared?.source).toBeUndefined();
+      expect(root.__childrenByName__?.shared?.source).toBeUndefined();
       expect(readRetainedSlotSource(root, '/shared', own)).toBe(first);
       writeFieldNode(
-        root.childrenByName!.shared,
+        root.__childrenByName__!.shared,
         second,
         FieldNodeWriteKind.Input,
         WriteOption.Overwrite,
@@ -53,7 +53,7 @@ describe('union fold pending exits and retained source', () => {
         FieldNodeWriteKind.CallerPartial,
         WriteOption.Merge,
       );
-      expect(root.childrenByName?.shared?.source).toBe(first);
+      expect(root.__childrenByName__?.shared?.source).toBe(first);
       expect(readRetainedSlotSource(root, '/shared', other)).toBe(second);
       writeFieldNode(
         root,
@@ -61,7 +61,7 @@ describe('union fold pending exits and retained source', () => {
         FieldNodeWriteKind.CallerPartial,
         WriteOption.Merge,
       );
-      expect(root.childrenByName?.shared?.source).toBe(second);
+      expect(root.__childrenByName__?.shared?.source).toBe(second);
       expect(root.runtime.diagnostics.status).toBe('stable');
     },
   );
@@ -78,35 +78,35 @@ describe('union fold pending exits and retained source', () => {
         { tag: from, shared: first },
         WriteOption.Overwrite,
       );
-      const original = root.childrenByName!.shared.blueprintNode;
+      const original = root.__childrenByName__!.shared.blueprintNode;
       writeFieldNode(
-        root.childrenByName!.tag,
+        root.__childrenByName__!.tag,
         to,
         FieldNodeWriteKind.Input,
         WriteOption.Overwrite,
       );
-      expect(root.childrenByName?.shared?.blueprintNode).not.toBe(original);
-      expect(root.childrenByName?.shared?.source).toBeUndefined();
+      expect(root.__childrenByName__?.shared?.blueprintNode).not.toBe(original);
+      expect(root.__childrenByName__?.shared?.source).toBeUndefined();
       writeFieldNode(
-        root.childrenByName!.shared,
+        root.__childrenByName__!.shared,
         second,
         FieldNodeWriteKind.Input,
         WriteOption.Overwrite,
       );
       writeFieldNode(
-        root.childrenByName!.tag,
+        root.__childrenByName__!.tag,
         from,
         FieldNodeWriteKind.Input,
         WriteOption.Overwrite,
       );
-      expect(root.childrenByName?.shared?.source).toBe(first);
+      expect(root.__childrenByName__?.shared?.source).toBe(first);
       writeFieldNode(
-        root.childrenByName!.tag,
+        root.__childrenByName__!.tag,
         to,
         FieldNodeWriteKind.Input,
         WriteOption.Overwrite,
       );
-      expect(root.childrenByName?.shared?.source).toBe(second);
+      expect(root.__childrenByName__?.shared?.source).toBe(second);
       expect(root.runtime.diagnostics.status).toBe('stable');
     },
   );
@@ -118,7 +118,7 @@ describe('union fold pending exits and retained source', () => {
       { left: true, right: false, shared: 17 },
       WriteOption.Overwrite,
     );
-    const detached = root.childrenByName!.shared;
+    const detached = root.__childrenByName__!.shared;
     writeFieldNode(
       root,
       { left: false, right: true },
@@ -132,7 +132,7 @@ describe('union fold pending exits and retained source', () => {
       FieldNodeWriteKind.CallerReplace,
       WriteOption.Overwrite,
     );
-    expect(root.childrenByName?.shared?.source).toBeUndefined();
+    expect(root.__childrenByName__?.shared?.source).toBeUndefined();
     expect(readRetainedSlotSource(root, '/shared', 'union:3')).toBe(17);
     writeFieldNode(
       root,
@@ -140,6 +140,6 @@ describe('union fold pending exits and retained source', () => {
       FieldNodeWriteKind.CallerPartial,
       WriteOption.Merge,
     );
-    expect(root.childrenByName?.shared?.source).toBe(17);
+    expect(root.__childrenByName__?.shared?.source).toBe(17);
   });
 });

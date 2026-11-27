@@ -65,7 +65,7 @@ describe('pending-exit keys are built only while an exit is pending', () => {
     const encodings = countKeySiteEncodings();
     loadFieldNodeAtMount(root, { kind: 'kind_0' }, WriteOption.Overwrite);
     expect(encodings.count).toBe(0);
-    expect(Object.keys(root.childrenByName ?? {})).toEqual([
+    expect(Object.keys(root.__childrenByName__ ?? {})).toEqual([
       'common',
       'kind',
       'payload_0_a',
@@ -77,17 +77,17 @@ describe('pending-exit keys are built only while an exit is pending', () => {
   it('builds no key when a write reselects 60 inactive entries and nothing exits', () => {
     const { root } = createTestTree(oneOfSchema(20));
     loadFieldNodeAtMount(root, { kind: 'none_1' }, WriteOption.Overwrite);
-    const common = root.childrenByName?.common;
+    const common = root.__childrenByName__?.common;
     const encodings = countKeySiteEncodings();
     writeFieldNode(
-      root.childrenByName!.kind,
+      root.__childrenByName__!.kind,
       'none_2',
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
     expect(encodings.count).toBe(0);
-    expect(root.childrenByName?.common === common).toBe(true);
-    expect(root.storedValue).toEqual({ common: 'shared', kind: 'none_2' });
+    expect(root.__childrenByName__?.common === common).toBe(true);
+    expect(root.__value__).toEqual({ common: 'shared', kind: 'none_2' });
   });
 
   it('marks an exit pending since an earlier wheel when its gate throws in a later wheel', () => {
@@ -117,14 +117,14 @@ describe('pending-exit keys are built only while an exit is pending', () => {
     armed = true;
     expect(() =>
       writeFieldNode(
-        root.childrenByName!.t,
+        root.__childrenByName__!.t,
         true,
         FieldNodeWriteKind.Input,
         WriteOption.Overwrite,
       ),
     ).toThrow('Gate evaluation failed');
-    expect(root.childrenByName?.g).toBeUndefined();
-    expect(root.storedValue).toEqual({ t: true, a: 1 });
+    expect(root.__childrenByName__?.g).toBeUndefined();
+    expect(root.__value__).toEqual({ t: true, a: 1 });
     expect(readRetainedSlotSource(root, '/g', 'string')).toBe('G');
   });
 
@@ -140,7 +140,7 @@ describe('pending-exit keys are built only while an exit is pending', () => {
       },
     });
     loadFieldNodeAtMount(root, { s: 'on', keep: 'K' }, WriteOption.Overwrite);
-    const keep = root.childrenByName!.keep;
+    const keep = root.__childrenByName__!.keep;
     const original = priming.primeHost;
     let injected = false;
     vi.spyOn(priming, 'primeHost').mockImplementation(
@@ -153,14 +153,14 @@ describe('pending-exit keys are built only while an exit is pending', () => {
       },
     );
     writeFieldNode(
-      root.childrenByName!.s,
+      root.__childrenByName__!.s,
       'off',
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
     expect(injected).toBe(true);
-    expect(root.childrenByName?.keep === keep).toBe(true);
+    expect(root.__childrenByName__?.keep === keep).toBe(true);
     expect(keep.isDetached).toBe(false);
-    expect(root.storedValue).toEqual({ s: 'off', keep: 'K' });
+    expect(root.__value__).toEqual({ s: 'off', keep: 'K' });
   });
 });

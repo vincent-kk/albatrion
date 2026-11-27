@@ -55,7 +55,7 @@ it.each([
     );
     expect(readFieldNodeInactiveValues(old)).toBe(frozen);
     dispatchSetValue(getDispatchNode(root, 'show'), true);
-    expect(list.storedValue).toEqual(
+    expect(list.__value__).toEqual(
       (operation === 'insert'
         ? ['new', 'first', 'second', 'third']
         : ['second', 'third']

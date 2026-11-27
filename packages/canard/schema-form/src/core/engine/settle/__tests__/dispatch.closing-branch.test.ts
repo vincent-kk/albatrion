@@ -57,7 +57,7 @@ const closeAndReopen = (
   return {
     closedSource,
     closedSize,
-    reopened: getDispatchChild(root, 'tags').storedOutputValue,
+    reopened: getDispatchChild(root, 'tags').__outputValue__,
     reopenedSize: readFieldNodeInactiveValues(root).length,
     commits,
   };
@@ -184,7 +184,7 @@ describe('nested array growth in the write that closes its branch (211C-01 A)', 
       items: [{ n: '1' }, { n: '2' }],
     });
     dispatchSetValue(getDispatchChild(root, 'kind'), 'list');
-    expect(root.storedOutputValue).toEqual({
+    expect(root.__outputValue__).toEqual({
       kind: 'list',
       group: { tags: ['a', 'b'] },
       rows: [{ sub: ['x', 'y'] }],
@@ -239,10 +239,10 @@ describe('object child first written in the write that closes its ancestor (211C
     dispatchSetValue(getDispatchChild(root, 'kind'), 'list');
     const info = getDispatchChild(root, 'info');
     return {
-      outputValue: info.storedOutputValue,
-      b: info.childrenByName?.b !== undefined,
-      c: getDispatchChild(info, 'obj').childrenByName?.c !== undefined,
-      x: getDispatchChild(info, 'arr').childrenByName?.['0'] !== undefined,
+      outputValue: info.__outputValue__,
+      b: info.__childrenByName__?.b !== undefined,
+      c: getDispatchChild(info, 'obj').__childrenByName__?.c !== undefined,
+      x: getDispatchChild(info, 'arr').__childrenByName__?.['0'] !== undefined,
     };
   };
   const restored = { outputValue: written, b: true, c: true, x: true };

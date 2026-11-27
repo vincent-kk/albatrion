@@ -56,7 +56,7 @@ export function createCoreScenarioAdapter(
         const node = root.find(path);
         if (!node || !isTestFieldNode(node))
           throw new Error(`Scenario identity source missing at ${path}`);
-        priorNodes.set(path, { node, itemKey: node.itemKey });
+        priorNodes.set(path, { node, itemKey: node.__itemKey__ });
       }
       actionResult = executeCoreScenarioStep(root, scenario, step);
     },
@@ -71,7 +71,7 @@ export function createCoreScenarioAdapter(
         const current = root.find(path);
         expect(root.find(path), `identity ${path}`).toBe(prior?.node);
         expect(
-          isTestFieldNode(current) ? current.itemKey : undefined,
+          isTestFieldNode(current) ? current.__itemKey__ : undefined,
           `item key ${path}`,
         ).toBe(prior?.itemKey);
       }

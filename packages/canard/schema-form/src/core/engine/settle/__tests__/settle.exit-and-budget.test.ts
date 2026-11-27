@@ -103,8 +103,8 @@ describe('settle exits and budgets', () => {
       },
     });
     loadFieldNodeAtMount(root, {}, WriteOption.Overwrite);
-    expect(root.childrenByName?.toggle?.source).toBe(true);
-    expect(root.childrenByName?.transient).toBeUndefined();
+    expect(root.__childrenByName__?.toggle?.source).toBe(true);
+    expect(root.__childrenByName__?.transient).toBeUndefined();
     expect(hasRetainedSlotOwnSource(root, '/transient', 'string')).toBe(false);
   });
 
@@ -128,25 +128,25 @@ describe('settle exits and budgets', () => {
       { flag: true, secret: 'held' },
       WriteOption.Overwrite,
     );
-    const former = root.childrenByName!.secret;
+    const former = root.__childrenByName__!.secret;
     writeFieldNode(
-      root.childrenByName!.flag,
+      root.__childrenByName__!.flag,
       false,
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
-    expect(root.childrenByName?.secret).toBeUndefined();
+    expect(root.__childrenByName__?.secret).toBeUndefined();
     expect(former.source).toBe('held');
     expect(former.isDetached).toBe(true);
     expect(hasRetainedSlotOwnSource(root, '/secret', 'string')).toBe(false);
     writeFieldNode(
-      root.childrenByName!.flag,
+      root.__childrenByName__!.flag,
       true,
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
-    expect(root.childrenByName?.secret).not.toBe(former);
-    expect(root.childrenByName?.secret?.source).toBe('fresh');
+    expect(root.__childrenByName__?.secret).not.toBe(former);
+    expect(root.__childrenByName__?.secret?.source).toBe('fresh');
   });
 
   it('WRITE-032 exit policy reads only the previous committed declarations', () => {
@@ -178,7 +178,7 @@ describe('settle exits and budgets', () => {
       WriteOption.Overwrite,
     );
     writeFieldNode(
-      root.childrenByName!.flag,
+      root.__childrenByName__!.flag,
       false,
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
@@ -208,7 +208,7 @@ describe('settle exits and budgets', () => {
       WriteOption.Overwrite,
     );
     writeFieldNode(
-      root.childrenByName!.flag,
+      root.__childrenByName__!.flag,
       false,
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
@@ -218,15 +218,17 @@ describe('settle exits and budgets', () => {
     );
     expect(readRetainedSlotSource(root, '/branch/keep', 'string')).toBe('K');
     writeFieldNode(
-      root.childrenByName!.flag,
+      root.__childrenByName__!.flag,
       true,
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
     expect(
-      root.childrenByName?.branch?.childrenByName?.drop?.source,
+      root.__childrenByName__?.branch?.__childrenByName__?.drop?.source,
     ).toBeUndefined();
-    expect(root.childrenByName?.branch?.childrenByName?.keep?.source).toBe('K');
+    expect(
+      root.__childrenByName__?.branch?.__childrenByName__?.keep?.source,
+    ).toBe('K');
   });
 
   it('WRITE-034 clears latent descendants of an exiting declaration with false override', () => {
@@ -261,14 +263,14 @@ describe('settle exits and budgets', () => {
       WriteOption.Overwrite,
     );
     writeFieldNode(
-      root.childrenByName!.branch.childrenByName!.show,
+      root.__childrenByName__!.branch.__childrenByName__!.show,
       false,
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
     expect(readRetainedSlotSource(root, '/branch/drop', 'string')).toBe('D');
     writeFieldNode(
-      root.childrenByName!.flag,
+      root.__childrenByName__!.flag,
       false,
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
@@ -310,15 +312,19 @@ describe('settle exits and budgets', () => {
       },
       WriteOption.Overwrite,
     );
-    expect(root.childrenByName?.addr?.childrenByName?.zip?.source).toBe('Z');
+    expect(root.__childrenByName__?.addr?.__childrenByName__?.zip?.source).toBe(
+      'Z',
+    );
     writeFieldNode(
-      root.childrenByName!.flag,
+      root.__childrenByName__!.flag,
       false,
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
-    expect(root.childrenByName?.addr).toBeDefined();
-    expect(root.childrenByName?.addr?.childrenByName?.zip).toBeUndefined();
+    expect(root.__childrenByName__?.addr).toBeDefined();
+    expect(
+      root.__childrenByName__?.addr?.__childrenByName__?.zip,
+    ).toBeUndefined();
     expect(hasRetainedSlotOwnSource(root, '/addr/zip', 'string')).toBe(false);
   });
 
@@ -339,10 +345,10 @@ describe('settle exits and budgets', () => {
       { flag: true, branch: { kept: 'K', extra: 'E' } },
       WriteOption.Overwrite,
     );
-    const former = root.childrenByName!.branch;
+    const former = root.__childrenByName__!.branch;
     const extras = former.extras;
     writeFieldNode(
-      root.childrenByName!.flag,
+      root.__childrenByName__!.flag,
       false,
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
@@ -376,7 +382,7 @@ describe('settle exits and budgets', () => {
         WriteOption.Overwrite,
       ),
     ).toThrow();
-    expect(root.childrenByName?.a?.source).toBe(0);
+    expect(root.__childrenByName__?.a?.source).toBe(0);
     expect(root.runtime.misfitPaths.has('/a')).toBe(true);
     expect(root.runtime.diagnostics).toMatchObject({
       status: 'degraded',
@@ -386,7 +392,7 @@ describe('settle exits and budgets', () => {
       commit: 1,
     });
     writeFieldNode(
-      root.childrenByName!.a,
+      root.__childrenByName__!.a,
       1,
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
@@ -450,8 +456,8 @@ describe('settle exits and budgets', () => {
       ),
     ).toThrow();
     expect(root.source).toBeUndefined();
-    expect(root.childrenByName?.a?.source).toBe(true);
-    expect(root.childrenByName?.b?.source).toBe(true);
+    expect(root.__childrenByName__?.a?.source).toBe(true);
+    expect(root.__childrenByName__?.b?.source).toBe(true);
     expect(root.runtime.diagnostics).toMatchObject({
       status: 'degraded',
       cause: 'budget',
@@ -522,7 +528,7 @@ describe('settle exits and budgets', () => {
     ).toThrow();
     expect(unstable.runtime.settlementScratch?.isInUse).toBe(false);
     expect(unstable.runtime.settlementScratch?.enteredNodes.size).toBe(0);
-    expect(unstable.storedOutputValue).toEqual({ a: true, b: true });
+    expect(unstable.__outputValue__).toEqual({ a: true, b: true });
     expect(unstable.runtime.settlementScratch?.changedNodes.size).toBe(0);
   });
 });

@@ -24,7 +24,7 @@ export const prepareArrayAppend = <Self extends FieldNodeRecord<Self>>(
   node: Self,
   operation: ArrayOperation,
 ): Optional<ArrayAppendProof<Self>> => {
-  const count = node.itemCount;
+  const count = node.__itemCount__;
   if (
     operation.kind !== 'push' &&
     (operation.kind !== 'insert' || operation.index !== count)
@@ -56,7 +56,7 @@ export const prepareArrayAppend = <Self extends FieldNodeRecord<Self>>(
       slots: [{ value: operation.value }],
       result: LENGTH_RESULT,
     },
-    value: node.storedValue,
+    value: node.__value__,
     isValid: true,
   };
 };

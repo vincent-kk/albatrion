@@ -1,22 +1,13 @@
 import { HostStaticPartition } from '../../../../blueprint';
-import type { Blueprint, BlueprintGate } from '../../../../blueprint';
 import type { FieldNodeRecord } from '../../../../record';
-import { getHostDerived } from '../../../../utils/cache/derivedRecords';
 import { getGateExpression } from '../../gates/getGateExpression';
-import type { GateOccurrence } from '../../gates/type';
 import { relocatedGates } from '../relocatedGates';
 import { getStaticGateList } from './getStaticGateList';
 
-/** Host identity owns only preparation metadata, never predicate inputs/results. */
-export interface HostWheelPlan {
-  readonly blueprint: Blueprint;
-  readonly path: string;
-  readonly itemCount: number;
-  readonly relocatedOccurrences: readonly GateOccurrence[];
-  readonly gates: readonly BlueprintGate[];
-  cap?: number;
-  readonly isBaselineEligible: boolean;
-}
+/** Host identity owns only preparation metadata, never predicate inputs/results; the record declares its shape. */
+export type HostWheelPlan = NonNullable<
+  FieldNodeRecord<unknown>['__wheelPlan__']
+>;
 
 /**
  * Prepare immutable wheel metadata once until this live host's locations change.
@@ -28,15 +19,14 @@ export const prepareHostWheelPlan = <Self extends FieldNodeRecord<Self>>(
   node: Self,
   previous?: HostWheelPlan,
 ): HostWheelPlan => {
-  const record = getHostDerived<'wheelPlan', HostWheelPlan>(node);
-  const cached = previous ?? record.wheelPlan;
+  const cached = previous ?? node.__wheelPlan__;
   const relocatedOccurrences = relocatedGates(node);
   if (
     cached &&
     (previous !== undefined || node.behavior.type === 'object') &&
     cached.blueprint === node.runtime.blueprint &&
     cached.path === node.path &&
-    cached.itemCount === node.itemCount &&
+    cached.itemCount === node.__itemCount__ &&
     cached.relocatedOccurrences === relocatedOccurrences
   )
     return cached;
@@ -74,11 +64,11 @@ export const prepareHostWheelPlan = <Self extends FieldNodeRecord<Self>>(
   const plan: HostWheelPlan = {
     blueprint: node.runtime.blueprint,
     path: node.path,
-    itemCount: node.itemCount,
+    itemCount: node.__itemCount__,
     relocatedOccurrences,
     gates,
     isBaselineEligible: matches,
   };
-  if (!previous) record.wheelPlan = plan;
+  if (!previous) node.__wheelPlan__ = plan;
   return plan;
 };

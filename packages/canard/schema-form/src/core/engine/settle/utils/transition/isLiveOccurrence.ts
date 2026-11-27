@@ -14,7 +14,8 @@ export const isLiveOccurrence = <Self extends FieldNodeRecord<Self>>(
 ): boolean => {
   if (node.isDetached) return false;
   if (context.pendingExits.size === 0) return true;
-  for (let current = node; current.parent; current = current.parent)
-    if (current.parent.childrenByName?.[current.name] !== current) return false;
+  for (let current = node; current.__parent__; current = current.__parent__)
+    if (current.__parent__.__childrenByName__?.[current.name] !== current)
+      return false;
   return true;
 };

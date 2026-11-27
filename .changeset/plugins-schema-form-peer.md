@@ -1,11 +1,11 @@
 ---
-"@canard/schema-form-antd5-plugin": patch
-"@canard/schema-form-antd6-plugin": patch
-"@canard/schema-form-antd-mobile-plugin": patch
-"@canard/schema-form-mui-plugin": patch
-"@canard/schema-form-ajv6-plugin": patch
-"@canard/schema-form-ajv7-plugin": patch
-"@canard/schema-form-ajv8-plugin": patch
+"@canard/schema-form-ajv6-plugin": major
+"@canard/schema-form-ajv7-plugin": major
+"@canard/schema-form-ajv8-plugin": major
 ---
 
-Install a supported release of `@canard/schema-form` alongside each UI or AJV plugin. The plugin's peer dependency range identifies the supported core releases.
+Breaking change: the AJV plugins declare `@canard/schema-form` 1.x as a peer dependency, which 0.x did not declare. Install a 1.x release of `@canard/schema-form` with the plugin; a project that keeps `@canard/schema-form` 0.x gets an unmet peer dependency.
+
+```sh
+yarn add @canard/schema-form@^1.0.0 @canard/schema-form-ajv8-plugin@^1.0.0
+```

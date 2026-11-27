@@ -14,7 +14,7 @@ export const readScheduledPaths = <Self extends FieldNodeRecord<Self>>(
   const dirty = new DirtyPathSet(new Map());
   dirty.beginPostOrder();
   for (const node of context.writtenInputs.keys())
-    if (node.writeEpoch === context.writeEpoch) dirty.add(node.path);
+    if (node.__writeEpoch__ === context.writeEpoch) dirty.add(node.path);
   for (const path of context.dirtyPaths) dirty.add(path);
   return [...dirty];
 };

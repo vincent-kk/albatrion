@@ -12,7 +12,7 @@ export const getDispatchNode = (
 ): DispatchTestNode => {
   let node = root;
   for (const name of names) {
-    const child = node.childrenByName?.[name];
+    const child = node.__childrenByName__?.[name];
     if (!child) throw new Error(`No child ${name} under ${node.path}`);
     node = child;
   }

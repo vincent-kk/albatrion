@@ -12,7 +12,7 @@ afterEach(() => vi.restoreAllMocks());
 it('publishes a membership-changing oneOf-80 selection without enumerating the private view', () => {
   const { root } = createDispatchTree(createFixedBranchSchema(80));
   dispatchMount(root, undefined, undefined, { deferValidation: false });
-  const kind = root.childrenByName!.kind;
+  const kind = root.__childrenByName__!.kind;
   dispatchSetValue(kind, 'kind_79');
   dispatchSetValue(kind, 'kind_0');
   let priorScans = 0;
@@ -30,7 +30,7 @@ it('publishes a membership-changing oneOf-80 selection without enumerating the p
       }
     },
   );
-  root.childrenByName = new Proxy(root.childrenByName!, {
+  root.__childrenByName__ = new Proxy(root.__childrenByName__!, {
     ownKeys(target) {
       if (comparingPresence) priorScans++;
       return Reflect.ownKeys(target);
@@ -54,17 +54,17 @@ it('publishes a membership-changing oneOf-80 selection without enumerating the p
   expect(viewScans).toBe(0);
   expect(viewWrites).toBe(0);
   expect(priorScans).toBe(0);
-  expect(root.storedOutputValue).toMatchObject({
+  expect(root.__outputValue__).toMatchObject({
     kind: 'kind_79',
     payload_79_a: 'a_79',
   });
-  expect(root.childrenByName!.kind).toBe(kind);
+  expect(root.__childrenByName__!.kind).toBe(kind);
 });
 
 it('does not sort noninteger entering required candidates in the oneOf-80 write', () => {
   const { root } = createDispatchTree(createFixedBranchSchema(80));
   dispatchMount(root, undefined, undefined, { deferValidation: false });
-  const kind = root.childrenByName!.kind;
+  const kind = root.__childrenByName__!.kind;
   dispatchSetValue(kind, 'kind_79');
   dispatchSetValue(kind, 'kind_0');
   let requiredSorts = 0;
@@ -79,7 +79,7 @@ it('does not sort noninteger entering required candidates in the oneOf-80 write'
         (node) =>
           node !== null &&
           typeof node === 'object' &&
-          Reflect.get(node, 'parent') === root,
+          Reflect.get(node, '__parent__') === root,
       )
     )
       requiredSorts++;
@@ -87,7 +87,7 @@ it('does not sort noninteger entering required candidates in the oneOf-80 write'
   });
   dispatchSetValue(kind, 'kind_79');
   expect(requiredSorts).toBe(0);
-  expect(root.storedOutputValue).toMatchObject({
+  expect(root.__outputValue__).toMatchObject({
     kind: 'kind_79',
     payload_79_a: 'a_79',
   });

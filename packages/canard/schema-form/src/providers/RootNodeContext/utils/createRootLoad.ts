@@ -72,8 +72,6 @@ export const createRootLoad = (
       });
   } catch (error) {
     load.error = error;
-    if (load.root?.diagnostics.cause === 'sharedConflict')
-      load.root = undefined;
   }
   if (mount && load.root && props.errors?.length)
     try {

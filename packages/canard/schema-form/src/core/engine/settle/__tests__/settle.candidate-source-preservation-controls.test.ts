@@ -35,7 +35,7 @@ it.each(['items', 'prefixItems'] as const)(
       { path: '/list', value: ['7'] },
     ]);
     dispatchSetValue(getDispatchNode(root, 'open'), true);
-    expect(root.storedOutputValue).toEqual({ open: true, list: [7] });
+    expect(root.__outputValue__).toEqual({ open: true, list: [7] });
     expect(readInactiveValuesAt(root, '')).toEqual([]);
   },
 );
@@ -54,5 +54,5 @@ it('candidate-free structural moves reuse their existing source records', () => 
   dispatchRemove(root, 0);
   expect(getDispatchNode(root, '0')).toBe(first);
   expect(getDispatchNode(root, '1')).toBe(second);
-  expect(root.storedOutputValue).toEqual([1, 2]);
+  expect(root.__outputValue__).toEqual([1, 2]);
 });

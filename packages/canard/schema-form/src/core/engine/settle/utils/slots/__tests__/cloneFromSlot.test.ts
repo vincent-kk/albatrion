@@ -60,9 +60,9 @@ it('copies source channels and rebinds every active and inactive parent', () => 
     instance.blueprintNode,
   );
   if (!hiddenEntry || !entry) throw new Error('Expected declared bindings');
-  instance.inactiveSlots = new Map([[hiddenEntry, hidden]]);
+  instance.__inactiveSlots__ = new Map([[hiddenEntry, hidden]]);
   dispatchSetValue(getDispatchNode(root, 'open'), false);
-  root.inactiveSlots = new Map([[entry, instance]]);
+  root.__inactiveSlots__ = new Map([[entry, instance]]);
   const scratch = getSettlementScratch(runtime);
   const context = createSettlementContext(
     root,
@@ -74,24 +74,24 @@ it('copies source channels and rebinds every active and inactive parent', () => 
   try {
     const clone = cloneFromSlot(root, entry, instance, context);
     expect(clone).not.toBe(instance);
-    expect(clone.parent).toBe(root);
+    expect(clone.__parent__).toBe(root);
     expect(clone.extras).toEqual({ extra: 7 });
     expect(getDispatchNode(clone, 'leaf').source).toBe('kept');
-    expect(getDispatchNode(clone, 'leaf').storedState).toEqual({});
+    expect(getDispatchNode(clone, 'leaf').__state__).toEqual({});
     expect(context.enteredNodes.has(getDispatchNode(clone, 'list', '0'))).toBe(
       true,
     );
-    expect(getDispatchNode(clone, 'list', '0').itemKey).toBeGreaterThan(
-      oldItem.itemKey!,
+    expect(getDispatchNode(clone, 'list', '0').__itemKey__).toBeGreaterThan(
+      oldItem.__itemKey__!,
     );
-    const candidate = clone.inactiveSlots?.get(hiddenEntry);
+    const candidate = clone.__inactiveSlots__?.get(hiddenEntry);
     expect(candidate).not.toBe(hidden);
-    expect(candidate?.parent).toBe(clone);
+    expect(candidate?.__parent__).toBe(clone);
     expect(candidate?.source).toBe('hidden');
     expect(candidate?.isDetached).toBe(true);
-    expect(instance.inactiveSlots.get(hiddenEntry)).toBe(hidden);
+    expect(instance.__inactiveSlots__.get(hiddenEntry)).toBe(hidden);
     expect(instance.isDetached).toBe(true);
-    expect(hidden.parent).toBe(instance);
+    expect(hidden.__parent__).toBe(instance);
     expect(merge).not.toHaveBeenCalled();
   } finally {
     releaseSettlementScratch(scratch);

@@ -63,10 +63,9 @@ export const flushPendingGateReads = <Self extends FieldNodeRecord<Self>>(
             gate,
             node,
             suffix,
-            childSuffix:
-              isOwnActiveGate(gate.schemaPath, node.schemaPath)
-                ? suffix
-                : undefined,
+            childSuffix: isOwnActiveGate(gate.schemaPath, node.schemaPath)
+              ? suffix
+              : undefined,
           });
       for (const entry of node.childEntries) {
         const childSuffix = appendSegment(suffix, entry.name);
@@ -76,10 +75,12 @@ export const flushPendingGateReads = <Self extends FieldNodeRecord<Self>>(
               gate,
               node,
               suffix,
-              childSuffix:
-                isOwnActiveGate(gate.schemaPath, declaration.schemaPath)
-                  ? childSuffix
-                  : undefined,
+              childSuffix: isOwnActiveGate(
+                gate.schemaPath,
+                declaration.schemaPath,
+              )
+                ? childSuffix
+                : undefined,
             });
         visit(entry.node, childSuffix);
       }
@@ -111,12 +112,12 @@ export const flushPendingGateReads = <Self extends FieldNodeRecord<Self>>(
         if (typeof name !== 'string') continue;
         if (
           host.source !== undefined ||
-          !host.childrenByName ||
+          !host.__childrenByName__ ||
           (host.behavior.type !== 'array' &&
-          Object.getPrototypeOf(host.childrenByName) === null
+          Object.getPrototypeOf(host.__childrenByName__) === null
             ? // structure values are always live nodes, so undefined means absent.
-              host.childrenByName[name] === undefined
-            : !hasOwnProperty(host.childrenByName, name))
+              host.__childrenByName__[name] === undefined
+            : !hasOwnProperty(host.__childrenByName__, name))
         )
           flushPendingOutput(host, context);
       }

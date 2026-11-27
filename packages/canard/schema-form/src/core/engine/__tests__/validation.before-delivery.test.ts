@@ -78,14 +78,14 @@ it('IR-6 W3 a reverting chain does not release an earlier queued request', async
       (event: FieldNodeDelivery) => {
         if (
           event.type & FieldNodeEventType.UpdateValue &&
-          root.storedOutputValue === 'b'
+          root.__outputValue__ === 'b'
         )
           dispatchSetValue(root, 'a');
       },
     ]),
   );
   dispatchSetValue(root, 'b');
-  expect(root.storedOutputValue).toBe('a');
+  expect(root.__outputValue__).toBe('a');
   expect(root.rootNode.runtime.isValidationPending ?? false).toBe(true);
   clock.frame();
   await clock.task();

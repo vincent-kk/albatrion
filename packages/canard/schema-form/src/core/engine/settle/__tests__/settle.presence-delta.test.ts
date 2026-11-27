@@ -35,26 +35,26 @@ it('does not enumerate the previous 1000-sibling shape on a steady switch', () =
   });
   loadFieldNodeAtMount(root, {}, WriteOption.Overwrite);
   writeFieldNode(
-    root.childrenByName!.type,
+    root.__childrenByName__!.type,
     'b',
     FieldNodeWriteKind.Input,
     WriteOption.Overwrite,
   );
   let scans = 0;
-  root.childrenByName = new Proxy(root.childrenByName!, {
+  root.__childrenByName__ = new Proxy(root.__childrenByName__!, {
     ownKeys(target) {
       scans++;
       return Reflect.ownKeys(target);
     },
   });
   writeFieldNode(
-    root.childrenByName.type,
+    root.__childrenByName__.type,
     'a',
     FieldNodeWriteKind.Input,
     WriteOption.Overwrite,
   );
   expect(scans).toBe(0);
-  expect(root.storedValue).toMatchObject({ type: 'a', x: 'a', pad_999: 999 });
+  expect(root.__value__).toMatchObject({ type: 'a', x: 'a', pad_999: 999 });
 });
 
 it('keeps actual multi-round dynamic key order instead of authored admission order', () => {
@@ -75,7 +75,7 @@ it('keeps actual multi-round dynamic key order instead of authored admission ord
   loadFieldNodeAtMount(root, {}, WriteOption.Overwrite);
   const counts = observePresenceChangeNames();
   writeFieldNode(
-    root.childrenByName!.type,
+    root.__childrenByName__!.type,
     true,
     FieldNodeWriteKind.Input,
     WriteOption.Overwrite,
@@ -83,13 +83,13 @@ it('keeps actual multi-round dynamic key order instead of authored admission ord
   expect(
     Reflect.get(getHostDerived(root).preparedStaticHost!, 'dynamicNames'),
   ).toEqual(
-    Object.keys(root.childrenByName!).filter(
+    Object.keys(root.__childrenByName__!).filter(
       (name) => name === 'p' || name === 'q',
     ),
   );
-  expect(root.storedValue).toEqual({ type: true, p: 'p', q: 'on' });
+  expect(root.__value__).toEqual({ type: true, p: 'p', q: 'on' });
   writeFieldNode(
-    root.childrenByName!.type,
+    root.__childrenByName__!.type,
     false,
     FieldNodeWriteKind.Input,
     WriteOption.Overwrite,
@@ -117,13 +117,13 @@ it('matches full presence traversal across a 1000-sibling switch', () => {
   loadFieldNodeAtMount(root, {}, WriteOption.Overwrite);
   const counts = observePresenceChangeNames();
   writeFieldNode(
-    root.childrenByName!.kind,
+    root.__childrenByName__!.kind,
     true,
     FieldNodeWriteKind.Input,
     WriteOption.Overwrite,
   );
   writeFieldNode(
-    root.childrenByName!.kind,
+    root.__childrenByName__!.kind,
     false,
     FieldNodeWriteKind.Input,
     WriteOption.Overwrite,
@@ -142,7 +142,7 @@ it('matches full presence traversal when a nullable prepared host is nullified a
   });
   loadFieldNodeAtMount(root, {}, WriteOption.Overwrite);
   writeFieldNode(
-    root.childrenByName!.kind,
+    root.__childrenByName__!.kind,
     true,
     FieldNodeWriteKind.Input,
     WriteOption.Overwrite,
@@ -181,25 +181,25 @@ it('matches full presence traversal when a prepared host exits and re-enters', (
   });
   loadFieldNodeAtMount(root, {}, WriteOption.Overwrite);
   writeFieldNode(
-    root.childrenByName!.host.childrenByName!.kind,
+    root.__childrenByName__!.host.__childrenByName__!.kind,
     true,
     FieldNodeWriteKind.Input,
     WriteOption.Overwrite,
   );
   const counts = observePresenceChangeNames();
   writeFieldNode(
-    root.childrenByName!.show,
+    root.__childrenByName__!.show,
     false,
     FieldNodeWriteKind.Input,
     WriteOption.Overwrite,
   );
   writeFieldNode(
-    root.childrenByName!.show,
+    root.__childrenByName__!.show,
     true,
     FieldNodeWriteKind.Input,
     WriteOption.Overwrite,
   );
-  expect(root.childrenByName!.host.childrenByName!.kind).toBeDefined();
+  expect(root.__childrenByName__!.host.__childrenByName__!.kind).toBeDefined();
   expect(
     counts.missing +
       counts.enteredNodes +
@@ -219,7 +219,7 @@ it('matches full presence traversal after the prepared witness is deleted', () =
   });
   loadFieldNodeAtMount(root, {}, WriteOption.Overwrite);
   writeFieldNode(
-    root.childrenByName!.kind,
+    root.__childrenByName__!.kind,
     true,
     FieldNodeWriteKind.Input,
     WriteOption.Overwrite,
@@ -227,7 +227,7 @@ it('matches full presence traversal after the prepared witness is deleted', () =
   delete getHostDerived(root).preparedStaticHost;
   const counts = observePresenceChangeNames();
   writeFieldNode(
-    root.childrenByName!.kind,
+    root.__childrenByName__!.kind,
     false,
     FieldNodeWriteKind.Input,
     WriteOption.Overwrite,
@@ -247,7 +247,7 @@ it('reaches every full-scan fallback with a previously prepared host', () => {
   });
   loadFieldNodeAtMount(root, {}, WriteOption.Overwrite);
   writeFieldNode(
-    root.childrenByName!.kind,
+    root.__childrenByName__!.kind,
     true,
     FieldNodeWriteKind.Input,
     WriteOption.Overwrite,
@@ -258,7 +258,7 @@ it('reaches every full-scan fallback with a previously prepared host', () => {
   >(root);
   const prepared = derived.preparedStaticHost!;
   expect(prepared).toBeDefined();
-  const childrenByName = root.childrenByName!;
+  const childrenByName = root.__childrenByName__!;
   const scratch = getSettlementScratch(root.runtime);
   const context = createSettlementContext(
     root,

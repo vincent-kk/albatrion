@@ -62,7 +62,7 @@ it('H4 keeps the scalar fast path after an ignored exited-item write', () => {
   dispatchSetValue(leaf, 1);
 
   expect(observed.fast).toEqual([true]);
-  expect(root.storedOutputValue).toEqual({ group: { stable: 1 } });
+  expect(root.__outputValue__).toEqual({ group: { stable: 1 } });
   expect(readRetainedSlotSource(root, '/other/0', 'number')).toBeUndefined();
   expect(seen).toEqual(['', '/group', '/group/stable']);
 });

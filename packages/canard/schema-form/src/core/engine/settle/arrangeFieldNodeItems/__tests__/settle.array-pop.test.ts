@@ -36,21 +36,21 @@ const OBJECTS: BlueprintSchema = {
 /** Public observations a truncation shares with the whole write of the remaining items. */
 const observe = (run: ArrayWriteRun) => ({
   result: run.result,
-  value: slotsOf(run.root.storedValue),
-  outputValue: slotsOf(run.root.storedOutputValue),
+  value: slotsOf(run.root.__value__),
+  outputValue: slotsOf(run.root.__outputValue__),
   deliveredPaths: run.deliveredPaths,
   changes: run.changes,
-  revisions: run.root.revisionLedger,
+  revisions: run.root.__revisionLedger__,
   items: (run.root.children ?? []).map((item, index) => ({
     same: item === run.before[index],
-    key: item.itemKey === run.keys[index],
+    key: item.__itemKey__ === run.keys[index],
     name: item.name,
     path: item.path,
-    parent: item.parent === run.root,
+    parent: item.__parent__ === run.root,
   })),
   removed: run.before
     .slice(run.root.children?.length ?? 0)
-    .map((item) => [item.isDetached, slotsOf(item.storedValue)]),
+    .map((item) => [item.isDetached, slotsOf(item.__value__)]),
 });
 
 // filid:contract settle-array-pop
@@ -72,7 +72,7 @@ describe('static pop through the truncation path matches the general path', () =
         { apply: (root) => dispatchRemove(root, 0), pop: false },
       ],
     );
-    expect(candidate.storedValue).toEqual([]);
+    expect(candidate.__value__).toEqual([]);
     expect(candidate.children).toEqual([]);
   });
 
@@ -89,7 +89,7 @@ describe('static pop through the truncation path matches the general path', () =
         { apply: (root) => dispatchRemove(root, 1.5), pop: false },
       ],
     );
-    expect(candidate.storedValue).toEqual(['b', 'c']);
+    expect(candidate.__value__).toEqual(['b', 'c']);
   });
 
   it('retires a nested object item and keeps its detached reads and latent-free runtime', () => {
@@ -109,8 +109,8 @@ describe('static pop through the truncation path matches the general path', () =
       ],
     );
     expect(popped?.isDetached).toBe(true);
-    expect(popped?.storedValue).toEqual({ name: 'b', fill: 7, nested: [3] });
-    expect(candidate.storedOutputValue).toEqual([
+    expect(popped?.__value__).toEqual({ name: 'b', fill: 7, nested: [3] });
+    expect(candidate.__outputValue__).toEqual([
       { name: 'a', fill: 7, nested: [1, 2] },
     ]);
   });
@@ -126,14 +126,23 @@ describe('static pop through the truncation path matches the general path', () =
       },
       { rows: [1, 2], sibling: 'same' },
       [
-        { apply: (root) => dispatchPop(root.childrenByName!.rows), pop: true },
-        { apply: (root) => dispatchPop(root.childrenByName!.rows), pop: true },
-        { apply: (root) => dispatchPop(root.childrenByName!.rows), pop: false },
+        {
+          apply: (root) => dispatchPop(root.__childrenByName__!.rows),
+          pop: true,
+        },
+        {
+          apply: (root) => dispatchPop(root.__childrenByName__!.rows),
+          pop: true,
+        },
+        {
+          apply: (root) => dispatchPop(root.__childrenByName__!.rows),
+          pop: false,
+        },
       ],
-      (root) => root.childrenByName!.rows,
+      (root) => root.__childrenByName__!.rows,
     );
-    expect(candidate.childrenByName!.rows.storedValue).toEqual([]);
-    expect(candidate.childrenByName!.sibling.storedOutputValue).toBe('same');
+    expect(candidate.__childrenByName__!.rows.__value__).toEqual([]);
+    expect(candidate.__childrenByName__!.sibling.__outputValue__).toBe('same');
   });
 
   it('densifies a sparse and a short load snapshot on an admitted pop without changing them', () => {
@@ -182,7 +191,7 @@ describe('static pop through the truncation path matches the general path', () =
         {
           apply: (root) =>
             dispatchSetValue(
-              root.children![1].childrenByName!.name,
+              root.children![1].__childrenByName__!.name,
               'B',
               WriteOption.Overwrite,
             ),
@@ -194,7 +203,7 @@ describe('static pop through the truncation path matches the general path', () =
         { apply: (root) => dispatchPop(root), pop: true },
       ],
     );
-    expect(candidate.storedOutputValue).toEqual([{ name: 'a', fill: 7 }]);
+    expect(candidate.__outputValue__).toEqual([{ name: 'a', fill: 7 }]);
   });
 
   it.each([1000, 8000])(
@@ -208,7 +217,7 @@ describe('static pop through the truncation path matches the general path', () =
           { apply: (root) => dispatchRemove(root, count - 2), pop: true },
         ],
       );
-      expect(candidate.storedValue).toHaveLength(count - 2);
+      expect(candidate.__value__).toHaveLength(count - 2);
     },
   );
 
@@ -254,7 +263,7 @@ describe('static pop through the truncation path matches the general path', () =
       },
     );
     expect(run.result).toBeUndefined();
-    expect(run.root.storedValue).toEqual([]);
+    expect(run.root.__value__).toEqual([]);
     expect(run.deliveredPaths).toEqual([]);
     expect(report).not.toHaveBeenCalled();
     expect(warn).not.toHaveBeenCalled();

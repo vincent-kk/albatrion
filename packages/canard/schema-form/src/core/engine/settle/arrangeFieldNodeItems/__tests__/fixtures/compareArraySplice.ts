@@ -80,10 +80,10 @@ export const compareArraySplice = (
         const host = select(root);
         const children = host.children;
         const formerChildren = [...(children ?? [])];
-        const formerKeys = formerChildren.map((child) => child.itemKey);
-        const value = host.storedValue;
+        const formerKeys = formerChildren.map((child) => child.__itemKey__);
+        const value = host.__value__;
         const formerValue = slotsOf(value);
-        const outputValue = host.storedOutputValue;
+        const outputValue = host.__outputValue__;
         const formerOutputValue = slotsOf(outputValue);
         const snapshot = root.runtime.loadSnapshot;
         const formerSnapshot = structuredClone(snapshot);
@@ -116,16 +116,16 @@ export const compareArraySplice = (
           result: slotsOf(result),
           delivered: [...delivered],
           settlement: observeArraySelection(root),
-          value: slotsOf(current.storedValue),
-          outputValue: slotsOf(current.storedOutputValue),
+          value: slotsOf(current.__value__),
+          outputValue: slotsOf(current.__outputValue__),
           defaults: defaultsOf(root),
-          departed: observeDetachedReads(root, formerChildren),
+          departed: observeDetachedReads(formerChildren),
           positions: formerChildren.map((child, position) => ({
             at: current.children?.indexOf(child) ?? -1,
-            key: child.itemKey === formerKeys[position],
+            key: child.__itemKey__ === formerKeys[position],
             name: child.name,
             path: child.path,
-            parent: child.parent === current,
+            parent: child.__parent__ === current,
             isDetached: child.isDetached,
           })),
         });

@@ -16,12 +16,12 @@ export const materializeInactiveSlotValues = <
 >(
   host: Self,
 ): readonly { path: string; value: unknown }[] => {
-  if (host.inactiveValuesCache && !host.isInactiveValuesDirty)
-    return host.inactiveValuesCache;
+  if (host.__inactiveValues__ && !host.__isInactiveValuesDirty__)
+    return host.__inactiveValues__;
   const values: InactiveSlotCandidate[] = [];
   collectHostSlotValues(
     host,
-    getSlotOrder(host.parent, host.name, host.blueprintNode),
+    getSlotOrder(host.__parent__, host.name, host.blueprintNode),
     values,
   );
   values.sort(
@@ -38,8 +38,8 @@ export const materializeInactiveSlotValues = <
     if (!chosen.has(candidate.entry.path))
       chosen.set(candidate.entry.path, candidate.entry);
   const next = [...chosen.values()];
-  const previous = host.inactiveValuesCache;
-  host.isInactiveValuesDirty = false;
+  const previous = host.__inactiveValues__;
+  host.__isInactiveValuesDirty__ = false;
   if (previous?.length === next.length) {
     let unchanged = true;
     for (let index = 0; index < previous.length; index++)
@@ -49,7 +49,7 @@ export const materializeInactiveSlotValues = <
       }
     if (unchanged) return previous;
   }
-  return (host.inactiveValuesCache = next.length
+  return (host.__inactiveValues__ = next.length
     ? Object.freeze(next)
     : EMPTY_ARRAY);
 };

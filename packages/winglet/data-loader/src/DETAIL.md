@@ -29,6 +29,7 @@ workspace의 source 조건은 개발 빌드의 입력입니다. 배포 파일에
 - `loadMany(keys: ReadonlyArray<Key>): Promise<Array<Value | Error>>` — array-like가 아닌 인자에서 `DataLoaderError`.
 - `clear(key: Key): this`, `clearAll(): this`, `prime(key, value): this` — 모두 체이닝을 위해 인스턴스 자신을 반환한다.
 - `batchScheduler`는 기본값 `scheduleNextTick`이며 함수가 아니면 `DataLoaderError`. `cacheKeyFn`은 기본값이 identity 함수이며 함수가 아니면 `DataLoaderError`.
+- `DataLoaderOptions`의 배칭 옵션은 두 형태 중 하나입니다. 배칭을 켠 `{ disableBatch?: false; maxBatchSize?: number }`와 배칭을 끈 `{ disableBatch: true; maxBatchSize?: never }`입니다. `disableBatch: true`와 `maxBatchSize`를 함께 쓰면 타입 오류입니다. 두 값은 서로 모순되므로, 타입이 받아들이면 호출자가 정한 한도가 아무 신호 없이 버려집니다. 타입 검사를 거치지 않은 JavaScript 호출에서는 `disableBatch: true`가 우선하고, `maxBatchSize`는 읽지도 검증하지도 않습니다.
 - 패키지의 유일한 export는 `DataLoader` 클래스와 `DataLoaderOptions` 타입이다.
 
 배치 실행의 함수형 표기는 콜백 인자·반환값과 실패 전달을 그대로 표현합니다. 함수형 별칭을 쓴다는 이유로 동기 예외와 Promise 거부의 처리 경계를 합치지 않습니다.

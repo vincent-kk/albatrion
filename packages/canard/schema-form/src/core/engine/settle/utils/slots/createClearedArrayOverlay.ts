@@ -77,7 +77,7 @@ export const createClearedArrayOverlay = <Self extends FieldNodeRecord<Self>>(
         true,
         true,
         child.overlay,
-        node.childrenByName?.[entry.name] === child.instance
+        node.__childrenByName__?.[entry.name] === child.instance
           ? context
           : undefined,
         sourceContext,
@@ -92,7 +92,7 @@ export const createClearedArrayOverlay = <Self extends FieldNodeRecord<Self>>(
         target,
         materializeKeptSlotOverlay(entry.node, child.instance, result.overlay),
       );
-      if (!retained || node.childrenByName?.[name] === child.instance)
+      if (!retained || node.__childrenByName__?.[name] === child.instance)
         value = readSlotSourceTree(entry.node, child.instance, result.overlay);
       retained = true;
     } while (position < entries.length && entries[position].name === name);

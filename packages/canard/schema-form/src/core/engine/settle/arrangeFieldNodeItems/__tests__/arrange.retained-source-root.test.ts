@@ -58,18 +58,18 @@ it.each([
     dispatchSetValue(getDispatchNode(root, 'a'), true);
     const sourceIndex = operation === 'insert' ? 0 : 1;
     const original = getDispatchNode(list, '' + sourceIndex);
-    expect(original.storedValue).toBe(liveValue);
+    expect(original.__value__).toBe(liveValue);
     if (operation === 'insert') dispatchInsert(list, 0, liveValue);
     else dispatchRemove(list, 0);
     const destination = operation === 'insert' ? 1 : 0;
-    expect(getDispatchNode(list, '' + destination).storedValue).toBe(stored);
+    expect(getDispatchNode(list, '' + destination).__value__).toBe(stored);
     expect(original.isDetached).toBe(true);
     if (operation === 'insert') dispatchRemove(list, 0);
     else dispatchInsert(list, 0, stored);
-    expect(getDispatchNode(list, '' + sourceIndex).storedValue).toBe(liveValue);
+    expect(getDispatchNode(list, '' + sourceIndex).__value__).toBe(liveValue);
     dispatchSetValue(getDispatchNode(root, 'a'), false);
     dispatchSetValue(getDispatchNode(root, 'b'), true);
-    expect(getDispatchNode(list, '' + sourceIndex).storedValue).toBe(stored);
+    expect(getDispatchNode(list, '' + sourceIndex).__value__).toBe(stored);
     expect(readFieldNodeInactiveValues(root)).toEqual([]);
   },
 );

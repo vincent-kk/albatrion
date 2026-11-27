@@ -20,7 +20,7 @@ import { getSlotSource } from './getSlotSource';
 import { markSlotChange } from './markSlotChange';
 import { recordRetainedSlotWrite } from './utils/recordRetainedSlotWrite';
 
-/** Annotates the lazily created `inactiveSlotOverlays`; an argument-less `new Map()` would be `Map<any, any>`. */
+/** Annotates the lazily created `__inactiveSlotOverlays__`; an argument-less `new Map()` would be `Map<any, any>`. */
 type InactiveSlotOverlays = Map<BlueprintChildEntry, InactiveSlotOverlay>;
 
 /**
@@ -69,7 +69,7 @@ export const writeSlotPath = <Self extends FieldNodeRecord<Self>>(
     );
     const entry = requested && getSlotBinding(host, requested);
     if (!entry) return false;
-    const live = host.childrenByName?.[name];
+    const live = host.__childrenByName__?.[name];
     if (
       depth < names.length - 1 &&
       live?.blueprintNode === entry.node &&
@@ -78,8 +78,8 @@ export const writeSlotPath = <Self extends FieldNodeRecord<Self>>(
       host = live;
       continue;
     }
-    const instance = host.inactiveSlots?.get(entry);
-    let previous = host.inactiveSlotOverlays?.get(entry);
+    const instance = host.__inactiveSlots__?.get(entry);
+    let previous = host.__inactiveSlotOverlays__?.get(entry);
     if (context && writeOrder !== undefined && depth + 1 < names.length) {
       const distribution = getChildDistribution(host, entry, context);
       if (
@@ -163,7 +163,8 @@ export const writeSlotPath = <Self extends FieldNodeRecord<Self>>(
           if (
             other.name !== name ||
             other.node === binding.node ||
-            instance?.childrenByName?.[name]?.blueprintNode === other.node ||
+            instance?.__childrenByName__?.[name]?.blueprintNode ===
+              other.node ||
             getBlueprintNodeIdentity(other.node) ===
               (bindingIdentity ??= getBlueprintNodeIdentity(binding.node))
           )
@@ -176,7 +177,7 @@ export const writeSlotPath = <Self extends FieldNodeRecord<Self>>(
       return { ...previous, children };
     };
     markSlotChange(host, entry, undefined, context);
-    const overlays: InactiveSlotOverlays = (host.inactiveSlotOverlays ??=
+    const overlays: InactiveSlotOverlays = (host.__inactiveSlotOverlays__ ??=
       new Map());
     const decision =
       context && writeOrder !== undefined
@@ -200,15 +201,15 @@ export const writeSlotPath = <Self extends FieldNodeRecord<Self>>(
         if (
           other.name !== name ||
           other.node === entry.node ||
-          (!host.inactiveSlots?.has(other) &&
-            !host.inactiveSlotOverlays?.has(other)) ||
+          (!host.__inactiveSlots__?.has(other) &&
+            !host.__inactiveSlotOverlays__?.has(other)) ||
           getBlueprintNodeIdentity(other.node) ===
             (entryIdentity ??= getBlueprintNodeIdentity(entry.node))
         )
           continue;
         markSlotChange(host, other, undefined, context);
-        host.inactiveSlots?.delete(other);
-        host.inactiveSlotOverlays?.delete(other);
+        host.__inactiveSlots__?.delete(other);
+        host.__inactiveSlotOverlays__?.delete(other);
         if (context && selectsNamedSource !== undefined)
           recordRetainedSlotWrite(host, other, context, selectsNamedSource);
       }

@@ -285,7 +285,7 @@ it('TEST-020 mount injection-target errors retain a visible form', async () => {
   ).toBe(true);
 });
 
-it('TEST-020 mount shared conflict renders a fallback instead of the conflicting form', async () => {
+it('TEST-020 mount shared conflict renders the degraded form instead of a fallback', async () => {
   form = await renderForm(
     {
       type: 'object',
@@ -303,7 +303,11 @@ it('TEST-020 mount shared conflict renders a fallback instead of the conflicting
     },
     { defaultValue: { first: true, second: true } },
   );
-  expect(form.field('/shared')).toBeNull();
+  expect(form.handle.node?.diagnostics).toMatchObject({
+    status: 'degraded',
+    cause: 'sharedConflict',
+  });
+  expect(form.field('/first')).not.toBeNull();
   expect(
     form
       .errorRecords()

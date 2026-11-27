@@ -10,7 +10,7 @@ export const selectionVariants = (
   node: DispatchTestNode,
 ): Map<DispatchTestNode, readonly number[]>[] => {
   const variants = [new Map<DispatchTestNode, readonly number[]>()];
-  for (const owner of node.parent ? [node, node.parent] : [node]) {
+  for (const owner of node.__parent__ ? [node, node.__parent__] : [node]) {
     const ids = owner.blueprintNode.declarations.map(({ id }) => id);
     variants.push(new Map([[owner, ids]]));
     for (const left of ids)

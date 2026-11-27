@@ -17,10 +17,10 @@ const projectedOutputValue = <Self extends FieldNodeRecord<Self>>(
   node: Self,
   context: SettlementContext<Self>,
 ): unknown =>
-  node.storedOutputValue === undefined ||
+  node.__outputValue__ === undefined ||
   (context.changedSource.has(node.path) && !context.changedNodes.has(node))
     ? undefined
-    : node.storedOutputValue;
+    : node.__outputValue__;
 
 /**
  * Read a path only from the current projected value and undeclared extras.
@@ -62,13 +62,13 @@ export const readProjectedValue = <Self extends FieldNodeRecord<Self>>(
     if (
       node.behavior.strategy === 'branch' &&
       node.source !== undefined &&
-      (node.parent !== null ||
+      (node.__parent__ !== null ||
         value === null ||
         typeof value !== 'object' ||
         !hasOwnProperty(value, name))
     )
       return undefined;
-    const childrenByName = node.childrenByName;
+    const childrenByName = node.__childrenByName__;
     const child = childrenByName
       ? node.behavior.type !== 'array' &&
         Object.getPrototypeOf(childrenByName) === null

@@ -18,7 +18,7 @@ export const selectRetiredArrayBaseline = <Self extends FieldNodeRecord<Self>>(
   const sources = context.retainedSources;
   if (!sources || !array.children) return;
   for (const item of array.children) {
-    if (Number(item.name) < array.itemCount) continue;
+    if (Number(item.name) < array.__itemCount__) continue;
     visitFieldNodes(
       item,
       (binding) => {

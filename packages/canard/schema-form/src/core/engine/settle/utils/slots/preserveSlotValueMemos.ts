@@ -19,8 +19,9 @@ export const preserveSlotValueMemos = <Self extends FieldNodeRecord<Self>>(
   overlay: Optional<InactiveSlotOverlay>,
 ): void => {
   if (!current && !overlay) return;
-  const memo = previous?.inactiveValueMemo ?? previousOverlay?.valueMemo;
-  if (current && !current.inactiveValueMemo) current.inactiveValueMemo = memo;
+  const memo = previous?.__inactiveSlotValue__ ?? previousOverlay?.valueMemo;
+  if (current && !current.__inactiveSlotValue__)
+    current.__inactiveSlotValue__ = memo;
   else if (overlay && !overlay.valueMemo) overlay.valueMemo = memo;
   for (const entry of getSlotEntries(previous, previousOverlay)) {
     const old = getSlotSource(previous, entry, previousOverlay);

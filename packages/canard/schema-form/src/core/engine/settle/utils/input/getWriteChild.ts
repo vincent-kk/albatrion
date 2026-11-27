@@ -17,7 +17,7 @@ export const getWriteChild = <Self extends FieldNodeRecord<Self>>(
   node: Self | undefined,
   key: string | number,
 ) => {
-  const children = node?.childrenByName;
+  const children = node?.__childrenByName__;
   const child =
     children && hasOwnProperty(children, key) ? children[key] : undefined;
   if (typeof key === 'number') {

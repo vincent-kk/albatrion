@@ -65,12 +65,12 @@ const sequentialRoute = <Self extends FieldNodeRecord<Self>>(
           resolved = false;
           break;
         }
-        if (node.childrenByName === null) break;
-        if (!hasOwnProperty(node.childrenByName, key)) {
+        if (node.__childrenByName__ === null) break;
+        if (!hasOwnProperty(node.__childrenByName__, key)) {
           resolved = false;
           break;
         }
-        const child = node.childrenByName[key];
+        const child = node.__childrenByName__[key];
         if (!child) {
           resolved = false;
           break;
@@ -86,7 +86,8 @@ const sequentialRoute = <Self extends FieldNodeRecord<Self>>(
     )
       continue;
     if (issue.rejectedKey) {
-      while (node.parent && node.childrenByName === null) node = node.parent;
+      while (node.__parent__ && node.__childrenByName__ === null)
+        node = node.__parent__;
     }
     if (!inScope(node)) continue;
     const previous = next.get(node) ?? [];
@@ -151,10 +152,10 @@ const compareRoutes = (
     defaultValue: { group: { a: 'a', b: 'b' }, outside: 'outside' },
     validationMode: ValidationMode.OnRequest,
   });
-  const group = root.childrenByName?.group;
-  const a = group?.childrenByName?.a;
-  const b = group?.childrenByName?.b;
-  const outside = root.childrenByName?.outside;
+  const group = root.__childrenByName__?.group;
+  const a = group?.__childrenByName__?.a;
+  const b = group?.__childrenByName__?.b;
+  const outside = root.__childrenByName__?.outside;
   if (!group || !a || !b || !outside)
     throw new Error('Missing route fixture nodes');
   const staleRoot = createRoutingTree({
@@ -264,7 +265,7 @@ it('uses a detached target path for strict descendants without selecting its liv
   if (!retired) throw new Error('Missing retiring target');
   dispatchRemove(root, 0);
   const live = (root.children ?? [])[0];
-  const child = live?.childrenByName?.a;
+  const child = live?.__childrenByName__?.a;
   if (!live || !child) throw new Error('Missing replacement nodes');
   expect(retired.isDetached).toBe(true);
   const issue = { dataPath: '/0/a', message: 'descendant' };
@@ -299,7 +300,7 @@ it('filters an inactive union issue and preserves rejected-key host attribution 
     defaultValue: { kind: 'x', value: 'a' },
     validationMode: ValidationMode.OnRequest,
   });
-  const value = root.childrenByName?.value;
+  const value = root.__childrenByName__?.value;
   if (!value) throw new Error('Missing union value');
   const issues = [
     {

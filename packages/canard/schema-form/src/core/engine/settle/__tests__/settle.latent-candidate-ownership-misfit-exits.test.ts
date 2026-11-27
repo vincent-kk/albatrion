@@ -79,11 +79,11 @@ it.each([
     if (scene.operation === 'insert') dispatchInsert(list, 0, {});
     else dispatchRemove(list, 0);
     expect(runtime.commitNumber).toBe((commit ?? 0) + 1);
-    const moved = list.childrenByName?.['' + destination];
+    const moved = list.__childrenByName__?.['' + destination];
     if (scene.inactive) expect(moved).toBeUndefined();
     else {
       expect(moved).toBeDefined();
-      expect(moved?.childrenByName?.v).toBeUndefined();
+      expect(moved?.__childrenByName__?.v).toBeUndefined();
       if (scene.layout === 'items') expect(moved).toBe(oldItem);
     }
     expect(oldChild.isDetached).toBe(true);
@@ -92,7 +92,7 @@ it.each([
     expect(runtime.misfitsMemo?.has(path)).toBe(false);
     expect(readFieldNodeMisfits(root)).toEqual([]);
     expect(readFieldNodeInactiveValues(root)).toEqual([{ path, value: 'bad' }]);
-    expect(root.storedOutputValue).toEqual({
+    expect(root.__outputValue__).toEqual({
       list: scene.operation === 'insert' ? [{}, {}, {}] : [{}, {}],
     });
     expect(runtime.misfitRecords).toEqual([]);

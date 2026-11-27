@@ -24,6 +24,6 @@ export const createFromSlotOverlay = <Self extends FieldNodeRecord<Self>>(
   const node = createChildNode(host, entry);
   applySlotOverlay(node, overlay, context);
   markSlotChange(host, binding, undefined, context);
-  host.inactiveSlotOverlays?.delete(binding);
+  host.__inactiveSlotOverlays__?.delete(binding);
   return node;
 };

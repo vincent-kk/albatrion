@@ -6,7 +6,7 @@ import { createRetainedSlotTree } from './fixtures/createRetainedSlotTree';
 it('applies a host JSON overlay at clone while ignoring the old leaf write', () => {
   const tree = createRetainedSlotTree();
   tree.close();
-  expect(Reflect.get(tree.root, 'inactiveSlots')).toBeInstanceOf(Map);
+  expect(Reflect.get(tree.root, '__inactiveSlots__')).toBeInstanceOf(Map);
   tree.leaf.setValue('ignored');
   tree.root.setValue({ group: { leaf: 'overlay' } }, SetValueOption.Merge);
   expect(tree.leaf.source).toBe('kept');
@@ -20,7 +20,7 @@ it('applies a host JSON overlay at clone while ignoring the old leaf write', () 
 it('clears absent slot descendants on whole replacement through a live host', () => {
   const tree = createRetainedSlotTree();
   tree.close();
-  expect(Reflect.get(tree.root, 'inactiveSlots')).toBeInstanceOf(Map);
+  expect(Reflect.get(tree.root, '__inactiveSlots__')).toBeInstanceOf(Map);
   tree.group.setValue({ leaf: 'ignored' });
   tree.root.setValue({ open: false, group: { leaf: 'replacement' } });
   tree.open();
@@ -33,7 +33,7 @@ it('clears absent slot descendants on whole replacement through a live host', ()
 it('merges a host overlay while retaining unwritten descendants and extras', () => {
   const tree = createRetainedSlotTree();
   tree.close();
-  expect(Reflect.get(tree.root, 'inactiveSlots')).toBeInstanceOf(Map);
+  expect(Reflect.get(tree.root, '__inactiveSlots__')).toBeInstanceOf(Map);
   tree.group.setValue({ leaf: 'ignored' }, SetValueOption.Merge);
   tree.root.setValue({ group: { leaf: 'merged' } }, SetValueOption.Merge);
   tree.open();
@@ -50,7 +50,7 @@ it('merges a host overlay while retaining unwritten descendants and extras', () 
 it('drops slot sources absent from a live root whole replacement', () => {
   const tree = createRetainedSlotTree();
   tree.close();
-  expect(Reflect.get(tree.root, 'inactiveSlots')).toBeInstanceOf(Map);
+  expect(Reflect.get(tree.root, '__inactiveSlots__')).toBeInstanceOf(Map);
   tree.root.setValue({ open: false });
   expect(tree.root.inactiveValues).toEqual([]);
   tree.open();
@@ -62,7 +62,7 @@ it('drops slot sources absent from a live root whole replacement', () => {
 it('replaces a supplied inactive subtree through a root write without mutating its slot', () => {
   const tree = createRetainedSlotTree();
   tree.close();
-  expect(Reflect.get(tree.root, 'inactiveSlots')).toBeInstanceOf(Map);
+  expect(Reflect.get(tree.root, '__inactiveSlots__')).toBeInstanceOf(Map);
   tree.root.setValue({ open: false, group: { leaf: 'root overlay' } });
   expect(tree.group.value).toMatchObject({ leaf: 'kept' });
   expect(tree.root.inactiveValues).toEqual([
@@ -77,7 +77,7 @@ it('replaces a supplied inactive subtree through a root write without mutating i
 it('ignores an old reference write while the same kind has a live lifetime', () => {
   const tree = createRetainedSlotTree();
   tree.close();
-  expect(Reflect.get(tree.root, 'inactiveSlots')).toBeInstanceOf(Map);
+  expect(Reflect.get(tree.root, '__inactiveSlots__')).toBeInstanceOf(Map);
   tree.open();
   tree.leaf.setValue('ignored');
   expect(tree.root.find('/group/leaf')!.source).toBe('kept');

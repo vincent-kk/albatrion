@@ -70,12 +70,12 @@ export const routeValidationIssues = <Self extends FieldNodeRecord<Self>>(
             resolved = false;
             break;
           }
-          if (node.childrenByName === null) break;
-          if (!hasOwnProperty(node.childrenByName, key)) {
+          if (node.__childrenByName__ === null) break;
+          if (!hasOwnProperty(node.__childrenByName__, key)) {
             resolved = false;
             break;
           }
-          const child: Self | undefined = node.childrenByName[key];
+          const child: Self | undefined = node.__childrenByName__[key];
           if (!child) {
             resolved = false;
             break;
@@ -100,7 +100,8 @@ export const routeValidationIssues = <Self extends FieldNodeRecord<Self>>(
     )
       continue;
     if (issue.rejectedKey) {
-      while (node.parent && node.childrenByName === null) node = node.parent;
+      while (node.__parent__ && node.__childrenByName__ === null)
+        node = node.__parent__;
     }
     if (!inScope(node)) continue;
     const previous = next.get(node);

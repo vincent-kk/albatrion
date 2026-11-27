@@ -34,12 +34,12 @@ it('does not prepare absent gates or virtual references on first or later writes
   const reference = vi.spyOn(references, 'getVirtualReferenceIndex');
   for (const value of ['first', 'later']) {
     writeFieldNode(
-      root.childrenByName!.value,
+      root.__childrenByName__!.value,
       value,
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
-    expect(root.storedOutputValue).toEqual({ value, sibling: 3 });
+    expect(root.__outputValue__).toEqual({ value, sibling: 3 });
     expect([cap.mock.calls.length, reference.mock.calls.length]).toEqual([
       0, 0,
     ]);
@@ -126,16 +126,17 @@ it('preserves output identity, payloads, revisions, commits and call-local flags
     },
   });
   loadFieldNodeAtMount(root, { value: 'before' }, WriteOption.Overwrite);
-  const leaf = root.childrenByName!.value,
-    sibling = root.childrenByName!.sibling;
-  const siblingRevision = sibling.revisionLedger;
+  const leaf = root.__childrenByName__!.value,
+    sibling = root.__childrenByName__!.sibling;
+  const siblingRevision = sibling.__revisionLedger__;
   let previous = 'before';
   for (let index = 0; index < 2; index++) {
     for (const node of root.runtime.deliveries ?? [])
-      node.pendingDelivery = undefined;
+      node.__pendingDelivery__ = undefined;
     root.runtime.deliveries?.clear();
     const value = index === 0 ? 'first' : 'later';
-    const revision = leaf.revisionLedger[FieldNodeEventType.UpdateValue] ?? 0;
+    const revision =
+      leaf.__revisionLedger__[FieldNodeEventType.UpdateValue] ?? 0;
     writeFieldNode(
       leaf,
       value,
@@ -144,17 +145,17 @@ it('preserves output identity, payloads, revisions, commits and call-local flags
         ? WriteOption.DisableAutomaticWrites
         : WriteOption.EnableAutomaticWrites,
     );
-    expect(root.storedOutputValue).toEqual({ value, sibling: 3 });
+    expect(root.__outputValue__).toEqual({ value, sibling: 3 });
     expect(
-      leaf.pendingDelivery?.payload?.[FieldNodeEventType.UpdateValue],
+      leaf.__pendingDelivery__?.payload?.[FieldNodeEventType.UpdateValue],
     ).toEqual({ previous, current: value });
     expect(
-      leaf.pendingDelivery?.options?.[FieldNodeEventType.UpdateValue],
+      leaf.__pendingDelivery__?.options?.[FieldNodeEventType.UpdateValue],
     ).toEqual({ source: FieldNodeWriteKind.Input });
-    expect(leaf.revisionLedger[FieldNodeEventType.UpdateValue]).toBe(
+    expect(leaf.__revisionLedger__[FieldNodeEventType.UpdateValue]).toBe(
       revision + 1,
     );
-    expect(sibling.revisionLedger).toBe(siblingRevision);
+    expect(sibling.__revisionLedger__).toBe(siblingRevision);
     expect(
       [...(root.runtime.deliveries ?? [])].map((node) => node.path),
     ).toEqual(['/value', '']);
@@ -164,14 +165,14 @@ it('preserves output identity, payloads, revisions, commits and call-local flags
     expect(root.runtime.settlementTrace?.rounds).toEqual([]);
     previous = value;
   }
-  const outputValue = root.storedOutputValue;
+  const outputValue = root.__outputValue__;
   writeFieldNode(
     leaf,
     previous,
     FieldNodeWriteKind.Input,
     WriteOption.Overwrite,
   );
-  expect(root.storedOutputValue).toBe(outputValue);
+  expect(root.__outputValue__).toBe(outputValue);
 });
 
 it('retains preparation and cleanup for actual gates, derivation and errors', () => {
@@ -192,9 +193,9 @@ it('retains preparation and cleanup for actual gates, derivation and errors', ()
   loadFieldNodeAtMount(root, { source: 1 }, WriteOption.Overwrite);
   const cap = vi.spyOn(caps, 'getTransitionCap');
   const reference = vi.spyOn(references, 'getVirtualReferenceIndex');
-  const instance = root.childrenByName!['source'];
+  const instance = root.__childrenByName__!['source'];
   writeFieldNode(instance, 2, FieldNodeWriteKind.Input, WriteOption.Overwrite);
-  expect(root.storedOutputValue).toEqual({
+  expect(root.__outputValue__).toEqual({
     source: 2,
     derived: 3,
     gated: 'filled',
@@ -223,7 +224,7 @@ it('retains preparation and cleanup for actual gates, derivation and errors', ()
     ),
   ).not.toThrow();
   expect(root.runtime.settlementScratch).toBe(scratch);
-  expect(root.storedOutputValue).toEqual({
+  expect(root.__outputValue__).toEqual({
     source: 3,
     derived: 4,
     gated: 'filled',

@@ -40,12 +40,12 @@ describe('array settlement writes', () => {
     );
     expect(root.children![0]).toBe(first);
     expect(root.children![1]).toBe(second);
-    expect(root.children![1].storedState).toMatchObject({
+    expect(root.children![1].__state__).toMatchObject({
       touched: true,
       edited: true,
     });
-    expect(root.children!.map((item) => item.itemKey)).toEqual([0, 1, 2]);
-    expect(root.storedValue).toEqual(['x', 'y', 'z']);
+    expect(root.children!.map((item) => item.__itemKey__)).toEqual([0, 1, 2]);
+    expect(root.__value__).toEqual(['x', 'y', 'z']);
   });
 
   it('WRITE-090 and LANDING-202 fill only a new tail on a non-load write', () => {
@@ -126,10 +126,10 @@ describe('array settlement writes', () => {
       FieldNodeWriteKind.CallerReplace,
       WriteOption.Overwrite,
     );
-    expect(root.itemCount).toBe(4);
+    expect(root.__itemCount__).toBe(4);
     expect(root.children).toHaveLength(2);
     expect(root.extras).toEqual(['c', 'd']);
-    expect(root.storedValue).toEqual(['a', 2, 'c', 'd']);
+    expect(root.__value__).toEqual(['a', 2, 'c', 'd']);
     expect(root.children![0].schemaType).toBe(
       root.blueprintNode.prefixItems![0].schemaType,
     );
@@ -157,7 +157,7 @@ describe('array settlement writes', () => {
     root.setValue(null);
     expect(root.source).toBeNull();
     expect(root.outputValue).toBeNull();
-    expect(Reflect.get(root, 'itemCount')).toBe(0);
+    expect(Reflect.get(root, '__itemCount__')).toBe(0);
     expect(root.children).toEqual([]);
     expect(root.isMisfit).toBe(true);
   });
@@ -196,7 +196,7 @@ describe('array settlement writes', () => {
       WriteOption.Overwrite,
     );
     expect(root.source).toEqual({ 0: 'wrong' });
-    expect(root.itemCount).toBe(0);
+    expect(root.__itemCount__).toBe(0);
     expect(root.children).toEqual([]);
     expect(root.extras).toBeUndefined();
     expect(old.isDetached).toBe(true);
@@ -206,7 +206,7 @@ describe('array settlement writes', () => {
       FieldNodeWriteKind.CallerReplace,
       WriteOption.Overwrite,
     );
-    expect(root.children![0].itemKey).toBeGreaterThan(old.itemKey!);
+    expect(root.children![0].__itemKey__).toBeGreaterThan(old.__itemKey__!);
   });
 
   it('WRITE-090 blocks non-load descendant fills below wrong-kind array source', () => {

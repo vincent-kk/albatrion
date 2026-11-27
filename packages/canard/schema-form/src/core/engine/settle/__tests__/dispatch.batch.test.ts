@@ -85,11 +85,11 @@ describe('dispatcher batch', () => {
     });
     dispatchBatch(root, () => {
       dispatchSetValue(root, 'first');
-      expect(root.storedOutputValue).toBe(undefined);
+      expect(root.__outputValue__).toBe(undefined);
       dispatchBatch(root, () => dispatchSetValue(root, 'last'));
-      expect(root.storedOutputValue).toBe(undefined);
+      expect(root.__outputValue__).toBe(undefined);
     });
-    expect(root.storedOutputValue).toBe('last');
+    expect(root.__outputValue__).toBe('last');
     expect(runtime.commitNumber).toBe(1);
     expect(calls).toBe(1);
   });
@@ -109,8 +109,8 @@ describe('dispatcher batch', () => {
     dispatchBatch(root, () => {
       dispatchSetValue(getDispatchChild(root, 'child'), 'pending');
       dispatchResetSubtree(getDispatchChild(root, 'child'));
-      expect(getDispatchChild(root, 'child').storedOutputValue).toBe('base');
-      expect(getDispatchChild(root, 'sibling').storedOutputValue).toBe('kept');
+      expect(getDispatchChild(root, 'child').__outputValue__).toBe('base');
+      expect(getDispatchChild(root, 'sibling').__outputValue__).toBe('kept');
     });
   });
 
@@ -129,7 +129,7 @@ describe('dispatcher batch', () => {
       dispatchSetValue(getDispatchChild(root, 'right'), 'new-right');
     });
     expect(runtime.commitNumber).toBe((before ?? 0) + 1);
-    expect(root.storedOutputValue).toEqual({
+    expect(root.__outputValue__).toEqual({
       left: 'new-left',
       right: 'new-right',
     });
@@ -144,7 +144,7 @@ describe('dispatcher batch', () => {
         throw failure;
       }),
     ).toThrow(failure);
-    expect(root.storedOutputValue).toBe('kept');
+    expect(root.__outputValue__).toBe('kept');
   });
 
   it('EVENT-061 treats an updater failure as a callback failure', () => {
@@ -159,7 +159,7 @@ describe('dispatcher batch', () => {
         dispatchSetValue(root, 2);
       }),
     ).toThrow(failure);
-    expect(root.storedOutputValue).toBe(1);
+    expect(root.__outputValue__).toBe(1);
   });
 
   it('EVENT-014 propagates a nested callback failure to the outer batch', () => {
@@ -176,15 +176,15 @@ describe('dispatcher batch', () => {
       }),
     ).toThrow(failure);
     expect(continued).toBe(false);
-    expect(root.storedOutputValue).toBe('first');
+    expect(root.__outputValue__).toBe('first');
   });
 
   it('EVENT-016 listener batch opens its own feedback batch', () => {
     const { root } = createDispatchTree({ type: 'string' });
     const seen: string[] = [];
     subscribeFieldNode(root, () => {
-      seen.push(String(root.storedOutputValue));
-      if (root.storedOutputValue === 'first')
+      seen.push(String(root.__outputValue__));
+      if (root.__outputValue__ === 'first')
         dispatchBatch(root, () => dispatchSetValue(root, 'second'));
     });
     dispatchSetValue(root, 'first');
@@ -197,9 +197,9 @@ describe('dispatcher batch', () => {
     dispatchBatch(root, () => {
       dispatchSetValue(root, (previous: number) => previous + 1);
       dispatchSetValue(root, (previous: number) => previous + 1);
-      expect(root.storedOutputValue).toBe(1);
+      expect(root.__outputValue__).toBe(1);
     });
-    expect(root.storedOutputValue).toBe(3);
+    expect(root.__outputValue__).toBe(3);
   });
 
   it('EVENT-061 branch updater sees an earlier partial mark over committed values', () => {
@@ -220,7 +220,7 @@ describe('dispatcher batch', () => {
       });
     });
     expect(previous).toEqual([{ left: 'new', right: 'kept' }]);
-    expect(root.storedOutputValue).toEqual({ left: 'new', right: 'last' });
+    expect(root.__outputValue__).toEqual({ left: 'new', right: 'last' });
   });
 
   it('WRITE-015 keeps automatic-write suppression inside batch', () => {
@@ -235,7 +235,7 @@ describe('dispatcher batch', () => {
       WriteOption.DisableAutomaticWrites |
       WriteOption.EnableAutomaticWrites;
     dispatchBatch(root, () => dispatchSetValue(root, {}, both));
-    expect(root.childrenByName?.name?.source).toBeUndefined();
+    expect(root.__childrenByName__?.name?.source).toBeUndefined();
   });
 
   it('191C-01 LANDING-018 LANDING-032 keeps latent source outside a two-write batch', () => {
@@ -245,10 +245,10 @@ describe('dispatcher batch', () => {
       dispatchSetValue(note, 'x');
       dispatchSetValue(note, 'y');
     });
-    expect(root.storedOutputValue).toEqual({ company: false, note: 'y' });
+    expect(root.__outputValue__).toEqual({ company: false, note: 'y' });
     expect(hasRetainedSlotOwnSource(root, '/vat', 'string')).toBe(true);
     dispatchSetValue(getDispatchChild(root, 'company'), true);
-    expect(root.storedOutputValue).toEqual({
+    expect(root.__outputValue__).toEqual({
       company: true,
       note: 'y',
       vat: 'VAT-9',
@@ -264,7 +264,7 @@ describe('dispatcher batch', () => {
       dispatchSetValue(company, false);
       dispatchSetValue(company, true);
     });
-    expect(root.storedOutputValue).toEqual({ company: true, vat: 'VAT-9' });
+    expect(root.__outputValue__).toEqual({ company: true, vat: 'VAT-9' });
     expect(runtime.commitNumber).toBe((before ?? 0) + 1);
   });
 
@@ -318,7 +318,7 @@ describe('dispatcher batch', () => {
       dispatchBatch(root, () => writes(root));
       expect(hasRetainedSlotOwnSource(root, '/extra', 'string')).toBe(true);
       dispatchSetValue(getDispatchChild(root, 'mode'), true);
-      expect(getDispatchChild(root, 'extra').storedOutputValue).toBe('E');
+      expect(getDispatchChild(root, 'extra').__outputValue__).toBe('E');
     },
   );
 
@@ -330,7 +330,7 @@ describe('dispatcher batch', () => {
     });
     expect(hasRetainedSlotOwnSource(root, '/vat', 'string')).toBe(false);
     dispatchSetValue(getDispatchChild(root, 'company'), true);
-    expect(root.storedOutputValue).toEqual({ company: true });
+    expect(root.__outputValue__).toEqual({ company: true });
   });
 
   it('191C-01 keeps latent source under a shallow Merge batch', () => {
@@ -339,7 +339,7 @@ describe('dispatcher batch', () => {
       dispatchSetValue(root, { note: 'z' }, WriteOption.Merge);
       dispatchSetValue(getDispatchChild(root, 'note'), 'w');
     });
-    expect(root.storedOutputValue).toEqual({ company: false, note: 'w' });
+    expect(root.__outputValue__).toEqual({ company: false, note: 'w' });
     expect(hasRetainedSlotOwnSource(root, '/vat', 'string')).toBe(true);
   });
 
@@ -352,7 +352,7 @@ describe('dispatcher batch', () => {
     expect(runtime.commitNumber).toBe((before ?? 0) + 1);
     expect(hasRetainedSlotOwnSource(root, '/vat', 'string')).toBe(true);
     dispatchSetValue(getDispatchChild(root, 'company'), true);
-    expect(root.storedOutputValue).toEqual({
+    expect(root.__outputValue__).toEqual({
       company: true,
       note: 'x',
       vat: 'VAT-9',
@@ -382,18 +382,18 @@ describe('dispatcher batch', () => {
     dispatchSetValue(getDispatchChild(side, 'flag'), false);
     expect(hasRetainedSlotOwnSource(root, '/side/nested', 'string')).toBe(true);
     const text = getDispatchChild(side, 'text');
-    const value = side.storedOutputValue;
+    const value = side.__outputValue__;
     dispatchBatch(root, () => {
       dispatchSetValue(getDispatchChild(root, 'a'), 'x');
       dispatchSetValue(getDispatchChild(root, 'b'), 'y');
     });
     expect(getDispatchChild(root, 'side')).toBe(side);
     expect(getDispatchChild(side, 'text')).toBe(text);
-    expect(text.storedOutputValue).toBeUndefined();
-    expect(side.storedOutputValue).toEqual(value);
+    expect(text.__outputValue__).toBeUndefined();
+    expect(side.__outputValue__).toEqual(value);
     expect(hasRetainedSlotOwnSource(root, '/side/nested', 'string')).toBe(true);
     dispatchSetValue(getDispatchChild(side, 'flag'), true);
-    expect(getDispatchChild(side, 'nested').storedOutputValue).toBe('N');
+    expect(getDispatchChild(side, 'nested').__outputValue__).toBe('N');
   });
 
   it('62C-01 NODE-051 keeps surviving item identity for batched array verbs', () => {
@@ -409,7 +409,7 @@ describe('dispatcher batch', () => {
       dispatchRemove(root, 0);
       dispatchUpdate(root, 1, { name: 'C2' });
     });
-    expect(root.storedOutputValue).toEqual([{ name: 'b' }, { name: 'C2' }]);
+    expect(root.__outputValue__).toEqual([{ name: 'b' }, { name: 'C2' }]);
     expect(root.children![0]).toBe(second);
     expect(root.children![1]).toBe(third);
     expect(first.isDetached).toBe(true);
@@ -427,7 +427,7 @@ describe('dispatcher batch', () => {
       dispatchSetValue(getDispatchChild(root, 'k'), 'b');
       dispatchSetValue(getDispatchChild(root, 'value'), 5);
     });
-    expect(root.storedOutputValue).toEqual({ k: 'b', value: 5 });
+    expect(root.__outputValue__).toEqual({ k: 'b', value: 5 });
     expect(hasRetainedSlotOwnSource(root, '/value', 'string')).toBe(false);
   });
 
@@ -445,7 +445,7 @@ describe('dispatcher batch', () => {
       dispatchFinishInput(getDispatchChild(root, 'value'));
       dispatchSetValue(getDispatchChild(root, 'other'), 'x');
     });
-    expect(root.storedOutputValue).toEqual({ k: 'a', value: 's', other: 'x' });
+    expect(root.__outputValue__).toEqual({ k: 'a', value: 's', other: 'x' });
     expect(hasRetainedSlotOwnSource(root, '/value', 'number')).toBe(true);
   });
 
@@ -475,9 +475,9 @@ describe('other-kind re-entry inside a batch (R1, 195C-01 F2)', () => {
     dispatchMount(root, { k: 'a', value: 's' });
     dispatchSetValue(getDispatchChild(root, 'k'), 'b');
     dispatchSetValue(root, { value: 5 }, WriteOption.Merge);
-    expect(root.storedOutputValue).toEqual({ k: 'b', value: 5 });
+    expect(root.__outputValue__).toEqual({ k: 'b', value: 5 });
     dispatchSetValue(getDispatchChild(root, 'k'), 'a');
-    expect(root.storedOutputValue).toEqual({ k: 'a', value: 's' });
+    expect(root.__outputValue__).toEqual({ k: 'a', value: 's' });
     expect(hasRetainedSlotOwnSource(root, '/value', 'number')).toBe(true);
   });
 
@@ -494,7 +494,7 @@ describe('other-kind re-entry inside a batch (R1, 195C-01 F2)', () => {
       dispatchSetValue(getDispatchChild(root, 'k'), 'a');
       dispatchSetValue(getDispatchChild(root, 'other'), 'x');
     });
-    expect(root.storedOutputValue).toEqual({ k: 'a', value: 's', other: 'x' });
+    expect(root.__outputValue__).toEqual({ k: 'a', value: 's', other: 'x' });
     expect(hasRetainedSlotOwnSource(root, '/value', 'number')).toBe(true);
   });
 
@@ -510,8 +510,8 @@ describe('other-kind re-entry inside a batch (R1, 195C-01 F2)', () => {
       dispatchSetValue(k, 'b');
       dispatchSetValue(k, 'b');
     });
-    expect(root.storedOutputValue).toEqual({ k: 'b' });
-    expect(getDispatchChild(root, 'value').storedOutputValue).toBe(undefined);
+    expect(root.__outputValue__).toEqual({ k: 'b' });
+    expect(getDispatchChild(root, 'value').__outputValue__).toBe(undefined);
     expect(hasRetainedSlotOwnSource(root, '/value', 'string')).toBe(true);
   });
 
@@ -568,7 +568,7 @@ describe('other-kind re-entry inside a batch (R1, 195C-01 F2)', () => {
       expect(hasRetainedSlotOwnSource(root, '/tag', 'string')).toBe(true);
       write(root);
       const { startDate: _startDate, ...outputValueRest } =
-        root.storedOutputValue as Record<string, unknown>;
+        root.__outputValue__ as Record<string, unknown>;
       return {
         outputValue: outputValueRest,
         startDate: hasRetainedSlotOwnSource(root, '/startDate', 'string'),
@@ -613,7 +613,7 @@ describe('other-kind re-entry inside a batch (R1, 195C-01 F2)', () => {
       dispatchMount(root, { k: 'a', startDate: 's', endDate: 'e' });
       dispatchSetValue(getDispatchChild(root, 'k'), 'b');
       write(root);
-      return getDispatchChild(root, 'startDate').storedOutputValue;
+      return getDispatchChild(root, 'startDate').__outputValue__;
     };
     const batched = run((root) =>
       dispatchBatch(root, () => {
@@ -654,8 +654,8 @@ describe('virtual writes inside a batch (R2, 195C-01 F6)', () => {
     );
     dispatchMount(root, { startDate: 's0', endDate: 'e0', note: 'n' });
     dispatchSetValue(getDispatchChild(root, 'period'), ['s1', 'e1']);
-    expect(getDispatchChild(root, 'startDate').storedOutputValue).toBe('s1');
-    expect(getDispatchChild(root, 'endDate').storedOutputValue).toBe('e1');
+    expect(getDispatchChild(root, 'startDate').__outputValue__).toBe('s1');
+    expect(getDispatchChild(root, 'endDate').__outputValue__).toBe('e1');
   });
 
   it('applies a virtual write made beside another write in one batch', () => {
@@ -670,10 +670,10 @@ describe('virtual writes inside a batch (R2, 195C-01 F6)', () => {
       dispatchSetValue(getDispatchChild(root, 'period'), ['s1', 'e1']);
       dispatchSetValue(getDispatchChild(root, 'note'), 'x');
     });
-    expect(getDispatchChild(root, 'startDate').storedOutputValue).toBe('s1');
-    expect(getDispatchChild(root, 'endDate').storedOutputValue).toBe('e1');
-    expect(getDispatchChild(root, 'note').storedOutputValue).toBe('x');
-    expect(root.storedOutputValue).toEqual({
+    expect(getDispatchChild(root, 'startDate').__outputValue__).toBe('s1');
+    expect(getDispatchChild(root, 'endDate').__outputValue__).toBe('e1');
+    expect(getDispatchChild(root, 'note').__outputValue__).toBe('x');
+    expect(root.__outputValue__).toEqual({
       startDate: 's1',
       endDate: 'e1',
       note: 'x',
@@ -694,6 +694,6 @@ describe('virtual writes inside a batch (R2, 195C-01 F6)', () => {
         dispatchSetValue(getDispatchChild(root, 'note'), 'x');
       }),
     ).toThrow('Invalid virtual node values at /period');
-    expect(getDispatchChild(root, 'startDate').storedOutputValue).toBe('s0');
+    expect(getDispatchChild(root, 'startDate').__outputValue__).toBe('s0');
   });
 });

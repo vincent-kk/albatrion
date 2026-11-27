@@ -45,7 +45,7 @@ const loader = new DataLoader<Key, Value>(batchLoader, options?);
 
 | Option | Type | Default | Description |
 |---|---|---|---|
-| `disableBatch` | `true` | omitted | Disable request batching |
+| `disableBatch` | `boolean` | omitted | Disable request batching. A type error together with `maxBatchSize` |
 | `maxBatchSize` | `number` | `Infinity` | Max keys per batch |
 | `cache` | `MapLike \| false` | `new Map()` | Custom promise cache, or `false` to disable caching |
 | `cacheKeyFn` | `(key) => CacheKey` | identity | Map key to cache key |
@@ -131,7 +131,7 @@ const loader = new DataLoader<Key, Value>(batchLoadFn, options?);
 ### Options
 | Option | Type | Default |
 |---|---|---|
-| `disableBatch` | `true` | omitted |
+| `disableBatch` | `boolean` | omitted |
 | `maxBatchSize` | `number` | `Infinity` |
 | `cache` | `MapLike \| false` | `new Map()` |
 | `cacheKeyFn` | `(key) => CacheKey` | identity |

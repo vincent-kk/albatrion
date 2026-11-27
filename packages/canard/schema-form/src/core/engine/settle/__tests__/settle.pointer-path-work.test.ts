@@ -79,8 +79,8 @@ describe('prepared canonical pointer work', () => {
     );
     dispatchMount(root, { value: 1 }, undefined, { deferValidation: true });
     parsers.decoder.mockClear();
-    dispatchSetValue(root.childrenByName!.value, 2);
-    expect(root.storedOutputValue).toEqual({ value: 2 });
+    dispatchSetValue(root.__childrenByName__!.value, 2);
+    expect(root.__outputValue__).toEqual({ value: 2 });
     expect(parsers.decoder).not.toHaveBeenCalled();
   });
 
@@ -101,7 +101,7 @@ describe('prepared canonical pointer work', () => {
     });
     dispatchMount(root, undefined, undefined, { deferValidation: true });
     expect(parsers.decoder.mock.calls.length).toBeGreaterThan(0);
-    const type = root.childrenByName!.type;
+    const type = root.__childrenByName__!.type;
     const registry = getGateRegistry(root.runtime);
     const preparedCount = parsers.decoder.mock.calls.length;
     const typeSegments = registry.pathSegments('/type');
@@ -110,8 +110,8 @@ describe('prepared canonical pointer work', () => {
       parsers.wrapper.mockClear();
       parsers.decoder.mockClear();
       dispatchSetValue(type, value);
-      expect(root.storedOutputValue).toEqual({ type: value, x: 'A', y: 1 });
-      expect(root.childrenByName!.type).toBe(type);
+      expect(root.__outputValue__).toEqual({ type: value, x: 'A', y: 1 });
+      expect(root.__childrenByName__!.type).toBe(type);
       expect(registry.pathSegments('/type')).toBe(typeSegments);
       expect(parsers.wrapper).not.toHaveBeenCalled();
       expect(parsers.decoder).not.toHaveBeenCalled();
@@ -130,16 +130,16 @@ describe('prepared canonical pointer work', () => {
       );
       dispatchMount(root, undefined, undefined, { deferValidation: true });
       expect(parsers.decoder.mock.calls.length).toBeGreaterThan(0);
-      const kind = root.childrenByName!.kind;
+      const kind = root.__childrenByName__!.kind;
       for (const index of [79, 0, 79, 0, 79, 0]) {
         parsers.wrapper.mockClear();
         parsers.decoder.mockClear();
         dispatchSetValue(kind, `kind_${index}`);
-        expect(root.storedOutputValue).toMatchObject({
+        expect(root.__outputValue__).toMatchObject({
           kind: `kind_${index}`,
           [`payload_${index}_a`]: `a_${index}`,
         });
-        expect(root.childrenByName!.kind).toBe(kind);
+        expect(root.__childrenByName__!.kind).toBe(kind);
         expect(parsers.wrapper).not.toHaveBeenCalled();
         expect(parsers.decoder).not.toHaveBeenCalled();
       }

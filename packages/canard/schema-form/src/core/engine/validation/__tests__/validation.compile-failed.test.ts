@@ -38,10 +38,10 @@ describe('validator failures', () => {
         FormErrorCode.ValidatorCompileFailed,
       );
       expect(readFieldNodeErrors(root)).toEqual([]);
-      expect(readFieldNodeErrors(root.childrenByName?.child ?? root)).toEqual(
-        [],
-      );
-      dispatchResetSubtree(root.childrenByName?.child ?? root);
+      expect(
+        readFieldNodeErrors(root.__childrenByName__?.child ?? root),
+      ).toEqual([]);
+      dispatchResetSubtree(root.__childrenByName__?.child ?? root);
       await new Promise((resolve) => setImmediate(resolve));
       expect(report).toHaveBeenCalledTimes(1);
       expect(compile).toHaveBeenCalledTimes(1);
@@ -193,7 +193,7 @@ describe('validator failures', () => {
       expect(refused[0]).toMatchObject({
         code: 'SCHEMA_FORM_ERROR.WRITE_IN_OBSERVER',
       });
-      expect(root.storedOutputValue).toBe('before');
+      expect(root.__outputValue__).toBe('before');
     } finally {
       sink.mockRestore();
     }

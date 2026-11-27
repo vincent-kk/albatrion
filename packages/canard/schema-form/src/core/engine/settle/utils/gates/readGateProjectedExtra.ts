@@ -33,7 +33,7 @@ export const readGateProjectedExtra = <Self extends FieldNodeRecord<Self>>(
       : [];
     for (let index = 0; index < segments.length; index++) {
       const childrenByName: Optional<Nullable<Dictionary<Self>>> =
-        hostNode?.childrenByName;
+        hostNode?.__childrenByName__;
       const name = segments[index];
       if (typeof name !== 'string') return undefined;
       hostNode =
@@ -45,12 +45,12 @@ export const readGateProjectedExtra = <Self extends FieldNodeRecord<Self>>(
   for (
     let ancestor: Optional<Nullable<Self>> = hostNode;
     ancestor;
-    ancestor = ancestor.parent
+    ancestor = ancestor.__parent__
   )
     if (
       ancestor.behavior.strategy === 'branch' &&
       ancestor.source !== undefined &&
-      (ancestor.parent !== null ||
+      (ancestor.__parent__ !== null ||
         source === null ||
         typeof source !== 'object' ||
         isArray(source))

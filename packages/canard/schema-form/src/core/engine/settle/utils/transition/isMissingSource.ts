@@ -16,8 +16,8 @@ export const isMissingSource = <Self extends FieldNodeRecord<Self>>(
 ): boolean => {
   if (node.source !== undefined) return false;
   if (node.behavior.strategy !== 'branch') return true;
-  if (node.extras !== undefined || node.inactiveSlots?.size) return false;
-  for (const overlay of node.inactiveSlotOverlays?.values() ?? [])
+  if (node.extras !== undefined || node.__inactiveSlots__?.size) return false;
+  for (const overlay of node.__inactiveSlotOverlays__?.values() ?? [])
     if (hasSlotOverlaySource(overlay)) return false;
   for (const pending of context.pendingExits.values())
     if (

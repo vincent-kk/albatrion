@@ -15,7 +15,7 @@ export const readSlotExitPolicy = <Self extends FieldNodeRecord<Self>>(
   node: Self,
   inherited: boolean,
 ): boolean => {
-  if (!hasOwnProperty(node, 'shouldUnsetOnInactive')) {
+  if (!hasOwnProperty(node, '__shouldUnsetOnInactive__')) {
     const layers = getControlLayers(node, emptyReadonlyMap, true);
     const keep = readExitLayerPolicy(
       layers,
@@ -27,7 +27,7 @@ export const readSlotExitPolicy = <Self extends FieldNodeRecord<Self>>(
       node.runtime.committedRuleValues,
       true,
     );
-    node.shouldUnsetOnInactive = keep === clear ? keep : undefined;
+    node.__shouldUnsetOnInactive__ = keep === clear ? keep : undefined;
   }
-  return node.shouldUnsetOnInactive ?? inherited;
+  return node.__shouldUnsetOnInactive__ ?? inherited;
 };

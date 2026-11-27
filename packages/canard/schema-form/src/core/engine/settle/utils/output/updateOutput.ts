@@ -34,8 +34,8 @@ export const updateOutput = <Self extends FieldNodeRecord<Self>>(
     arrayAppend.isValid &&
     !recalculated &&
     node.children === arrayAppend.children &&
-    (node.storedValue === arrayAppend.value ||
-      node.storedValue === arrayAppend.assembledValue);
+    (node.__value__ === arrayAppend.value ||
+      node.__value__ === arrayAppend.assembledValue);
   const arrayPop = context.arrayPop;
   const truncating =
     arrayPop !== undefined &&
@@ -43,8 +43,8 @@ export const updateOutput = <Self extends FieldNodeRecord<Self>>(
     arrayPop.isValid &&
     !recalculated &&
     node.children === arrayPop.children &&
-    (node.storedValue === arrayPop.value ||
-      node.storedValue === arrayPop.assembledValue);
+    (node.__value__ === arrayPop.value ||
+      node.__value__ === arrayPop.assembledValue);
   const hint =
     recalculated && host
       ? { isIncremental: false }
@@ -61,7 +61,7 @@ export const updateOutput = <Self extends FieldNodeRecord<Self>>(
   );
   if (appending && hint?.isIncremental) arrayAppend.assembledValue = assembled;
   if (truncating && hint?.isIncremental) arrayPop.assembledValue = assembled;
-  const previousValue = node.storedValue;
+  const previousValue = node.__value__;
   let same = false;
   if (hint?.isIncremental) {
     if (
@@ -84,64 +84,65 @@ export const updateOutput = <Self extends FieldNodeRecord<Self>>(
           break;
         }
     }
-  } else same = sameValue(node.storedValue, assembled);
-  let value = same ? node.storedValue : assembled;
-  const baseline = node.deliveryPreviousValue;
+  } else same = sameValue(node.__value__, assembled);
+  let value = same ? node.__value__ : assembled;
+  const baseline = node.__deliveryPreviousValue__;
   const revisit =
-    (node.deliveryChanges & FieldNodeEventType.UpdateValue) !== BIT_MASK_NONE &&
+    (node.__deliveryChanges__ & FieldNodeEventType.UpdateValue) !==
+      BIT_MASK_NONE &&
     value !== baseline &&
     !(isArray(baseline) && isArray(value) && baseline.length !== value.length);
   if (
     revisit &&
     (!host ||
       ((!recalculated ||
-        keepsChildOutputValues(node.deliveryPreviousValue, recalculated)) &&
+        keepsChildOutputValues(node.__deliveryPreviousValue__, recalculated)) &&
         keepsChildOutputValues(
-          node.deliveryPreviousValue,
+          node.__deliveryPreviousValue__,
           node.children ?? [],
         ))) &&
-    sameValue(node.deliveryPreviousValue, value)
+    sameValue(node.__deliveryPreviousValue__, value)
   )
-    value = node.deliveryPreviousValue;
+    value = node.__deliveryPreviousValue__;
   const projected = keepRootOutputValue(
     node,
     value,
     node.behavior.project(node, value),
   );
   let outputValue =
-    node.storedOutputValue === node.storedValue && projected === value
+    node.__outputValue__ === node.__value__ && projected === value
       ? value
-      : sameValue(node.storedOutputValue, projected)
-        ? node.storedOutputValue
+      : sameValue(node.__outputValue__, projected)
+        ? node.__outputValue__
         : projected;
   if (
-    node.deliveryChanges & FieldNodeEventType.UpdateValue &&
-    outputValue !== node.deliveryPreviousOutputValue &&
+    node.__deliveryChanges__ & FieldNodeEventType.UpdateValue &&
+    outputValue !== node.__deliveryPreviousOutputValue__ &&
     !(
       revisit &&
       outputValue === value &&
-      node.deliveryPreviousOutputValue === node.deliveryPreviousValue
+      node.__deliveryPreviousOutputValue__ === node.__deliveryPreviousValue__
     ) &&
-    sameValue(node.deliveryPreviousOutputValue, outputValue)
+    sameValue(node.__deliveryPreviousOutputValue__, outputValue)
   )
-    outputValue = node.deliveryPreviousOutputValue;
+    outputValue = node.__deliveryPreviousOutputValue__;
   const changed =
-    value !== node.storedValue || outputValue !== node.storedOutputValue;
-  node.storedValue = captureFieldNodeChange(node, 'storedValue', value);
-  node.storedOutputValue = captureFieldNodeChange(
+    value !== node.__value__ || outputValue !== node.__outputValue__;
+  node.__value__ = captureFieldNodeChange(node, '__value__', value);
+  node.__outputValue__ = captureFieldNodeChange(
     node,
-    'storedOutputValue',
+    '__outputValue__',
     outputValue,
   );
   if (changed) {
     context.changedNodes.add(node);
-    const parent = node.parent;
+    const parent = node.__parent__;
     const index = context.virtualReferenceIndex;
     if (node.behavior.type !== 'virtual' && parent && index) {
       const names = index.get(parent.blueprintNode)?.get(node.name);
       if (names)
         for (const name of names) {
-          const virtual = parent.childrenByName?.[name];
+          const virtual = parent.__childrenByName__?.[name];
           if (virtual?.behavior.type === 'virtual' && !virtual.isDetached)
             updateOutput(virtual, context);
         }

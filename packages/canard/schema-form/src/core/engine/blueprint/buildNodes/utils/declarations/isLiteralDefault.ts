@@ -4,7 +4,7 @@ import { isArray } from '@winglet/common-utils/filter';
  * Recognize finite literal data without evaluating getters or copying its values.
  * @param value - Authored default whose descendants must also be literal data
  * @param active - Current object ancestry, allocated only for container defaults
- * @returns Whether the value is finite JSON data without executable members
+ * @returns Whether the value is finite JSON data without executable members, array holes or non-enumerable array indices
  */
 export const isLiteralDefault = (
   value: unknown,
@@ -20,6 +20,12 @@ export const isLiteralDefault = (
   active ??= new WeakSet();
   if (active.has(value)) return false;
   active.add(value);
+  // Every index below length must be enumerable-own so Object.keys visits it;
+  // non-enumerable indices and holes are rejected, while extra own properties are ignored.
+  if (isArray(value))
+    for (let index = 0; index < value.length; index++)
+      if (!Object.prototype.propertyIsEnumerable.call(value, index))
+        return false;
   const keys = Object.keys(value);
   for (let index = 0; index < keys.length; index++) {
     const descriptor = Object.getOwnPropertyDescriptor(value, keys[index]);

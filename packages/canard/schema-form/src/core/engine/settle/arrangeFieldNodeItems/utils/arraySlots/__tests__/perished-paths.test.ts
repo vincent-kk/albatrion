@@ -46,7 +46,7 @@ it('passes one removed splice root as a singleton array', () => {
   expect(pruned).toHaveBeenCalled();
   expect(pruned.mock.calls[0][1]).toEqual(['/1']);
   expect(isArray(pruned.mock.calls[0][1])).toBe(true);
-  expect(root.storedValue).toEqual([0, 2]);
+  expect(root.__value__).toEqual([0, 2]);
 });
 
 it.each([3, 65])(
@@ -60,7 +60,7 @@ it.each([3, 65])(
     expect(pruned).toHaveBeenCalled();
     expect(pruned.mock.calls[0][1]).toEqual([`/${count - 1}`]);
     expect(isArray(pruned.mock.calls[0][1])).toBe(true);
-    expect(root.storedValue).toHaveLength(count - 1);
+    expect(root.__value__).toHaveLength(count - 1);
   },
 );
 
@@ -83,7 +83,7 @@ const truncateTail = (count: number) => {
     );
     // Tail cleanup is followed by the rekey helper's separate prune call.
     expect(pruned).toHaveBeenCalledTimes(2);
-    expect(root.itemCount).toBe(1);
+    expect(root.__itemCount__).toBe(1);
     expect(root.children).toHaveLength(1);
     expect(root.children![0].path).toBe('/0');
     expect(context.perishedNodes.size).toBe(count - 1);

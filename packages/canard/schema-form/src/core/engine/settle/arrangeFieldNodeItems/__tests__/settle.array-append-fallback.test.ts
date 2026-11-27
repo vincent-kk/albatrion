@@ -215,15 +215,15 @@ describe('append admission declines and the general path settles', () => {
       { rows: [] },
       [
         {
-          apply: (root) => dispatchPush(root.childrenByName!.rows, 1),
+          apply: (root) => dispatchPush(root.__childrenByName__!.rows, 1),
           append: false,
         },
         {
-          apply: (root) => dispatchPush(root.childrenByName!.rows, 2),
+          apply: (root) => dispatchPush(root.__childrenByName__!.rows, 2),
           append: true,
         },
       ],
-      (root) => root.childrenByName!.rows,
+      (root) => root.__childrenByName__!.rows,
     );
   });
 

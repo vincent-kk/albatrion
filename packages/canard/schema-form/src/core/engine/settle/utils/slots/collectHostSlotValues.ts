@@ -19,23 +19,23 @@ export const collectHostSlotValues = <Self extends FieldNodeRecord<Self>>(
   order: readonly number[],
   values: InactiveSlotCandidate[],
 ): void => {
-  const entries = new Set<BlueprintChildEntry>(host.inactiveSlots?.keys());
-  for (const entry of host.inactiveSlotOverlays?.keys() ?? [])
+  const entries = new Set<BlueprintChildEntry>(host.__inactiveSlots__?.keys());
+  for (const entry of host.__inactiveSlotOverlays__?.keys() ?? [])
     entries.add(entry);
-  for (const entry of host.inactiveSlotBaselines?.keys() ?? [])
+  for (const entry of host.__inactiveSlotBaselines__?.keys() ?? [])
     entries.add(entry);
   const active = new Set<Self>();
   for (const entry of entries) {
-    const baseline = host.inactiveSlotBaselines?.get(entry);
+    const baseline = host.__inactiveSlotBaselines__?.get(entry);
     const instance = baseline
       ? baseline.instance
-      : host.inactiveSlots?.get(entry);
+      : host.__inactiveSlots__?.get(entry);
     const overlay = baseline
       ? baseline.overlay
-      : host.inactiveSlotOverlays?.get(entry);
+      : host.__inactiveSlotOverlays__?.get(entry);
     const counterpart = baseline
       ? baseline.activeNode
-      : host.childrenByName?.[entry.name];
+      : host.__childrenByName__?.[entry.name];
     const childOrder = [
       ...order,
       getSlotEntryPosition(host.blueprintNode, entry),
@@ -54,11 +54,11 @@ export const collectHostSlotValues = <Self extends FieldNodeRecord<Self>>(
       values,
     );
   }
-  for (const child of host.inactiveSlotChildren?.values() ?? []) {
+  for (const child of host.__inactiveSlotChildren__?.values() ?? []) {
     if (
       active.has(child) ||
-      host.childrenByName?.[child.name] !== child ||
-      !child.isDeliveryInitialized
+      host.__childrenByName__?.[child.name] !== child ||
+      !child.__isDeliveryInitialized__
     )
       continue;
     const entry = getRetainedChildEntry(host, child.name, child.blueprintNode);

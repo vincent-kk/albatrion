@@ -14,7 +14,7 @@ it('replaces the one visited host slot instead of retaining earlier lifetimes', 
   for (let index = 0; index < 64; index++) {
     const previous = tree.root.find('/group')!;
     tree.close();
-    const slots: unknown = Reflect.get(tree.root, 'inactiveSlots');
+    const slots: unknown = Reflect.get(tree.root, '__inactiveSlots__');
     expect(slots).toBeInstanceOf(Map);
     if (!(slots instanceof Map)) throw new Error('Expected retained slots');
     expect(slots.size).toBe(1);
@@ -24,7 +24,10 @@ it('replaces the one visited host slot instead of retaining earlier lifetimes', 
     tree.open();
     expect(tree.root.find('/group')).not.toBe(previous);
     expect(slots.size).toBe(0);
-    const overlays: unknown = Reflect.get(tree.root, 'inactiveSlotOverlays');
+    const overlays: unknown = Reflect.get(
+      tree.root,
+      '__inactiveSlotOverlays__',
+    );
     if (overlays instanceof Map) expect(overlays.size).toBe(0);
     expect(
       tree.root.inactiveValues.some((entry) => entry.path === '/group'),
@@ -64,7 +67,7 @@ it('retains recursive candidates only through the supplied finite value depth', 
   const bound = countRetainedSlotNodes(root);
   for (let index = 0; index < 8; index++) {
     root.find('/open')!.setValue(false);
-    expect(Reflect.get(root, 'inactiveSlots')).toBeInstanceOf(Map);
+    expect(Reflect.get(root, '__inactiveSlots__')).toBeInstanceOf(Map);
     expect(countRetainedSlotNodes(root)).toBeLessThanOrEqual(bound);
     root.find('/open')!.setValue(true);
     expect(root.find('/tree')!.value).toEqual(value);

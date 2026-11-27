@@ -120,9 +120,9 @@ describe('diagnostic: absent child at the second referrer with the aliased index
       const { root } = createDispatchTree(s);
       setContext(root, { on: true });
       dispatchMount(root, {});
-      const before = root.storedOutputValue;
+      const before = root.__outputValue__;
       setContext(root, { on: false });
-      return { before, after: root.storedOutputValue };
+      return { before, after: root.__outputValue__ };
     };
     expect(read(schema)).toEqual(read(inline(schema)));
   });

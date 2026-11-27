@@ -3,7 +3,10 @@ import { isArray } from '@winglet/common-utils/filter';
 import type { BlueprintNode } from '../../../blueprint';
 import { CONTROL_KEY } from '../../../constants/controlKey';
 import { SCHEMA_GROUP } from '../../../constants/schemaGroup';
-import type { DeclarationLayer } from '../../../types/controls';
+import type {
+  CommittedDeclarationKey,
+  DeclarationLayer,
+} from '../../../types/controls';
 import { getCommittedDeclarationKey } from '../../../utils/controls/getCommittedDeclarationKey';
 import { getFragmentOwnerPaths } from '../../../utils/controls/getFragmentOwnerPaths';
 
@@ -31,13 +34,11 @@ export interface ControlTarget<Self> {
   /** Static declarations for this occurrence. */
   readonly blueprintNode: BlueprintNode;
   /** Direct parent whose groups may address this occurrence. */
-  readonly parent: Self | null;
+  readonly __parent__: Self | null;
+  /** Reused committed declaration key of this occurrence. */
+  __declarationKey__?: CommittedDeclarationKey;
   /** Last active declaration choices for the whole tree. */
   readonly runtime: {
-    committedDeclarationKeys?: WeakMap<
-      object,
-      { path: string; kind: string; key: string }
-    >;
     readonly committedDeclarationIds?: ReadonlyMap<string, readonly number[]>;
   };
 }
@@ -69,7 +70,7 @@ export const referenceControlLayers = <Self extends ControlTarget<Self>>(
   const selected = (current: Self): readonly number[] =>
     selectedDeclarationIds.get(current) ??
     current.runtime.committedDeclarationIds?.get(
-      getCommittedDeclarationKey(current, current.runtime),
+      getCommittedDeclarationKey(current),
     ) ??
     declarationIds(current.blueprintNode);
   const nodeIds = selected(node);
@@ -97,7 +98,7 @@ export const referenceControlLayers = <Self extends ControlTarget<Self>>(
         host: node,
       });
   }
-  const parent = node.parent;
+  const parent = node.__parent__;
   if (!parent) return groups;
   const parentIds = selected(parent);
   const parentDeclarations = parent.blueprintNode.declarations;

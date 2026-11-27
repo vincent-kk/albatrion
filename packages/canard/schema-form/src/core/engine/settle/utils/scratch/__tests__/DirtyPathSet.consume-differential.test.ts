@@ -120,7 +120,11 @@ it('300 seeded mutation histories preserve every permitted live-child query', ()
     },
   });
   dispatchMount(root, undefined);
-  const parents = [root, root.childrenByName!.h, root.childrenByName!.other];
+  const parents = [
+    root,
+    root.__childrenByName__!.h,
+    root.__childrenByName__!.other,
+  ];
   const paths = [
     '',
     '/h',
@@ -171,7 +175,7 @@ it('300 seeded mutation histories preserve every permitted live-child query', ()
             actual.isPostOrder &&
             names.some((name) => {
               const child =
-                parent.childrenByName?.[
+                parent.__childrenByName__?.[
                   name.replace(/~1/g, '/').replace(/~0/g, '~')
                 ];
               return child && !actual.has(child.path);

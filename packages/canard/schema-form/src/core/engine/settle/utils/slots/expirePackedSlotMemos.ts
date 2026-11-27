@@ -19,7 +19,7 @@ export const expirePackedSlotMemos = <Self extends FieldNodeRecord<Self>>(
     node: Optional<Self>,
     patch: Optional<InactiveSlotOverlay>,
   ): void => {
-    if (node) node.inactiveValueMemo = undefined;
+    if (node) node.__inactiveSlotValue__ = undefined;
     if (patch) patch.valueMemo = undefined;
     for (const entry of getSlotEntries(node, patch)) {
       const child = getSlotSource(node, entry, patch);
@@ -32,7 +32,7 @@ export const expirePackedSlotMemos = <Self extends FieldNodeRecord<Self>>(
       getItemEntries(instance.blueprintNode, Number(entry.name)).length > 1 ||
       (overlay?.children?.has(entry) &&
         overlay.children.get(entry) !==
-          instance.retainedSourceOverlay?.children?.get(entry))
+          instance.__retainedSourceOverlay__?.children?.get(entry))
     )
       continue;
     const child = getSlotSource(instance, entry, overlay);

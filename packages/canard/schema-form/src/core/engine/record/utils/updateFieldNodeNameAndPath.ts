@@ -17,7 +17,7 @@ export const updateFieldNodeNameAndPath = <
   name: string,
   parent: Nullable<Self>,
 ): void => {
-  node.parent = parent;
+  node.__parent__ = parent;
   node.name = name;
   node.escapedName = formatSegment(name);
   node.path = captureFieldNodeChange(

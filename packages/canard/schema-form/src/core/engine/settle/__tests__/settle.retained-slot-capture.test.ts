@@ -15,8 +15,8 @@ it('keeps a detached instance in the host without capturing latent source', () =
   dispatchMount(root, { open: true, value: 'held' });
   const old = getDispatchNode(root, 'value');
   dispatchSetValue(getDispatchNode(root, 'open'), false);
-  expect(root.inactiveSlots).toBeInstanceOf(Map);
-  expect([...(root.inactiveSlots?.values() ?? [])]).toContain(old);
+  expect(root.__inactiveSlots__).toBeInstanceOf(Map);
+  expect([...(root.__inactiveSlots__?.values() ?? [])]).toContain(old);
   expect(old.isDetached).toBe(true);
   dispatchSetValue(getDispatchNode(root, 'open'), true);
   expect(getDispatchNode(root, 'value')).not.toBe(old);
@@ -37,7 +37,7 @@ it('does not retain an entry whose effective exit policy clears its source', () 
   dispatchMount(root, { open: true, value: 'cleared' });
   const old = getDispatchNode(root, 'value');
   dispatchSetValue(getDispatchNode(root, 'open'), false);
-  expect([...(root.inactiveSlots?.values() ?? [])]).not.toContain(old);
+  expect([...(root.__inactiveSlots__?.values() ?? [])]).not.toContain(old);
   dispatchSetValue(getDispatchNode(root, 'open'), true);
   expect(getDispatchNode(root, 'value').source).toBeUndefined();
 });
@@ -62,7 +62,7 @@ it('retains same-name candidates under separate blueprint child entries', () => 
   dispatchSetValue(getDispatchNode(root, 'kind'), 'number');
   const number = getDispatchNode(root, 'value');
   dispatchSetValue(getDispatchNode(root, 'kind'), 'none');
-  const values = [...(root.inactiveSlots?.values() ?? [])];
+  const values = [...(root.__inactiveSlots__?.values() ?? [])];
   expect(values).toContain(string);
   expect(values).toContain(number);
   expect(values).toHaveLength(2);

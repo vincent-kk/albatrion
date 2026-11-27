@@ -5,7 +5,7 @@ import { createRetainedSlotTree } from './fixtures/createRetainedSlotTree';
 it('materializes nested slot values in document order with frozen stable references', () => {
   const tree = createRetainedSlotTree();
   const activeHost = tree.group.inactiveValues;
-  expect(Reflect.get(tree.group, 'inactiveSlots')).toBeInstanceOf(Map);
+  expect(Reflect.get(tree.group, '__inactiveSlots__')).toBeInstanceOf(Map);
   expect(activeHost).toEqual([{ path: '/group/held', value: 'hidden' }]);
   expect(tree.group.inactiveValues).toBe(activeHost);
   tree.close();
@@ -30,7 +30,7 @@ it('materializes nested slot values in document order with frozen stable referen
 
 it('keeps unread detached slot reads independent of later writes and re-entry', () => {
   const tree = createRetainedSlotTree();
-  expect(Reflect.get(tree.group, 'inactiveSlots')).toBeInstanceOf(Map);
+  expect(Reflect.get(tree.group, '__inactiveSlots__')).toBeInstanceOf(Map);
   tree.close();
   tree.held.setValue('overlay');
   tree.open();
@@ -48,7 +48,7 @@ it('keeps unread detached slot reads independent of later writes and re-entry', 
 it('does not republish an untouched host when a sibling branch changes', () => {
   const tree = createRetainedSlotTree();
   const held = tree.group.inactiveValues;
-  expect(Reflect.get(tree.group, 'inactiveSlots')).toBeInstanceOf(Map);
+  expect(Reflect.get(tree.group, '__inactiveSlots__')).toBeInstanceOf(Map);
   tree.root.find('/group/leaf')!.setValue('changed');
   expect(tree.group.inactiveValues).toBe(held);
   expect(tree.root.inactiveValues[0]).toBe(held[0]);

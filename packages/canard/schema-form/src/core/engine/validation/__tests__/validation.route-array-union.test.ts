@@ -46,7 +46,7 @@ it.each([false, true])(
     ))!;
     routeValidationIssues([root], issues);
     for (let index = 0; index < value.length; index++) {
-      const node = root.childrenByName![index].childrenByName!.value;
+      const node = root.__childrenByName__![index].__childrenByName__!.value;
       expect(
         readFieldNodeErrors(node).map((issue) => issue.schemaPath),
       ).toEqual([`#/items/oneOf/${index}/properties/value/minLength`]);
@@ -70,7 +70,9 @@ it('keeps branch selection attached to an item after removal shifts its address'
   }));
   routeValidationIssues([root], issues);
   expect(
-    readFieldNodeErrors(root.childrenByName!['0'].childrenByName!.value),
+    readFieldNodeErrors(
+      root.__childrenByName__!['0'].__childrenByName__!.value,
+    ),
   ).toEqual([issues[1]]);
 });
 
@@ -88,12 +90,14 @@ it('binds every level of nested array templates independently', () => {
   routeValidationIssues([root], issues);
   expect(
     readFieldNodeErrors(
-      root.childrenByName!['0'].childrenByName!['0'].childrenByName!.value,
+      root.__childrenByName__!['0'].__childrenByName__!['0'].__childrenByName__!
+        .value,
     ),
   ).toEqual([issues[0]]);
   expect(
     readFieldNodeErrors(
-      root.childrenByName!['1'].childrenByName!['0'].childrenByName!.value,
+      root.__childrenByName__!['1'].__childrenByName__!['0'].__childrenByName__!
+        .value,
     ),
   ).toEqual([issues[3]]);
 });
@@ -110,12 +114,16 @@ it('refreshes anyOf selection without retaining the previous routing cache', () 
   }));
   routeValidationIssues([root], issues);
   expect(
-    readFieldNodeErrors(root.childrenByName!['0'].childrenByName!.value),
+    readFieldNodeErrors(
+      root.__childrenByName__!['0'].__childrenByName__!.value,
+    ),
   ).toEqual([issues[0]]);
   dispatchUpdate(root, 0, { kind: 'y', value: 'a' });
   routeValidationIssues([root], issues);
   expect(
-    readFieldNodeErrors(root.childrenByName!['0'].childrenByName!.value),
+    readFieldNodeErrors(
+      root.__childrenByName__!['0'].__childrenByName__!.value,
+    ),
   ).toEqual([issues[1]]);
 });
 
@@ -134,9 +142,11 @@ it('preserves host errors and unknown schema locations in the full result', () =
     schemaPath: '#/$defs/unknown/minLength',
   };
   routeValidationIssues([root], [host, unknown]);
-  expect(readFieldNodeErrors(root.childrenByName!['0'])).toEqual([host]);
+  expect(readFieldNodeErrors(root.__childrenByName__!['0'])).toEqual([host]);
   expect(
-    readFieldNodeErrors(root.childrenByName!['0'].childrenByName!.value),
+    readFieldNodeErrors(
+      root.__childrenByName__!['0'].__childrenByName__!.value,
+    ),
   ).toEqual([unknown]);
   expect(root.runtime.globalErrors).toEqual([host, unknown]);
 });
@@ -162,9 +172,9 @@ it.each([false, true])(
       schemaPath: `#/$defs/item/oneOf/${branch}/properties/value/minLength`,
     }));
     routeValidationIssues([root], issues);
-    const host = root.childrenByName!.b;
-    const field = (array ? host.childrenByName!['0'] : host).childrenByName!
-      .value;
+    const host = root.__childrenByName__!.b;
+    const field = (array ? host.__childrenByName__!['0'] : host)
+      .__childrenByName__!.value;
     expect(readFieldNodeErrors(field)).toEqual([issues[0]]);
   },
 );
@@ -188,7 +198,9 @@ it('indexes only live nodes of the queried host once for repeated issues', () =>
       Array.from({ length: 20 }, () => issue),
     );
     expect(
-      readFieldNodeErrors(root.childrenByName!['0'].childrenByName!.value),
+      readFieldNodeErrors(
+        root.__childrenByName__!['0'].__childrenByName__!.value,
+      ),
     ).toEqual([]);
     expect(reads).toHaveBeenCalledTimes(3);
   } finally {

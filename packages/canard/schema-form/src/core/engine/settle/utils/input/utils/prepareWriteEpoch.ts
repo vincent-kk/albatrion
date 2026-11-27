@@ -25,9 +25,9 @@ export const prepareWriteEpoch = <Self extends FieldNodeRecord<Self>>(
     context.writeOrigins !== undefined ||
     runtime.batchDepth ||
     runtime.visitDepth ||
-    context.root.inactiveSlots?.size ||
-    context.root.inactiveSlotOverlays?.size ||
-    context.root.inactiveSlotChildren?.size ||
+    context.root.__inactiveSlots__?.size ||
+    context.root.__inactiveSlotOverlays__?.size ||
+    context.root.__inactiveSlotChildren__?.size ||
     runtime.misfitPaths.size ||
     !StaticFirstLoadCapability.has(runtime.blueprint)
   )

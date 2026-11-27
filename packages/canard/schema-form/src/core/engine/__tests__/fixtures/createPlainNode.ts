@@ -15,7 +15,8 @@ import type {
 export interface PlainNode extends FieldNodeRecord<PlainNode> {}
 
 /**
- * Create one record through the same row selection the later factory uses.
+ * Create one record with a per-record wrapper of its kind and strategy row. The wrapper breaks
+ * row identity, so a plain record never carries an item leaf row; public trees cover that row.
  * @param entry - Blueprint template or bound child occurrence
  * @param parent - Structural owner of the new record
  * @param runtime - Single tree runtime supplied to every child
@@ -63,7 +64,7 @@ export const createPlainNode = (
     behavior,
     runtime,
     blueprintNode: template,
-    parent,
+    __parent__: parent,
     get rootNode() {
       return parent?.rootNode ?? this;
     },
@@ -74,34 +75,34 @@ export const createPlainNode = (
     isRequired: false,
     isNullable: template.isNullable,
     schemaType: template.schemaType,
-    childrenByName: template.strategy === 'branch' ? {} : null,
+    __childrenByName__: template.strategy === 'branch' ? {} : null,
     children: template.strategy === 'branch' ? [] : null,
-    itemKey: null,
-    itemCount: 0,
-    nextItemKey: 0,
+    __itemKey__: null,
+    __itemCount__: 0,
+    __nextItemKey__: 0,
     source: undefined,
     extras: undefined,
     isActive: true,
     isVisible: true,
     isReadOnly: false,
     isDisabled: false,
-    storedValue: undefined,
-    storedOutputValue: undefined,
-    divergenceCurrent: undefined,
-    divergencePath: undefined,
-    divergenceSegments: undefined,
-    divergenceBase: undefined,
-    storedIsDivergent: false,
-    schema: mergeEffectiveSchema(template, [], { mode: 'runtime' }),
-    storedState: {},
-    revisionLedger: EMPTY_REVISION_LEDGER,
-    isDeliveryInitialized: false,
-    deliveryChanges: 0,
-    pendingDelivery: undefined,
-    pendingRevisionMask: 0,
-    pendingNonSettleDelivery: undefined,
+    __value__: undefined,
+    __outputValue__: undefined,
+    __divergenceCurrent__: undefined,
+    __divergencePath__: undefined,
+    __divergenceSegments__: undefined,
+    __divergenceBase__: undefined,
+    __isDivergent__: false,
+    __schema__: mergeEffectiveSchema(template, [], { mode: 'runtime' }),
+    __state__: {},
+    __revisionLedger__: EMPTY_REVISION_LEDGER,
+    __isDeliveryInitialized__: false,
+    __deliveryChanges__: 0,
+    __pendingDelivery__: undefined,
+    __pendingRevisionMask__: 0,
+    __pendingNonSettleDelivery__: undefined,
     isDetached: false,
     isDisposed: false,
-    interactionEpoch: 0,
+    __interactionEpoch__: 0,
   };
 };

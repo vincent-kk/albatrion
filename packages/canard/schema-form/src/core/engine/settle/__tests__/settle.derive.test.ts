@@ -23,7 +23,7 @@ describe('settle derivation', () => {
       },
     });
     loadFieldNodeAtMount(root, { source: 'A' }, WriteOption.Overwrite);
-    expect(root.childrenByName?.target?.source).toBe('A');
+    expect(root.__childrenByName__?.target?.source).toBe('A');
   });
 
   it('SETTLE-048 no fire lets a caller value survive the same source', () => {
@@ -36,7 +36,7 @@ describe('settle derivation', () => {
     });
     loadFieldNodeAtMount(root, { source: 'A' }, WriteOption.Overwrite);
     writeFieldNode(
-      root.childrenByName!.target,
+      root.__childrenByName__!.target,
       'manual',
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
@@ -47,14 +47,14 @@ describe('settle derivation', () => {
       FieldNodeWriteKind.CallerReplace,
       WriteOption.Overwrite,
     );
-    expect(root.childrenByName?.target?.source).toBe('manual');
+    expect(root.__childrenByName__?.target?.source).toBe('manual');
     writeFieldNode(
-      root.childrenByName!['source'],
+      root.__childrenByName__!['source'],
       'B',
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
-    expect(root.childrenByName?.target?.source).toBe('B');
+    expect(root.__childrenByName__?.target?.source).toBe('B');
   });
 
   it('SETTLE-004 edge consumed does not reevaluate one source edge after its own write', () => {
@@ -66,7 +66,7 @@ describe('settle derivation', () => {
       },
     });
     loadFieldNodeAtMount(root, { source: 1 }, WriteOption.Overwrite);
-    expect(root.childrenByName?.target?.source).toBe(2);
+    expect(root.__childrenByName__?.target?.source).toBe(2);
     expect(root.runtime.diagnostics.status).toBe('stable');
   });
 
@@ -83,8 +83,8 @@ describe('settle derivation', () => {
       { clear: true, target: 'X' },
       WriteOption.Overwrite,
     );
-    expect(root.childrenByName?.target?.source).toBeUndefined();
-    expect(root.childrenByName?.clear?.source).toBe(true);
+    expect(root.__childrenByName__?.target?.source).toBeUndefined();
+    expect(root.__childrenByName__?.clear?.source).toBe(true);
   });
 
   it('WRITE-029 rebirth treats a newly active true unset rule as an edge', () => {
@@ -104,13 +104,13 @@ describe('settle derivation', () => {
     });
     loadFieldNodeAtMount(root, { present: false }, WriteOption.Overwrite);
     writeFieldNode(
-      root.childrenByName!.present,
+      root.__childrenByName__!.present,
       true,
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
-    expect(root.childrenByName?.target).toBeDefined();
-    expect(root.childrenByName?.target?.source).toBeUndefined();
+    expect(root.__childrenByName__?.target).toBeDefined();
+    expect(root.__childrenByName__?.target?.source).toBeUndefined();
   });
 
   it('WRITE-015 suppress derive consumes the load edge without an automatic write', () => {
@@ -126,21 +126,21 @@ describe('settle derivation', () => {
       { source: 'A', target: 'manual' },
       WriteOption.DisableAutomaticWrites,
     );
-    expect(root.childrenByName?.target?.source).toBe('manual');
+    expect(root.__childrenByName__?.target?.source).toBe('manual');
     writeFieldNode(
       root,
       { source: 'A', target: 'manual' },
       FieldNodeWriteKind.CallerReplace,
       WriteOption.Overwrite,
     );
-    expect(root.childrenByName?.target?.source).toBe('manual');
+    expect(root.__childrenByName__?.target?.source).toBe('manual');
     writeFieldNode(
-      root.childrenByName!['source'],
+      root.__childrenByName__!['source'],
       'B',
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
-    expect(root.childrenByName?.target?.source).toBe('B');
+    expect(root.__childrenByName__?.target?.source).toBe('B');
   });
 
   it('SETTLE-006 resetInteraction clears flags on a false to true edge', () => {
@@ -156,22 +156,23 @@ describe('settle derivation', () => {
       { clear: false, target: 'X' },
       WriteOption.Overwrite,
     );
-    const target = root.childrenByName!.target;
+    const target = root.__childrenByName__!.target;
     setTestInteractionState(target, {
       [FieldNodeState.Edited]: true,
       [FieldNodeState.Touched]: true,
     });
-    const revision = target.revisionLedger[FieldNodeEventType.UpdateState] ?? 0;
+    const revision =
+      target.__revisionLedger__[FieldNodeEventType.UpdateState] ?? 0;
     writeFieldNode(
-      root.childrenByName!.clear,
+      root.__childrenByName__!.clear,
       true,
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
-    expect(target.storedState[FieldNodeState.Edited]).toBe(false);
-    expect(target.storedState[FieldNodeState.Touched]).toBe(false);
+    expect(target.__state__[FieldNodeState.Edited]).toBe(false);
+    expect(target.__state__[FieldNodeState.Touched]).toBe(false);
     expect(
-      target.revisionLedger[FieldNodeEventType.UpdateState],
+      target.__revisionLedger__[FieldNodeEventType.UpdateState],
     ).toBeGreaterThan(revision);
     expect(target.source).toBe('X');
   });
@@ -195,7 +196,7 @@ describe('settle derivation', () => {
       { clear: false, target: 'before' },
       WriteOption.Overwrite,
     );
-    const target = root.childrenByName!.target;
+    const target = root.__childrenByName__!.target;
     setTestInteractionState(target, {
       [FieldNodeState.Edited]: true,
       [FieldNodeState.Touched]: true,
@@ -206,12 +207,12 @@ describe('settle derivation', () => {
       FieldNodeWriteKind.Load,
       WriteOption.DisableAutomaticWrites,
     );
-    expect(root.childrenByName?.target?.source).toBe('manual');
+    expect(root.__childrenByName__?.target?.source).toBe('manual');
     expect(
-      root.childrenByName?.target?.storedState[FieldNodeState.Edited],
+      root.__childrenByName__?.target?.__state__[FieldNodeState.Edited],
     ).toBe(false);
     expect(
-      root.childrenByName?.target?.storedState[FieldNodeState.Touched],
+      root.__childrenByName__?.target?.__state__[FieldNodeState.Touched],
     ).toBe(false);
   });
 
@@ -226,7 +227,7 @@ describe('settle derivation', () => {
     expect(() =>
       loadFieldNodeAtMount(root, { left: 0, right: 0 }, WriteOption.Overwrite),
     ).toThrow('budget');
-    expect(root.storedOutputValue).toEqual({ left: 0, right: 0 });
+    expect(root.__outputValue__).toEqual({ left: 0, right: 0 });
     expect(root.runtime.diagnostics).toMatchObject({
       status: 'degraded',
       cause: 'budget',
@@ -268,7 +269,7 @@ describe('settle derivation', () => {
       ]),
     );
     writeFieldNode(
-      root.childrenByName!['source'],
+      root.__childrenByName__!['source'],
       'B',
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
@@ -288,7 +289,7 @@ describe('settle derivation', () => {
       },
     });
     loadFieldNodeAtMount(root, { source: 'A' }, WriteOption.Overwrite);
-    expect(root.childrenByName?.target?.source).toBe('A');
+    expect(root.__childrenByName__?.target?.source).toBe('A');
   });
 
   it('CONTROLS-077 fragment derived uses the fragment host for each direct child', () => {
@@ -307,7 +308,7 @@ describe('settle derivation', () => {
       ],
     });
     loadFieldNodeAtMount(root, { source: 'A' }, WriteOption.Overwrite);
-    expect(root.childrenByName?.target?.source).toBe('A');
+    expect(root.__childrenByName__?.target?.source).toBe('A');
   });
 
   it('TEST-016 settle trace records a derived candidate that loses to unsetValue', () => {
@@ -367,7 +368,7 @@ describe('settle derivation', () => {
       { source: 'off', flag: true, target: 'old' },
       WriteOption.Overwrite,
     );
-    expect(root.childrenByName?.target).toBeUndefined();
+    expect(root.__childrenByName__?.target).toBeUndefined();
     expect(root.runtime.settlementTrace?.rounds.flat()).toEqual(
       expect.arrayContaining([
         expect.objectContaining({
@@ -390,7 +391,7 @@ describe('settle derivation', () => {
         },
       });
       loadFieldNodeAtMount(root, { source: 'A' }, WriteOption.Overwrite);
-      expect(root.childrenByName?.target?.source).toBe('A');
+      expect(root.__childrenByName__?.target?.source).toBe('A');
       expect('settlementTrace' in root.runtime).toBe(false);
     } finally {
       vi.unstubAllEnvs();

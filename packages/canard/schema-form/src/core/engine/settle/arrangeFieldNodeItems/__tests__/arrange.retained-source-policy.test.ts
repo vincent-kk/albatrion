@@ -60,11 +60,9 @@ it.each([[false], [true]] as const)(
     const kept = [{ path: '/list/0/keep', value: 'held' }];
     expect(readFieldNodeInactiveValues(root)).toEqual(kept);
     dispatchSetValue(getDispatchNode(root, 'open'), true);
-    expect(getDispatchNode(root, 'list').itemCount).toBe(1);
+    expect(getDispatchNode(root, 'list').__itemCount__).toBe(1);
     expect(readFieldNodeInactiveValues(root)).toEqual(kept);
     dispatchSetValue(getDispatchNode(root, 'show'), true);
-    expect(getDispatchNode(root, 'list').storedValue).toEqual([
-      { keep: 'held' },
-    ]);
+    expect(getDispatchNode(root, 'list').__value__).toEqual([{ keep: 'held' }]);
   },
 );

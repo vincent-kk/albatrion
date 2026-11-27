@@ -26,11 +26,11 @@ import type {
 import type { PresenceQueryCursor } from '../../types/presenceQueryCursor';
 import { getDependencyIndex } from '../dependencies/getDependencyIndex';
 import { getGateExpression } from './getGateExpression';
+import { isOwnActiveGate } from './isOwnActiveGate';
 import { createGatePredicate } from './predicates/createGatePredicate';
 import { getIfGateReadNames } from './predicates/getIfGateReadNames';
 import { resolveGateOccurrence } from './resolveGateOccurrence';
 import type { GateOccurrence } from './type';
-import { isOwnActiveGate } from './isOwnActiveGate';
 
 /** Bound gate with exact read paths used to invalidate its L. */
 class RegisteredGateOccurrence implements GateOccurrence {
@@ -189,9 +189,7 @@ class GateRegistry {
     for (const entry of node.blueprintNode.childEntries) {
       for (const declaration of entry.declarations)
         for (const gate of declaration.gates)
-          if (
-            isOwnActiveGate(gate.schemaPath, declaration.schemaPath)
-          ) {
+          if (isOwnActiveGate(gate.schemaPath, declaration.schemaPath)) {
             edges ??= new Map();
             let edgeMemo = edges.get(entry.name);
             if (!edgeMemo) {
@@ -370,7 +368,7 @@ class GateRegistry {
   /** Forget a detached subtree's location entries; a virtual node's referenced siblings stay. */
   remove<Self extends FieldNodeRecord<Self>>(node: Self): void {
     for (const child of node.children ?? [])
-      if (child.parent === node) this.remove(child);
+      if (child.__parent__ === node) this.remove(child);
     if (this.byPath.get(node.path)?.node === node) this.removePath(node.path);
   }
 

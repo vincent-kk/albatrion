@@ -245,7 +245,7 @@ describe('44C-01 array settlement scaling', () => {
       loadFieldNodeAtMount(root, value, WriteOption.Overwrite);
       if (process.env.SETTLE_SCALING_PROBE)
         console.info(`51C-01 object host assemblies: ${assemblies}`);
-      expect(root.storedOutputValue).toEqual(value);
+      expect(root.__outputValue__).toEqual(value);
       expect(assemblies).toBeLessThan(10);
     } finally {
       Reflect.set(root, 'behavior', behavior);
@@ -309,8 +309,8 @@ describe('44C-01 array settlement scaling', () => {
     for (const value of observations.slice(0, settled))
       expect(value).toEqual(inProgress);
     for (const value of observations.slice(settled))
-      expect(value).toEqual(root.storedOutputValue);
-    expect(root.storedOutputValue).toEqual({
+      expect(value).toEqual(root.__outputValue__);
+    expect(root.__outputValue__).toEqual({
       first: { value: 'entered' },
       current: { value: 'in-progress', primer: 'ready', reader: 'visible' },
     });
@@ -745,14 +745,14 @@ describe('44C-01 array settlement scaling', () => {
   it('NODE-026 visits only dirty item slots on a 2,000-item keystroke', () => {
     const { root } = makeFieldNodeTree(schema);
     root.setValue(items(2000, 0));
-    const childrenByName = Reflect.get(root, 'childrenByName') as Record<
+    const childrenByName = Reflect.get(root, '__childrenByName__') as Record<
       string,
       unknown
     >;
     let slotReads = 0;
     Reflect.set(
       root,
-      'childrenByName',
+      '__childrenByName__',
       new Proxy(childrenByName, {
         get(target, property, receiver) {
           if (typeof property === 'string' && /^\d+$/.test(property))

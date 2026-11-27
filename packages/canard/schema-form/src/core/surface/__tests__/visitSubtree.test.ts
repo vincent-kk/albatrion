@@ -77,7 +77,7 @@ describe('SURFACE-062 visitSubtree order and range', () => {
     expect(collectPaths(root)).toEqual(['', '/flag']);
   });
 
-  it('walks the subtree a detached node was detached with, as other childrenByName reads do', () => {
+  it('walks the subtree a detached node was detached with, as other __childrenByName__ reads do', () => {
     const { root } = makeFieldNodeTree({
       type: 'object',
       properties: {

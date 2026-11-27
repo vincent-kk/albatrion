@@ -34,17 +34,17 @@ describe('per-node branch sources', () => {
     };
     const nullTree = createTestTree(schema).root;
     loadFieldNodeAtMount(nullTree, null, WriteOption.Overwrite);
-    expect(nullTree.storedOutputValue).toBeNull();
-    expect(nullTree.childrenByName?.kind).toBeDefined();
-    expect(nullTree.childrenByName?.meow).toBeUndefined();
+    expect(nullTree.__outputValue__).toBeNull();
+    expect(nullTree.__childrenByName__?.kind).toBeDefined();
+    expect(nullTree.__childrenByName__?.meow).toBeUndefined();
     const scalarTree = createTestTree(schema).root;
     loadFieldNodeAtMount(scalarTree, 17, WriteOption.Overwrite);
-    expect(scalarTree.storedOutputValue).toBe(17);
-    expect(scalarTree.childrenByName?.kind).toBeDefined();
-    expect(scalarTree.childrenByName?.meow).toBeUndefined();
+    expect(scalarTree.__outputValue__).toBe(17);
+    expect(scalarTree.__childrenByName__?.kind).toBeDefined();
+    expect(scalarTree.__childrenByName__?.meow).toBeUndefined();
     const catTree = createTestTree(schema).root;
     loadFieldNodeAtMount(catTree, { kind: 'cat' }, WriteOption.Overwrite);
-    expect(catTree.storedOutputValue).toEqual({ kind: 'cat', meow: true });
+    expect(catTree.__outputValue__).toEqual({ kind: 'cat', meow: true });
   });
 
   it('39C-01 keeps a nullable object null and a replaced child null', () => {
@@ -77,7 +77,7 @@ describe('per-node branch sources', () => {
       },
       WriteOption.Overwrite,
     );
-    expect(root.storedOutputValue).toEqual({
+    expect(root.__outputValue__).toEqual({
       user: null,
       target: {
         note: 'typed',
@@ -90,9 +90,9 @@ describe('per-node branch sources', () => {
       FieldNodeWriteKind.CallerReplace,
       WriteOption.Overwrite,
     );
-    expect(root.storedOutputValue).toEqual({ user: null, target: null });
+    expect(root.__outputValue__).toEqual({ user: null, target: null });
     expect(
-      root.childrenByName?.target?.childrenByName?.note?.source,
+      root.__childrenByName__?.target?.__childrenByName__?.note?.source,
     ).toBeUndefined();
   });
   it('VALUE-002/004 keeps an object host empty and its extra keys separately', () => {
@@ -104,7 +104,7 @@ describe('per-node branch sources', () => {
     });
     loadFieldNodeAtMount(root, { a: 'x', z: 1 }, WriteOption.Overwrite);
     writeFieldNode(
-      root.childrenByName!.a,
+      root.__childrenByName__!.a,
       'y',
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
@@ -149,7 +149,7 @@ describe('per-node branch sources', () => {
       WriteOption.Merge,
     );
     expect(Object.keys(root.extras ?? {})).toEqual(['z', 'm', 'q']);
-    expect(Object.keys(root.storedOutputValue ?? {})).toEqual([
+    expect(Object.keys(root.__outputValue__ ?? {})).toEqual([
       'a',
       'z',
       'm',
@@ -158,7 +158,7 @@ describe('per-node branch sources', () => {
     const extras = root.extras;
     writeFieldNode(
       root,
-      root.storedOutputValue,
+      root.__outputValue__,
       FieldNodeWriteKind.CallerReplace,
       WriteOption.Overwrite,
     );
@@ -192,9 +192,9 @@ describe('per-node branch sources', () => {
       { flag: true, g: { leaf: 'a', deep: { x: 1, y: 2 }, e: 1 } },
       WriteOption.Overwrite,
     );
-    const old = root.childrenByName!.g;
+    const old = root.__childrenByName__!.g;
     writeFieldNode(
-      root.childrenByName!.flag,
+      root.__childrenByName__!.flag,
       false,
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
@@ -219,12 +219,12 @@ describe('per-node branch sources', () => {
     );
     expect(input.g.deep.x).toBe(2);
     writeFieldNode(
-      root.childrenByName!.flag,
+      root.__childrenByName__!.flag,
       true,
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
-    expect(root.storedOutputValue).toEqual({
+    expect(root.__outputValue__).toEqual({
       flag: true,
       g: { leaf: 'a', deep: { x: 2, y: 2 }, e: 1, f: 3 },
     });
@@ -252,13 +252,13 @@ describe('per-node branch sources', () => {
       WriteOption.Overwrite,
     );
     writeFieldNode(
-      root.childrenByName!.show,
+      root.__childrenByName__!.show,
       false,
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
     writeFieldNode(
-      root.childrenByName!.on,
+      root.__childrenByName__!.on,
       false,
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
@@ -271,13 +271,13 @@ describe('per-node branch sources', () => {
     );
     expect(sourceAt(root, '/g/secret', 'string')).toBe('S');
     writeFieldNode(
-      root.childrenByName!.on,
+      root.__childrenByName__!.on,
       true,
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
     writeFieldNode(
-      root.childrenByName!.show,
+      root.__childrenByName__!.show,
       true,
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
@@ -299,7 +299,7 @@ describe('per-node branch sources', () => {
       WriteOption.Overwrite,
     );
     writeFieldNode(
-      root.childrenByName!.flag,
+      root.__childrenByName__!.flag,
       false,
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
@@ -341,7 +341,7 @@ describe('per-node branch sources', () => {
       WriteOption.Overwrite,
     );
     writeFieldNode(
-      root.childrenByName!.flag,
+      root.__childrenByName__!.flag,
       false,
       FieldNodeWriteKind.Input,
       WriteOption.DisableAutomaticWrites,
@@ -351,12 +351,12 @@ describe('per-node branch sources', () => {
       z: 1,
     });
     writeFieldNode(
-      root.childrenByName!.flag,
+      root.__childrenByName__!.flag,
       true,
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
-    expect(root.storedOutputValue).toEqual({
+    expect(root.__outputValue__).toEqual({
       flag: true,
       g: { leaf: 'L', z: 1 },
     });
@@ -433,10 +433,10 @@ describe('per-node branch sources', () => {
       FieldNodeWriteKind.CallerReplace,
       WriteOption.Overwrite,
     );
-    const user = root.childrenByName!.user;
+    const user = root.__childrenByName__!.user;
     expect(user.source).toBeNull();
     writeFieldNode(
-      user.childrenByName!.name,
+      user.__childrenByName__!.name,
       undefined,
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
@@ -458,14 +458,14 @@ describe('per-node branch sources', () => {
     expect(user.source).toBeNull();
     expect(user.extras).toEqual({ z: 1 });
     writeFieldNode(
-      user.childrenByName!.name,
+      user.__childrenByName__!.name,
       'N',
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
     expect(user.source).toBeUndefined();
-    expect(user.childrenByName?.sibling?.source).toBeUndefined();
-    expect(root.storedOutputValue).toEqual({ user: { name: 'N', z: 1 } });
+    expect(user.__childrenByName__?.sibling?.source).toBeUndefined();
+    expect(root.__outputValue__).toEqual({ user: { name: 'N', z: 1 } });
   });
 
   it('VALUE-025 keeps a changed leaf and does not revive an explicitly absent sibling', () => {
@@ -489,34 +489,36 @@ describe('per-node branch sources', () => {
       WriteOption.Overwrite,
     );
     writeFieldNode(
-      root.childrenByName!.g.childrenByName!.leaf,
+      root.__childrenByName__!.g.__childrenByName__!.leaf,
       'new',
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
     writeFieldNode(
-      root.childrenByName!.g.childrenByName!.other,
+      root.__childrenByName__!.g.__childrenByName__!.other,
       undefined,
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
     writeFieldNode(
-      root.childrenByName!.flag,
+      root.__childrenByName__!.flag,
       false,
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
     writeFieldNode(
-      root.childrenByName!.flag,
+      root.__childrenByName__!.flag,
       true,
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
-    expect(root.childrenByName?.g?.childrenByName?.leaf?.source).toBe('new');
+    expect(root.__childrenByName__?.g?.__childrenByName__?.leaf?.source).toBe(
+      'new',
+    );
     expect(
-      root.childrenByName?.g?.childrenByName?.other?.source,
+      root.__childrenByName__?.g?.__childrenByName__?.other?.source,
     ).toBeUndefined();
-    expect(root.childrenByName?.g?.extras).toEqual({ z: 1 });
+    expect(root.__childrenByName__?.g?.extras).toEqual({ z: 1 });
   });
 
   it('TEST-069 lets a gate read an undeclared key from extras', () => {
@@ -531,14 +533,14 @@ describe('per-node branch sources', () => {
       { mode: 'on', visible: 'V' },
       WriteOption.Overwrite,
     );
-    expect(root.childrenByName?.visible?.source).toBe('V');
+    expect(root.__childrenByName__?.visible?.source).toBe('V');
     writeFieldNode(
       root,
       {},
       FieldNodeWriteKind.CallerReplace,
       WriteOption.Overwrite,
     );
-    expect(root.childrenByName?.visible).toBeUndefined();
+    expect(root.__childrenByName__?.visible).toBeUndefined();
   });
 
   it('Q2/Q4 enumerates latent leaves beneath a path live as another kind', () => {
@@ -570,7 +572,7 @@ describe('per-node branch sources', () => {
       WriteOption.Overwrite,
     );
     writeFieldNode(
-      root.childrenByName!.kind,
+      root.__childrenByName__!.kind,
       'b',
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
@@ -592,7 +594,7 @@ describe('per-node branch sources', () => {
     loadFieldNodeAtMount(root, { flag: false, n: '3' }, WriteOption.Overwrite);
     expect(sourceAt(root, '/n', 'number')).toBe(3);
     writeFieldNode(
-      root.childrenByName!.flag,
+      root.__childrenByName__!.flag,
       true,
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
@@ -624,9 +626,9 @@ describe('per-node branch sources', () => {
         WriteOption.Overwrite,
       ),
     ).not.toThrow();
-    expect(root.childrenByName?.child?.childrenByName?.hasChild?.source).toBe(
-      false,
-    );
+    expect(
+      root.__childrenByName__?.child?.__childrenByName__?.hasChild?.source,
+    ).toBe(false);
     expect(root.runtime.diagnostics.exceededBudget).not.toBe('recursion');
   });
 
@@ -649,14 +651,16 @@ describe('per-node branch sources', () => {
       WriteOption.Overwrite,
     );
     writeFieldNode(
-      root.childrenByName!.flag,
+      root.__childrenByName__!.flag,
       true,
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
-    expect(root.childrenByName?.g?.childrenByName?.leaf?.source).toBe('L');
+    expect(root.__childrenByName__?.g?.__childrenByName__?.leaf?.source).toBe(
+      'L',
+    );
     writeFieldNode(
-      root.childrenByName!.flag,
+      root.__childrenByName__!.flag,
       false,
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
@@ -667,7 +671,9 @@ describe('per-node branch sources', () => {
       FieldNodeWriteKind.CallerReplace,
       WriteOption.Overwrite,
     );
-    expect(root.childrenByName?.g?.childrenByName?.leaf?.source).toBe('D');
+    expect(root.__childrenByName__?.g?.__childrenByName__?.leaf?.source).toBe(
+      'D',
+    );
   });
 
   it('WRITE-035 clears a departing host extras and leaf together', () => {
@@ -691,7 +697,7 @@ describe('per-node branch sources', () => {
       WriteOption.Overwrite,
     );
     writeFieldNode(
-      root.childrenByName!.flag,
+      root.__childrenByName__!.flag,
       false,
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
@@ -759,9 +765,9 @@ describe('per-node branch sources', () => {
       { mode: 'string', item: 'old' },
       WriteOption.Overwrite,
     );
-    const detachedString = root.childrenByName!.item;
+    const detachedString = root.__childrenByName__!.item;
     writeFieldNode(
-      root.childrenByName!.mode,
+      root.__childrenByName__!.mode,
       'off',
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
@@ -863,25 +869,27 @@ describe('per-node branch sources', () => {
       WriteOption.Overwrite,
     );
     writeFieldNode(
-      root.childrenByName!.flag,
+      root.__childrenByName__!.flag,
       false,
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
     writeFieldNode(
-      root.childrenByName!.mode,
+      root.__childrenByName__!.mode,
       'number',
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
     expect(sourceAt(root, '/g/value', 'string')).toBe('old');
     writeFieldNode(
-      root.childrenByName!.flag,
+      root.__childrenByName__!.flag,
       true,
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
-    expect(root.childrenByName?.g?.childrenByName?.value?.source).toBe(7);
+    expect(root.__childrenByName__?.g?.__childrenByName__?.value?.source).toBe(
+      7,
+    );
     expect(readRetainedSlotSource(root, '/g/value', 'string')).toBe('old');
   });
 
@@ -906,12 +914,14 @@ describe('per-node branch sources', () => {
     });
     loadFieldNodeAtMount(root, { flag: false }, WriteOption.Overwrite);
     writeFieldNode(
-      root.childrenByName!.flag,
+      root.__childrenByName__!.flag,
       true,
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
-    expect(root.childrenByName?.g?.childrenByName?.secret).toBeUndefined();
+    expect(
+      root.__childrenByName__?.g?.__childrenByName__?.secret,
+    ).toBeUndefined();
     expect(hasRetainedSlotOwnSource(root, '/g/secret', 'string')).toBe(false);
   });
 
@@ -934,30 +944,32 @@ describe('per-node branch sources', () => {
       WriteOption.Overwrite,
     );
     writeFieldNode(
-      root.childrenByName!.box.childrenByName!.b,
+      root.__childrenByName__!.box.__childrenByName__!.b,
       true,
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
-    expect(root.childrenByName?.secret?.source).toBe('held');
+    expect(root.__childrenByName__?.secret?.source).toBe('held');
     writeFieldNode(
-      root.childrenByName!.grp.childrenByName!.x,
+      root.__childrenByName__!.grp.__childrenByName__!.x,
       'typed',
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
-    resetFieldNodeSubtree(root.childrenByName!.box, WriteOption.Overwrite);
-    expect(root.childrenByName?.secret).toBeUndefined();
-    expect(root.childrenByName?.grp).toBeUndefined();
+    resetFieldNodeSubtree(root.__childrenByName__!.box, WriteOption.Overwrite);
+    expect(root.__childrenByName__?.secret).toBeUndefined();
+    expect(root.__childrenByName__?.grp).toBeUndefined();
     expect(sourceAt(root, '/secret', 'string')).toBe('held');
     expect(readRetainedSlotSource(root, '/grp/x', 'string')).toBe('typed');
     writeFieldNode(
-      root.childrenByName!.box.childrenByName!.b,
+      root.__childrenByName__!.box.__childrenByName__!.b,
       true,
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
-    expect(root.childrenByName?.secret?.source).toBe('held');
-    expect(root.childrenByName?.grp?.childrenByName?.x?.source).toBe('typed');
+    expect(root.__childrenByName__?.secret?.source).toBe('held');
+    expect(root.__childrenByName__?.grp?.__childrenByName__?.x?.source).toBe(
+      'typed',
+    );
   });
 });

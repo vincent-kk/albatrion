@@ -60,84 +60,102 @@ import { SetValueOption } from '../type';
 /**
  * Runtime record implementation; the public FieldNode name denotes a union type.
  *
- * Field forms follow rule 8 of NAMING_CONVENTIONS.md. A `__name__` field is a private backing
- * field that only this class touches; other code reaches it through the accessor of the same name.
- * A public field is a `FieldNodeRecord` slot that engine modules read and write directly, so it
- * cannot be private. A `stored` prefix marks a slot behind the public member named by the rest of
- * its name: that member is read-only, memoized or dispatching, so the raw slot needs a name of its
- * own. The `stored` slots, which stay in their domain groups below, are:
- * - `storedValue` behind `value`, which is read-only; writes go through `setValue` and the array commands.
- * - `storedOutputValue` behind `outputValue`, which is read-only.
- * - `storedIsDivergent` behind `isDivergent`, which memoizes its comparison.
- * - `storedState` behind `state`, whose setter dispatches a patch.
+ * Field forms follow rule 8 of NAMING_CONVENTIONS.md: every internal field is named `__name__`, so a
+ * node shows its internal fields apart from its public members at runtime. A `private` field is one
+ * that only this class touches; other code reaches it through the accessor of the same name. A field
+ * without `private` is a `FieldNodeRecord` slot that engine modules read and write directly; the
+ * public node types do not declare it. A slot behind a public member takes that member's name
+ * (`__value__` behind `value`, `__state__` behind `state`) and carries no marker word.
  */
 export class FieldNode implements FieldNodeRecord<FieldNode> {
   /** Structural parent, null only at the root; engine traversals walk it, and consumers read it as `parentNode`. */
-  parent: Nullable<FieldNode>;
+  __parent__: Nullable<FieldNode>;
   /** Direct children of the last committed shape, keyed by name. */
-  childrenByName: Nullable<Dictionary<FieldNode>>;
+  __childrenByName__: Nullable<Dictionary<FieldNode>>;
   /** Creation-order nonce of an array item; null on nodes that are not array items. */
-  itemKey: Nullable<number>;
+  __itemKey__: Nullable<number>;
   /** Number of positions an array host holds, including positions without a template. */
-  itemCount: number;
+  __itemCount__: number;
   /** Next creation-order nonce this array host hands out. */
-  nextItemKey: number;
+  __nextItemKey__: number;
 
   /** Backing field for `value`, written directly by the engine. */
-  storedValue: unknown;
+  __value__: unknown;
   /** Backing field for `outputValue`, written directly by the engine. */
-  storedOutputValue: unknown;
+  __outputValue__: unknown;
 
   /** Effective schema merged from the active declarations; `jsonSchema` reads its `schema`. */
-  schema: EffectiveSchema;
+  __schema__: EffectiveSchema;
   /** Current output at this path retained by the divergence read memo. */
-  divergenceCurrent: unknown;
+  __divergenceCurrent__: unknown;
   /** Concrete path whose parsed segments this occurrence retains. */
-  divergencePath: string | undefined;
+  __divergencePath__: string | undefined;
   /** Parsed path syntax retained until this occurrence changes address. */
-  divergenceSegments: readonly PointerSegment[] | undefined;
+  __divergenceSegments__: readonly PointerSegment[] | undefined;
   /** Last root load output at this path retained by the divergence read memo. */
-  divergenceBase: unknown;
-  /** Backing field for `isDivergent`: the memoized comparison, reused while `divergenceCurrent` and `divergenceBase` keep their identities. */
-  storedIsDivergent: boolean;
+  __divergenceBase__: unknown;
+  /** Backing field for `isDivergent`: the memoized comparison, reused while `__divergenceCurrent__` and `__divergenceBase__` keep their identities. */
+  __isDivergent__: boolean;
   /** Last default tuple of a virtual group, reused while unchanged; initialized on every kind so all nodes share one layout. */
-  virtualDefaultValue: Optional<readonly unknown[]>;
+  __virtualDefaultValue__: Optional<readonly unknown[]>;
   /** Last watch values read for this node with their commit, reused while unchanged; initialized on every kind so all nodes share one layout. */
-  watchValuesMemo: FieldNodeRecord<FieldNode>['watchValuesMemo'];
+  __watchValues__: FieldNodeRecord<FieldNode>['__watchValues__'];
+  /** Shape an object branch proved at its last full assembly; initialized on every kind so all nodes share one layout. */
+  __objectShape__: FieldNodeRecord<FieldNode>['__objectShape__'];
+  /** Shape an array branch proved at its last assembly; initialized on every kind so all nodes share one layout. */
+  __arrayShape__: FieldNodeRecord<FieldNode>['__arrayShape__'];
+  /** Item entries an array branch declared for its last item count; initialized on every kind so all nodes share one layout. */
+  __childEntries__: FieldNodeRecord<FieldNode>['__childEntries__'];
+  /** Committed declaration key reused while this occurrence's path and kind stay equal. */
+  __declarationKey__: FieldNodeRecord<FieldNode>['__declarationKey__'];
+  /** Gate wheel budget cap reused while this host's gate list is unchanged; initialized on every kind so all nodes share one layout. */
+  __budgetCap__: FieldNodeRecord<FieldNode>['__budgetCap__'];
+  /** Derive rule target identity issued the first time a rule key addresses this occurrence. */
+  __deriveTargetId__: FieldNodeRecord<FieldNode>['__deriveTargetId__'];
+  /** Identity guards of the last watch read, mutated in place; initialized on every kind so all nodes share one layout. */
+  __watchValuesWitness__: FieldNodeRecord<FieldNode>['__watchValuesWitness__'];
+  /** Gate wheel metadata of a branch host; initialized on every kind so all nodes share one layout. */
+  __wheelPlan__: FieldNodeRecord<FieldNode>['__wheelPlan__'];
+  /** Whether a write here may skip source pruning, decided once from the fixed lineage. */
+  __isSourceScopeUnique__: FieldNodeRecord<FieldNode>['__isSourceScopeUnique__'];
+  /** Resolved dependency syntax of this host's authored state and watch expressions. */
+  __stateDependencyPlans__: FieldNodeRecord<FieldNode>['__stateDependencyPlans__'];
+  /** Last committed reads frozen when this reference first left the live shape. */
+  __detachedReads__: FieldNodeRecord<FieldNode>['__detachedReads__'];
 
   /** Backing field for `state`: interaction flags the engine replaces directly, whereas the public `state` setter dispatches a patch. */
-  storedState: FieldNodeRecord<FieldNode>['storedState'];
+  __state__: FieldNodeRecord<FieldNode>['__state__'];
   /** Raised each time this node's interaction state is cleared, so deferred touched callbacks from an earlier lifetime are dropped. */
-  interactionEpoch: number;
+  __interactionEpoch__: number;
 
   /** Per-bit counts copied only after this occurrence first receives delivery. */
-  revisionLedger: Readonly<Record<number, number>>;
+  __revisionLedger__: Readonly<Record<number, number>>;
   /** Whether the first delivery comparison has run; change capture starts only after it. */
-  isDeliveryInitialized: boolean;
+  __isDeliveryInitialized__: boolean;
   /** Event bits whose pre-change baseline this commit has already captured. */
-  deliveryChanges: number;
-  /** `storedValue` before this commit's first value change. */
-  deliveryPreviousValue: unknown;
-  /** `storedOutputValue` before this commit's first value change. */
-  deliveryPreviousOutputValue: unknown;
+  __deliveryChanges__: number;
+  /** `__value__` before this commit's first value change. */
+  __deliveryPreviousValue__: unknown;
+  /** `__outputValue__` before this commit's first value change. */
+  __deliveryPreviousOutputValue__: unknown;
   /** Path before this commit's first rekey. */
-  deliveryPreviousPath: Optional<string>;
+  __deliveryPreviousPath__: Optional<string>;
   /** Child array before this commit's first shape change. */
-  deliveryPreviousChildren: Optional<Nullable<readonly FieldNode[]>>;
+  __deliveryPreviousChildren__: Optional<Nullable<readonly FieldNode[]>>;
   /** Packed isActive, isVisible, isReadOnly and isDisabled before their first change in this commit. */
-  deliveryPreviousComputedBits: Optional<number>;
+  __deliveryPreviousComputedBits__: Optional<number>;
   /** Effective schema before this commit's first schema change. */
-  deliveryPreviousSchema: Optional<EffectiveSchema>;
+  __deliveryPreviousSchema__: Optional<EffectiveSchema>;
   /** Interaction flags before settlement clears or patches them; a direct state dispatch moves this baseline forward. */
-  deliveryPreviousState: Optional<NodeStateFlags>;
+  __deliveryPreviousState__: Optional<NodeStateFlags>;
   /** Watch values from the last comparison; set only on declared watch targets. */
-  deliveryWatchValues: Optional<readonly unknown[]>;
+  __deliveryWatchValues__: Optional<readonly unknown[]>;
   /** Event bits and payloads waiting for the next settlement delivery wave. */
-  pendingDelivery: FieldNodeRecord<FieldNode>['pendingDelivery'];
+  __pendingDelivery__: FieldNodeRecord<FieldNode>['__pendingDelivery__'];
   /** Revision bits to advance once at this commit, whether or not anyone listens. */
-  pendingRevisionMask: number;
+  __pendingRevisionMask__: number;
   /** State and command events waiting for their own delivery wave, apart from settlement. */
-  pendingNonSettleDelivery: FieldNodeRecord<FieldNode>['pendingNonSettleDelivery'];
+  __pendingNonSettleDelivery__: FieldNodeRecord<FieldNode>['__pendingNonSettleDelivery__'];
 
   /** Backing field for `behavior`. */
   private readonly __behavior__: Behavior<FieldNode>;
@@ -196,39 +214,50 @@ export class FieldNode implements FieldNodeRecord<FieldNode> {
     childrenByName: Nullable<Dictionary<FieldNode>>,
     children: Nullable<readonly FieldNode[]>,
     schema: EffectiveSchema,
-    state: FieldNodeRecord<FieldNode>['storedState'],
+    state: FieldNodeRecord<FieldNode>['__state__'],
   ) {
-    this.parent = parent;
-    this.childrenByName = childrenByName;
-    this.itemKey = null;
-    this.itemCount = 0;
-    this.nextItemKey = 0;
-    this.storedValue = undefined;
-    this.storedOutputValue = undefined;
-    this.schema = schema;
-    this.divergenceCurrent = undefined;
-    this.divergencePath = undefined;
-    this.divergenceSegments = undefined;
-    this.divergenceBase = undefined;
-    this.storedIsDivergent = false;
-    this.virtualDefaultValue = undefined;
-    this.watchValuesMemo = undefined;
-    this.storedState = state;
-    this.interactionEpoch = 0;
-    this.revisionLedger = EMPTY_REVISION_LEDGER;
-    this.isDeliveryInitialized = false;
-    this.deliveryChanges = BIT_MASK_NONE;
-    this.deliveryPreviousValue = undefined;
-    this.deliveryPreviousOutputValue = undefined;
-    this.deliveryPreviousPath = undefined;
-    this.deliveryPreviousChildren = undefined;
-    this.deliveryPreviousComputedBits = undefined;
-    this.deliveryPreviousSchema = undefined;
-    this.deliveryPreviousState = undefined;
-    this.deliveryWatchValues = undefined;
-    this.pendingDelivery = undefined;
-    this.pendingRevisionMask = BIT_MASK_NONE;
-    this.pendingNonSettleDelivery = undefined;
+    this.__parent__ = parent;
+    this.__childrenByName__ = childrenByName;
+    this.__itemKey__ = null;
+    this.__itemCount__ = 0;
+    this.__nextItemKey__ = 0;
+    this.__value__ = undefined;
+    this.__outputValue__ = undefined;
+    this.__schema__ = schema;
+    this.__divergenceCurrent__ = undefined;
+    this.__divergencePath__ = undefined;
+    this.__divergenceSegments__ = undefined;
+    this.__divergenceBase__ = undefined;
+    this.__isDivergent__ = false;
+    this.__virtualDefaultValue__ = undefined;
+    this.__watchValues__ = undefined;
+    this.__objectShape__ = undefined;
+    this.__arrayShape__ = undefined;
+    this.__childEntries__ = undefined;
+    this.__declarationKey__ = undefined;
+    this.__budgetCap__ = undefined;
+    this.__deriveTargetId__ = undefined;
+    this.__watchValuesWitness__ = undefined;
+    this.__wheelPlan__ = undefined;
+    this.__isSourceScopeUnique__ = undefined;
+    this.__stateDependencyPlans__ = undefined;
+    this.__detachedReads__ = undefined;
+    this.__state__ = state;
+    this.__interactionEpoch__ = 0;
+    this.__revisionLedger__ = EMPTY_REVISION_LEDGER;
+    this.__isDeliveryInitialized__ = false;
+    this.__deliveryChanges__ = BIT_MASK_NONE;
+    this.__deliveryPreviousValue__ = undefined;
+    this.__deliveryPreviousOutputValue__ = undefined;
+    this.__deliveryPreviousPath__ = undefined;
+    this.__deliveryPreviousChildren__ = undefined;
+    this.__deliveryPreviousComputedBits__ = undefined;
+    this.__deliveryPreviousSchema__ = undefined;
+    this.__deliveryPreviousState__ = undefined;
+    this.__deliveryWatchValues__ = undefined;
+    this.__pendingDelivery__ = undefined;
+    this.__pendingRevisionMask__ = BIT_MASK_NONE;
+    this.__pendingNonSettleDelivery__ = undefined;
     this.__behavior__ = behavior;
     this.__blueprintNode__ = blueprintNode;
     this.__schemaType__ = blueprintNode.schemaType;
@@ -273,7 +302,7 @@ export class FieldNode implements FieldNodeRecord<FieldNode> {
   }
   /** Effective JSON Schema merged from the currently active declarations. */
   get jsonSchema() {
-    return this.schema.schema;
+    return this.__schema__.schema;
   }
   /** Whether the fixed type permits null, through `type: [..., 'null']` or `nullable: true`. */
   get isNullable() {
@@ -282,7 +311,7 @@ export class FieldNode implements FieldNodeRecord<FieldNode> {
 
   /** Whether this node is the root, the only node without a parent. */
   get isRoot() {
-    return this.parent === null;
+    return this.__parent__ === null;
   }
   /** Root of the tree this node was created in, kept after the node detaches. */
   get rootNode() {
@@ -290,7 +319,7 @@ export class FieldNode implements FieldNodeRecord<FieldNode> {
   }
   /** Structural parent, or null at the root. */
   get parentNode() {
-    return this.parent;
+    return this.__parent__;
   }
   /** Number of structural edges from the root. */
   get depth() {
@@ -361,11 +390,11 @@ export class FieldNode implements FieldNodeRecord<FieldNode> {
   }
   /** Current local value before output projection; write it through `setValue` or the array commands. */
   get value() {
-    return this.storedValue;
+    return this.__value__;
   }
   /** Value after the schema options project it, such as `omitTrailingEmpty` trimming; the root's is the form's submitted value. */
   get outputValue() {
-    return this.storedOutputValue;
+    return this.__outputValue__;
   }
   /** Source at this path in the form's load snapshot, unaffected by later caller writes. */
   get defaultValue() {
@@ -469,7 +498,7 @@ export class FieldNode implements FieldNodeRecord<FieldNode> {
 
   /** Local interaction flags, patched through the dispatcher on assignment. */
   get state() {
-    return this.storedState;
+    return this.__state__;
   }
   /** Dispatch a shallow patch of the interaction flags, like `setState`. @param value - Flags to merge. */
   set state(value: NodeStateFlags) {

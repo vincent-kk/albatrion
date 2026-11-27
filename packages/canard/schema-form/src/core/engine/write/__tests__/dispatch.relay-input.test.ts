@@ -35,7 +35,7 @@ describe('binding input relay', () => {
     dispatchRelayInput(input, 'x', OPTION, (value) =>
       dispatchSetValue(root, { input: value, other: 'computed' }),
     );
-    expect(input.storedValue).toBe('x');
+    expect(input.__value__).toBe('x');
     expect(readFieldNodeRevision(input, REFRESH)).toBe(before);
     expect(readFieldNodeRevision(other, REFRESH)).toBe(siblingBefore + 1);
     expect(runtime.inputRelays).toBeUndefined();
@@ -46,7 +46,7 @@ describe('binding input relay', () => {
     dispatchMount(root, 'old');
     const before = readFieldNodeRevision(root, REFRESH);
     dispatchRelayInput(root, 'x', OPTION, () => dispatchSetValue(root, 'X'));
-    expect(root.storedValue).toBe('X');
+    expect(root.__value__).toBe('X');
     expect(readFieldNodeRevision(root, REFRESH)).toBe(before + 1);
   });
 
@@ -61,7 +61,7 @@ describe('binding input relay', () => {
         { node: root, path: '', value: 'y' },
       ]);
     });
-    expect(root.storedValue).toBe('x');
+    expect(root.__value__).toBe('x');
     expect(readFieldNodeRevision(root, REFRESH)).toBe(before + 1);
   });
 
@@ -73,7 +73,7 @@ describe('binding input relay', () => {
     dispatchRelayInput(root, updater, OPTION, relay);
     expect(updater).toHaveBeenCalledExactlyOnceWith('old');
     expect(relay).toHaveBeenCalledExactlyOnceWith('oldx', OPTION);
-    expect(root.storedValue).toBe('oldx');
+    expect(root.__value__).toBe('oldx');
   });
 
   it('evaluates an updater against earlier pending writes inside a user batch', () => {
@@ -87,7 +87,7 @@ describe('binding input relay', () => {
       );
     });
     expect(updater).toHaveBeenCalledExactlyOnceWith('pending');
-    expect(root.storedValue).toBe('pendingx');
+    expect(root.__value__).toBe('pendingx');
   });
 
   it('consumes relay records before a commit listener starts a reentrant write', () => {
@@ -105,7 +105,7 @@ describe('binding input relay', () => {
       dispatchSetValue(root, value),
     );
     expect(first).toBe(false);
-    expect(root.storedValue).toBe('followup');
+    expect(root.__value__).toBe('followup');
     expect(readFieldNodeRevision(root, REFRESH)).toBe(before + 1);
   });
 
@@ -115,7 +115,7 @@ describe('binding input relay', () => {
     const before = readFieldNodeRevision(root, REFRESH);
     dispatchRelayInput(root, 'x', OPTION, () => undefined);
     expect(runtime.inputRelays).toBeUndefined();
-    expect(root.storedValue).toBe('old');
+    expect(root.__value__).toBe('old');
     dispatchSetValue(root, 'x');
     expect(readFieldNodeRevision(root, REFRESH)).toBe(before + 1);
   });
@@ -129,9 +129,9 @@ describe('binding input relay', () => {
         dispatchSetValue(root, value),
       );
       expect(runtime.inputRelays).toHaveLength(1);
-      expect(root.storedValue).toBe('old');
+      expect(root.__value__).toBe('old');
     });
-    expect(root.storedValue).toBe('x');
+    expect(root.__value__).toBe('x');
     expect(readFieldNodeRevision(root, REFRESH)).toBe(before);
     expect(runtime.inputRelays).toBeUndefined();
     dispatchSetValue(root, 'later');
@@ -170,7 +170,7 @@ describe('binding input relay', () => {
         dispatchSetValue(input, value);
       });
     });
-    expect(root.storedValue).toEqual(['inserted', 'x']);
+    expect(root.__value__).toEqual(['inserted', 'x']);
     expect(readFieldNodeRevision(input, REFRESH)).toBe(before + 1);
     expect(runtime.inputRelays).toBeUndefined();
   });
@@ -181,7 +181,7 @@ describe('binding input relay', () => {
     dispatchSetExternalErrors(previous.root, [
       { dataPath: '', message: 'kept' },
     ]);
-    const state = previous.root.storedState;
+    const state = previous.root.__state__;
     const next = createDispatchTree({ type: 'string' });
     expect(() =>
       dispatchRelayInput(previous.root, 'x', OPTION, () => {
@@ -192,11 +192,11 @@ describe('binding input relay', () => {
     ).not.toThrow();
     expect(previous.runtime.inputRelays).toBeUndefined();
     expect(next.runtime.inputRelays).toBeUndefined();
-    expect(previous.root.storedState).toBe(state);
+    expect(previous.root.__state__).toBe(state);
     expect(previous.runtime.nodeErrors?.get(previous.root)).toEqual([
       { dataPath: '', message: 'kept' },
     ]);
-    expect(next.root.storedValue).toBe('x');
+    expect(next.root.__value__).toBe('x');
   });
 
   it.each([
@@ -214,8 +214,8 @@ describe('binding input relay', () => {
       dispatchRelayInput(root, value, OPTION, () =>
         dispatchSetValue(root, copy),
       );
-      expect(root.storedValue).toEqual(value);
-      expect(root.storedValue).not.toBe(value);
+      expect(root.__value__).toEqual(value);
+      expect(root.__value__).not.toBe(value);
       expect(readFieldNodeRevision(root, REFRESH)).toBe(before + 1);
     },
   );

@@ -9,4 +9,4 @@ export const readFieldNodeInteractionEpoch = <
   Self extends FieldNodeRecord<Self>,
 >(
   node: Self,
-): number => node.interactionEpoch;
+): number => node.__interactionEpoch__;

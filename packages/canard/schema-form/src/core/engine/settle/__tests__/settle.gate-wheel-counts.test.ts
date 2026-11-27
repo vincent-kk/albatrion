@@ -36,7 +36,7 @@ describe('gate-form-one-key confirmation wheel counts', () => {
     const evaluating = vi.spyOn(gates, 'evaluateGate');
     try {
       writeFieldNode(
-        root.childrenByName!.sw,
+        root.__childrenByName__!.sw,
         2,
         FieldNodeWriteKind.Input,
         WriteOption.Overwrite,

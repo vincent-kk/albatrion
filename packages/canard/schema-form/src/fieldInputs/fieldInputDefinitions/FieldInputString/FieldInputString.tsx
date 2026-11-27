@@ -4,11 +4,15 @@ import { type ChangeEvent, type ComponentPropsWithRef, useMemo } from 'react';
 import { useHandle } from '@winglet/react-utils/hook';
 
 import type { FieldInputProps } from '@/schema-form/types';
+
+import { readArrayItemTitleId } from '../../utils/readArrayItemTitleId';
 import { readNativeTextValue } from '../../utils/readNativeTextValue';
 
 /** Render the common string input; binding wrappers may supply native draft handlers. */
 export const FieldInputString = ({
   inputId: fieldId,
+  labelId,
+  node,
   name,
   readOnly,
   disabled,
@@ -43,6 +47,7 @@ export const FieldInputString = ({
       onChange={handleChange}
       style={style}
       className={className}
+      aria-labelledby={readArrayItemTitleId(node, labelId)}
       aria-invalid={misfit || undefined}
       {...inputProps}
     />

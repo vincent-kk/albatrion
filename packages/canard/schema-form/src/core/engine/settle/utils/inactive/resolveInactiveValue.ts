@@ -31,10 +31,10 @@ export const resolveInactiveValue = <Self extends FieldNodeRecord<Self>>(
     return;
   let outer = exit;
   for (
-    let ancestor = exit.parent;
-    ancestor?.parent &&
-    ancestor.parent.childrenByName?.[ancestor.name] !== ancestor;
-    ancestor = ancestor.parent
+    let ancestor = exit.__parent__;
+    ancestor?.__parent__ &&
+    ancestor.__parent__.__childrenByName__?.[ancestor.name] !== ancestor;
+    ancestor = ancestor.__parent__
   )
     outer = ancestor;
   if (hasExplicitInactiveValue(node, outer, context)) return;
@@ -46,8 +46,8 @@ export const resolveInactiveValue = <Self extends FieldNodeRecord<Self>>(
   const lineage: Self[] = [];
   for (
     let ancestor: Nullable<Self> = node;
-    ancestor && ancestor !== outer.parent;
-    ancestor = ancestor.parent
+    ancestor && ancestor !== outer.__parent__;
+    ancestor = ancestor.__parent__
   )
     lineage.push(ancestor);
   let clear = readDepartingAncestorPolicy(context, outer);

@@ -70,7 +70,7 @@ it('keeps registration owners and dirtyChildren sweeps constant at N=5 and N=80'
               row.dormant = [...context.dirtyPaths].filter(
                 (path) =>
                   path.startsWith('/payload_') &&
-                  !root.childrenByName?.[path.slice(1)],
+                  !root.__childrenByName__?.[path.slice(1)],
               ).length;
           },
         );
@@ -83,7 +83,7 @@ it('keeps registration owners and dirtyChildren sweeps constant at N=5 and N=80'
         );
         try {
           writeFieldNode(
-            root.childrenByName!.kind,
+            root.__childrenByName__!.kind,
             `kind_${count - 1}`,
             FieldNodeWriteKind.Input,
             WriteOption.Overwrite,

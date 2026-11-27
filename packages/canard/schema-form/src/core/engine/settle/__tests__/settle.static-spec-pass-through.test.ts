@@ -29,8 +29,8 @@ describe('static spec forwarding observations', () => {
       list: [3, 4],
     });
     const children = [...root.children!];
-    const nested = root.childrenByName!.nested.childrenByName!.n;
-    const items = [...root.childrenByName!.list.children!];
+    const nested = root.__childrenByName__!.nested.__childrenByName__!.n;
+    const items = [...root.__childrenByName__!.list.children!];
     const input = {
       before: '5',
       nested: { n: '6' },
@@ -40,7 +40,7 @@ describe('static spec forwarding observations', () => {
     const saved = structuredClone(input);
     dispatchWriteInput(root, input);
     expect(input).toStrictEqual(saved);
-    expect(root.storedOutputValue).toEqual({
+    expect(root.__outputValue__).toEqual({
       before: 5,
       nested: { n: 6 },
       after: 'B',
@@ -49,21 +49,21 @@ describe('static spec forwarding observations', () => {
     expect(
       root.children!.every((child, index) => child === children[index]),
     ).toBe(true);
-    expect(root.childrenByName!.nested.childrenByName!.n).toBe(nested);
+    expect(root.__childrenByName__!.nested.__childrenByName__!.n).toBe(nested);
     expect(
-      root.childrenByName!.list.children!.every(
+      root.__childrenByName__!.list.children!.every(
         (child, index) => child === items[index],
       ),
     ).toBe(true);
-    const output = root.storedOutputValue,
-      revisions = root.revisionLedger;
+    const output = root.__outputValue__,
+      revisions = root.__revisionLedger__;
     const changed = vi.fn();
     root.runtime.onChange = changed;
     const delivered: number[] = [];
     subscribeFieldNode(root, ({ type }) => delivered.push(type));
     dispatchWriteInput(root, structuredClone(input));
-    expect(root.storedOutputValue).toBe(output);
-    expect(root.revisionLedger).toEqual(revisions);
+    expect(root.__outputValue__).toBe(output);
+    expect(root.__revisionLedger__).toEqual(revisions);
     expect(
       delivered.some((type) => type & FieldNodeEventType.UpdateValue),
     ).toBe(false);
@@ -85,19 +85,19 @@ describe('static spec forwarding observations', () => {
       ],
     });
     dispatchMount(root, { flag: true, n: 1, inner: { x: 2 } });
-    const child = root.childrenByName!.n;
+    const child = root.__childrenByName__!.n;
     dispatchWriteInput(root, { flag: true, n: '3', inner: { x: '4' } });
-    expect(root.storedOutputValue).toEqual({
+    expect(root.__outputValue__).toEqual({
       flag: true,
       n: 3,
       inner: { x: 4 },
     });
-    expect(root.childrenByName!.n).toBe(child);
+    expect(root.__childrenByName__!.n).toBe(child);
     dispatchWriteInput(root, { flag: false }, WriteOption.Merge);
     dispatchWriteInput(root, { n: '5', inner: { x: '6' } }, WriteOption.Merge);
-    expect(root.storedOutputValue).toEqual({ flag: false });
+    expect(root.__outputValue__).toEqual({ flag: false });
     dispatchWriteInput(root, { flag: true }, WriteOption.Merge);
-    expect(root.storedOutputValue).toEqual({
+    expect(root.__outputValue__).toEqual({
       flag: true,
       n: 5,
       inner: { x: 6 },
@@ -114,9 +114,9 @@ describe('static spec forwarding observations', () => {
       },
     });
     dispatchMount(root, { n: 1, inner: { x: 2 }, list: [3, 4] });
-    const n = root.childrenByName!.n,
-      inner = root.childrenByName!.inner,
-      list = root.childrenByName!.list;
+    const n = root.__childrenByName__!.n,
+      inner = root.__childrenByName__!.inner,
+      list = root.__childrenByName__!.list;
     const changed = vi.fn();
     root.runtime.onChange = changed;
     dispatchBatch(root, () => {
@@ -124,14 +124,14 @@ describe('static spec forwarding observations', () => {
       dispatchWriteInput(inner, { x: '6' });
       expect(dispatchUpdate(list, 0, '7')).toBe(7);
     });
-    expect(root.storedOutputValue).toEqual({
+    expect(root.__outputValue__).toEqual({
       n: 5,
       inner: { x: 6 },
       list: [7, 4],
     });
-    expect(root.childrenByName!.n).toBe(n);
-    expect(root.childrenByName!.inner).toBe(inner);
-    expect(root.childrenByName!.list).toBe(list);
+    expect(root.__childrenByName__!.n).toBe(n);
+    expect(root.__childrenByName__!.inner).toBe(inner);
+    expect(root.__childrenByName__!.list).toBe(list);
     expect(changed).toHaveBeenCalledTimes(1);
   });
 
@@ -144,13 +144,13 @@ describe('static spec forwarding observations', () => {
       },
     });
     dispatchMount(root, { choice: 'A', leaf: 1 });
-    const choice = root.childrenByName!.choice,
-      leaf = root.childrenByName!.leaf;
+    const choice = root.__childrenByName__!.choice,
+      leaf = root.__childrenByName__!.leaf;
     dispatchWriteInput(root, { choice: 3, leaf: null });
-    expect(root.storedOutputValue).toEqual({ choice: 3, leaf: null });
+    expect(root.__outputValue__).toEqual({ choice: 3, leaf: null });
     dispatchWriteInput(root, { choice: null, leaf: '4' });
-    expect(root.storedOutputValue).toEqual({ choice: null, leaf: 4 });
-    expect(root.childrenByName!.choice).toBe(choice);
-    expect(root.childrenByName!.leaf).toBe(leaf);
+    expect(root.__outputValue__).toEqual({ choice: null, leaf: 4 });
+    expect(root.__childrenByName__!.choice).toBe(choice);
+    expect(root.__childrenByName__!.leaf).toBe(leaf);
   });
 });

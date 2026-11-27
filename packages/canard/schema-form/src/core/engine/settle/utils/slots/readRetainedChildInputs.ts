@@ -24,7 +24,7 @@ export const readRetainedChildInputs = <Self extends FieldNodeRecord<Self>>(
   let children: Map<BlueprintChildEntry, InactiveSlotOverlay> | undefined;
   if (!context.exceededBudget) {
     for (const [entry, source] of retained?.slots ?? []) {
-      const live = node.childrenByName?.[entry.name];
+      const live = node.__childrenByName__?.[entry.name];
       const array = retained?.array;
       if (
         source.namedInput &&
@@ -75,7 +75,7 @@ export const readRetainedChildInputs = <Self extends FieldNodeRecord<Self>>(
   const isArray = node.behavior.type === 'array';
   for (const name of Object.keys(distribution.input ?? {})) {
     if (
-      node.childrenByName?.[name] ||
+      node.__childrenByName__?.[name] ||
       !hasDistributedChildInput(distribution.input, name, isArray)
     )
       continue;

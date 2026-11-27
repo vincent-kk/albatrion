@@ -37,8 +37,8 @@ describe('exit preparation preserves committed policies and document order', () 
       { secret: 'S', plain: 'P' },
       WriteOption.Overwrite,
     );
-    const secret = root.childrenByName!.secret;
-    const plain = root.childrenByName!.plain;
+    const secret = root.__childrenByName__!.secret;
+    const plain = root.__childrenByName__!.plain;
     getControlLayers(secret, emptyReadonlyMap);
     getControlLayers(plain, emptyReadonlyMap);
     readUnsetPolicy(secret, false);
@@ -105,7 +105,7 @@ describe('exit preparation preserves committed policies and document order', () 
       { clear: true, secret: 'S' },
       WriteOption.Overwrite,
     );
-    const secret = root.childrenByName!.secret;
+    const secret = root.__childrenByName__!.secret;
     expect(
       getControlLayers(secret, emptyReadonlyMap, true).map(
         (group) => group.layer,
@@ -113,13 +113,13 @@ describe('exit preparation preserves committed policies and document order', () 
     ).toEqual(['fragment']);
     expect(readUnsetPolicy(secret, false)).toBe(true);
     writeFieldNode(
-      root.childrenByName!.clear,
+      root.__childrenByName__!.clear,
       false,
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
     expect(readUnsetPolicy(secret, true)).toBe(false);
-    const key = getCommittedDeclarationKey(root, root.runtime);
+    const key = getCommittedDeclarationKey(root);
     const committed = (root.runtime.committedDeclarationIds ??=
       new PathKeyedMap<readonly number[]>('pair'));
     const selected = committed.get(key);
@@ -147,10 +147,10 @@ describe('exit preparation preserves committed policies and document order', () 
       { flag: true, branch: { z: 'Z', a: 'A' } },
       WriteOption.Overwrite,
     );
-    const branch = root.childrenByName!.branch;
+    const branch = root.__childrenByName__!.branch;
     const searches = vi.spyOn(Array.prototype, 'findIndex');
     writeFieldNode(
-      root.childrenByName!.flag,
+      root.__childrenByName__!.flag,
       false,
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
@@ -213,11 +213,11 @@ describe('exit preparation preserves committed policies and document order', () 
         { flag: true, clear: true, branch: { value: 'V' } },
         WriteOption.Overwrite,
       );
-      const old = root.childrenByName!.branch;
+      const old = root.__childrenByName__!.branch;
       const clear = kind !== 'node' && kind !== 'keep';
       expect(readUnsetPolicy(old, true)).toBe(clear);
       writeFieldNode(
-        root.childrenByName!.flag,
+        root.__childrenByName__!.flag,
         false,
         FieldNodeWriteKind.Input,
         WriteOption.Overwrite,
@@ -230,16 +230,16 @@ describe('exit preparation preserves committed policies and document order', () 
           'V',
         );
       writeFieldNode(
-        root.childrenByName!.flag,
+        root.__childrenByName__!.flag,
         true,
         FieldNodeWriteKind.Input,
         WriteOption.Overwrite,
       );
       if (!clear)
-        expect(root.childrenByName!.branch.childrenByName!.value.source).toBe(
-          'V',
-        );
-      expect(root.childrenByName!.branch).not.toBe(old);
+        expect(
+          root.__childrenByName__!.branch.__childrenByName__!.value.source,
+        ).toBe('V');
+      expect(root.__childrenByName__!.branch).not.toBe(old);
     },
   );
 });

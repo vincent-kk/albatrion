@@ -13,7 +13,7 @@ export const projectObject: Behavior['project'] = (node, value) => {
       isArray(node.source))
   )
     return node.source;
-  return getStaticChoices(node.schema).omitEmpty
+  return getStaticChoices(node.__schema__).omitEmpty
     ? omitEmptyObject(value)
     : value;
 };

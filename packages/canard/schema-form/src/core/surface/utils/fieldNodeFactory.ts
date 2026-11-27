@@ -20,13 +20,13 @@ import type {
   Validator,
 } from '../../engine';
 import {
-  BEHAVIORS,
   PathKeyedSet,
   collectBlueprintWarnings,
   compileEntryGuards,
   createFormErrorRecord,
   mergeEffectiveSchema,
   readValidationEntry,
+  selectBehavior,
 } from '../../engine';
 import { FieldNode as RuntimeFieldNode } from '../runtime/FieldNode';
 import type {
@@ -109,7 +109,8 @@ const createFieldNode = (
     : $.Root;
   const depth = parent ? parent.depth + 1 : 0;
   const row =
-    instance?.behavior ?? BEHAVIORS[template.kind]?.[template.strategy];
+    instance?.behavior ??
+    selectBehavior(template, parent?.behavior.type === 'array');
   if (!row)
     throw new Error(
       `Missing behavior for ${template.kind}/${template.strategy}`,
@@ -126,7 +127,7 @@ const createFieldNode = (
     depth,
     template.strategy === 'branch' ? {} : null,
     template.strategy === 'branch' ? [] : null,
-    instance?.schema ??
+    instance?.__schema__ ??
       mergeEffectiveSchema(template, NO_ACTIVE_DECLARATION_IDS, {
         mode: 'runtime',
         isAtomic: runtime.blueprint?.isAtomic,
@@ -154,10 +155,7 @@ export function fieldNodeFactory(
   // The spread stays first so V8 clones the seed on its fast path.
   const runtime: FieldNodeRuntime<RuntimeFieldNode> = {
     ...runtimeSeed,
-    hostBudgetCaps: runtimeSeed.hostBudgetCaps,
     committedDeclarationIds: runtimeSeed.committedDeclarationIds,
-    committedDeclarationKeys: runtimeSeed.committedDeclarationKeys,
-    deriveTargetIds: runtimeSeed.deriveTargetIds,
     committedRuleValues: runtimeSeed.committedRuleValues,
     committedRuleKeysBySource: runtimeSeed.committedRuleKeysBySource,
     committedRuleKeysByTarget: runtimeSeed.committedRuleKeysByTarget,

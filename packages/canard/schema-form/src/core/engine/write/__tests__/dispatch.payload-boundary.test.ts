@@ -133,21 +133,21 @@ describe('payload boundary differential characterization', () => {
     const valueRevision = readFieldNodeRevision(root, E.UpdateValue);
     const stateRevision = readFieldNodeRevision(root, E.UpdateState);
     const pathRevision = readFieldNodeRevision(root, E.UpdatePath);
-    const ledger = root.revisionLedger;
+    const ledger = root.__revisionLedger__;
     dispatchSetValue(root, 'B');
     expect(readFieldNodeRevision(root, E.UpdateValue)).toBe(valueRevision + 1);
     expect(readFieldNodeRevision(root, E.UpdateState)).toBe(stateRevision);
     expect(readFieldNodeRevision(root, E.UpdatePath)).toBe(pathRevision);
     for (let bit = 1; bit <= E.UpdateDiagnostics; bit <<= 1)
-      expect(root.revisionLedger[bit] ?? 0, E[bit]).toBe(
+      expect(root.__revisionLedger__[bit] ?? 0, E[bit]).toBe(
         (ledger[bit] ?? 0) +
           (bit === E.UpdateValue || bit === E.RequestRefresh ? 1 : 0),
       );
-    const subscribedLedger = root.revisionLedger;
+    const subscribedLedger = root.__revisionLedger__;
     subscribeFieldNode(root, () => {});
     dispatchSetValue(root, 'C');
     for (let bit = 1; bit <= E.UpdateDiagnostics; bit <<= 1)
-      expect(root.revisionLedger[bit] ?? 0, E[bit]).toBe(
+      expect(root.__revisionLedger__[bit] ?? 0, E[bit]).toBe(
         (subscribedLedger[bit] ?? 0) +
           (bit === E.UpdateValue || bit === E.RequestRefresh ? 1 : 0),
       );
@@ -174,8 +174,8 @@ describe('payload boundary differential characterization', () => {
       properties: { a: { type: 'string' } },
     });
     dispatchSetValue(root, { a: 'A' });
-    const before = root.storedValue,
-      beforeOutputValue = root.storedOutputValue;
+    const before = root.__value__,
+      beforeOutputValue = root.__outputValue__;
     const events: FieldNodeDelivery[] = [];
     subscribeFieldNode(root, (event) => events.push(event));
     subscribeFieldNode(root, (event) => events.push(event));
@@ -184,20 +184,20 @@ describe('payload boundary differential characterization', () => {
     const payload = value(events[0]);
     expect(payload).toEqual({
       previous: { value: before, outputValue: beforeOutputValue },
-      current: { value: root.storedValue, outputValue: root.storedOutputValue },
+      current: { value: root.__value__, outputValue: root.__outputValue__ },
     });
     expect((payload as { previous: { value: unknown } }).previous.value).toBe(
       before,
     );
     expect((payload as { current: { value: unknown } }).current.value).toBe(
-      root.storedValue,
+      root.__value__,
     );
     expect(
       (payload as { previous: { outputValue: unknown } }).previous.outputValue,
     ).toBe(beforeOutputValue);
     expect(
       (payload as { current: { outputValue: unknown } }).current.outputValue,
-    ).toBe(root.storedOutputValue);
+    ).toBe(root.__outputValue__);
     expect(Object.isFrozen(payload)).toBe(true);
     expect(Object.isFrozen((payload as { current: object }).current)).toBe(
       false,
@@ -237,12 +237,12 @@ describe('payload boundary differential characterization', () => {
     ).root;
     dispatchSetValue(conditional, { enabled: false, value: 'a' });
     const child = getDispatchChild(conditional, 'value');
-    const previous = child.schema.schema;
+    const previous = child.__schema__.schema;
     const events: FieldNodeDelivery[] = [];
     subscribeFieldNode(child, (event) => events.push(event));
     dispatchSetValue(getDispatchChild(conditional, 'enabled'), true);
     const payload = events[0].payload?.[E.UpdateJsonSchema];
-    expect(payload).toEqual({ previous, current: child.schema.schema });
+    expect(payload).toEqual({ previous, current: child.__schema__.schema });
     expect(Object.isFrozen(payload)).toBe(true);
   });
 

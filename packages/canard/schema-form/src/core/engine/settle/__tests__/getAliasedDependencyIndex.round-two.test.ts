@@ -40,10 +40,10 @@ it('round-2 schema-form 2: rolled-back array admission retains the original occu
   if (!root) throw new Error('Expected active root record');
   const listSurface = rootSurface.find('/list');
   if (!isArrayNode(listSurface)) throw new Error('Expected array');
-  const list = root.childrenByName?.list;
+  const list = root.__childrenByName__?.list;
   if (!list) throw new Error('Expected array record');
   const previousItems = [...(list.children ?? [])];
-  const previousItemCount = list.itemCount ?? 0;
+  const previousItemCount = list.__itemCount__ ?? 0;
   const scratch = getSettlementScratch(root.runtime);
   const context = createSettlementContext(
     root,

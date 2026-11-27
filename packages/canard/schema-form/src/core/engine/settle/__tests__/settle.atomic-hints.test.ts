@@ -60,12 +60,12 @@ describe('runtime hint atomicity', () => {
       WriteOption.Overwrite,
     );
     writeFieldNode(
-      root.childrenByName!.enabled,
+      root.__childrenByName__!.enabled,
       true,
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
-    const effective = root.childrenByName!.field.schema.schema;
+    const effective = root.__childrenByName__!.field.__schema__.schema;
     if (typeof effective === 'boolean')
       throw new Error('Expected object schema');
     for (const hints of [
@@ -85,7 +85,7 @@ describe('runtime hint atomicity', () => {
       { enabled: true, field: 'value' },
       WriteOption.Overwrite,
     );
-    const effective = root.childrenByName!.field.schema.schema;
+    const effective = root.__childrenByName__!.field.__schema__.schema;
     if (typeof effective === 'boolean')
       throw new Error('Expected object schema');
     for (const hints of [

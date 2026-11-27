@@ -24,7 +24,7 @@ const createArraySlotTree = () => {
   const secondHeld = root.find('/1/held')!;
   root.find('/0/enabled')!.setValue(false);
   root.find('/1/enabled')!.setValue(false);
-  expect(Reflect.get(second, 'inactiveSlots')).toBeInstanceOf(Map);
+  expect(Reflect.get(second, '__inactiveSlots__')).toBeInstanceOf(Map);
   return { root, first, second, secondHeld };
 };
 

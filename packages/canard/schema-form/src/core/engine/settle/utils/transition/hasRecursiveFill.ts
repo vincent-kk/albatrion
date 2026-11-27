@@ -14,12 +14,12 @@ export const hasRecursiveFill = <Self extends FieldNodeRecord<Self>>(
   hosts: ReadonlySet<Self>,
   context: SettlementContext<Self>,
 ): boolean =>
-  node.parent !== null &&
+  node.__parent__ !== null &&
   hasRecursiveExpansion(
-    node.parent,
+    node.__parent__,
     node.blueprintNode,
     undefined,
     context,
-    node.schema,
+    node.__schema__,
     hosts,
   );

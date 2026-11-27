@@ -10,6 +10,7 @@
 
 - 입력 선택의 전체 우선순위와 수명은 [FieldInputBridge 계약](../components/FieldProxy/components/FieldInputBridge/DETAIL.md)에 둡니다. 이곳은 기본 정의 사이의 우선순위와 표현 정책을 소유합니다.
 - 공개 Hint·props·presentation 형은 [types 계약](../types/DETAIL.md), 시험 객체의 실행 의미는 [fieldInputDefinition 계약](../helpers/fieldInputDefinition/DETAIL.md)을 따릅니다. 같은 형과 시험 규칙을 입력마다 다시 정의하지 않습니다.
+- 단일 컨트롤(글·수·불리언·enum select·날짜와 이를 쓰는 union)은 배열 항목일 때만 labelId를 `aria-labelledby`로 참조합니다. 기본 렌더러와 UI 플러그인 렌더러는 배열 항목에 `for`로 연결된 label 대신 labelId의 숨긴 제목만 그리므로, 이 참조가 없으면 컨트롤에 이름이 없습니다. 배열이 아닌 부모 아래와 루트에서는 참조하지 않습니다. 그곳의 이름은 `for` 라벨이 주며, 제목을 그리지 않는 렌더러(MUI 플러그인 렌더러 등) 아래에서 참조가 존재하지 않는 요소를 가리키지 않게 합니다. 선택지 묶음(radio·checkbox)은 루트에서도 labelId를 참조하여 소비자가 빈 경로의 `Form.Label`로 그린 제목이 이름을 주게 합니다.
 
 ## Acceptance Criteria
 

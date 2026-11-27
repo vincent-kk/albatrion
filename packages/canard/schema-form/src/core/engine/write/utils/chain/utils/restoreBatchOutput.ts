@@ -6,7 +6,7 @@ const restore = <Self extends FieldNodeRecord<Self>>(
   node: Self,
   value: unknown,
 ): void => {
-  node.storedOutputValue = value;
+  node.__outputValue__ = value;
   if (value === null || typeof value !== 'object') return;
   for (const child of node.children ?? [])
     if (Object.prototype.hasOwnProperty.call(value, child.name))
@@ -23,5 +23,5 @@ export const restoreBatchOutput = <Self extends FieldNodeRecord<Self>>(
   root: Self,
   initial: unknown,
 ): void => {
-  if (sameValue(root.storedOutputValue, initial)) restore(root, initial);
+  if (sameValue(root.__outputValue__, initial)) restore(root, initial);
 };

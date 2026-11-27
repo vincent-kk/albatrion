@@ -15,11 +15,11 @@ export const recordArrayBoundary = <Self extends FieldNodeRecord<Self>>(
   if (!source) return;
   source.array ??= {
     previousItems: [...(host.children ?? [])],
-    previousItemCount: host.itemCount,
+    previousItemCount: host.__itemCount__,
     retiredFrom: Infinity,
   };
   if (context.isCollectingFillArrayCounts) {
     const counts: Map<Self, number> = (context.fillArrayCounts ??= new Map());
-    if (!counts.has(host)) counts.set(host, host.itemCount);
+    if (!counts.has(host)) counts.set(host, host.__itemCount__);
   }
 };

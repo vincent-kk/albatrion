@@ -29,18 +29,18 @@ export const findNodes = <Self extends FieldNodeRecord<Self>>(
     for (const cursor of cursors) {
       if (token === PointerOperator.Current) next.push(cursor);
       else if (token === PointerOperator.Parent) {
-        const parent = cursor.parent;
+        const parent = cursor.__parent__;
         if (parent !== null && (!cursor.isDetached || parent.isDetached))
           next.push(parent);
-      } else if (cursor.childrenByName !== null) {
+      } else if (cursor.__childrenByName__ !== null) {
         if (token === PointerOperator.Wildcard) {
-          for (const child of Object.values(cursor.childrenByName))
+          for (const child of Object.values(cursor.__childrenByName__))
             next.push(child);
         } else if (
           typeof token === 'string' &&
-          hasOwnProperty(cursor.childrenByName, token)
+          hasOwnProperty(cursor.__childrenByName__, token)
         ) {
-          const child = cursor.childrenByName[token];
+          const child = cursor.__childrenByName__[token];
           if (child !== undefined) next.push(child);
         }
       }

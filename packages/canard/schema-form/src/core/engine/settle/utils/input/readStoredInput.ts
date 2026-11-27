@@ -1,3 +1,4 @@
+import { EMPTY_ARRAY } from '@winglet/common-utils/constant';
 import { isArray } from '@winglet/common-utils/filter';
 
 import {
@@ -5,6 +6,7 @@ import {
   assembleArrayValue,
   assembleObjectValue,
   getStaticChoices,
+  isItemLeafBehavior,
 } from '../../../behaviors';
 import { mergeEffectiveSchema } from '../../../blueprint';
 import type { BlueprintNode } from '../../../blueprint';
@@ -20,6 +22,9 @@ import { visitInputChildren } from './visitInputChildren';
 
 /**
  * Evaluate a marked storage input with the currently selected child bindings.
+ * A live item leaf target's own read goes through its row's assembly, so it reads a stored null
+ * as undefined as its node does; child emissions keep the null the array emits there. Every
+ * other terminal row assembles its source unchanged, so its read allocates no record.
  * @param template - Binding that provides the static input type
  * @param input - Composed caller source, including any hidden wrong-kind host source
  * @param live - Current occurrence, if it exists
@@ -42,11 +47,14 @@ export const readStoredInput = <Self extends FieldNodeRecord<Self>>(
     staticSpec(template.schemaType, template.isNullable),
   );
   const schema =
-    live?.schema ?? mergeEffectiveSchema(template, [], { mode: 'runtime' });
+    live?.__schema__ ?? mergeEffectiveSchema(template, [], { mode: 'runtime' });
   let source = value;
   let stored = value;
 
-  if (
+  if (live && !output && isItemLeafBehavior(live.behavior)) {
+    const record: Self = Object.create(live, { source: { value } });
+    stored = live.behavior.assemble(record, EMPTY_ARRAY);
+  } else if (
     template.strategy === 'branch' &&
     template.kind === 'object' &&
     value !== null
@@ -86,7 +94,7 @@ export const readStoredInput = <Self extends FieldNodeRecord<Self>>(
       source === null
         ? null
         : assembleObjectValue(
-            live?.storedValue,
+            live?.__value__,
             entries,
             getStaticChoices(schema).propertyOrder,
             getHostDerived<
@@ -112,25 +120,19 @@ export const readStoredInput = <Self extends FieldNodeRecord<Self>>(
           const node = entry.node;
           slots[index] = {
             blueprintNode: node,
-            storedOutputValue: readStoredInput(
-              node,
-              raw,
-              child,
-              true,
-              ancestors,
-            ),
+            __outputValue__: readStoredInput(node, raw, child, true, ancestors),
           };
         },
         undefined,
         'stored',
       );
     }
-    const previous = live?.storedValue;
+    const previous = live?.__value__;
     stored = assembleArrayValue(
       {
         blueprintNode: template,
-        childrenByName: slots,
-        itemCount: items?.length ?? 0,
+        __childrenByName__: slots,
+        __itemCount__: items?.length ?? 0,
         extras:
           items &&
           arrayExtras({ blueprintNode: template, extras: live?.extras }, items),
@@ -139,5 +141,5 @@ export const readStoredInput = <Self extends FieldNodeRecord<Self>>(
       isArray(previous) ? previous : undefined,
     );
   }
-  return output ? row.project({ schema, source }, stored) : stored;
+  return output ? row.project({ __schema__: schema, source }, stored) : stored;
 };

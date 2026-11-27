@@ -10,9 +10,9 @@ import { getSlotSource } from './getSlotSource';
 import { markRestoredSlotSource } from './markRestoredSlotSource';
 import { readSlotSourceTree } from './readSlotSourceTree';
 
-/** Annotates the lazily created `inactiveSlots`; an argument-less `new Map()` would be `Map<any, any>`. */
+/** Annotates the lazily created `__inactiveSlots__`; an argument-less `new Map()` would be `Map<any, any>`. */
 type InactiveSlots<Self> = Map<BlueprintChildEntry, Self>;
-/** Annotates the lazily created `inactiveSlotOverlays`; an argument-less `new Map()` would be `Map<any, any>`. */
+/** Annotates the lazily created `__inactiveSlotOverlays__`; an argument-less `new Map()` would be `Map<any, any>`. */
 type InactiveSlotOverlays = Map<BlueprintChildEntry, InactiveSlotOverlay>;
 
 /**
@@ -36,14 +36,14 @@ export const restoreTransferredSlotSource = <
   for (const entry of getSlotEntries(instance, overlay, template)) {
     const prior = getSlotSource(instance, entry, overlay);
     if (prior.instance) {
-      const slots: InactiveSlots<Self> = (node.inactiveSlots ??= new Map());
+      const slots: InactiveSlots<Self> = (node.__inactiveSlots__ ??= new Map());
       slots.set(
         entry,
         cloneSlotSubtree(node, entry, prior.instance, context, false),
       );
     }
     if (prior.overlay) {
-      const overlays: InactiveSlotOverlays = (node.inactiveSlotOverlays ??=
+      const overlays: InactiveSlotOverlays = (node.__inactiveSlotOverlays__ ??=
         new Map());
       overlays.set(entry, prior.overlay);
     }

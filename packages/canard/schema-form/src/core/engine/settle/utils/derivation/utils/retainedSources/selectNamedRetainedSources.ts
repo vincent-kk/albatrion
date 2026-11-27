@@ -15,7 +15,7 @@ export const selectNamedRetainedSources = <Self extends FieldNodeRecord<Self>>(
   recordSourceDecision(node, input, context, 'declarative', order, true);
   for (const child of node.children ?? [])
     if (
-      child.parent === node &&
+      child.__parent__ === node &&
       child.behavior.type !== 'virtual' &&
       hasDistributedChildInput(
         input,

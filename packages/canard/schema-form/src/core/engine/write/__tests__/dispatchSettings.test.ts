@@ -39,7 +39,7 @@ it('keeps settings deferred after a nested onChange write returns', () => {
   };
   dispatchSetValue(root, ' outer ');
   expect(settingInside).not.toBe(true);
-  expect(root.storedOutputValue).toBe('nested');
+  expect(root.__outputValue__).toBe('nested');
   expect(runtime.disableAutomaticWrites).toBe(true);
 });
 
@@ -83,12 +83,12 @@ it('defers write defaults through reentrant writes until the outer batch ends', 
     dispatchFinishInput(root);
   });
   expect(runtime.disableAutomaticWrites).toBe(true);
-  expect(root.storedOutputValue).toBe('a');
+  expect(root.__outputValue__).toBe('a');
   dispatchSetValue(root, ' b ');
   dispatchFinishInput(root);
-  expect(root.storedOutputValue).toBe(' b ');
+  expect(root.__outputValue__).toBe(' b ');
   dispatchFinishInput(root, WriteOption.EnableAutomaticWrites);
-  expect(root.storedOutputValue).toBe('b');
+  expect(root.__outputValue__).toBe('b');
 });
 
 it('late explicit failure cannot mark the new mode unavailable or report', async () => {

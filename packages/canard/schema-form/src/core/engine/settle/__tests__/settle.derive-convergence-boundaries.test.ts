@@ -26,12 +26,12 @@ it('includes expression reads and watches of a disabled fragment', () => {
     { enabled: false, source: 1 },
     [{ path: '/source', value: 2 }],
   );
-  expect(result.root.storedOutputValue).toEqual({
+  expect(result.root.__outputValue__).toEqual({
     enabled: false,
     source: 2,
     target: 2,
   });
-  expect(result.root.childrenByName?.dormant).toBeUndefined();
+  expect(result.root.__childrenByName__?.dormant).toBeUndefined();
   expect(result.proof?.has('/target')).toBe(false);
 });
 
@@ -61,7 +61,7 @@ it('rejects ancestor targets intersecting a descendant gate read', () => {
     { source: 0, group: { flag: 0 } },
     [{ path: '/source', value: 2 }],
   );
-  expect(result.root.storedOutputValue).toEqual({
+  expect(result.root.__outputValue__).toEqual({
     source: 2,
     group: { flag: 2, fresh: 8 },
   });
@@ -87,7 +87,7 @@ it('binds parent-scoped rules and target watches without treating a path prefix 
     { source: 1 },
     [{ path: '/source', value: 3 }],
   );
-  expect(result.root.storedOutputValue).toEqual({
+  expect(result.root.__outputValue__).toEqual({
     source: 3,
     target: 4,
     targetLong: 3,
@@ -119,7 +119,7 @@ it('does not skip a virtual write whose actual targets are sibling paths', () =>
     { source: 1 },
     [{ path: '/source', value: 3 }],
   );
-  expect(result.root.childrenByName!.a.source).toBe(3);
-  expect(result.root.childrenByName!.sink.source).toBe(4);
+  expect(result.root.__childrenByName__!.a.source).toBe(3);
+  expect(result.root.__childrenByName__!.sink.source).toBe(4);
   expect(result.proof).toBeUndefined();
 });

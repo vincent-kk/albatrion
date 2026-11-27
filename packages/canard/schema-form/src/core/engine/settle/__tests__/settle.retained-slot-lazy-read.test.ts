@@ -33,7 +33,7 @@ it('never publishes a detached-reference overlay', () => {
   dispatchMount(root, { open: true, value: 'held' });
   const old = getDispatchNode(root, 'value');
   dispatchSetValue(getDispatchNode(root, 'open'), false);
-  expect(root.inactiveSlots).toBeInstanceOf(Map);
+  expect(root.__inactiveSlots__).toBeInstanceOf(Map);
   const published = reads.readFieldNodeInactiveValues(root);
   const commit = runtime.commitNumber;
   dispatchSetValue(old, 'overlay');

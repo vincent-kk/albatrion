@@ -36,9 +36,9 @@ it.each(['insert', 'remove'] as const)(
             { previous: '/2', current: undefined },
           ],
     );
-    expect(root.storedValue).toEqual(
+    expect(root.__value__).toEqual(
       operation === 'insert' ? ['new', 'first', '37'] : ['37', 'last'],
     );
-    expect(root.storedOutputValue).toEqual(root.storedValue);
+    expect(root.__outputValue__).toEqual(root.__value__);
   },
 );

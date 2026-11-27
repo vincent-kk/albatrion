@@ -59,7 +59,7 @@ it.each([
     expect(readRetainedSlotSource(root, path, 'number')).toBe(value);
     expect(hasRetainedSlotOwnSource(root, path, 'string')).toBe(false);
     dispatchSetValue(getDispatchNode(root, 'kind'), 'number');
-    expect(root.storedOutputValue).toEqual({
+    expect(root.__outputValue__).toEqual({
       open: true,
       kind: 'number',
       list,

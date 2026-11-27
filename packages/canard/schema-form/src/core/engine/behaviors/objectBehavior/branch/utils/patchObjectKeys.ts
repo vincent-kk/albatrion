@@ -24,17 +24,17 @@ export const patchObjectKeys = (
       typeof child !== 'object' ||
       !('name' in child) ||
       typeof child.name !== 'string' ||
-      !('storedOutputValue' in child)
+      !('__outputValue__' in child)
     )
       return;
     const oldHasKey = hasOwnProperty(previous, child.name);
-    if ((child.storedOutputValue === undefined) === oldHasKey) return;
+    if ((child.__outputValue__ === undefined) === oldHasKey) return;
     if (
       oldHasKey &&
-      !Object.is(child.storedOutputValue, Reflect.get(previous, child.name))
+      !Object.is(child.__outputValue__, Reflect.get(previous, child.name))
     ) {
       if (!patch) patch = copyObjectValue(previous, keyCount);
-      writeObjectKey(patch, child.name, child.storedOutputValue);
+      writeObjectKey(patch, child.name, child.__outputValue__);
     }
   }
   return patch ?? previous;

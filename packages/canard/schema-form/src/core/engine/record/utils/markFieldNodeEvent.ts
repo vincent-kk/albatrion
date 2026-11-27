@@ -16,18 +16,18 @@ export const markFieldNodeEvent = <Self extends FieldNodeRecord<Self>>(
   options?: unknown,
 ): void => {
   const deliveries = (node.runtime.deliveries ??= new Set());
-  const previous = node.pendingDelivery;
+  const previous = node.__pendingDelivery__;
   if (previous) {
     previous.type |= bit;
     if (payload !== undefined) (previous.payload ??= {})[bit] = payload;
     if (options !== undefined) (previous.options ??= {})[bit] = options;
   } else
-    node.pendingDelivery = {
+    node.__pendingDelivery__ = {
       type: bit,
       payload: payload === undefined ? undefined : { [bit]: payload },
       options: options === undefined ? undefined : { [bit]: options },
     };
   deliveries.add(node);
-  node.pendingRevisionMask |= bit;
+  node.__pendingRevisionMask__ |= bit;
   (node.runtime.revisionNodes ??= new Set()).add(node);
 };

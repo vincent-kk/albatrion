@@ -22,6 +22,10 @@ import { useFieldLifecycle } from '../hooks/useFieldLifecycle';
 const noop = () => {};
 /** Registry shared by this file's isolated layout-effect fixtures. */
 const inputPositions = new Map();
+/** Child proxy count of positions that render no child fields. */
+const mountedChildren = { current: 0 };
+/** Child-ownership record of positions that render no child fields. */
+const childValueRevision = {};
 /** A real input position exercising the hook without Form render scheduling. */
 const Position = ({
   node,
@@ -44,6 +48,8 @@ const Position = ({
     null,
     input ? registry : null,
     noop,
+    mountedChildren,
+    childValueRevision,
     inputPositions,
   );
   return input ? (
@@ -275,6 +281,8 @@ it('calls the composition cleanup and restores command subscriptions on effect r
       null,
       registry,
       noop,
+      mountedChildren,
+      childValueRevision,
       inputPositions,
     );
     return (

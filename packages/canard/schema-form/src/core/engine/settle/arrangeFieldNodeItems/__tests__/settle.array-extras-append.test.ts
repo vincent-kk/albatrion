@@ -46,7 +46,7 @@ describe('extras-only static array appends', () => {
     expect(prefix.mock.calls.length).toBeLessThanOrEqual(0);
     expect(entry.mock.calls.length).toBeLessThanOrEqual(4);
     expect(entries.mock.calls.length).toBeLessThanOrEqual(4);
-    expect(root.itemCount).toBe(count + 1);
+    expect(root.__itemCount__).toBe(count + 1);
     expect(root.children).toEqual([]);
   });
 
@@ -60,14 +60,14 @@ describe('extras-only static array appends', () => {
       const { candidate } = compareArrayAppend({ type: 'array' }, input, [
         { apply: (root) => dispatchPush(root, payload), append: true },
         {
-          apply: (root) => dispatchInsert(root, root.itemCount, undefined),
+          apply: (root) => dispatchInsert(root, root.__itemCount__, undefined),
           append: true,
         },
         { apply: (root) => dispatchPush(root, 9), append: true },
       ]);
       expect(input).toStrictEqual(before);
       expect(payload).toEqual({ untouched: [3, 4] });
-      expect(candidate.storedValue).toEqual([...input, payload, undefined, 9]);
+      expect(candidate.__value__).toEqual([...input, payload, undefined, 9]);
     },
   );
 
@@ -77,15 +77,15 @@ describe('extras-only static array appends', () => {
       { list: [1, 2] },
       [
         {
-          apply: (root) => dispatchPush(root.childrenByName!.list, 3),
+          apply: (root) => dispatchPush(root.__childrenByName__!.list, 3),
           append: true,
         },
         {
-          apply: (root) => dispatchInsert(root.childrenByName!.list, 3, 4),
+          apply: (root) => dispatchInsert(root.__childrenByName__!.list, 3, 4),
           append: true,
         },
       ],
-      (root) => root.childrenByName!.list,
+      (root) => root.__childrenByName__!.list,
     );
   });
 
@@ -94,17 +94,17 @@ describe('extras-only static array appends', () => {
     dispatchMount(root, [1, 2]);
     const children = root.children;
     const extras = root.extras;
-    const value = root.storedValue;
+    const value = root.__value__;
     const snapshot = root.runtime.loadSnapshot;
     const revision =
-      root.revisionLedger[FieldNodeEventType.UpdateChildren] ?? 0;
+      root.__revisionLedger__[FieldNodeEventType.UpdateChildren] ?? 0;
     const delivered: number[] = [];
     subscribeFieldNode(root, ({ type }) => delivered.push(type));
     dispatchPush(root, 3);
     expect(root.children).not.toBe(children);
     expect(root.children).toEqual([]);
     expect(root.extras).not.toBe(extras);
-    expect(root.storedValue).not.toBe(value);
+    expect(root.__value__).not.toBe(value);
     expect(root.runtime.loadSnapshot).not.toBe(snapshot);
     expect(children).toEqual([]);
     expect(extras).toEqual([1, 2]);
@@ -114,7 +114,7 @@ describe('extras-only static array appends', () => {
       delivered.some((type) => type & FieldNodeEventType.UpdateChildren),
     ).toBe(true);
     expect(
-      root.revisionLedger[FieldNodeEventType.UpdateChildren],
+      root.__revisionLedger__[FieldNodeEventType.UpdateChildren],
     ).toBeGreaterThan(revision);
   });
 
@@ -181,11 +181,11 @@ describe('extras-only static array appends', () => {
       { flag: true, list: [1] },
       [
         {
-          apply: (root) => dispatchPush(root.childrenByName!.list, 2),
+          apply: (root) => dispatchPush(root.__childrenByName__!.list, 2),
           append: false,
         },
       ],
-      (root) => root.childrenByName!.list,
+      (root) => root.__childrenByName__!.list,
     );
     compareArrayAppend(
       { type: 'array' },

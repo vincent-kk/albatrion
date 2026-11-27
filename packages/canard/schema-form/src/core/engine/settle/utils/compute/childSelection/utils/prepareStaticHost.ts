@@ -43,7 +43,7 @@ export interface PreparedStaticHost<Self> {
 /**
  * Validate a fixed static baseline once per eligible live object-host lifetime.
  * @param node - Host with a unique static partition and immutable templates
- * @param prior - Previously published `childrenByName` used only as occurrence witnesses
+ * @param prior - Previously published `__childrenByName__` used only as occurrence witnesses
  * @param context - Load, distribution and path changes invalidate the witnesses
  * @param hasRelocated - Relocated gates force the original selection path
  * @returns Prepared baseline, or undefined when the original path is required
@@ -108,11 +108,11 @@ export const prepareStaticHost = <Self extends FieldNodeRecord<Self>>(
     const child = prior[entry.name];
     if (
       !child ||
-      child.parent !== node ||
+      child.__parent__ !== node ||
       child.name !== entry.name ||
       child.path !== appendSegment(node.path, entry.name) ||
       child.blueprintNode !== entry.node ||
-      child.schema !== schema ||
+      child.__schema__ !== schema ||
       !child.isActive ||
       child.isDetached ||
       (prepared && prepared.baseline[entry.name] !== child)
@@ -140,7 +140,7 @@ export const prepareStaticHost = <Self extends FieldNodeRecord<Self>>(
     ),
     selectedChildrenByName: prior,
     selectedChildren:
-      node.childrenByName === prior
+      node.__childrenByName__ === prior
         ? (node.children ?? [])
         : Object.values(prior),
     dynamicNames: filterArray(Object.keys(prior), (name) => !entries.has(name)),

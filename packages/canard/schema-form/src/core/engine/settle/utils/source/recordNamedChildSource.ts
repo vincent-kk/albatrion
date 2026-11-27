@@ -67,7 +67,7 @@ export const recordNamedChildSource = <Self extends FieldNodeRecord<Self>>(
           : overlay;
     },
     (key) =>
-      !host.childrenByName?.[key] ||
+      !host.__childrenByName__?.[key] ||
       (previousCount !== undefined && Number(key) >= previousCount),
   );
 };

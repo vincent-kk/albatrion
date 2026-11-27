@@ -13,7 +13,7 @@ import type { FieldNodeRecord } from '../../../record';
 export const effectiveType = <Self extends FieldNodeRecord<Self>>(
   node: Self,
 ): Optional<BlueprintSchemaType> => {
-  const schema = node.schema.schema;
+  const schema = node.__schema__.schema;
   const candidate =
     typeof schema === 'object' && schema !== null ? schema.type : undefined;
   if (typeof candidate === 'string' && isTypeName(candidate)) return candidate;

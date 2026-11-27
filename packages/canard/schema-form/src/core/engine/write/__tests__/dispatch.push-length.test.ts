@@ -18,7 +18,7 @@ describe('push returns the array length after the call', () => {
     const calls: { returned: unknown; length: number }[] = [];
     subscribeFieldNode(root, () => {
       if (calls.length >= 30) return;
-      const before = root.itemCount;
+      const before = root.__itemCount__;
       calls.push({ returned: dispatchPush(root, 0), length: before });
     });
     expect(() => dispatchPush(root, 0)).toThrow();

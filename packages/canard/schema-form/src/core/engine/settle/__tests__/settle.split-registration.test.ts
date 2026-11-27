@@ -42,7 +42,7 @@ describe('split registration preserves the settlement contract', () => {
       },
     );
     writeFieldNode(
-      root.childrenByName!.kind,
+      root.__childrenByName__!.kind,
       'kind_79',
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
@@ -124,7 +124,7 @@ describe('split registration preserves the settlement contract', () => {
       (context) => {
         register(context);
         stages.push({
-          living: !!root.childrenByName?.pb,
+          living: !!root.__childrenByName__?.pb,
           pending: [...context.pendingExits.values()].some(
             (node) => node.path === '/pb',
           ),
@@ -133,7 +133,7 @@ describe('split registration preserves the settlement contract', () => {
       },
     );
     writeFieldNode(
-      root.childrenByName!.kind,
+      root.__childrenByName__!.kind,
       'b',
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
@@ -148,6 +148,6 @@ describe('split registration preserves the settlement contract', () => {
       pending: true,
       dirty: true,
     });
-    expect(root.storedValue).toEqual({ kind: 'b', hop: 'back', pb: 'B' });
+    expect(root.__value__).toEqual({ kind: 'b', hop: 'back', pb: 'B' });
   });
 });

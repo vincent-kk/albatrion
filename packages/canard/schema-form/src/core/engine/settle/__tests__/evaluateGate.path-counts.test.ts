@@ -105,7 +105,7 @@ describe('gate path resolution runtime visits', () => {
           gateVisits.fill(0);
           total = 0;
           writeFieldNode(
-            root.childrenByName!.kind,
+            root.__childrenByName__!.kind,
             kind,
             FieldNodeWriteKind.Input,
             WriteOption.Overwrite,

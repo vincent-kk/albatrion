@@ -80,7 +80,7 @@ export const loadStaticFirstTree = <Self extends FieldNodeRecord<Self>>(
       frame.hasEntered = true;
       frame.order = order++;
       deliveries.add(node);
-      const schema = node.schema.schema;
+      const schema = node.__schema__.schema;
       const authored =
         typeof schema === 'object' && schema !== null ? schema : undefined;
       const fallback =
@@ -108,11 +108,11 @@ export const loadStaticFirstTree = <Self extends FieldNodeRecord<Self>>(
       );
       frame.input = value;
       if (node.behavior.strategy === 'branch') {
-        node.childrenByName = Object.create(null);
+        node.__childrenByName__ = Object.create(null);
         node.children = frame.children = [];
         if (node.behavior.type === 'array') {
           const array = isArray(value);
-          node.itemCount = array ? value.length : 0;
+          node.__itemCount__ = array ? value.length : 0;
           node.source = array ? undefined : value;
           node.extras = array ? arrayExtras(node, value) : undefined;
           frame.entries = node.behavior.declareChildren(node);
@@ -133,7 +133,7 @@ export const loadStaticFirstTree = <Self extends FieldNodeRecord<Self>>(
             : EMPTY_ARRAY;
         }
       } else node.source = value;
-      const state = node.storedState;
+      const state = node.__state__;
       for (const key in state)
         if (hasOwnProperty(state, key) && state[key]) {
           deltas ??= new Map();
@@ -143,7 +143,7 @@ export const loadStaticFirstTree = <Self extends FieldNodeRecord<Self>>(
     if (frame.index < frame.entries.length) {
       const entry = frame.entries[frame.index++];
       const child = createChildNode(node, entry);
-      node.childrenByName![entry.name] = child;
+      node.__childrenByName__![entry.name] = child;
       frame.children!.push(child);
       child.isRequired = frame.required.includes(entry.name);
       const input =
@@ -176,6 +176,6 @@ export const loadStaticFirstTree = <Self extends FieldNodeRecord<Self>>(
   }
   runtime.commitNumber = commit;
   if (deltas) publishGlobalStateDeltas(root, deltas);
-  runtime.loadBaseline = { value: root.storedOutputValue };
+  runtime.loadBaseline = { value: root.__outputValue__ };
   finishStaticFirstLoad(root, option, warnings);
 };

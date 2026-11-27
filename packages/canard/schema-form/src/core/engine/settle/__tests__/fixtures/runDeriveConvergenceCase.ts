@@ -83,7 +83,7 @@ export const runDeriveConvergenceCase = (
     try {
       for (let step = -1; step < writes.length; step++) {
         for (const node of root.runtime.deliveries ?? [])
-          node.pendingDelivery = undefined;
+          node.__pendingDelivery__ = undefined;
         root.runtime.deliveries?.clear();
         let error;
         try {
@@ -94,7 +94,7 @@ export const runDeriveConvergenceCase = (
             let target = root;
             const segments = write.path.split('/').filter(isTruthy);
             for (const segment of segments)
-              target = target.childrenByName![segment];
+              target = target.__childrenByName__![segment];
             writeFieldNode(
               target,
               write.value,
@@ -113,21 +113,21 @@ export const runDeriveConvergenceCase = (
             path: node.path,
             kind: node.blueprintNode.kind,
             source: node.source,
-            outputValue: node.storedOutputValue,
+            outputValue: node.__outputValue__,
             extras: node.extras,
             isReadOnly: node.isReadOnly,
             isVisible: node.isVisible,
             isDisabled: node.isDisabled,
             errors: root.runtime.combinedErrors?.get(node.path),
-            revisions: node.revisionLedger,
-            delivery: node.pendingDelivery,
+            revisions: node.__revisionLedger__,
+            delivery: node.__pendingDelivery__,
           });
           for (
             let index = (node.children?.length ?? 0) - 1;
             index >= 0;
             index--
           )
-            if (node.children![index].parent === node)
+            if (node.children![index].__parent__ === node)
               pending.push(node.children![index]);
         }
         snapshots.push(

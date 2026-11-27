@@ -30,7 +30,7 @@ import { replaceAtPath } from './replaceAtPath';
 export const composeBatchValue = <Self extends FieldNodeRecord<Self>>(
   root: Self,
   writes: Readonly<NonNullable<FieldNodeRuntime<Self>['batchWrites']>>,
-  base: unknown = root.storedValue,
+  base: unknown = root.__value__,
   ranges?: WriteRange[],
   markRanges?: WriteRange[][],
   mode: 'root' | 'direct' = 'root',
@@ -71,10 +71,10 @@ export const composeBatchValue = <Self extends FieldNodeRecord<Self>>(
       const tuple =
         direct && values ? new Array<unknown>(values.length) : undefined;
       const parentNames = direct ? EMPTY_ARRAY : names.slice(0, -1);
-      const parent = write.node.parent;
+      const parent = write.node.__parent__;
       ownRanges?.push({ path: write.node.path, source, isLogical: true });
       for (const target of targets) {
-        const current = parent?.childrenByName?.[target.name];
+        const current = parent?.__childrenByName__?.[target.name];
         const input = values?.[target.index];
         if (
           !write.virtualTargets &&

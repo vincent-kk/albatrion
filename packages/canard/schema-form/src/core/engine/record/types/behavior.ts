@@ -59,7 +59,7 @@ export interface Behavior<Self = unknown> {
   ): unknown;
   /** Project a stored value using the input source and effective schema. */
   project<Node extends Self>(
-    node: Pick<FieldNodeRecord<Node>, 'schema' | 'source'>,
+    node: Pick<FieldNodeRecord<Node>, '__schema__' | 'source'>,
     value: unknown,
   ): unknown;
   /** Return a completed input string, or undefined when there is no write. */

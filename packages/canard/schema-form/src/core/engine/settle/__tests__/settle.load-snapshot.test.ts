@@ -23,7 +23,7 @@ describe('settle load snapshot', () => {
     );
     const defaultValue = readFieldNodeDefaultValue(root);
     const snapshot = root.runtime.loadSnapshot;
-    resetFieldNodeSubtree(root.childrenByName!.left, WriteOption.Overwrite);
+    resetFieldNodeSubtree(root.__childrenByName__!.left, WriteOption.Overwrite);
     expect(root.runtime.loadSnapshot).toBe(snapshot);
     expect(readFieldNodeDefaultValue(root)).toBe(defaultValue);
   });

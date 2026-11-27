@@ -30,16 +30,17 @@ describe('settlement reference revival against the previous commit', () => {
       FieldNodeWriteKind.CallerReplace,
       WriteOption.Overwrite,
     );
-    const group = root.childrenByName!.group;
-    const value = group.childrenByName!.value;
-    const watcher = root.childrenByName!.watcher;
-    const committedStoredValue = group.storedValue;
-    const committedEmit = group.storedOutputValue;
+    const group = root.__childrenByName__!.group;
+    const value = group.__childrenByName__!.value;
+    const watcher = root.__childrenByName__!.watcher;
+    const committedValue = group.__value__;
+    const committedEmit = group.__outputValue__;
     const groupRevision =
-      group.revisionLedger[FieldNodeEventType.UpdateValue] ?? 0;
+      group.__revisionLedger__[FieldNodeEventType.UpdateValue] ?? 0;
     const watchRevision =
-      watcher.revisionLedger[FieldNodeEventType.UpdateControlledProperties] ??
-      0;
+      watcher.__revisionLedger__[
+        FieldNodeEventType.UpdateControlledProperties
+      ] ?? 0;
 
     writeFieldNode(
       value,
@@ -48,15 +49,16 @@ describe('settlement reference revival against the previous commit', () => {
       WriteOption.Overwrite,
     );
 
-    expect(group.storedValue).toEqual({ value: 0 });
-    expect(group.storedValue).toBe(committedStoredValue);
-    expect(group.storedOutputValue).toBe(committedEmit);
-    expect(group.revisionLedger[FieldNodeEventType.UpdateValue] ?? 0).toBe(
+    expect(group.__value__).toEqual({ value: 0 });
+    expect(group.__value__).toBe(committedValue);
+    expect(group.__outputValue__).toBe(committedEmit);
+    expect(group.__revisionLedger__[FieldNodeEventType.UpdateValue] ?? 0).toBe(
       groupRevision,
     );
     expect(
-      watcher.revisionLedger[FieldNodeEventType.UpdateControlledProperties] ??
-        0,
+      watcher.__revisionLedger__[
+        FieldNodeEventType.UpdateControlledProperties
+      ] ?? 0,
     ).toBe(watchRevision);
   });
 
@@ -87,50 +89,52 @@ describe('settlement reference revival against the previous commit', () => {
       FieldNodeWriteKind.CallerReplace,
       WriteOption.Overwrite,
     );
-    const group = root.childrenByName!.group;
-    const other = root.childrenByName!.other;
-    const watcher = root.childrenByName!.watcher;
-    const committedStoredValue = group.storedValue;
-    const committedEmit = group.storedOutputValue;
-    const rootLocal = root.storedValue;
-    const otherLocal = other.storedValue;
+    const group = root.__childrenByName__!.group;
+    const other = root.__childrenByName__!.other;
+    const watcher = root.__childrenByName__!.watcher;
+    const committedValue = group.__value__;
+    const committedEmit = group.__outputValue__;
+    const rootLocal = root.__value__;
+    const otherLocal = other.__value__;
     const groupRevision =
-      group.revisionLedger[FieldNodeEventType.UpdateValue] ?? 0;
+      group.__revisionLedger__[FieldNodeEventType.UpdateValue] ?? 0;
     const rootRevision =
-      root.revisionLedger[FieldNodeEventType.UpdateValue] ?? 0;
+      root.__revisionLedger__[FieldNodeEventType.UpdateValue] ?? 0;
     const watchRevision =
-      watcher.revisionLedger[FieldNodeEventType.UpdateControlledProperties] ??
-      0;
+      watcher.__revisionLedger__[
+        FieldNodeEventType.UpdateControlledProperties
+      ] ?? 0;
 
     writeFieldNode(
-      group.childrenByName!.value,
+      group.__childrenByName__!.value,
       1,
       FieldNodeWriteKind.CallerReplace,
       WriteOption.Overwrite,
     );
 
-    expect(other.storedValue).not.toBe(otherLocal);
-    expect(root.storedValue).not.toBe(rootLocal);
-    expect(root.revisionLedger[FieldNodeEventType.UpdateValue] ?? 0).toBe(
+    expect(other.__value__).not.toBe(otherLocal);
+    expect(root.__value__).not.toBe(rootLocal);
+    expect(root.__revisionLedger__[FieldNodeEventType.UpdateValue] ?? 0).toBe(
       rootRevision + 1,
     );
-    expect(group.storedValue).toBe(committedStoredValue);
-    expect(group.storedOutputValue).toBe(committedEmit);
-    expect(Reflect.get(Object(root.storedValue), 'group')).toBe(
-      group.storedOutputValue,
+    expect(group.__value__).toBe(committedValue);
+    expect(group.__outputValue__).toBe(committedEmit);
+    expect(Reflect.get(Object(root.__value__), 'group')).toBe(
+      group.__outputValue__,
     );
-    expect(Reflect.get(Object(root.storedOutputValue), 'group')).toBe(
-      group.storedOutputValue,
+    expect(Reflect.get(Object(root.__outputValue__), 'group')).toBe(
+      group.__outputValue__,
     );
-    expect(Reflect.get(Object(root.storedValue), 'other')).toBe(
-      other.storedOutputValue,
+    expect(Reflect.get(Object(root.__value__), 'other')).toBe(
+      other.__outputValue__,
     );
-    expect(group.revisionLedger[FieldNodeEventType.UpdateValue] ?? 0).toBe(
+    expect(group.__revisionLedger__[FieldNodeEventType.UpdateValue] ?? 0).toBe(
       groupRevision,
     );
     expect(
-      watcher.revisionLedger[FieldNodeEventType.UpdateControlledProperties] ??
-        0,
+      watcher.__revisionLedger__[
+        FieldNodeEventType.UpdateControlledProperties
+      ] ?? 0,
     ).toBe(watchRevision);
   });
 
@@ -165,31 +169,31 @@ describe('settlement reference revival against the previous commit', () => {
       FieldNodeWriteKind.CallerReplace,
       WriteOption.Overwrite,
     );
-    const outer = root.childrenByName!.outer;
-    const group = outer.childrenByName!.group;
-    const other = root.childrenByName!.other;
-    const outerLocal = outer.storedValue;
-    const groupLocal = group.storedValue;
-    const otherLocal = other.storedValue;
+    const outer = root.__childrenByName__!.outer;
+    const group = outer.__childrenByName__!.group;
+    const other = root.__childrenByName__!.other;
+    const outerLocal = outer.__value__;
+    const groupLocal = group.__value__;
+    const otherLocal = other.__value__;
 
     writeFieldNode(
-      group.childrenByName!.value,
+      group.__childrenByName__!.value,
       1,
       FieldNodeWriteKind.CallerReplace,
       WriteOption.Overwrite,
     );
 
-    expect(other.storedValue).not.toBe(otherLocal);
-    expect(group.storedValue).toBe(groupLocal);
-    expect(outer.storedValue).toBe(outerLocal);
-    expect(Reflect.get(Object(outer.storedValue), 'group')).toBe(
-      group.storedOutputValue,
+    expect(other.__value__).not.toBe(otherLocal);
+    expect(group.__value__).toBe(groupLocal);
+    expect(outer.__value__).toBe(outerLocal);
+    expect(Reflect.get(Object(outer.__value__), 'group')).toBe(
+      group.__outputValue__,
     );
-    expect(Reflect.get(Object(root.storedValue), 'outer')).toBe(
-      outer.storedOutputValue,
+    expect(Reflect.get(Object(root.__value__), 'outer')).toBe(
+      outer.__outputValue__,
     );
-    expect(Reflect.get(Object(root.storedOutputValue), 'outer')).toBe(
-      outer.storedOutputValue,
+    expect(Reflect.get(Object(root.__outputValue__), 'outer')).toBe(
+      outer.__outputValue__,
     );
   });
 });

@@ -93,10 +93,10 @@ it('IR-6 R-a equal-content setValue preserves the output and accepts the current
   dispatchSetValue(root, { a: 'new' });
   clock.frame();
   await clock.task();
-  const outputValue = root.storedOutputValue;
+  const outputValue = root.__outputValue__;
   const commit = runtime.commitNumber!;
   dispatchSetValue(root, { a: 'new' });
-  expect(root.storedOutputValue).toBe(outputValue);
+  expect(root.__outputValue__).toBe(outputValue);
   expect(runtime.commitNumber).toBeGreaterThan(commit);
   finishes[0]([]);
   await clock.task();

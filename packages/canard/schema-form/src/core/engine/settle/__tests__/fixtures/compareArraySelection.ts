@@ -77,7 +77,7 @@ export const compareArraySelection = (
           delivered: [...delivered],
           records: [...report.mock.calls],
           settlement: observeArraySelection(root),
-          departed: observeDetachedReads(root, former),
+          departed: observeDetachedReads(former),
         });
       }
     } finally {

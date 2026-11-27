@@ -73,9 +73,9 @@ export const compareArrayAppend = (
         const host = select(root);
         const children = host.children;
         const formerChildren = [...(children ?? [])];
-        const value = host.storedValue;
+        const value = host.__value__;
         const formerValue = slotsOf(value);
-        const outputValue = host.storedOutputValue;
+        const outputValue = host.__outputValue__;
         const formerOutputValue = slotsOf(outputValue);
         const snapshot = root.runtime.loadSnapshot;
         const formerSnapshot = structuredClone(snapshot);
@@ -103,13 +103,13 @@ export const compareArrayAppend = (
           result,
           delivered: [...delivered],
           settlement: observeArraySelection(root),
-          value: slotsOf(current.storedValue),
-          outputValue: slotsOf(current.storedOutputValue),
+          value: slotsOf(current.__value__),
+          outputValue: slotsOf(current.__outputValue__),
           defaults: defaultsOf(root),
           owners: formerChildren.map(
             (child, index) =>
               current.children?.[index] === child &&
-              child.parent === current &&
+              child.__parent__ === current &&
               !child.isDetached,
           ),
         });

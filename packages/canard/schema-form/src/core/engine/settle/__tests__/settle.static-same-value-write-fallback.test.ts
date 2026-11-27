@@ -72,7 +72,7 @@ const INPUT = { h: { flag: true, key: 1, field: 2 }, s: 's', rows: [[1], [2]] };
  * @returns The host record
  */
 const hostOf = (root: DispatchTestNode): DispatchTestNode =>
-  root.childrenByName!.h;
+  root.__childrenByName__!.h;
 
 // filid:contract settle-static-same-value-write-fallback
 describe('same-value admission declines and the general path settles', () => {
@@ -85,7 +85,7 @@ describe('same-value admission declines and the general path settles', () => {
     await compareSameValueWrite(hostWith(controls), INPUT, [
       {
         apply: (root) =>
-          dispatchSetValue(hostOf(root), hostOf(root).storedOutputValue),
+          dispatchSetValue(hostOf(root), hostOf(root).__outputValue__),
         skip: false,
       },
     ]);
@@ -95,7 +95,7 @@ describe('same-value admission declines and the general path settles', () => {
     await compareSameValueWrite(hostWith({}), INPUT, [
       {
         apply: (root) =>
-          dispatchSetValue(hostOf(root), hostOf(root).storedOutputValue),
+          dispatchSetValue(hostOf(root), hostOf(root).__outputValue__),
         skip: true,
       },
     ]);
@@ -106,7 +106,7 @@ describe('same-value admission declines and the general path settles', () => {
     await compareSameValueWrite(SCOPED, SCOPED_INPUT, [
       {
         apply: (root) => {
-          const rows = root.childrenByName!.a.childrenByName!.rows;
+          const rows = root.__childrenByName__!.a.__childrenByName__!.rows;
           popped = rows.children![1];
           return dispatchPop(rows);
         },
@@ -115,22 +115,26 @@ describe('same-value admission declines and the general path settles', () => {
       { apply: () => dispatchPush(popped!, 5), skip: false },
       {
         apply: (root) =>
-          dispatchSetValue(root.childrenByName!.b.childrenByName!.w, 3),
+          dispatchSetValue(root.__childrenByName__!.b.__childrenByName__!.w, 3),
         skip: false,
       },
       {
         apply: (root) => {
           expect(root.runtime.misfitPaths.size).toBe(0);
           return dispatchSetValue(
-            root.childrenByName!.b,
-            root.childrenByName!.b.storedOutputValue,
+            root.__childrenByName__!.b,
+            root.__childrenByName__!.b.__outputValue__,
           );
         },
         skip: true,
       },
       {
         apply: (root) =>
-          dispatchSetValue(root.childrenByName!.a, { v: 1 }, WriteOption.Merge),
+          dispatchSetValue(
+            root.__childrenByName__!.a,
+            { v: 1 },
+            WriteOption.Merge,
+          ),
         skip: true,
       },
     ]);
@@ -141,7 +145,7 @@ describe('same-value admission declines and the general path settles', () => {
     await compareSameValueWrite(SCOPED, SCOPED_INPUT, [
       {
         apply: (root) => {
-          const rows = root.childrenByName!.a.childrenByName!.rows;
+          const rows = root.__childrenByName__!.a.__childrenByName__!.rows;
           popped = rows.children![1];
           return dispatchPop(rows);
         },
@@ -150,12 +154,12 @@ describe('same-value admission declines and the general path settles', () => {
       { apply: () => dispatchPush(popped!, 5), skip: false },
       {
         apply: (root) =>
-          dispatchSetValue(root.childrenByName!.b.childrenByName!.w, 3),
+          dispatchSetValue(root.__childrenByName__!.b.__childrenByName__!.w, 3),
         skip: false,
       },
       {
         apply: (root) => {
-          dispatchSetValue(root, root.storedOutputValue);
+          dispatchSetValue(root, root.__outputValue__);
         },
         skip: true,
       },
@@ -168,8 +172,8 @@ describe('same-value admission declines and the general path settles', () => {
         apply: (root) => {
           expect(root.runtime.misfitPaths.size).toBeGreaterThan(0);
           return dispatchSetValue(
-            root.childrenByName!.a,
-            root.childrenByName!.a.storedOutputValue,
+            root.__childrenByName__!.a,
+            root.__childrenByName__!.a.__outputValue__,
           );
         },
         skip: true,
@@ -177,13 +181,13 @@ describe('same-value admission declines and the general path settles', () => {
       {
         apply: (root) =>
           dispatchSetValue(
-            root.childrenByName!.b,
-            root.childrenByName!.b.storedOutputValue,
+            root.__childrenByName__!.b,
+            root.__childrenByName__!.b.__outputValue__,
           ),
         skip: false,
       },
       {
-        apply: (root) => dispatchSetValue(root, root.storedOutputValue),
+        apply: (root) => dispatchSetValue(root, root.__outputValue__),
         skip: false,
       },
     ]);
@@ -192,14 +196,14 @@ describe('same-value admission declines and the general path settles', () => {
   it('a load, a multi-write batch and a visit walk with two writes', async () => {
     await compareSameValueWrite(hostWith({}), INPUT, [
       {
-        apply: (root) => dispatchMount(root, root.storedOutputValue),
+        apply: (root) => dispatchMount(root, root.__outputValue__),
         skip: false,
       },
       {
         apply: (root) =>
           dispatchBatch(root, () => {
-            dispatchSetValue(hostOf(root), hostOf(root).storedOutputValue);
-            dispatchSetValue(root.childrenByName!.s, 't');
+            dispatchSetValue(hostOf(root), hostOf(root).__outputValue__);
+            dispatchSetValue(root.__childrenByName__!.s, 't');
           }),
         skip: false,
       },
@@ -207,8 +211,8 @@ describe('same-value admission declines and the general path settles', () => {
         apply: (root) =>
           dispatchVisitSubtree(root, (node) => {
             if (node !== root) return;
-            dispatchSetValue(hostOf(root), hostOf(root).storedOutputValue);
-            dispatchSetValue(root.childrenByName!.s, 'u');
+            dispatchSetValue(hostOf(root), hostOf(root).__outputValue__);
+            dispatchSetValue(root.__childrenByName__!.s, 'u');
           }),
         skip: false,
       },
@@ -271,7 +275,7 @@ describe('same-value admission declines and the general path settles', () => {
       },
     );
     dispatchPush(root);
-    expect(root.storedOutputValue).toEqual([{ v: 1 }, { v: 7 }]);
+    expect(root.__outputValue__).toEqual([{ v: 1 }, { v: 7 }]);
     expect(automatic.length).toBeGreaterThan(0);
     expect(automatic.every((admitted) => !admitted)).toBe(true);
   });

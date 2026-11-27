@@ -17,8 +17,8 @@ export const admitsStaticArrayTail = <Self extends FieldNodeRecord<Self>>(
   allowExtras = false,
 ): boolean => {
   const runtime = node.runtime;
-  const count = node.itemCount;
-  const value = node.storedValue;
+  const count = node.__itemCount__;
+  const value = node.__value__;
   const extrasOnly =
     allowExtras &&
     !node.blueprintNode.item &&
@@ -29,13 +29,13 @@ export const admitsStaticArrayTail = <Self extends FieldNodeRecord<Self>>(
     node.behavior.strategy !== 'branch' ||
     node.isDetached ||
     !node.isActive ||
-    !node.isDeliveryInitialized ||
+    !node.__isDeliveryInitialized__ ||
     runtime.batchDepth ||
     runtime.visitDepth ||
     !StaticFirstLoadCapability.has(runtime.blueprint) ||
-    node.inactiveSlots?.size ||
-    node.inactiveSlotOverlays?.size ||
-    node.inactiveSlotChildren?.size ||
+    node.__inactiveSlots__?.size ||
+    node.__inactiveSlotOverlays__?.size ||
+    node.__inactiveSlotChildren__?.size ||
     runtime.misfitPaths.size > 0 ||
     node.source !== undefined ||
     (extrasOnly
@@ -46,8 +46,8 @@ export const admitsStaticArrayTail = <Self extends FieldNodeRecord<Self>>(
         (node.children?.length ?? 0) !== count) ||
     !isArray(value) ||
     value.length !== count ||
-    (count > 0 && !node.childrenByName) ||
-    getStaticChoices(node.schema).omitTrailingEmpty ||
-    !isArray(getLoadValue(node.rootNode.storedOutputValue, node.path))
+    (count > 0 && !node.__childrenByName__) ||
+    getStaticChoices(node.__schema__).omitTrailingEmpty ||
+    !isArray(getLoadValue(node.rootNode.__outputValue__, node.path))
   );
 };

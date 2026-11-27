@@ -1,6 +1,6 @@
 import { hasOwnProperty } from '@winglet/common-utils/lib';
 
-import type { Dictionary } from '@aileron/declare';
+import type { Dictionary, Optional } from '@aileron/declare';
 
 import { PointerOperator } from '@/schema-form/helpers/jsonPointer';
 
@@ -20,8 +20,8 @@ export interface OutputValueSnapshot {
  * @param root - Live root whose output and context are settled
  * @param hostPath - Occurrence path that anchors relative dependencies
  * @param dependency - Authored pointer or context token
- * @param snapshot - Optional preceding commit when a node is detaching
- * @param owner - Actual host binding the syntax; defaults to the runtime for direct calls
+ * @param snapshot - Preceding commit when a node is detaching, otherwise undefined
+ * @param owner - Actual host whose `__stateDependencyPlans__` binds the syntax
  * @param absentContext - Existing same-node/commit empty context identity, when still selected
  * @returns The emitted value, context, or undefined for an absent path
  */
@@ -29,8 +29,8 @@ export const readStateDependency = <Self extends FieldNodeRecord<Self>>(
   root: Self,
   hostPath: string,
   dependency: string,
-  snapshot?: OutputValueSnapshot,
-  owner: object = root.runtime,
+  snapshot: Optional<OutputValueSnapshot>,
+  owner: Pick<FieldNodeRecord<unknown>, '__stateDependencyPlans__'>,
   absentContext?: object,
 ): unknown => {
   const { segments } = getStateDependencyPlan(
@@ -45,7 +45,7 @@ export const readStateDependency = <Self extends FieldNodeRecord<Self>>(
       absentContext ??
       {}
     );
-  let value: unknown = snapshot ? snapshot.outputValue : root.storedOutputValue;
+  let value: unknown = snapshot ? snapshot.outputValue : root.__outputValue__;
   for (const name of segments) {
     if (value === null || typeof value !== 'object') return undefined;
     if (typeof name !== 'string') return undefined;

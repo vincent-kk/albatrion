@@ -2,7 +2,7 @@
 "@lerx/promise-modal": major
 ---
 
-Breaking change: pending `useModal` requests stay pending when React Activity hides only the caller and the `ModalProvider` stays visible. In the beta, hiding the caller cancelled its requests. Showing the caller again preserves the pending request. Removing the caller, including while hidden, still cancels it and resolves a pending confirmation to `false`.
+Breaking change: pending `useModal` requests stay pending when React Activity hides only the caller and the `ModalProvider` stays visible. Previously, hiding the caller cancelled its requests. Showing the caller again preserves the pending request. Removing the caller, including while hidden, still cancels it and resolves a pending confirmation to `false`, and hiding the caller together with its `ModalProvider` still cancels its requests.
 
 If your application relied on cancellation when hiding the caller, pass an `AbortSignal` to the request and abort it when you hide the caller.
 

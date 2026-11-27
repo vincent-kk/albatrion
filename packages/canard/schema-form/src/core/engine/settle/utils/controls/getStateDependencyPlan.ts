@@ -1,45 +1,34 @@
-import type { PointerSegment } from '@/schema-form/helpers/jsonPointer';
-
-import { getHostDerived } from '../../../utils/cache/derivedRecords';
+import type { FieldNodeRecord } from '../../../record';
 import { getCachedPointerSegments } from '../../../utils/paths/getCachedPointerSegments';
 import { resolveDependencyPath } from '../../../utils/paths/resolveDependencyPath';
 
-/** Resolved syntax only; emitted values and effective schemas remain call-local. */
-interface StateDependencyPlan {
-  /** Absolute dependency address, including the context sentinel. */
-  readonly path: string;
-  /** Decoded names and operators reused by emitted-value traversal. */
-  readonly segments: readonly PointerSegment[];
-}
+/** One actual host's authored dependencies under its current address witness; the record declares the shape. */
+type StateDependencyPlans = NonNullable<
+  FieldNodeRecord<unknown>['__stateDependencyPlans__']
+>;
 
-/** One actual host's authored dependencies under its current address witness. */
-interface StateDependencyPlans {
-  /** Address used to bind every retained relative dependency. */
-  readonly hostPath: string;
-  /** Separate syntax for each authored dependency at this occurrence. */
-  readonly dependencies: Map<string, StateDependencyPlan>;
-}
+/** Resolved syntax only; emitted values and effective schemas remain call-local. */
+type StateDependencyPlan = NonNullable<
+  ReturnType<StateDependencyPlans['dependencies']['get']>
+>;
 
 /**
  * Prepare authored dependency syntax without retaining a live lookup result.
  * @param runtime - Tree runtime owning bounded concrete pointer syntax
  * @param hostPath - Current absolute address anchoring relative dependencies
  * @param dependency - Authored pointer or context token
- * @param owner - Actual host identity; cold direct callers may use the runtime
+ * @param owner - Actual host whose `__stateDependencyPlans__` retains the syntax
  * @returns The retained syntax plan, rebound when the host address changes
  */
 export const getStateDependencyPlan = (
   runtime: object,
   hostPath: string,
   dependency: string,
-  owner: object = runtime,
+  owner: Pick<FieldNodeRecord<unknown>, '__stateDependencyPlans__'>,
 ): StateDependencyPlan => {
-  const derived = getHostDerived<'stateDependencyPlans', StateDependencyPlans>(
-    owner,
-  );
-  let plans = derived.stateDependencyPlans;
+  let plans = owner.__stateDependencyPlans__;
   if (!plans || plans.hostPath !== hostPath)
-    derived.stateDependencyPlans = plans = {
+    owner.__stateDependencyPlans__ = plans = {
       hostPath,
       dependencies: new Map(),
     };

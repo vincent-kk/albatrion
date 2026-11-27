@@ -7,7 +7,7 @@ export function isRuntimeFieldNode(value: unknown): value is TestFieldNode {
     typeof value === 'object' &&
     'behavior' in value &&
     'runtime' in value &&
-    'schema' in value &&
+    '__schema__' in value &&
     'rootNode' in value &&
     'source' in value
   );

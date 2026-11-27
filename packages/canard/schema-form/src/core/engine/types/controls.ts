@@ -72,6 +72,16 @@ export type ChildSchemaControls = {
 /** Specificity layer of a control declaration: the node itself, a parent `controls.fields` entry, or a fragment. */
 export type DeclarationLayer = 'node' | 'fields' | 'fragment';
 
+/** Key under which an occurrence's committed declaration IDs are stored, with the path and kind it encodes. */
+export type CommittedDeclarationKey = {
+  /** Absolute occurrence path the key was built from. */
+  path: string;
+  /** Fold-inclusive kind token the key was built from. */
+  kind: string;
+  /** JSON pair of `path` and `kind`. */
+  key: string;
+};
+
 /** Key of a `controls.fields` entry or fragment `controls`. */
 export type ChildControlKey = keyof ChildSchemaControls;
 

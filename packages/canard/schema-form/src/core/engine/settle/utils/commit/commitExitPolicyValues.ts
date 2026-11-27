@@ -82,7 +82,7 @@ export const commitExitPolicyValues = <Self extends FieldNodeRecord<Self>>(
     );
   const candidates = new Set(context.stateDirtyNodes);
   for (const source of context.stateDirtyNodes) {
-    if (source.isDetached || !source.childrenByName) continue;
+    if (source.isDetached || !source.__childrenByName__) continue;
     if (
       context.kind !== FieldNodeWriteKind.Load &&
       !isDependencyOwner(context, source.path) &&
@@ -111,7 +111,7 @@ export const commitExitPolicyValues = <Self extends FieldNodeRecord<Self>>(
           const childSelected =
             context.selectedDeclarationIds.get(child) ??
             child.runtime.committedDeclarationIds?.get(
-              getCommittedDeclarationKey(child, child.runtime),
+              getCommittedDeclarationKey(child),
             );
           let belongsToExitingFragment = false;
           for (const childDeclaration of child.blueprintNode.declarations) {
@@ -143,10 +143,10 @@ export const commitExitPolicyValues = <Self extends FieldNodeRecord<Self>>(
         for (const name of item.targets) {
           if (
             name === undefined ||
-            !hasOwnProperty(source.childrenByName, name)
+            !hasOwnProperty(source.__childrenByName__, name)
           )
             continue;
-          candidates.add(source.childrenByName[name]);
+          candidates.add(source.__childrenByName__[name]);
           break;
         }
       }

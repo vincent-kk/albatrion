@@ -17,9 +17,9 @@ export const compareDocumentOrder = <Self extends FieldNodeRecord<Self>>(
   if (left === right) return 0;
   const leftLine: Self[] = [];
   const rightLine: Self[] = [];
-  for (let node: Nullable<Self> = left; node; node = node.parent)
+  for (let node: Nullable<Self> = left; node; node = node.__parent__)
     leftLine.push(node);
-  for (let node: Nullable<Self> = right; node; node = node.parent)
+  for (let node: Nullable<Self> = right; node; node = node.__parent__)
     rightLine.push(node);
   leftLine.reverse();
   rightLine.reverse();

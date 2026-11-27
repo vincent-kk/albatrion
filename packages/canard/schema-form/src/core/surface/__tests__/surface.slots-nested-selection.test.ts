@@ -28,7 +28,7 @@ it('reselects a cloned nested host from its fixed baseline using current gate in
   const oldGroup = root.find('/group')!;
   const oldString = root.find('/group/value')!;
   root.find('/open')!.setValue(false);
-  expect(Reflect.get(root, 'inactiveSlots')).toBeInstanceOf(Map);
+  expect(Reflect.get(root, '__inactiveSlots__')).toBeInstanceOf(Map);
   root.find('/kind')!.setValue('number');
   root.find('/open')!.setValue(true);
   const number = root.find('/group/value')!;
@@ -58,7 +58,7 @@ it('does not use a retained candidate as the previous active shape', () => {
   });
   root.setValue({ open: true, allow: true, group: { value: 'saved' } });
   root.find('/open')!.setValue(false);
-  expect(Reflect.get(root, 'inactiveSlots')).toBeInstanceOf(Map);
+  expect(Reflect.get(root, '__inactiveSlots__')).toBeInstanceOf(Map);
   root.find('/allow')!.setValue(false);
   root.find('/open')!.setValue(true);
   expect(root.find('/group/value')).toBeNull();

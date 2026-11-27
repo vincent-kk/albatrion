@@ -41,7 +41,7 @@ export const prepareGateTableRound = <Self extends FieldNodeRecord<Self>>(
   for (
     let ancestor: Nullable<Self> = node;
     ancestor;
-    ancestor = ancestor.parent
+    ancestor = ancestor.__parent__
   )
     if (ancestor.source !== undefined) return;
   const table = getGateSelectionTable(

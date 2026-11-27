@@ -59,10 +59,10 @@ export const writeFieldNode = <Self extends FieldNodeRecord<Self>>(
     (node.isDisposed || root.isDisposed)
   )
     return;
-  const schema = node.schema.schema;
+  const schema = node.__schema__.schema;
   const inputType = typeof input;
   const scalarWrite =
-    node.parent !== null &&
+    node.__parent__ !== null &&
     !node.isDisposed &&
     !root.isDisposed &&
     root.runtime.blueprint.capabilities.isBranchless &&

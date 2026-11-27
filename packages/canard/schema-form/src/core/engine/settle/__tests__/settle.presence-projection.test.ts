@@ -38,8 +38,8 @@ describe.each(['record', 'skip', 'shadow'] as const)(
             expect(state.isReadOnly).toBe(!flag);
             expect(state.isDisabled).toBe(!flag);
             const gate = getDispatchNode(observer, 'gate');
-            expect(gate.childrenByName?.leaf !== undefined).toBe(!flag);
-            const fresh = mountPresenceTree(schema, root.storedOutputValue);
+            expect(gate.__childrenByName__?.leaf !== undefined).toBe(!flag);
+            const fresh = mountPresenceTree(schema, root.__outputValue__);
             expect(observePresenceTree(observer)).toEqual(
               observePresenceTree(getDispatchNode(fresh, 'observer')),
             );

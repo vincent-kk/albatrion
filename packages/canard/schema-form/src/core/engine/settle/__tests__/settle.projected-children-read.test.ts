@@ -5,7 +5,7 @@ import { readProjectedValue } from '../utils/gates/readProjectedValue';
 import { createGateReadFixture } from './fixtures/createGateReadFixture';
 
 // filid:contract settle-projected-children-read
-describe('projected childrenByName reads', () => {
+describe('projected __childrenByName__ reads', () => {
   it.each(['dictionary', 'prepared-view'])(
     'reads a %s without allocating own-key descriptors',
     (shape) => {
@@ -15,7 +15,7 @@ describe('projected childrenByName reads', () => {
       );
       let descriptors = 0;
       try {
-        const baseline = root.childrenByName!;
+        const baseline = root.__childrenByName__!;
         expect(Object.getPrototypeOf(baseline)).toBe(null);
         const target =
           shape === 'dictionary'
@@ -26,7 +26,7 @@ describe('projected childrenByName reads', () => {
                 [],
                 Object.create(baseline),
               );
-        root.childrenByName = new Proxy(target, {
+        root.__childrenByName__ = new Proxy(target, {
           getOwnPropertyDescriptor(target, name) {
             descriptors++;
             return Reflect.getOwnPropertyDescriptor(target, name);
@@ -58,15 +58,15 @@ describe('projected childrenByName reads', () => {
     },
   );
 
-  it('rejects an inherited node on an ordinary-prototype childrenByName map', () => {
+  it('rejects an inherited node on an ordinary-prototype __childrenByName__ map', () => {
     const { root, context, release } = createGateReadFixture(
       { type: 'object', properties: { field: { type: 'string' } } },
       { field: 'kept' },
     );
     try {
-      const ordinary = { ...root.childrenByName };
+      const ordinary = { ...root.__childrenByName__ };
       Object.setPrototypeOf(ordinary, { inherited: ordinary.field });
-      root.childrenByName = ordinary;
+      root.__childrenByName__ = ordinary;
       expect(readProjectedValue(context, '/inherited')).toBeUndefined();
       expect(readProjectedValue(context, '/field')).toBe('kept');
     } finally {
@@ -83,7 +83,7 @@ describe('projected childrenByName reads', () => {
     );
     let descriptors = 0;
     try {
-      root.childrenByName = new Proxy(root.childrenByName!, {
+      root.__childrenByName__ = new Proxy(root.__childrenByName__!, {
         getOwnPropertyDescriptor(target, name) {
           descriptors++;
           return Reflect.getOwnPropertyDescriptor(target, name);

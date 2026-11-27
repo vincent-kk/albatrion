@@ -24,11 +24,11 @@ import type {
   writeFieldNodeInput,
 } from '../../src/core';
 import type {
-  BEHAVIORS,
   PathKeyedMap,
   PathKeyedSet,
   loadFieldNodeAtMount,
 } from '../../src/core/engine';
+import type { BEHAVIORS } from '../../src/core/engine/behaviors';
 import type { getControlLayers } from '../../src/core/engine/settle/utils/controls/getControlLayers';
 import type { getGateRegistry } from '../../src/core/engine/settle/utils/gates/getGateRegistry';
 import type { sameValue } from '../../src/core/engine/utils/compute/sameValue';

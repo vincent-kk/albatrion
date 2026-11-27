@@ -117,7 +117,7 @@ const measure = (count: number, verb: (root: DispatchTestNode) => unknown) => {
     for (const undo of restore) undo();
   }
   expect(removed).toBe(count - 1);
-  expect(root.storedValue).toHaveLength(count - 1);
+  expect(root.__value__).toHaveLength(count - 1);
   expect(admit.mock.results.some((call) => call.value !== undefined)).toBe(
     true,
   );
@@ -137,7 +137,7 @@ const pop = (root: DispatchTestNode) => dispatchPop(root);
 
 /** Remove the last position by index. */
 const removeLast = (root: DispatchTestNode) =>
-  dispatchRemove(root, root.itemCount - 1);
+  dispatchRemove(root, root.__itemCount__ - 1);
 
 // filid:contract settle-array-pop-cost
 describe('an admitted pop does prefix work independent of the item count', () => {

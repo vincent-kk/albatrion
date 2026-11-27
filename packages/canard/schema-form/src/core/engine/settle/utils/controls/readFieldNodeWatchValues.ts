@@ -5,7 +5,6 @@ import type { Optional } from '@aileron/declare';
 
 import type { BlueprintSchema } from '../../../blueprint';
 import type { FieldNodeRecord } from '../../../record';
-import { getHostDerived } from '../../../utils/cache/derivedRecords';
 import { readValidatedControls } from '../../../utils/controls/readValidatedControls';
 import { readStateDependency } from './readStateDependency';
 import type { OutputValueSnapshot } from './readStateDependency';
@@ -14,15 +13,6 @@ import type { OutputValueSnapshot } from './readStateDependency';
 export interface WatchValuesSnapshot extends OutputValueSnapshot {
   /** Effective schema before the departing node's last settlement. */
   readonly schema: BlueprintSchema;
-}
-
-/** Identity guards for reusing an absent-context value within one node/commit. */
-interface WatchValuesWitness {
-  schema: BlueprintSchema;
-  watch: unknown;
-  path: string;
-  isSnapshotRead: boolean;
-  isContextAbsent: boolean;
 }
 
 /**
@@ -37,10 +27,10 @@ export const readFieldNodeWatchValues = <Self extends FieldNodeRecord<Self>>(
 ): readonly unknown[] => {
   const runtime = node.runtime;
   const commit = runtime.commitNumber ?? 0;
-  const memo = node.watchValuesMemo;
+  const memo = node.__watchValues__;
   if (!snapshot && memo && node.isDetached) return memo.values;
   if (node.isDetached) return EMPTY_ARRAY;
-  const schema = snapshot?.schema ?? node.schema.schema;
+  const schema = snapshot?.schema ?? node.__schema__.schema;
   const watch = readValidatedControls(schema)?.watch;
   const paths = isArray(watch) ? watch : EMPTY_ARRAY;
   if (!snapshot && paths.length === 0 && (!memo || memo.values.length === 0))
@@ -48,10 +38,7 @@ export const readFieldNodeWatchValues = <Self extends FieldNodeRecord<Self>>(
   const comparable =
     !snapshot && memo !== undefined && memo.values.length === paths.length;
   const reusable = comparable && memo.commit === commit;
-  const derived = getHostDerived<'watchValuesWitness', WatchValuesWitness>(
-    node,
-  );
-  const witness = derived.watchValuesWitness;
+  const witness = node.__watchValuesWitness__;
   const selectedContext = snapshot ? snapshot.context : runtime.context;
   const reuseAbsentContext =
     reusable &&
@@ -87,7 +74,7 @@ export const readFieldNodeWatchValues = <Self extends FieldNodeRecord<Self>>(
     witness.isSnapshotRead = snapshot !== undefined;
     witness.isContextAbsent = selectedContext == null;
   } else
-    derived.watchValuesWitness = {
+    node.__watchValuesWitness__ = {
       schema,
       watch,
       path: node.path,
@@ -96,6 +83,6 @@ export const readFieldNodeWatchValues = <Self extends FieldNodeRecord<Self>>(
     };
   if (!next) return memo!.values;
   const values = next.length ? Object.freeze(next) : EMPTY_ARRAY;
-  node.watchValuesMemo = { commit, values };
+  node.__watchValues__ = { commit, values };
   return values;
 };

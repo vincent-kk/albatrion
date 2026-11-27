@@ -31,21 +31,6 @@ const schema = {
 /** Stable empty context, so a re-render does not count as a context change. */
 const context = {};
 
-/** Two always-active `allOf` branches declare `shared` with different types, so the load keeps no root. */
-const conflictSchema = {
-  type: 'object',
-  allOf: [
-    {
-      controls: { active: 'true' },
-      properties: { shared: { type: 'number' } },
-    },
-    {
-      controls: { active: 'true' },
-      properties: { shared: { type: 'string' } },
-    },
-  ],
-} as const;
-
 /** The `oneOf` branches give the discriminator `kind` constants of different types, so construction fails. */
 const unbuildableSchema = {
   type: 'object',
@@ -144,7 +129,7 @@ it('REACT-007 keeps the initial errors through an unrelated re-render and an equ
   expectExpressionReportedOnce(onError, sink);
 });
 
-it('REACT-007 keeps the load fallback when a shared conflict fails the mount with initial errors', () => {
+it('REACT-007 keeps the degraded form when a shared conflict fails the mount with initial errors', () => {
   observeErrorSink();
   const onError = vi.fn();
   const handle = createRef<FormHandle>();
@@ -170,8 +155,11 @@ it('REACT-007 keeps the load fallback when a shared conflict fails the mount wit
     />,
   );
   expect(handle.current).not.toBeNull();
-  expect(handle.current?.node).toBeUndefined();
-  expect(view.getByRole('alert').textContent).toBe('Unable to load form.');
+  expect(handle.current?.node?.diagnostics.cause).toBe('sharedConflict');
+  expect(handle.current?.getErrors()).toEqual([
+    { dataPath: '/shared', message: 'external shared' },
+  ]);
+  expect(view.queryByText('Unable to load form.')).toBeNull();
   expect(onError).toHaveBeenCalledTimes(1);
   expect(onError.mock.calls[0][0]).toMatchObject({
     code: FormErrorCode.SharedNodeConflict,
@@ -209,16 +197,6 @@ it('REACT-007 applies the initial errors when input-map recovery mounts into a t
 });
 
 it.each([
-  {
-    source: 'a shared-conflict fallback',
-    initial: conflictSchema,
-    trigger: 'handle.reset()',
-  },
-  {
-    source: 'a shared-conflict fallback',
-    initial: conflictSchema,
-    trigger: 'a validatorFactory change',
-  },
   {
     source: 'a construction failure',
     initial: unbuildableSchema,

@@ -28,9 +28,9 @@ describe('gate-wheel input evidence at critical wheels', () => {
           },
           (root) => {
             observations.push({
-              outputValue: root.storedOutputValue,
+              outputValue: root.__outputValue__,
               declarations: root.runtime.committedDeclarationIds?.get(
-                getCommittedDeclarationKey(root, root.runtime),
+                getCommittedDeclarationKey(root),
               ),
             });
             decisions.push(
@@ -123,7 +123,7 @@ describe('gate-wheel input evidence at critical wheels', () => {
           engineModes.setMode('gateWheel', 'skip');
         },
         (root) => {
-          values.push(root.storedOutputValue);
+          values.push(root.__outputValue__);
         },
       );
       expect(values[0]).toEqual({ mode: 'x', akey: true, bkey: true });

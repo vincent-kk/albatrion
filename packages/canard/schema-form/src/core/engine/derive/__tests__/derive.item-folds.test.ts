@@ -46,7 +46,9 @@ describe('array fragment derive candidates', () => {
         { a: false, b: true, list: [0] },
         WriteOption.Overwrite,
       );
-      expect(root.childrenByName!.list.childrenByName!['0'].source).toBe(42);
+      expect(
+        root.__childrenByName__!.list.__childrenByName__!['0'].source,
+      ).toBe(42);
     },
   );
 });

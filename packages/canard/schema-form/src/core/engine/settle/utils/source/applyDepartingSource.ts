@@ -18,7 +18,9 @@ const findLive = <Self extends FieldNodeRecord<Self>>(
   let current: Self | undefined = node;
   for (const name of parsePointerSegments(suffix))
     current =
-      typeof name === 'string' ? current?.childrenByName?.[name] : undefined;
+      typeof name === 'string'
+        ? current?.__childrenByName__?.[name]
+        : undefined;
   return current;
 };
 

@@ -10,7 +10,7 @@ import type { FieldNodeRecord } from '../../../record';
 export const hasWrongKindBranchAncestor = <Self extends FieldNodeRecord<Self>>(
   node: Self,
 ): boolean => {
-  let parent = node.parent;
+  let parent = node.__parent__;
   while (parent) {
     if (
       parent.behavior.type === 'object' &&
@@ -28,7 +28,7 @@ export const hasWrongKindBranchAncestor = <Self extends FieldNodeRecord<Self>>(
       !isArray(parent.source)
     )
       return true;
-    parent = parent.parent;
+    parent = parent.__parent__;
   }
   return false;
 };

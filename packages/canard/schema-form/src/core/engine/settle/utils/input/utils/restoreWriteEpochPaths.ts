@@ -12,5 +12,5 @@ export const restoreWriteEpochPaths = <Self extends FieldNodeRecord<Self>>(
   const epoch = context.writeEpoch;
   context.writeEpoch = undefined;
   for (const node of context.writtenInputs.keys())
-    if (node.writeEpoch === epoch) context.dirtyPaths.add(node.path);
+    if (node.__writeEpoch__ === epoch) context.dirtyPaths.add(node.path);
 };

@@ -38,7 +38,7 @@ export const dispatchRelayInput = <
     dispatchBatch(node, () => {
       const value =
         typeof input === 'function'
-          ? input(marking ? readBatchValue(node) : node.storedValue)
+          ? input(marking ? readBatchValue(node) : node.__value__)
           : input;
       const relays = (runtime.inputRelays ??= []);
       const record = { node, path: node.path, value };

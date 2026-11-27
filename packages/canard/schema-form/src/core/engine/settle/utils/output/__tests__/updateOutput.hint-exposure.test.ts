@@ -69,7 +69,7 @@ it('never exposes any hint through emitted values or delivered payloads', () => 
   dispatchMount(root, undefined, WriteOption.Overwrite);
   for (const value of [3, 4, 1, 1])
     dispatchSetValue(
-      root.childrenByName!.nested.childrenByName!.value,
+      root.__childrenByName__!.nested.__childrenByName__!.value,
       value,
       WriteOption.Overwrite,
     );
@@ -78,13 +78,14 @@ it('never exposes any hint through emitted values or delivered payloads', () => 
   const pending = [root];
   while (pending.length) {
     const node = pending.pop()!;
-    expect(containsHint(node.storedOutputValue, hints), node.path).toBe(false);
-    expect(containsHint(node.storedValue, hints), node.path).toBe(false);
-    expect(containsHint(node.pendingDelivery?.payload, hints), node.path).toBe(
-      false,
-    );
+    expect(containsHint(node.__outputValue__, hints), node.path).toBe(false);
+    expect(containsHint(node.__value__, hints), node.path).toBe(false);
+    expect(
+      containsHint(node.__pendingDelivery__?.payload, hints),
+      node.path,
+    ).toBe(false);
     for (const child of node.children ?? [])
-      if (child.parent === node) pending.push(child);
+      if (child.__parent__ === node) pending.push(child);
   }
   expect(containsHint(payloads, hints)).toBe(false);
 });

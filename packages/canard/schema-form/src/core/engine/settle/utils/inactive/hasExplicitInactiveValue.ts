@@ -27,7 +27,11 @@ export const hasExplicitInactiveValue = <Self extends FieldNodeRecord<Self>>(
     return false;
   const lineage: Self[] = [];
   let ancestor: Nullable<Self> = node;
-  for (; ancestor && ancestor !== context.target; ancestor = ancestor.parent)
+  for (
+    ;
+    ancestor && ancestor !== context.target;
+    ancestor = ancestor.__parent__
+  )
     lineage.push(ancestor);
   if (!ancestor) return false;
   let input = context.writtenInputs.get(context.target);

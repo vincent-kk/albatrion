@@ -2,7 +2,7 @@
 "@winglet/json-schema": major
 ---
 
-This is a breaking change to schema traversal, reference resolution, and scanner lifecycle behavior.
+Breaking change: `JSONSchemaScanner`, `JSONSchemaScannerAsync` and `resolveReference` now resolve references through a resolver object, read the JSON Schema dialect of each resource, visit boolean schemas and the children of references they keep, keep sibling keywords beside inlined references, and reject `mutate` results that change identifiers. Each section below names one change and how to migrate.
 
 ### Construct a resolver object instead of supplying a callback
 
@@ -77,41 +77,89 @@ const scanner = new JSONSchemaScanner({
 scanner.scan(schema).getValue();
 ```
 
-### Use the wider default vocabulary and inspect inertness
+### Expect the wider default vocabulary
 
-`EXTENDED_KEYWORDS` is removed. The default vocabulary includes the extended applicators and schema-valued `dependencies`. Positions from other supported dialects are still visited with `entry.inert`; skip semantic transformations there. `keywords` replaces the complete vocabulary, while `additionalKeywords` appends and the last duplicate wins.
+`EXTENDED_KEYWORDS` is removed. `DEFAULT_KEYWORDS` now also holds `patternProperties`, `dependentSchemas`, `propertyNames`, `contains`, `additionalItems`, `unevaluatedProperties`, `unevaluatedItems`, `contentSchema` and schema-valued `dependencies`, so a scanner with default options visits those positions too. The new `keywords` option replaces the whole vocabulary; `additionalKeywords` still appends to it, and the last duplicate still wins.
 
 Before:
 
 ```typescript
-import {
-  DEFAULT_KEYWORDS,
-  EXTENDED_KEYWORDS,
-  JSONSchemaScanner,
-} from "@winglet/json-schema";
+import { EXTENDED_KEYWORDS, JSONSchemaScanner } from "@winglet/json-schema";
 new JSONSchemaScanner({
-  options: { keywords: [...DEFAULT_KEYWORDS, ...EXTENDED_KEYWORDS] },
+  options: { additionalKeywords: [...EXTENDED_KEYWORDS] },
 }).scan({ contains: { type: "string" } });
 ```
 
 After:
 
 ```typescript
-import { JSONSchemaScanner } from "@winglet/json-schema";
+import { DEFAULT_KEYWORDS, JSONSchemaScanner } from "@winglet/json-schema";
+new JSONSchemaScanner().scan({ contains: { type: "string" } });
+
+// To visit only the keywords of the former default vocabulary:
+const former = [
+  "$defs",
+  "definitions",
+  "additionalProperties",
+  "not",
+  "if",
+  "then",
+  "else",
+  "allOf",
+  "anyOf",
+  "oneOf",
+  "prefixItems",
+  "items",
+  "properties",
+];
 new JSONSchemaScanner({
-  options: { defaultDialect: "2020-12" },
-  visitor: {
-    enter(entry) {
-      if (entry.inert) return;
-      console.log(entry.path);
-    },
+  options: {
+    keywords: DEFAULT_KEYWORDS.filter((descriptor) =>
+      former.includes(descriptor.keyword),
+    ),
   },
 }).scan({ contains: { type: "string" } });
 ```
 
-### Handle boolean nodes before reading object fields
+### Name the dialect of documents without `$schema`
 
-`SchemaEntry.schema` is `Schema | boolean`. Boolean leaves now reach filters, transformations and visitors, so code that assumes every entry has object fields must narrow first.
+Each resource is read in the dialect its `$schema` declares, and a document without a recognized `$schema` is read as 2020-12 unless `defaultDialect` names another dialect. A position that does not belong to that dialect, and everything below it, is visited with `entry.inert: true`: callbacks still run there, but a `mutate` replacement is not written to the output and a reference is not resolved. Under the 2020-12 default this includes array-form `items` and `additionalItems`, so name the dialect of a draft-04, draft-06 or draft-07 document that has no `$schema`. With a resolver, also pass `defaultDialect` to `createReferenceResolver`, whose dialect takes precedence over the scanner option.
+
+Before:
+
+```typescript
+import { JSONSchemaScanner } from "@winglet/json-schema";
+const output = new JSONSchemaScanner({
+  options: {
+    mutate: (entry) =>
+      entry.path === "#/items/0" ? { type: "number" } : undefined,
+  },
+})
+  .scan({ type: "array", items: [{ type: "string" }] })
+  .getValue();
+// { type: 'array', items: [{ type: 'number' }] }
+```
+
+After:
+
+```typescript
+import { JSONSchemaScanner } from "@winglet/json-schema";
+const output = new JSONSchemaScanner({
+  options: {
+    defaultDialect: "draft-07",
+    mutate: (entry) =>
+      entry.path === "#/items/0" ? { type: "number" } : undefined,
+  },
+})
+  .scan({ type: "array", items: [{ type: "string" }] })
+  .getValue();
+// { type: 'array', items: [{ type: 'number' }] }
+// Without defaultDialect, '#/items/0' is inert and the output keeps { type: 'string' }.
+```
+
+### Narrow entries and results before reading object fields
+
+`SchemaEntry.schema` is `Schema | boolean` and `readonly`. Boolean leaves now reach `filter`, `mutate` and visitors, `scan` accepts a boolean root, and `getValue()` and `resolveReference` can return a boolean. `SchemaEntry.keyword` is a `string` and `SchemaEntry.variant` is `string | number`, so comparing `keyword` no longer narrows `variant`. Narrow before reading object fields, and return a replacement from `mutate` instead of assigning `entry.schema`.
 
 Before:
 
@@ -121,9 +169,10 @@ new JSONSchemaScanner({
   visitor: {
     enter: (entry) => {
       console.log(entry.schema.type);
+      if (entry.keyword === "properties") console.log(entry.variant.length);
     },
   },
-}).scan({ properties: { denied: false } });
+}).scan({ properties: { denied: false, name: { type: "string" } } });
 ```
 
 After:
@@ -132,15 +181,14 @@ After:
 import { JSONSchemaScanner } from "@winglet/json-schema";
 new JSONSchemaScanner({
   visitor: {
-    enter(entry) {
-      if (typeof entry.schema === "boolean") {
-        console.log(entry.schema);
-        return;
-      }
+    enter: (entry) => {
+      if (typeof entry.schema === "boolean") return;
       console.log(entry.schema.type);
+      if (entry.keyword === "properties" && typeof entry.variant === "string")
+        console.log(entry.variant.length);
     },
   },
-}).scan({ properties: { denied: false } });
+}).scan({ properties: { denied: false, name: { type: "string" } } });
 ```
 
 ### Read reference outcomes at exit
@@ -186,9 +234,9 @@ new JSONSchemaScanner({
 }).scan({ $ref: "#/missing" });
 ```
 
-### Treat arrays as containers, not schema nodes
+### Expect visits below references that stay in place
 
-Array-valued children are skipped as schemas. A schema-list keyword still visits its schema elements; it does not visit the array itself. Adjust analysis counts that included malformed array-valued schema positions.
+A node whose `$ref` is not inlined, because no resolver is configured, the target is missing, the node sits under `$defs` or `definitions`, or the reference closes a cycle, now has its children visited; before, the scan stopped at that node. In draft-04, draft-06 and draft-07 those children are inert, except `definitions` and `$defs`.
 
 Before:
 
@@ -201,8 +249,8 @@ new JSONSchemaScanner({
       paths.push(entry.path);
     },
   },
-}).scan({ not: [] });
-console.assert(paths.includes("#/not"));
+}).scan({ $ref: "#/$defs/A", properties: { name: { type: "string" } } });
+console.assert(!paths.includes("#/properties/name"));
 ```
 
 After:
@@ -216,13 +264,52 @@ new JSONSchemaScanner({
       paths.push(entry.path);
     },
   },
-}).scan({ not: [] });
-console.assert(!paths.includes("#/not"));
+}).scan({ $ref: "#/$defs/A", properties: { name: { type: "string" } } });
+console.assert(paths.includes("#/properties/name"));
+```
+
+### Expect sibling keywords beside inlined references
+
+In 2019-09 and 2020-12, including documents read with the 2020-12 default, a `$ref` with sibling keywords is no longer replaced by its target: the siblings stay and the target is appended to `allOf`. A non-array `allOf` keeps the reference in place with `skipped: 'invalid'`, and a `$ref` without siblings is still replaced by its target. In draft-04, draft-06 and draft-07, string, number and null siblings are still dropped and `$schema`, `definitions` and `$defs` stay beside `allOf`; any other boolean, object or array sibling keeps the reference in place with `skipped: 'relocation'`. `resolveReference` follows the same rules.
+
+Before:
+
+```typescript
+import { JSONSchemaScanner } from "@winglet/json-schema";
+const schema = {
+  $defs: { Text: { type: "string" } },
+  properties: { name: { $ref: "#/$defs/Text", title: "Name" } },
+};
+new JSONSchemaScanner({
+  options: { resolveReference: () => schema.$defs.Text },
+})
+  .scan(schema)
+  .getValue();
+// properties.name is { type: 'string' }
+```
+
+After:
+
+```typescript
+import {
+  createReferenceResolver,
+  JSONSchemaScanner,
+} from "@winglet/json-schema";
+const schema = {
+  $defs: { Text: { type: "string" } },
+  properties: { name: { $ref: "#/$defs/Text", title: "Name" } },
+};
+new JSONSchemaScanner({
+  options: { resolveReference: createReferenceResolver(schema) },
+})
+  .scan(schema)
+  .getValue();
+// properties.name is { title: 'Name', allOf: [{ type: 'string' }] }
 ```
 
 ### Move result reads and same-instance scans outside the running scan
 
-Calling `scan` or `getValue` on a running instance now throws `JSONSchemaScanError` with `code: 'scan-in-progress'`, including while async callbacks are pending. Use a separate instance for independent nested work, and read the outer result after completion. A failed scan clears its state.
+Calling `scan` or `getValue` on a running instance now throws `JSONSchemaScanError` with `code: 'scan-in-progress'`, including while async callbacks are pending. Use a separate instance for independent nested work, and read the outer result after completion.
 
 Before:
 
@@ -259,44 +346,56 @@ scanner.scan({ type: "string" });
 const output = scanner.getValue();
 ```
 
-### Keep falsy replacements across result reads
+### Keep identifiers unchanged in `mutate`
 
-Every non-undefined `mutate` result is a replacement, including false. Subsequent `getValue()` calls retain that falsy result instead of reverting to the input. JavaScript callbacks returning other falsy non-undefined values also record replacements; return undefined when the node should stay unchanged. `entry.schema` is readonly to callers: return a replacement instead of changing the input.
+A `mutate` result that adds, removes or changes the node's `$id`, `id`, `$schema`, `$anchor`, `$dynamicAnchor` or `$recursiveAnchor` now throws `JSONSchemaScanError` with `code: 'identifier-mutation'`; before, any result was accepted. Change identifiers before scanning, and name the dialect when you remove `$schema`.
 
 Before:
 
 ```typescript
 import { JSONSchemaScanner } from "@winglet/json-schema";
-const scanner = new JSONSchemaScanner({
-  options: { mutate: () => false },
-}).scan({ type: "string" });
-console.assert(scanner.getValue() === false);
-console.assert(typeof scanner.getValue() === "object");
+const schema = {
+  $schema: "http://json-schema.org/draft-07/schema#",
+  type: "string",
+};
+new JSONSchemaScanner({
+  options: {
+    mutate: (entry) => {
+      if (entry.path !== "#") return undefined;
+      const { $schema, ...rest } = entry.schema;
+      return rest;
+    },
+  },
+})
+  .scan(schema)
+  .getValue();
+// { type: 'string' }
 ```
 
 After:
 
 ```typescript
 import { JSONSchemaScanner } from "@winglet/json-schema";
-const scanner = new JSONSchemaScanner({
-  options: { mutate: () => false },
-}).scan({ type: "string" });
-console.assert(scanner.getValue() === false);
-console.assert(scanner.getValue() === false);
-const unchanged = new JSONSchemaScanner({
-  options: { mutate: () => undefined },
-})
-  .scan({ type: "string" })
+const { $schema, ...rest } = {
+  $schema: "http://json-schema.org/draft-07/schema#",
+  type: "string",
+};
+new JSONSchemaScanner({ options: { defaultDialect: "draft-07" } })
+  .scan(rest)
   .getValue();
-console.assert(typeof unchanged === "object");
+// { type: 'string' }
 ```
 
-### Preserve references whose meaning cannot be fixed statically
+### Falsy `mutate` results persist across reads
 
-`$id` (`id` in draft-04) identifies resources, `$anchor` names static fragments, and `$dynamicAnchor`/`$recursiveAnchor` express scope that may require preservation. Identifiers and anchors resolve to canonical locations; chains continue until completion or a configured limit, and an active ancestor cycle remains a reference without blocking reuse in siblings. Definitions remain address containers. In 2019-09 and 2020-12, sibling keywords keep applying and target branches append to `allOf`.
+`mutate` may return a boolean schema. Every result other than `undefined`, including `false`, replaces the node on every `getValue()` call; before, a falsy replacement of the root was returned by the first `getValue()` call only, and later calls returned the input. Return `undefined` to leave a node unchanged.
 
-In draft-07 and below, only string, number and null siblings are discarded; `$schema`, `definitions` and `$defs` are retained. Any other boolean, object or array sibling preserves the reference as `'relocation'`. This avoids deleting addressable locations or activating ignored sibling evaluation. Targets at/below inert positions, unsafe dialect/resource moves and dynamic scope also remain in place. Read `entry.references` rather than assuming an output contains no references.
+### Reference and dialect behavior
 
-Use `defaultDialect` for documents without a recognized declaration, and resolver `dialects` for custom metaschema aliases. `createReferenceResolverAsync` supplies documents only through an explicit `load` hook; the package never performs automatic network or filesystem access. Registered and loaded resources, pending requests and missing results can be reused by a resolver.
+`$id` (`id` in draft-04) identifies resources, `$anchor` names static fragments, and `$dynamicAnchor`/`$recursiveAnchor` express scope that may require preservation. Identifiers and anchors resolve to canonical locations; reference chains are followed until completion or a configured limit, and an active ancestor cycle remains a reference without blocking reuse in siblings. References under `$defs` and `definitions` are still not inlined. Targets at or below inert positions, unsafe dialect or resource moves and dynamic scope also remain in place. Read `entry.references` rather than assuming an output contains no references.
 
-`unresolvedReference: 'throw'` rejects missing targets. `limits.referenceChain` and `limits.inlinedNodes` bound expansion. The supported dialects and the reasons a reference stays in place are exported as the `Dialect` and `ReferenceSkipReason` tables; their entries are the same strings as before, so literals keep working. `JSONSchemaScanError.code` is typed as a union of the entries in the exported `JSONSchemaScanErrorCode` table (for example `JSONSchemaScanErrorCode.SchemaCycle`), and distinguishes duplicate identifiers, invalid resolver results, identifier-changing mutations, reference budgets, physical cycles and running-instance access. Iterative traversal and copying support deep plain JSON containers; custom prototypes, callbacks and loaders keep their own depth behavior.
+Without a resolver, a subschema with a recognized `$schema` switches to that dialect when the identifier keyword of that dialect (`id` for draft-04, `$id` from draft-06) holds a string and, under a draft-04, draft-06 or draft-07 parent, no string `$ref` sits beside it. The built-in resolver also declines an identifier with a non-empty fragment (in 2019-09 and 2020-12, or in older drafts when it names the enclosing document) and one that does not resolve as a URI reference, so below such an identifier `entry.inert` can differ between a scan with and without the resolver.
+
+Use resolver `dialects` for custom metaschema aliases. `createReferenceResolverAsync` supplies documents only through an explicit `load` hook; the package never performs automatic network or filesystem access. Registered and loaded resources, pending requests and missing results can be reused by a resolver.
+
+`unresolvedReference: 'throw'` rejects missing targets. `limits.referenceChain` and `limits.inlinedNodes` bound expansion. The exported `Dialect` and `ReferenceSkipReason` tables list the supported dialects and the reasons a reference stays in place; their values are plain strings, so literals such as `'2020-12'` and `'relocation'` are accepted too. Scanning errors are `JSONSchemaScanError`, whose `code` is one of the values of the exported `JSONSchemaScanErrorCode` table (for example `JSONSchemaScanErrorCode.SchemaCycle`) and distinguishes duplicate identifiers, invalid resolver results, identifier-changing mutations, reference budgets, physical cycles in the schema object graph and running-instance access. A schema object graph that contains itself now throws `schema-cycle` once the scan passes depth 256, instead of being traversed until `maxDepth`, if set, stops it. Iterative traversal and copying support deep plain JSON containers; custom prototypes, callbacks and loaders keep their own depth behavior.

@@ -40,7 +40,7 @@ export const chooseDeriveWrite = <Self extends FieldNodeRecord<Self>>(
       kind: candidate.kind,
       sourcePath,
       targetPath: path,
-      previousValue: candidate.target?.storedOutputValue,
+      previousValue: candidate.target?.__outputValue__,
       nextValue: candidate.value,
       result: state.isAutomaticWriteSuppressed
         ? 'suppressed'

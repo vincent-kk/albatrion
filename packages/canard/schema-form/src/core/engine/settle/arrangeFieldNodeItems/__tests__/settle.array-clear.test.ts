@@ -162,7 +162,7 @@ describe('clear empties the host by host prefix with positional detached reads',
     );
     const host = root.children![0];
     const former = host.children!.flatMap((item) => [item, ...item.children!]);
-    const ledgers = former.map((node) => ({ ...node.revisionLedger }));
+    const ledgers = former.map((node) => ({ ...node.__revisionLedger__ }));
     const delivered: [string, number][] = [];
     for (const node of [root, host, ...former])
       subscribeFieldNode(node, (event) => {
@@ -178,20 +178,20 @@ describe('clear empties the host by host prefix with positional detached reads',
           FieldNodeEventType.RequestRefresh,
       ],
     ]);
-    expect(host.storedValue).toEqual([]);
+    expect(host.__value__).toEqual([]);
     for (let index = 0; index < former.length; index++) {
       const node = former[index];
       expect(node.isDetached).toBe(true);
       expect(node.isActive).toBe(false);
-      expect(node.pendingDelivery).toBeUndefined();
-      expect(node.pendingRevisionMask).toBe(0);
-      expect({ ...node.revisionLedger }).toEqual(ledgers[index]);
+      expect(node.__pendingDelivery__).toBeUndefined();
+      expect(node.__pendingRevisionMask__).toBe(0);
+      expect({ ...node.__revisionLedger__ }).toEqual(ledgers[index]);
     }
-    expect(root.runtime.detachedReads?.get(former[0])?.defaultValue).toEqual({
+    expect(former[0].__detachedReads__?.defaultValue).toEqual({
       name: 'a',
     });
-    expect(root.runtime.detachedReads?.get(former[1])?.defaultValue).toBe('a');
-    expect(root.runtime.detachedReads?.get(former[2])?.defaultValue).toEqual({
+    expect(former[1].__detachedReads__?.defaultValue).toBe('a');
+    expect(former[2].__detachedReads__?.defaultValue).toEqual({
       name: 'b',
     });
   });

@@ -20,12 +20,12 @@ export const getSlotSource = <Self extends FieldNodeRecord<Self>>(
   const supplied = overlay?.children?.get(binding);
   if (overlay?.isWhole && !supplied)
     return { instance: undefined, overlay: undefined };
-  const live = host?.childrenByName?.[entry.name];
+  const live = host?.__childrenByName__?.[entry.name];
   return {
     instance:
       live?.blueprintNode === entry.node
         ? live
-        : host?.inactiveSlots?.get(binding),
-    overlay: supplied ?? host?.inactiveSlotOverlays?.get(binding),
+        : host?.__inactiveSlots__?.get(binding),
+    overlay: supplied ?? host?.__inactiveSlotOverlays__?.get(binding),
   };
 };

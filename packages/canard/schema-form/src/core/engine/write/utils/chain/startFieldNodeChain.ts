@@ -21,7 +21,7 @@ export const startFieldNodeChain = <Self extends FieldNodeRecord<Self>>(
       : undefined;
   if (!runtime.enclosingChain) runtime.chainOrigin = origin;
   runtime.chainRoot = root;
-  runtime.chainInitialOutputValue = root.storedOutputValue;
+  runtime.chainInitialOutputValue = root.__outputValue__;
   runtime.chainErrors = [];
   runtime.chainOccurrences = [];
   runtime.feedbackBudget = 0;

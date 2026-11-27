@@ -18,7 +18,7 @@ export const finalizeRestoredSlotSource = <Self extends FieldNodeRecord<Self>>(
       live !== node &&
       live.source === undefined &&
       live.extras === undefined &&
-      !(live.behavior.type === 'array' && live.itemCount > 0)
+      !(live.behavior.type === 'array' && live.__itemCount__ > 0)
     )
       context.changedSource.delete(node.path);
   }

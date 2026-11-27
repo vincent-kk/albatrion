@@ -25,28 +25,28 @@ describe('injectTo edge boundaries', () => {
     });
     loadFieldNodeAtMount(root, { source: 'A' }, WriteOption.Overwrite);
     writeFieldNode(
-      root.childrenByName!['source'],
+      root.__childrenByName__!['source'],
       'A',
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
     expect(injectTo).toHaveBeenCalledOnce();
-    expect(root.childrenByName?.target?.source).toBeUndefined();
+    expect(root.__childrenByName__?.target?.source).toBeUndefined();
     writeFieldNode(
-      root.childrenByName!['source'],
+      root.__childrenByName__!['source'],
       'B',
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
-    expect(root.childrenByName?.target?.source).toBeUndefined();
+    expect(root.__childrenByName__?.target?.source).toBeUndefined();
     expect(injectTo).toHaveBeenCalledTimes(2);
     writeFieldNode(
-      root.childrenByName!['source'],
+      root.__childrenByName__!['source'],
       'C',
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
-    expect(root.childrenByName?.target?.source).toBe('C');
+    expect(root.__childrenByName__?.target?.source).toBe('C');
     expect(injectTo).toHaveBeenCalledTimes(3);
   });
 
@@ -116,7 +116,7 @@ describe('injectTo edge boundaries', () => {
         WriteOption.Overwrite,
       ),
     ).toThrow();
-    expect(root.childrenByName?.target?.source).toBe('written');
+    expect(root.__childrenByName__?.target?.source).toBe('written');
     expect(root.runtime.diagnostics.cause).toBe('injectTarget');
   });
 
@@ -139,7 +139,7 @@ describe('injectTo edge boundaries', () => {
     expect(() =>
       loadFieldNodeAtMount(root, { source: 'A' }, WriteOption.Overwrite),
     ).toThrow();
-    expect(root.childrenByName?.target?.source).toBeUndefined();
+    expect(root.__childrenByName__?.target?.source).toBeUndefined();
     expect(root.runtime.diagnostics.cause).toBe('injectTarget');
   });
 
@@ -156,14 +156,14 @@ describe('injectTo edge boundaries', () => {
     expect(() =>
       loadFieldNodeAtMount(root, { source: 'A' }, WriteOption.Overwrite),
     ).toThrow('Derive expression failed');
-    expect(root.childrenByName?.['source']?.source).toBe('A');
+    expect(root.__childrenByName__?.['source']?.source).toBe('A');
     expect(root.runtime.diagnostics).toMatchObject({
       status: 'degraded',
       cause: 'expression',
       commit: 1,
     });
     writeFieldNode(
-      root.childrenByName!['source'],
+      root.__childrenByName__!['source'],
       'A',
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
@@ -184,7 +184,7 @@ describe('injectTo edge boundaries', () => {
     });
     loadFieldNodeAtMount(root, {}, WriteOption.Overwrite);
     expect(injectTo).toHaveBeenCalledTimes(2);
-    expect(root.childrenByName?.target?.source).toBe('root');
+    expect(root.__childrenByName__?.target?.source).toBe('root');
   });
 
   it('WRITE-015 suppress injectTo consumes the load edge', () => {
@@ -201,14 +201,14 @@ describe('injectTo edge boundaries', () => {
       { source: 'A', target: 'manual' },
       WriteOption.DisableAutomaticWrites,
     );
-    expect(root.childrenByName?.target?.source).toBe('manual');
+    expect(root.__childrenByName__?.target?.source).toBe('manual');
     writeFieldNode(
-      root.childrenByName!['source'],
+      root.__childrenByName__!['source'],
       'A',
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
-    expect(root.childrenByName?.target?.source).toBe('manual');
+    expect(root.__childrenByName__?.target?.source).toBe('manual');
     expect(injectTo).toHaveBeenCalledOnce();
   });
 
@@ -226,10 +226,13 @@ describe('injectTo edge boundaries', () => {
       { source: 'A', group: {} },
       WriteOption.Overwrite,
     );
-    resetFieldNodeSubtree(root.childrenByName!.group, WriteOption.Overwrite);
+    resetFieldNodeSubtree(
+      root.__childrenByName__!.group,
+      WriteOption.Overwrite,
+    );
     expect(injectTo).toHaveBeenCalledOnce();
     expect(
-      root.childrenByName?.group?.childrenByName?.target?.source,
+      root.__childrenByName__?.group?.__childrenByName__?.target?.source,
     ).toBeUndefined();
   });
 
@@ -254,24 +257,24 @@ describe('injectTo edge boundaries', () => {
       WriteOption.Overwrite,
     );
     writeFieldNode(
-      root.childrenByName!.group.childrenByName!.child,
+      root.__childrenByName__!.group.__childrenByName__!.child,
       'B',
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
     writeFieldNode(
-      root.childrenByName!.target,
+      root.__childrenByName__!.target,
       'manual',
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
     const before = injectTo.mock.calls.length;
     resetFieldNodeSubtree(
-      root.childrenByName!.group.childrenByName!.child,
+      root.__childrenByName__!.group.__childrenByName__!.child,
       WriteOption.Overwrite,
     );
     expect(injectTo).toHaveBeenCalledTimes(before);
-    expect(root.childrenByName?.target?.source).toBe('manual');
+    expect(root.__childrenByName__?.target?.source).toBe('manual');
   });
 
   it('ERROR-195 accepts a correctly sized virtual tuple', () => {
@@ -289,7 +292,7 @@ describe('injectTo edge boundaries', () => {
       options: { virtual: { v: { fields: ['real'] } } },
     });
     loadFieldNodeAtMount(root, { source: 'A' }, WriteOption.Overwrite);
-    expect(root.childrenByName?.real?.source).toBe('written');
+    expect(root.__childrenByName__?.real?.source).toBe('written');
     expect(root.runtime.diagnostics.status).toBe('stable');
   });
 
@@ -333,7 +336,7 @@ describe('injectTo edge boundaries', () => {
       undefined,
       'C',
     ]);
-    expect(root.childrenByName?.t?.source).toBe('from-C');
+    expect(root.__childrenByName__?.t?.source).toBe('from-C');
   });
 
   it('CONTROLS-073 reborn target kind starts its fields derived edge anew', () => {
@@ -362,19 +365,19 @@ describe('injectTo edge boundaries', () => {
       },
     });
     loadFieldNodeAtMount(root, { source: 10 }, WriteOption.Overwrite);
-    const oldTarget = root.childrenByName!.target;
+    const oldTarget = root.__childrenByName__!.target;
     expect(oldTarget.blueprintNode.kind).toBe('number');
     const oldKey = [...(root.runtime.committedRuleValues?.keys() ?? [])].find(
       (key) => key.includes('"/target","number"'),
     );
     expect(oldKey).toBeDefined();
     writeFieldNode(
-      root.childrenByName!.enabled,
+      root.__childrenByName__!.enabled,
       true,
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
-    const newTarget = root.childrenByName!.target;
+    const newTarget = root.__childrenByName__!.target;
     expect(newTarget).not.toBe(oldTarget);
     expect(newTarget.blueprintNode.kind).toBe('union');
     expect(newTarget.source).toBe(10);
@@ -418,18 +421,18 @@ describe('injectTo edge boundaries', () => {
       { source: 10, a: 'A', b: 'B' },
       WriteOption.Overwrite,
     );
-    const target = root.childrenByName!.target;
+    const target = root.__childrenByName__!.target;
     expect(target.blueprintNode.kind).toBe('number');
     writeFieldNode(target, 99, FieldNodeWriteKind.Input, WriteOption.Overwrite);
     writeFieldNode(
-      root.childrenByName!.a,
+      root.__childrenByName__!.a,
       'changed',
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
     expect(target.source).toBe(99);
     writeFieldNode(
-      root.childrenByName!.b,
+      root.__childrenByName__!.b,
       'C',
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,

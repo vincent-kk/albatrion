@@ -38,7 +38,7 @@ describe('navigation over the committed shape', () => {
     const root = createNode('');
     const leaf = createNode('leaf', root, 'terminal');
     const absent = createNode('absent', root);
-    delete root.childrenByName?.absent;
+    delete root.__childrenByName__?.absent;
     root.children = [leaf];
     expect(find(root, '/absent')).toBeNull();
     expect(findNodes(root, '/absent')).toEqual([]);
@@ -51,7 +51,7 @@ describe('navigation over the committed shape', () => {
     const root = createNode('');
     const first = createNode('first', root);
     const second = createNode('second', root);
-    if (root.childrenByName !== null) root.childrenByName.alias = first;
+    if (root.__childrenByName__ !== null) root.__childrenByName__.alias = first;
     expect(findNodes(root, '/*')).toEqual([first, second]);
     expect(find(root, '/*')).toBe(first);
   });
@@ -60,7 +60,7 @@ describe('navigation over the committed shape', () => {
     const root = createNode('');
     const startDate = createNode('startDate', root);
     const period = createNode('period', root);
-    period.childrenByName = { startDate };
+    period.__childrenByName__ = { startDate };
     period.children = [startDate];
     expect(find(root, '/period/startDate')).toBe(startDate);
     expect(find(root, '/period/startDate')?.path).toBe('/startDate');
@@ -70,7 +70,7 @@ describe('navigation over the committed shape', () => {
     const root = createNode('');
     const first = createNode('first', root);
     const second = createNode('second', root);
-    second.childrenByName = { first };
+    second.__childrenByName__ = { first };
     second.children = [first];
     const visited: TestNode[] = [];
     visitFieldNodes(root, (node) => {
@@ -121,7 +121,7 @@ describe('detached navigation reads', () => {
     const oldChild = createNode('oldChild', oldBranch);
     oldBranch.isDetached = true;
     oldChild.isDetached = true;
-    delete root.childrenByName?.branch;
+    delete root.__childrenByName__?.branch;
     root.children = [];
     const liveBranch = createNode('branch', root);
     const liveChild = createNode('liveChild', liveBranch);
@@ -137,7 +137,7 @@ describe('detached navigation reads', () => {
     const child = createNode('child', branch);
     branch.isDetached = true;
     child.isDetached = true;
-    delete root.childrenByName?.branch;
+    delete root.__childrenByName__?.branch;
     root.children = [];
     createNode('live', root);
     expect(find(child, '..')).toBe(branch);

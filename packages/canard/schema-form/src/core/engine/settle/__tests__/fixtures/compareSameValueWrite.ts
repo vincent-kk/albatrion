@@ -96,7 +96,7 @@ export const compareSameValueWrite = async (
         report.mockClear();
         first = undefined;
         const before = new Map(
-          nodesOf(root).map((node) => [node.path, node.storedValue]),
+          nodesOf(root).map((node) => [node.path, node.__value__]),
         );
         let result: unknown;
         try {
@@ -114,14 +114,14 @@ export const compareSameValueWrite = async (
           settlement: observeArraySelection(root),
           refresh: [...(root.runtime.refreshTargets ?? [])],
           rounds: root.runtime.settlementTrace?.rounds.length,
-          order: JSON.stringify([root.storedValue, root.storedOutputValue]),
+          order: JSON.stringify([root.__value__, root.__outputValue__]),
           nodes: nodes.map((node) => ({
             path: node.path,
             keys:
-              node.storedValue !== null && typeof node.storedValue === 'object'
-                ? Object.keys(node.storedValue)
+              node.__value__ !== null && typeof node.__value__ === 'object'
+                ? Object.keys(node.__value__)
                 : null,
-            copied: before.get(node.path) !== node.storedValue,
+            copied: before.get(node.path) !== node.__value__,
             defaultValue: JSON.stringify(readFieldNodeDefaultValue(node)),
           })),
           errors: root.runtime.globalErrors,

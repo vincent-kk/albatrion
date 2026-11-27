@@ -17,6 +17,8 @@ Breaking change: the node and input APIs use FieldNode and FieldInput names. Upd
 | `useSchemaNodeTracker` | `useFieldNodeTracker` |
 | `useChildNodeComponentMap` | `useChildFieldMap` |
 | `useChildNodeErrors` | `useChildFieldErrors` |
+| `useChildNodeErrors().showError` | `useChildFieldErrors().errorVisible` |
+| `useChildNodeErrors().showErrors` | `useChildFieldErrors().childErrorVisibleList` |
 | `ChildNodeComponentProps` | `ChildFieldProps` |
 | `FormTypeInputDefinition` | `FieldInputDefinition` |
 | `FormTypeInputMap` | `FieldInputMap` |

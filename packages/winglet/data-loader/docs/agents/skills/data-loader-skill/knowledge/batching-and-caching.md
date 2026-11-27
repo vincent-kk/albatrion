@@ -38,7 +38,7 @@ const loader = new DataLoader(batchLoad, { maxBatchSize: 100 });
 // → batch 2: batchLoad(keys[100..149])
 ```
 
-`maxBatchSize` must be a positive integer or `Infinity`; any other value, such as `0`, `2.5` or `NaN`, makes the constructor throw with code `DATA_LOADER.INVALID_MAX_BATCH_SIZE`. The default is `Infinity`. With `disableBatch: true` the option is not read.
+`maxBatchSize` must be a positive integer or `Infinity`; any other value, such as `0`, `2.5` or `NaN`, makes the constructor throw with code `DATA_LOADER.INVALID_MAX_BATCH_SIZE`. The default is `Infinity`. It cannot be combined with `disableBatch: true`, as described below.
 
 ### Disabling Batching
 
@@ -50,7 +50,16 @@ const singleLoader = new DataLoader(batchLoad, { disableBatch: true });
 // Note: still uses the scheduler; each batch simply holds one key
 ```
 
-`disableBatch: true` and `maxBatchSize` are both accepted by the type, and `disableBatch: true` wins (batch size 1) — pick one.
+`maxBatchSize` beside `disableBatch: true` is a type error (TS2322 on `maxBatchSize`), because the two contradict each other. So is `maxBatchSize` beside a `disableBatch` typed as `boolean`, which may be `true`. Choose the shape per branch:
+
+```typescript
+const loader = new DataLoader(
+  batchLoad,
+  singleKeyBackend ? { disableBatch: true } : { maxBatchSize: 100 },
+);
+```
+
+`disableBatch: false` is the same as omitting it. Fix the options, never the type error: when the type check is bypassed (`as any`, or plain JavaScript), `disableBatch: true` wins and `maxBatchSize` is neither read nor validated, so the limit is silently ignored.
 
 ### Custom Schedulers
 

@@ -91,10 +91,10 @@ describe('array integration runtime stores', () => {
       WriteOption.Overwrite,
     );
     for (const node of root.runtime.deliveries ?? [])
-      node.pendingDelivery = undefined;
+      node.__pendingDelivery__ = undefined;
     root.runtime.deliveries?.clear();
     const item = root.children![1];
-    const leaf = item.childrenByName!.n;
+    const leaf = item.__childrenByName__!.n;
     const scratch = getSettlementScratch(root.runtime);
     try {
       const context = createSettlementContext(
@@ -108,16 +108,16 @@ describe('array integration runtime stores', () => {
         updateFieldNodeNameAndPath(
           node,
           node === item ? '0' : node.name,
-          node.parent,
+          node.__parent__,
         );
         context.pathChanges.push({ node, previous, current: node.path });
       }
       markCommitDeliveries(context);
       expect(
-        item.pendingDelivery?.payload?.[FieldNodeEventType.UpdatePath],
+        item.__pendingDelivery__?.payload?.[FieldNodeEventType.UpdatePath],
       ).toEqual({ previous: '/1', current: '/0' });
       expect(
-        leaf.pendingDelivery?.payload?.[FieldNodeEventType.UpdatePath],
+        leaf.__pendingDelivery__?.payload?.[FieldNodeEventType.UpdatePath],
       ).toEqual({ previous: '/1/n', current: '/0/n' });
     } finally {
       releaseSettlementScratch(scratch);
@@ -140,14 +140,14 @@ describe('array integration runtime stores', () => {
         WriteOption.Overwrite,
       );
       const item = root.children![kind === 'pop' ? 1 : 0];
-      const leaf = item.childrenByName!.n;
-      item.storedState = { touched: true };
-      leaf.storedState = { edited: true };
+      const leaf = item.__childrenByName__!.n;
+      item.__state__ = { touched: true };
+      leaf.__state__ = { edited: true };
       const deltas = new Map<string, number>();
       for (const node of [item, leaf]) {
-        accumulateGlobalStateDeltas(deltas, {}, node.storedState);
-        node.deliveryPreviousState = node.storedState;
-        node.deliveryChanges |= FieldNodeEventType.UpdateState;
+        accumulateGlobalStateDeltas(deltas, {}, node.__state__);
+        node.__deliveryPreviousState__ = node.__state__;
+        node.__deliveryChanges__ |= FieldNodeEventType.UpdateState;
       }
       publishGlobalStateDeltas(root, deltas);
       expect(root.runtime.globalState).toEqual({ touched: true, edited: true });
@@ -176,7 +176,7 @@ describe('array integration runtime stores', () => {
       WriteOption.Overwrite,
     );
     const item = root.children![0];
-    const leaf = item.childrenByName!.n;
+    const leaf = item.__childrenByName__!.n;
     const runtime = root.runtime;
     for (const node of [item, leaf]) {
       (runtime.nodeErrors ??= new Map()).set(node, [{ dataPath: node.path }]);
@@ -188,24 +188,24 @@ describe('array integration runtime stores', () => {
       (runtime.validationTargets ??= new Set()).add(node);
       (runtime.validationPendingTargets ??= new Set()).add(node);
       (runtime.queuedNonSettleEvents ??= new Set()).add(node);
-      node.pendingNonSettleDelivery = { type: 1 };
+      node.__pendingNonSettleDelivery__ = { type: 1 };
       (runtime.revisionNodes ??= new Set()).add(node);
-      node.pendingRevisionMask = 1;
+      node.__pendingRevisionMask__ = 1;
       runtime.deliveries!.add(node);
-      node.pendingDelivery = { type: 1 };
+      node.__pendingDelivery__ = { type: 1 };
     }
     expect(runtime.deliveryWatchIndex?.allNodes.has(leaf)).toBe(true);
     arrangeFieldNodeItems(root, { kind: 'clear' });
     for (const node of [item, leaf]) {
-      expect(node.deliveryChanges).toBe(0);
-      expect(node.deliveryPreviousState).toBeUndefined();
-      expect(node.deliveryWatchValues).toBeUndefined();
-      expect(node.pendingDelivery).toBeUndefined();
-      expect(node.pendingNonSettleDelivery).toBeUndefined();
+      expect(node.__deliveryChanges__).toBe(0);
+      expect(node.__deliveryPreviousState__).toBeUndefined();
+      expect(node.__deliveryWatchValues__).toBeUndefined();
+      expect(node.__pendingDelivery__).toBeUndefined();
+      expect(node.__pendingNonSettleDelivery__).toBeUndefined();
       expect(runtime.deliveryWatchIndex?.allNodes.has(node)).toBe(false);
       expect(runtime.deliveries?.has(node)).toBe(false);
       expect(runtime.revisionNodes?.has(node)).toBe(false);
-      expect(node.pendingRevisionMask).toBe(0);
+      expect(node.__pendingRevisionMask__).toBe(0);
       expect(runtime.queuedNonSettleEvents?.has(node)).toBe(false);
       expect(runtime.nodeErrors?.has(node)).toBe(false);
       expect(runtime.validationErrors?.has(node)).toBe(false);

@@ -14,19 +14,22 @@ export const pruneArraySlotTail = <Self extends FieldNodeRecord<Self>>(
   host: Self,
   context: SettlementContext<Self>,
 ): void => {
-  for (const [name, child] of host.inactiveSlotChildren ?? []) {
-    if (Number(name) < host.itemCount && host.childrenByName?.[name] === child)
+  for (const [name, child] of host.__inactiveSlotChildren__ ?? []) {
+    if (
+      Number(name) < host.__itemCount__ &&
+      host.__childrenByName__?.[name] === child
+    )
       continue;
     const entry = getRetainedChildEntry(host, name, child.blueprintNode);
     if (entry) markSlotChange(host, entry, child, context);
   }
-  const entries = new Set<BlueprintChildEntry>(host.inactiveSlots?.keys());
-  for (const entry of host.inactiveSlotOverlays?.keys() ?? [])
+  const entries = new Set<BlueprintChildEntry>(host.__inactiveSlots__?.keys());
+  for (const entry of host.__inactiveSlotOverlays__?.keys() ?? [])
     entries.add(entry);
   for (const entry of entries) {
-    if (Number(entry.name) < host.itemCount) continue;
+    if (Number(entry.name) < host.__itemCount__) continue;
     markSlotChange(host, entry, undefined, context);
-    host.inactiveSlots?.delete(entry);
-    host.inactiveSlotOverlays?.delete(entry);
+    host.__inactiveSlots__?.delete(entry);
+    host.__inactiveSlotOverlays__?.delete(entry);
   }
 };

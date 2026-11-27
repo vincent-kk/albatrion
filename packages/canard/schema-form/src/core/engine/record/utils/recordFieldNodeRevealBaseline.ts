@@ -12,14 +12,14 @@ export const recordFieldNodeRevealBaseline = <Self>(
     !((runtime.validationMode ?? ValidationMode.None) & ValidationMode.OnChange)
   )
     return;
-  const entries = (node.revealBaseline ??= { entries: [] }).entries;
+  const entries = (node.__revealBaseline__ ??= { entries: [] }).entries;
   const sequence = runtime.revealWriteSequence ?? 0;
   if (entries.length && entries[entries.length - 1].sequence === sequence)
     return;
   const generation = (runtime.revealBaselineGeneration =
     (runtime.revealBaselineGeneration ?? 0) + 1);
   entries.push({
-    state: node.storedState,
+    state: node.__state__,
     isPresent: node.isActive && node.isVisible,
     generation,
     sequence,

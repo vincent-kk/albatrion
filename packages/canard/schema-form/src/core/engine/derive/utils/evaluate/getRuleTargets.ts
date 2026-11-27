@@ -20,7 +20,7 @@ export const getRuleTargets = <Self extends FieldNodeRecord<Self>>(
   state: DeriveState<Self>,
 ): readonly Self[] => {
   if (rule.targetName === undefined && !rule.isItemTarget) return [source];
-  const children = source.childrenByName;
+  const children = source.__childrenByName__;
   // A repeated array template addresses every live item; declaration selection filters below.
   const targets = rule.isItemTarget
     ? (source.children ?? EMPTY_ARRAY)

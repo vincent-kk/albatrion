@@ -33,13 +33,13 @@ const resultOf = <Self extends FieldNodeRecord<Self>>(
   if (plan.result.source === 'removed') return removed;
   if (plan.result.source === 'length')
     return plan.kind === 'slots'
-      ? node.itemCount
+      ? node.__itemCount__
       : isArray(node.source)
         ? node.source.length
         : 0;
   if (plan.result.source === 'updated')
-    return isArray(node.storedValue)
-      ? node.storedValue[plan.result.index]
+    return isArray(node.__value__)
+      ? node.__value__[plan.result.index]
       : undefined;
   return undefined;
 };
@@ -89,7 +89,7 @@ export const arrangeFieldNodeItems = <Self extends FieldNodeRecord<Self>>(
     );
     return resultOf(node, plan, previous);
   }
-  if (plan.kind === 'update' && !node.childrenByName?.['' + plan.index]) {
+  if (plan.kind === 'update' && !node.__childrenByName__?.['' + plan.index]) {
     const scratch = getSettlementScratch(node.rootNode.runtime);
     const context = createSettlementContext(
       node,
@@ -111,8 +111,8 @@ export const arrangeFieldNodeItems = <Self extends FieldNodeRecord<Self>>(
       FieldNodeWriteKind.CallerReplace,
       WriteOption.Overwrite,
     );
-    const item = node.childrenByName?.['' + plan.index];
-    if (item) return item.storedValue;
+    const item = node.__childrenByName__?.['' + plan.index];
+    if (item) return item.__value__;
     const readScratch = getSettlementScratch(node.rootNode.runtime);
     try {
       const readContext = createSettlementContext(
@@ -128,7 +128,7 @@ export const arrangeFieldNodeItems = <Self extends FieldNodeRecord<Self>>(
     }
   }
   if (plan.kind === 'update') {
-    const item = node.childrenByName?.['' + plan.index];
+    const item = node.__childrenByName__?.['' + plan.index];
     if (!item) return undefined;
     writeFieldNode(
       item,
@@ -136,7 +136,7 @@ export const arrangeFieldNodeItems = <Self extends FieldNodeRecord<Self>>(
       FieldNodeWriteKind.CallerReplace,
       WriteOption.Overwrite,
     );
-    return item.storedValue;
+    return item.__value__;
   }
 
   const scratch = getSettlementScratch(node.rootNode.runtime);

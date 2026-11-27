@@ -26,6 +26,8 @@ Move each key to its group:
 | `propertyKeys` | `options.propertyOrder` |
 | `virtual`, `type: 'virtual'` | `options.virtual: { <name>: { fields: [...] } }` |
 
+`options.propertyOrder` orders only the keys of the submitted value. In 0.x `propertyKeys` also set the order in which the fields render; `options.propertyOrder` does not change the on-screen order.
+
 Before:
 
 ```ts
@@ -46,6 +48,4 @@ const schema = {
 };
 ```
 
-Migrate schema configuration first, component and type imports next, and node state and validation-issue handling last. The [migration guide](https://vincent-kk.github.io/albatrion/docs/canard/schema-form/migration-from-0x) lists every renamed component, type, hook and node member, and the behavior to re-check after conversion. The other entries of this release that begin with "Breaking change" each describe one of those changes with its own migration.
-
-The root entry point also exports the node kinds and their guards (`BranchNode`, `TerminalNode`, `UnionNode`, `isBranchNode`, `isTerminalNode`, `isUnionNode`), the schema types `JSONSchema` and `InferJSONSchema`, and `FormWarningCode`.
+Migrate schema configuration first, component and type imports next, and node state and validation-issue handling last. The [migration guide](https://vincent-kk.github.io/albatrion/docs/canard/schema-form/migration-from-0x) maps the renamed schema keys, components, types, hooks and node state flags, and lists the behavior to re-check after conversion; the entry on renamed and removed field node members lists the other node members. The other entries of this release that begin with "Breaking change" each describe one of those changes with its own migration.

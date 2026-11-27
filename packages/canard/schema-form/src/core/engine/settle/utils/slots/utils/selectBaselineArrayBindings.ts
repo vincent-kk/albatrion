@@ -18,16 +18,16 @@ export const selectBaselineArrayBindings = <Self extends FieldNodeRecord<Self>>(
 ): CompactedSlotSources<Self> | undefined => {
   const { previousItemCount: itemCount, previousItems } = baseline;
   if (
-    itemCount === node.itemCount &&
+    itemCount === node.__itemCount__ &&
     previousItems.length === (node.children?.length ?? 0) &&
-    previousItems.every((item) => node.childrenByName?.[item.name] === item)
+    previousItems.every((item) => node.__childrenByName__?.[item.name] === item)
   )
     return undefined;
   const sources = new Map<BlueprintChildEntry, Self>();
   const overlays = new Map<BlueprintChildEntry, InactiveSlotOverlay>();
-  for (const [entry, instance] of node.inactiveSlots ?? [])
+  for (const [entry, instance] of node.__inactiveSlots__ ?? [])
     if (Number(entry.name) < itemCount) sources.set(entry, instance);
-  for (const [entry, overlay] of node.inactiveSlotOverlays ?? [])
+  for (const [entry, overlay] of node.__inactiveSlotOverlays__ ?? [])
     if (Number(entry.name) < itemCount) overlays.set(entry, overlay);
   for (const item of previousItems) {
     const entry = getRetainedChildEntry(node, item.name, item.blueprintNode);

@@ -69,7 +69,7 @@ export const primeHost = <Self extends FieldNodeRecord<Self>>(
     names.set(node, prepared.dynamicNames);
     if (prepared.selectedChildrenByName === prior)
       prepared.selectedChildren = node.children ?? [];
-    node.childrenByName = prepared.baseline;
+    node.__childrenByName__ = prepared.baseline;
     node.children = captureFieldNodeChange(
       node,
       'children',
@@ -176,11 +176,11 @@ export const primeHost = <Self extends FieldNodeRecord<Self>>(
         isAtomic: node.runtime.blueprint?.isAtomic,
       },
     );
-    if (child.schema !== schema) {
+    if (child.__schema__ !== schema) {
       captureProjectionBaseline(node, child, !!priorChild, context);
       if (!context.originalSchemas.has(child.path))
-        context.originalSchemas.set(child.path, child.schema);
-      child.schema = captureFieldNodeChange(child, 'schema', schema);
+        context.originalSchemas.set(child.path, child.__schema__);
+      child.__schema__ = captureFieldNodeChange(child, '__schema__', schema);
       context.dirtyPaths.add(child.path);
       context.changedNodes.add(child);
     }
@@ -188,7 +188,7 @@ export const primeHost = <Self extends FieldNodeRecord<Self>>(
     child.isDetached = false;
     baseline[entry.name] = child;
   }
-  node.childrenByName = baseline;
+  node.__childrenByName__ = baseline;
   const children = Object.values(baseline);
   const publishedChildren = node.children;
   node.children = captureFieldNodeChange(

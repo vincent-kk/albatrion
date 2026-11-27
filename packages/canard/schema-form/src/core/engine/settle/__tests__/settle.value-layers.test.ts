@@ -25,18 +25,18 @@ describe('settled value rule layers', () => {
     });
     loadFieldNodeAtMount(root, { source: 'first' }, WriteOption.Overwrite);
     expect([
-      root.childrenByName?.a?.source,
-      root.childrenByName?.b?.source,
+      root.__childrenByName__?.a?.source,
+      root.__childrenByName__?.b?.source,
     ]).toEqual(['first', 'first']);
     writeFieldNode(
-      root.childrenByName!['source'],
+      root.__childrenByName__!['source'],
       'second',
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
     expect([
-      root.childrenByName?.a?.source,
-      root.childrenByName?.b?.source,
+      root.__childrenByName__?.a?.source,
+      root.__childrenByName__?.b?.source,
     ]).toEqual(['second', 'second']);
   });
 
@@ -61,8 +61,8 @@ describe('settled value rule layers', () => {
       { source: 'from-source' },
       WriteOption.Overwrite,
     );
-    expect(root.childrenByName?.inside?.source).toBe('from-source');
-    expect(root.childrenByName?.outside?.source).toBeUndefined();
+    expect(root.__childrenByName__?.inside?.source).toBe('from-source');
+    expect(root.__childrenByName__?.outside?.source).toBeUndefined();
   });
 
   it('CONTROLS-073 fields derived evaluates once for all targets', () => {
@@ -78,8 +78,8 @@ describe('settled value rule layers', () => {
     loadFieldNodeAtMount(root, {}, WriteOption.Overwrite);
     expect(derive).toHaveBeenCalledTimes(1);
     expect([
-      root.childrenByName?.a?.source,
-      root.childrenByName?.b?.source,
+      root.__childrenByName__?.a?.source,
+      root.__childrenByName__?.b?.source,
     ]).toEqual(['shared', 'shared']);
   });
 
@@ -98,8 +98,8 @@ describe('settled value rule layers', () => {
     loadFieldNodeAtMount(root, { a: 'A', b: 'B' }, WriteOption.Overwrite);
     expect(clear).toHaveBeenCalledTimes(2);
     expect([
-      root.childrenByName?.a?.source,
-      root.childrenByName?.b?.source,
+      root.__childrenByName__?.a?.source,
+      root.__childrenByName__?.b?.source,
     ]).toEqual([undefined, undefined]);
   });
 
@@ -127,31 +127,31 @@ describe('settled value rule layers', () => {
       { trigger: false, a: 'A', b: 'B' },
       WriteOption.Overwrite,
     );
-    root.childrenByName!.a.storedState = {
+    root.__childrenByName__!.a.__state__ = {
       [FieldNodeState.Edited]: true,
       [FieldNodeState.Touched]: true,
     };
-    root.childrenByName!.b.storedState = {
+    root.__childrenByName__!.b.__state__ = {
       [FieldNodeState.Edited]: true,
       [FieldNodeState.Touched]: true,
     };
     writeFieldNode(
-      root.childrenByName!.trigger,
+      root.__childrenByName__!.trigger,
       true,
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
     expect(reset).toHaveBeenCalledTimes(1);
-    expect(root.childrenByName?.a?.storedState[FieldNodeState.Edited]).toBe(
+    expect(root.__childrenByName__?.a?.__state__[FieldNodeState.Edited]).toBe(
       false,
     );
-    expect(root.childrenByName?.a?.storedState[FieldNodeState.Touched]).toBe(
+    expect(root.__childrenByName__?.a?.__state__[FieldNodeState.Touched]).toBe(
       false,
     );
-    expect(root.childrenByName?.b?.storedState[FieldNodeState.Edited]).toBe(
+    expect(root.__childrenByName__?.b?.__state__[FieldNodeState.Edited]).toBe(
       false,
     );
-    expect(root.childrenByName?.b?.storedState[FieldNodeState.Touched]).toBe(
+    expect(root.__childrenByName__?.b?.__state__[FieldNodeState.Touched]).toBe(
       false,
     );
   });

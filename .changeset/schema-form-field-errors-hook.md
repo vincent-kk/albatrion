@@ -7,7 +7,7 @@ Breaking change: real inputs no longer receive `errors` or `errorVisible` props;
 Before:
 
 ```tsx
-const Feedback = ({ errors, errorVisible }: FieldInputProps) => (
+const Feedback = ({ errors, errorVisible }: FormTypeInputProps) => (
   <span>{errorVisible && errors[0]?.message}</span>
 );
 ```

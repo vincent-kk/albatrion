@@ -23,7 +23,7 @@ Applies when the project imports `@winglet/data-loader`, or when the question in
 | Bounded or expiring storage, or a cache shared by two loaders | `cache: <MapLike>` — any `get`/`set`/`delete`/`clear` object    |
 | Value must never be served stale                              | `cache: false` — dedup off, batching still on                   |
 | Backend caps how many keys one call may carry                 | `maxBatchSize: n`                                               |
-| Backend accepts exactly one key per call                      | `disableBatch: true` (equivalent to `maxBatchSize: 1`)          |
+| Backend accepts exactly one key per call                      | `disableBatch: true` (equivalent to `maxBatchSize: 1`), never beside `maxBatchSize` |
 | One key, failure should reject                                | `load()`                                                        |
 | Many keys, partial success acceptable                         | `loadMany()` — failures arrive as `Error` _values_ in the array |
 | Wider batching window than the default tick                   | `batchScheduler` (e.g. `setTimeout(fn, 10)`)                    |
@@ -119,7 +119,7 @@ const loader = new DataLoader<Key, Value, CacheKey>(
     cacheKeyFn, // (key) => CacheKey — defaults to identity
     batchScheduler, // (task) => void — defaults to scheduleNextTick
     maxBatchSize, // number — defaults to Infinity
-    // disableBatch: true is an alternative to maxBatchSize and wins when both are given
+    // or disableBatch: true instead of maxBatchSize; passing both is a type error
   },
 );
 

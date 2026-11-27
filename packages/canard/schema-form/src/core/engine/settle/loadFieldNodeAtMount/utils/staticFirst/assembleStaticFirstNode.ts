@@ -39,6 +39,6 @@ export const assembleStaticFirstNode = <Self extends FieldNodeRecord<Self>>(
       value = node.behavior.assemble(node, children);
       outputValue = node.behavior.project(node, value);
   }
-  node.storedValue = value;
-  node.storedOutputValue = keepRootOutputValue(node, value, outputValue);
+  node.__value__ = value;
+  node.__outputValue__ = keepRootOutputValue(node, value, outputValue);
 };

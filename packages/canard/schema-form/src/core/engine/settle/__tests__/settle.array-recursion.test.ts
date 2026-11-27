@@ -21,35 +21,35 @@ describe('BLUEPRINT-030 recursive array item expansion', () => {
     const { root } = createTestTree(recursiveArraySchema);
     loadFieldNodeAtMount(root, { children: [{}] }, WriteOption.Overwrite);
 
-    const item = root.childrenByName!.children.children![0];
-    expect(item.childrenByName!.id.path).toBe('/children/0/id');
-    expect(item.childrenByName!.children.path).toBe('/children/0/children');
-    expect(item.childrenByName!.children.children).toEqual([]);
-    expect(item.childrenByName!.children.storedValue).toEqual([]);
+    const item = root.__childrenByName__!.children.children![0];
+    expect(item.__childrenByName__!.id.path).toBe('/children/0/id');
+    expect(item.__childrenByName__!.children.path).toBe('/children/0/children');
+    expect(item.__childrenByName__!.children.children).toEqual([]);
+    expect(item.__childrenByName__!.children.__value__).toEqual([]);
     expect(root.runtime.diagnostics.status).toBe('stable');
   });
 
   it('pushes one referenced level per item without expanding empty child arrays', () => {
     const { root } = createTestTree(recursiveArraySchema);
     loadFieldNodeAtMount(root, { children: [] }, WriteOption.Overwrite);
-    const children = root.childrenByName!.children;
+    const children = root.__childrenByName__!.children;
     expect(children.children).toEqual([]);
 
     expect(arrangeFieldNodeItems(children, { kind: 'push', value: {} })).toBe(
       1,
     );
     const item = children.children![0];
-    expect(item.childrenByName!.id.path).toBe('/children/0/id');
-    const nestedChildren = item.childrenByName!.children;
+    expect(item.__childrenByName__!.id.path).toBe('/children/0/id');
+    const nestedChildren = item.__childrenByName__!.children;
     expect(nestedChildren.children).toEqual([]);
     expect(
       arrangeFieldNodeItems(nestedChildren, { kind: 'push', value: {} }),
     ).toBe(1);
     const nestedItem = nestedChildren.children![0];
-    expect(nestedItem.childrenByName!.id.path).toBe(
+    expect(nestedItem.__childrenByName__!.id.path).toBe(
       '/children/0/children/0/id',
     );
-    expect(nestedItem.childrenByName!.children.children).toEqual([]);
+    expect(nestedItem.__childrenByName__!.children.children).toEqual([]);
     expect(root.runtime.diagnostics.status).toBe('stable');
   });
 

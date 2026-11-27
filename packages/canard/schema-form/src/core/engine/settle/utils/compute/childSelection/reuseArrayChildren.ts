@@ -37,7 +37,7 @@ export const reuseArrayChildren = <Self extends FieldNodeRecord<Self>>(
   const arraySplice = context.arraySplice;
   const start =
     arraySplice?.host === node && arraySplice.isValid ? arraySplice.index : 0;
-  for (let index = start; index < node.itemCount; index++) {
+  for (let index = start; index < node.__itemCount__; index++) {
     const entry = getItemEntry(node.blueprintNode, index);
     if (!entry) continue;
     const child = prior[entry.name];

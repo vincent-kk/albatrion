@@ -24,7 +24,7 @@ const expectRecovery = (root: DispatchTestNode) => {
   subscribeFieldNode(root, event);
   runtime.onChange = onChange;
   const value =
-    typeof root.storedValue === 'string'
+    typeof root.__value__ === 'string'
       ? 'recovered independently'
       : { recovered: true };
   dispatchSetValue(root, value);
@@ -367,12 +367,12 @@ describe('chain exit failure recovery', () => {
       report,
     };
     subscribeFieldNode(root, () => {
-      if (root.storedValue !== 'nested') return;
+      if (root.__value__ !== 'nested') return;
       failConsumer = true;
       throw new Error('nested listener');
     });
     runtime.onChange = () => {
-      if (root.storedValue === 'mounted') dispatchSetValue(root, 'nested');
+      if (root.__value__ === 'mounted') dispatchSetValue(root, 'nested');
     };
     expect(() => dispatchMount(root, 'mounted')).toThrow(failure);
     expect(report).not.toHaveBeenCalled();

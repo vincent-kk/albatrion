@@ -58,7 +58,7 @@ export const visitInputChildren = <Self extends FieldNodeRecord<Self>>(
         view === 'stored' &&
         live &&
         !child &&
-        (object || index < live.itemCount)
+        (object || index < live.__itemCount__)
       )
         continue;
       const isNamed =

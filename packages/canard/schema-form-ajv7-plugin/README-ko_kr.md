@@ -127,7 +127,7 @@ AJV 전체 검증이 명세와 다른 다음 경우에는 가드가 명세를 �
 - `toString`처럼 `Object.prototype` 멤버와 겹치는 앵커 이름은 전체 검증이나 어휘적 선언을 AJV가 직접 평가할 때 실패할 수 있습니다. 루트 포인터 가드는 사슬 자원이 선언한 동적 앵커를 자체 항목으로 전달합니다.
 - 루트나 부모 데이터를 읽는 `$data` 참조와 사용자 정의 키워드는 가드에서 호스트 값만 봅니다. 이것은 호스트 값만 받는 가드 인터페이스의 별도 한계이며 동적 범위와 무관합니다.
 
-바인딩한 인스턴스의 엄격 옵션(예: `strictTypes`, `strictRequired`)은 일부 `if` 가드의 컴파일을 실패시킬 수 있습니다. 해당 게이트는 false가 되고 `GUARD_FAILED` `onError` 기록을 만듭니다. 플러그인은 소비자의 옵션을 덮어쓰지 않으며, 엄격 모드는 플러그인 기본값이 아닙니다(VALIDATE-003, VALIDATE-005, VALIDATE-033, ERROR-041).
+바인딩한 인스턴스의 엄격 옵션(예: `strictTypes`, `strictRequired`)은 일부 `if` 가드의 컴파일을 실패시킬 수 있습니다. 해당 조건은 `then`과 `else` 어느 쪽도 적용하지 않고 `onError`로 `GUARD_FAILED` 기록 하나를 보고합니다. 이후 그 조건을 다시 평가하는 쓰기는 `GUARD_FAILED`를 던지며, 프로덕션 빌드에서는 마운트 시에도 던집니다. 플러그인은 소비자의 옵션을 덮어쓰지 않으며, 엄격 모드는 플러그인 기본값이 아닙니다(VALIDATE-003, VALIDATE-005, VALIDATE-033, ERROR-041).
 
 ### **기본 설정**
 
@@ -156,6 +156,87 @@ const defaultSettings: Ajv.Options = {
 `createValidator(ajv)`는 Form의 `validatorFactory`에 넘길 인스턴스별 `{ compile, compileGuard }` 객체를 돌려줍니다. 새 객체는 Form이 트리를 다시 만들게 하므로 렌더 밖에서 한 번만 만드십시오(`const validator = createValidator(customAjv);` 뒤 `<Form validatorFactory={validator} />`). 여러 객체가 AJV 인스턴스 하나를 함께 써도 되며, 인스턴스는 값을 바꾸지 않아야 합니다(`coerceTypes`, `useDefaults`, `removeAdditional` 꺼짐).
 
 `compileGuard`는 포인터가 스키마(객체나 불리언)를 가리키지 않으면, 곧 없는 위치이거나 `/type`·`/required`처럼 스키마가 아닌 값이면 네이티브 `GuardPointerNotSchemaError`를 던집니다. 호출자는 `group`(`'UNHANDLED_ERROR'`)과 `code`(`'GUARD_POINTER_NOT_SCHEMA'`)로 구분하며, `details`에는 루트의 `$id`(없으면 `''`)와 포인터가 담깁니다.
+
+---
+
+## 커스텀 AJV 인스턴스와 사용자 정의 키워드
+
+`createValidator(ajv)`로 사용자 AJV 인스턴스를 Form에 전달합니다. 새 검증기 객체는 Form이 트리를 다시 만들게 하므로 인스턴스와 검증기는 모듈 범위에서 한 번만 만드십시오.
+
+```tsx
+import { Form, type JSONSchema } from '@canard/schema-form';
+import { createValidator } from '@canard/schema-form-ajv7-plugin';
+import Ajv from 'ajv';
+
+const ajv = new Ajv({ strict: false });
+ajv.addKeyword({
+  keyword: 'isEven',
+  schemaType: 'boolean',
+  validate: (schema: boolean, data: unknown) =>
+    typeof data === 'number' && (data % 2 === 0) === schema,
+});
+const validator = createValidator(ajv);
+
+const schema = {
+  type: 'object',
+  properties: { n: { type: 'number' } },
+  if: { type: 'object', properties: { n: { isEven: true } }, required: ['n'] },
+  then: { properties: { evenField: { type: 'string' } } },
+  else: { properties: { oddField: { type: 'string' } } },
+} satisfies JSONSchema;
+
+export const EvenOddForm = () => (
+  <Form jsonSchema={schema} defaultValue={{ n: 2 }} validatorFactory={validator} />
+);
+```
+
+모든 Form에서 이 인스턴스를 쓰려면 대신 플러그인에 바인딩하고 플러그인을 등록하십시오.
+
+```ts
+import { registerPlugin } from '@canard/schema-form';
+import { plugin } from '@canard/schema-form-ajv7-plugin';
+
+plugin.validator.bind(ajv);
+registerPlugin(plugin);
+```
+
+플러그인은 인스턴스의 사적 사본으로 검증하고 `if` 조건을 평가합니다. 다음 컴파일 전에 인스턴스에 추가한 키워드와 포맷은 양쪽에 모두 적용되며, `createValidator(ajv)` 뒤 Form이 마운트되기 전에 추가한 포맷도 마찬가지입니다. 위 폼에서는 `n`이 2인 동안 `evenField`가 있고, `n`이 3이 되면 `oddField`가 그 자리를 대신합니다.
+
+### `oneOf`·`anyOf` 분기 선택
+
+분기는 다음 세 방법 중 하나로 선택됩니다.
+
+1. 분기에 둔 `controls.active`
+2. 객체에 둔 `controls.discriminator`와 각 분기의 `const`·`enum` 태그
+3. 분기에 둔 `if`와 `else: false`. `if`는 검증기가 판정하므로 사용자 정의 키워드로 분기를 선택할 수 있습니다.
+
+```ts
+const schema = {
+  type: 'object',
+  properties: { n: { type: 'number' } },
+  oneOf: [
+    {
+      if: { type: 'object', properties: { n: { isEven: true } }, required: ['n'] },
+      then: { properties: { evenField: { type: 'string' } } },
+      else: false,
+    },
+    {
+      if: { type: 'object', properties: { n: { isEven: false } }, required: ['n'] },
+      then: { properties: { oddField: { type: 'string' } } },
+      else: false,
+    },
+  ],
+} satisfies JSONSchema;
+```
+
+세 방법 중 어느 것도 없는 분기는 항상 폼에 포함됩니다. 그런 분기에 직접 쓴 키워드는 검증에는 참여하지만 분기를 선택하지 않습니다. 각 분기가 자기 필드 옆에 `n: { isEven: … }`만 두면 `evenField`와 `oddField`가 모두 폼에 남습니다. `controls.active`와 discriminator는 [조합과 조건 게이트](https://vincent-kk.github.io/albatrion/ko/docs/canard/schema-form/schema-reference#composition)를 참고하십시오.
+
+### 한계
+
+- AJV가 컴파일할 수 없는 조건은 그 가드를 실패시킵니다. AJV 7이 기본으로 켜는 엄격 모드 인스턴스에 조건이 쓰는 키워드가 없는 경우가 그 예입니다. 이때 `then`과 `else` 어느 쪽도 적용되지 않고 `onError`는 `GUARD_FAILED` 기록(`FormErrorCode.GuardFailed`) 하나를 받으며, 이후 조건을 다시 평가하는 쓰기는 값을 반영하되 그 오류를 던집니다. 프로덕션 빌드에서는 Form이 마운트될 때에도 이 오류가 잡히지 않은 오류로 발생합니다. Form이 컴파일하기 전에 모든 키워드를 추가하거나, AJV가 알 수 없는 키워드를 무시하는 `strict: false`를 사용하십시오.
+- 가드는 동기적입니다. 비동기 키워드(`async: true`)를 쓰는 조건은 컴파일에 실패합니다(`async keyword in sync schema`).
+- 가드는 `if`를 가진 객체의 값만 받습니다. 부모나 루트 데이터를 읽는 키워드와 `$data`도 그 값만 봅니다.
+- 플러그인은 `coerceTypes`, `useDefaults`, `removeAdditional`이 켜진 인스턴스를 거부합니다. `modifying: true`로 선언한 키워드는 거부하지 않으므로, 그런 키워드가 폼의 값을 바꾸지 않게 하는 것은 소비자의 책임입니다.
 
 ---
 

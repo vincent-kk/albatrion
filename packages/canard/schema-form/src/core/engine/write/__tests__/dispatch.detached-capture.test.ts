@@ -25,7 +25,7 @@ describe('65C-03 detached nodes keep no delivery capture', () => {
     dispatchClear(rows);
     expect(item.isDetached).toBe(true);
     dispatchResetSubtree(item);
-    expect(item.deliveryChanges).toBe(0);
+    expect(item.__deliveryChanges__).toBe(0);
     expect(runtime.deliveryAffectedPaths?.size ?? 0).toBe(0);
   });
 });

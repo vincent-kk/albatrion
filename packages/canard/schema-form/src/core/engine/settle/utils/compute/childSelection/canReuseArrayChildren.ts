@@ -56,19 +56,19 @@ export const canReuseArrayChildren = <Self extends FieldNodeRecord<Self>>(
     capabilities.hasExpressions ||
     capabilities.hasDerive ||
     oldCount === undefined ||
-    oldCount === node.itemCount ||
+    oldCount === node.__itemCount__ ||
     node.source !== undefined ||
     context.distributedInputs.has(node) ||
     context.pathChanges.length > 0 ||
     context.pendingExits.size > 0 ||
-    node.childrenByName !== prior ||
+    node.__childrenByName__ !== prior ||
     !children ||
     !isArray(getLoadValue(context.previousOutputValue, node.path))
   )
     return false;
-  const prefixCount = minLite(oldCount, node.itemCount);
+  const prefixCount = minLite(oldCount, node.__itemCount__);
   let position = 0;
-  for (let index = 0; index < node.itemCount; index++) {
+  for (let index = 0; index < node.__itemCount__; index++) {
     const entry = getItemEntry(node.blueprintNode, index);
     if (!entry) {
       if (prior['' + index] !== undefined) return false;
@@ -84,9 +84,9 @@ export const canReuseArrayChildren = <Self extends FieldNodeRecord<Self>>(
       child !== prior[entry.name] ||
       child.blueprintNode !== entry.node ||
       child.name !== entry.name ||
-      child.parent !== node ||
+      child.__parent__ !== node ||
       child.path !== appendSegment(node.path, entry.name) ||
-      child.schema !== schema ||
+      child.__schema__ !== schema ||
       !child.isActive ||
       child.isDetached ||
       schema.hasTypeConflict ||

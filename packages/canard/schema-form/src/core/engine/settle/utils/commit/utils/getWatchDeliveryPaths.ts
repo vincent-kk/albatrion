@@ -13,7 +13,7 @@ import { getStateDependencyPlan } from '../../controls/getStateDependencyPlan';
 export const getWatchDeliveryPaths = <Self extends FieldNodeRecord<Self>>(
   node: Self,
 ): readonly string[] => {
-  const schema = node.schema.schema;
+  const schema = node.__schema__.schema;
   const watch = readValidatedControls(schema)?.watch;
   if (!isArray(watch)) return EMPTY_ARRAY;
   const paths: string[] = [];

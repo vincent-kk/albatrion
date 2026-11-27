@@ -93,8 +93,8 @@ it.each<MoveCase>([
     expect(getDispatchNode(moved, 'b').source).toBe(99);
     expect(getDispatchNode(moved, 'v').source).toBe('live');
     expect(moved.extras).toEqual({ keep: 'extra' });
-    expect(root.storedValue).toEqual(expected);
-    expect(root.storedOutputValue).toEqual(expected);
+    expect(root.__value__).toEqual(expected);
+    expect(root.__outputValue__).toEqual(expected);
     expect(
       events.at(-1)?.payload?.[FieldNodeEventType.UpdateValue],
     ).toMatchObject({ current: { value: expected, outputValue: expected } });

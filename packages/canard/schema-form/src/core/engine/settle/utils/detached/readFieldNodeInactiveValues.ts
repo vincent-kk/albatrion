@@ -10,18 +10,18 @@ import { materializeInactiveSlotValues } from '../slots/materializeInactiveSlotV
 export const readFieldNodeInactiveValues = <Self extends FieldNodeRecord<Self>>(
   node: Self,
 ): readonly { path: string; value: unknown }[] => {
-  if (node.inactiveValuesCache && !node.isInactiveValuesDirty)
-    return node.inactiveValuesCache;
+  if (node.__inactiveValues__ && !node.__isInactiveValuesDirty__)
+    return node.__inactiveValues__;
   if (node.isDetached)
     return (
-      node.runtime.detachedReads?.get(node)?.inactiveValues ??
+      node.__detachedReads__?.inactiveValues ??
       materializeInactiveSlotValues(node)
     );
-  if (node.behavior.type !== 'virtual' || !node.parent)
+  if (node.behavior.type !== 'virtual' || !node.__parent__)
     return materializeInactiveSlotValues(node);
-  node.isInactiveValuesDirty = true;
-  const values = materializeInactiveSlotValues(node.parent);
-  if (!values.length) return (node.inactiveValuesCache = EMPTY_ARRAY);
+  node.__isInactiveValuesDirty__ = true;
+  const values = materializeInactiveSlotValues(node.__parent__);
+  if (!values.length) return (node.__inactiveValues__ = EMPTY_ARRAY);
   const targets = resolveStorageTargets(node) ?? EMPTY_ARRAY;
   const includes = (value: { path: string }): boolean =>
     targets.some(
@@ -29,13 +29,13 @@ export const readFieldNodeInactiveValues = <Self extends FieldNodeRecord<Self>>(
         value.path === target.path || isDescendantPath(value.path, target.path),
     );
   const next = values.every(includes) ? values : values.filter(includes);
-  const previous = node.inactiveValuesCache;
+  const previous = node.__inactiveValues__;
   if (
     previous?.length === next.length &&
     next.every((value, index) => value === previous[index])
   )
     return previous;
-  return (node.inactiveValuesCache = next.length
+  return (node.__inactiveValues__ = next.length
     ? Object.freeze(next)
     : EMPTY_ARRAY);
 };

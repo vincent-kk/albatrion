@@ -11,9 +11,9 @@ import type { FieldNodeRecord, InactiveSlotOverlay } from '../../../record';
 import type { SettlementContext } from '../../types/settlement';
 import { markSlotChange } from './markSlotChange';
 
-/** Annotates the lazily created `inactiveSlots`; an argument-less `new Map()` would be `Map<any, any>`. */
+/** Annotates the lazily created `__inactiveSlots__`; an argument-less `new Map()` would be `Map<any, any>`. */
 type InactiveSlots<Self> = Map<BlueprintChildEntry, Self>;
-/** Annotates the lazily created `inactiveSlotOverlays`; an argument-less `new Map()` would be `Map<any, any>`. */
+/** Annotates the lazily created `__inactiveSlotOverlays__`; an argument-less `new Map()` would be `Map<any, any>`. */
 type InactiveSlotOverlays = Map<BlueprintChildEntry, InactiveSlotOverlay>;
 
 /**
@@ -28,8 +28,8 @@ export const rekeyArraySlotBindings = <Self extends FieldNodeRecord<Self>>(
   moves: readonly { previous: string; current?: string }[],
   context: SettlementContext<Self>,
 ): void => {
-  const entries = new Set<BlueprintChildEntry>(host.inactiveSlots?.keys());
-  for (const entry of host.inactiveSlotOverlays?.keys() ?? [])
+  const entries = new Set<BlueprintChildEntry>(host.__inactiveSlots__?.keys());
+  for (const entry of host.__inactiveSlotOverlays__?.keys() ?? [])
     entries.add(entry);
   if (!entries.size) return;
   const destinations = new Map(
@@ -53,29 +53,29 @@ export const rekeyArraySlotBindings = <Self extends FieldNodeRecord<Self>>(
         : (getItemEntries(host.blueprintNode, Number(name)).find(
             (candidate) => candidate.node === entry.node,
           ) ?? { ...entry, name });
-    const instance = host.inactiveSlots?.get(entry);
-    const overlay = host.inactiveSlotOverlays?.get(entry);
+    const instance = host.__inactiveSlots__?.get(entry);
+    const overlay = host.__inactiveSlotOverlays__?.get(entry);
     markSlotChange(host, entry, undefined, context);
-    host.inactiveSlots?.delete(entry);
-    host.inactiveSlotOverlays?.delete(entry);
+    host.__inactiveSlots__?.delete(entry);
+    host.__inactiveSlotOverlays__?.delete(entry);
     if (target) pending.push({ entry: target, instance, overlay });
   }
   for (const { entry, instance, overlay } of pending) {
     markSlotChange(host, entry, undefined, context);
     if (instance) {
-      const slots: InactiveSlots<Self> = (host.inactiveSlots ??= new Map());
+      const slots: InactiveSlots<Self> = (host.__inactiveSlots__ ??= new Map());
       slots.set(entry, instance);
     }
     if (overlay) {
-      const overlays: InactiveSlotOverlays = (host.inactiveSlotOverlays ??=
+      const overlays: InactiveSlotOverlays = (host.__inactiveSlotOverlays__ ??=
         new Map());
       overlays.set(entry, overlay);
     }
   }
   if (
-    host.inactiveSlots?.size ||
-    host.inactiveSlotOverlays?.size ||
-    host.inactiveSlotChildren?.size
+    host.__inactiveSlots__?.size ||
+    host.__inactiveSlotOverlays__?.size ||
+    host.__inactiveSlotChildren__?.size
   )
     (host.runtime.slotDirtyHosts ??= new Set()).add(host);
 };

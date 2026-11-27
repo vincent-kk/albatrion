@@ -24,10 +24,10 @@ import { getDeriveRuleKey } from '../utils/rules/getDeriveRuleKey';
 import { getDeriveRuleTable } from '../utils/rules/getDeriveRuleTable';
 import { getWatchPaths } from '../utils/rules/getWatchPaths';
 import { evaluateInjectTo } from './utils/inject/evaluateInjectTo';
+import { compareDeriveWrites } from './utils/rank/compareDeriveWrites';
 import { getDeriveSourceOrder } from './utils/rank/getDeriveSourceOrder';
 import { KIND_RANK } from './utils/rank/kindRank';
 import { LAYER_RANK } from './utils/rank/layerRank';
-import { compareDeriveWrites } from './utils/rank/compareDeriveWrites';
 import { chooseDeriveWrite } from './utils/writes/chooseDeriveWrite';
 import { getVirtualWriteFailure } from './utils/writes/getVirtualWriteFailure';
 
@@ -84,7 +84,6 @@ export const evaluateDeriveRound = <Self extends FieldNodeRecord<Self>>(
             getBlueprintNodeIdentity(node.blueprintNode),
             rule,
             target,
-            target.runtime,
           );
           addActiveRuleKey(state, node.path, key);
           const consumed = state.consumedRuleValues.has(key);
@@ -103,7 +102,7 @@ export const evaluateDeriveRound = <Self extends FieldNodeRecord<Self>>(
               state.enteredNodes.has(target) ||
               state.revivedNodes.has(target));
           if (rule.kind === 'injectTo') {
-            const current = node.storedOutputValue;
+            const current = node.__outputValue__;
             state.consumedRuleValues.set(key, current);
             if (
               state.loadScope &&
@@ -208,7 +207,7 @@ export const evaluateDeriveRound = <Self extends FieldNodeRecord<Self>>(
                 kind: rule.kind,
                 sourcePath: node.path,
                 targetPath: target.path,
-                previousValue: target.storedOutputValue,
+                previousValue: target.__outputValue__,
                 nextValue: value,
                 result: 'undefined',
               });

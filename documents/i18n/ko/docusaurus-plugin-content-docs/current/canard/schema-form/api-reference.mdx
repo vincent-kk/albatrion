@@ -160,7 +160,7 @@ controlled 선언이 없는 자식에는 다음 한계가 있습니다.
 - 내보낸 객체나 배열을 복사하면 내용이 같아도 자식이 재마운트될 수 있습니다. 변환이 필요 없으면 내보낸 참조를 유지하고, 그렇지 않으면 controlled 입력을 사용하십시오.
 - 쓰지 않고 입력을 거절하면 노드에는 이전 값이, 화면에는 입력한 초안이 남습니다. 거절만으로는 controlled 선언이 없는 입력의 표시가 복구되지 않으므로, 복구가 의도한 동작이면 명시적으로 refresh하십시오.
 
-`value`와 `defaultValue`는 덮어쓸 수 없으며 값은 `onChange`로 씁니다. 렌더러와 입력의 공통 표시 전용 `required`는 Child·Form.Input·Form.Render·Form.Field의 불리언 덮어쓰기, 불리언 `presentation.required`, `node.isRequired` 순으로 결정합니다. false를 존중하며 비불리언일 때만 다음 값으로 넘어갑니다. 마운트 뒤 부모만 바뀌거나 undefined로 돌아가도 두 표면에 전달됩니다. `presentation.FieldInputProps`·`presentation.FieldRendererProps` 안의 `required`는 바인딩이 소유하여 영향을 주지 않습니다. 렌더러 작성자가 Input에 주는 불리언 required는 해당 입력만 덮어쓰며 undefined는 공통 값을 지우지 않고 상속합니다. 검증과 입력 선택 힌트는 계속 스키마의 required 제약을 따릅니다. 입력 구현이 `required`를 네이티브 요소에 전달하면 브라우저 검증에는 영향을 줄 수 있습니다.
+`value`와 `defaultValue`는 덮어쓸 수 없으며 값은 `onChange`로 씁니다. 렌더러와 입력의 공통 표시 전용 `required`는 Child·Form.Input·Form.Render·Form.Field의 불리언 덮어쓰기, 불리언 `presentation.required`, `node.isRequired` 순으로 결정합니다. false를 존중하며 비불리언일 때만 다음 값으로 넘어갑니다. 마운트 뒤 부모만 바뀌거나 undefined로 돌아가도 두 표면에 전달됩니다. `presentation.FieldInputProps`·`presentation.FieldRendererProps` 안의 `required`는 바인딩이 소유하여 영향을 주지 않습니다. `readOnly` 또는 `disabled`를 Child·Form.Input·Form.Render·Form.Field의 덮어쓰기나 `presentation.FieldInputProps` 안에서 `true`로 설정하면 입력의 해당 속성이 `true`가 되며, 어느 쪽의 `false`도 Form이나 필드의 잠금을 해제할 수 없습니다. 둘 다 `onChange`와 `onFileAttach`를 막지 않으며, Form의 잠금과 필드 자체의 잠금(`readOnly: true`, `controls.readOnly`, `controls.disabled`)만 호출을 무시하게 합니다. 렌더러 작성자가 Input에 주는 불리언 required는 해당 입력만 덮어쓰며 undefined는 공통 값을 지우지 않고 상속합니다. 검증과 입력 선택 힌트는 계속 스키마의 required 제약을 따릅니다. 입력 구현이 `required`를 네이티브 요소에 전달하면 브라우저 검증에는 영향을 줄 수 있습니다.
 
 ## 플러그인과 FormProvider {#plugins}
 

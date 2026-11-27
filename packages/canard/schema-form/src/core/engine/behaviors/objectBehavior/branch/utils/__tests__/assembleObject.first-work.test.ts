@@ -5,15 +5,15 @@ import { assembleObject } from '../assembleObject';
 
 it('assembles aligned first children without Map or Set allocation and preserves omitted/prototype keys', () => {
   const children = [
-    { name: 'first', storedOutputValue: 1 },
-    { name: 'empty', storedOutputValue: undefined },
-    { name: '__proto__', storedOutputValue: 2 },
+    { name: 'first', __outputValue__: 1 },
+    { name: 'empty', __outputValue__: undefined },
+    { name: '__proto__', __outputValue__: 2 },
   ];
   const node = {
     runtime: {},
-    storedValue: undefined,
+    __value__: undefined,
     extras: undefined,
-    schema: { schema: { type: 'object' }, hasTypeConflict: false },
+    __schema__: { schema: { type: 'object' }, hasTypeConflict: false },
     blueprintNode: {
       childEntries: children.map((child) => ({ name: child.name })),
     },
@@ -47,20 +47,20 @@ it('assembles aligned first children without Map or Set allocation and preserves
   expect(Object.getPrototypeOf(result)).toBe(Object.prototype);
   expect((result as Record<string, unknown>).__proto__).toBe(2);
   expect(objectKeyCounts.get(result as object)).toBe(2);
-  node.storedValue = result;
+  node.__value__ = result;
   expect(assembleObject(node, children)).toBe(result);
 });
 
 it('keeps declaration/preferred/extras order when first-child order needs the generic assembly', () => {
   const children = [
-    { name: 'second', storedOutputValue: 2 },
-    { name: 'first', storedOutputValue: 1 },
+    { name: 'second', __outputValue__: 2 },
+    { name: 'first', __outputValue__: 1 },
   ];
   const node = {
     runtime: {},
-    storedValue: undefined,
+    __value__: undefined,
     extras: { extra: 3 },
-    schema: {
+    __schema__: {
       schema: {
         type: 'object',
         options: { propertyOrder: ['extra', 'second'] },
@@ -75,7 +75,7 @@ it('keeps declaration/preferred/extras order when first-child order needs the ge
     'first',
   ]);
   node.extras = undefined;
-  node.schema = { schema: { type: 'object' }, hasTypeConflict: false };
+  node.__schema__ = { schema: { type: 'object' }, hasTypeConflict: false };
   expect(Object.keys(assembleObject(node, children) as object)).toEqual([
     'first',
     'second',

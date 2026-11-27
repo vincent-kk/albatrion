@@ -48,7 +48,7 @@ export const createUnionBranchActivity = <Self extends FieldNodeRecord<Self>>(
       host.blueprintNode.path !== fragment.hostPath &&
       bindPointerTemplate(fragment.hostPath, host.path) !== host.path
     )
-      host = host.parent;
+      host = host.__parent__;
     if (!host) return false;
     if (!visited.has(host)) {
       preparation ??= {
@@ -63,8 +63,7 @@ export const createUnionBranchActivity = <Self extends FieldNodeRecord<Self>>(
           if (preparation.conditional.has(child.blueprintNode))
             pending.push(child);
         const ids =
-          committed.get(getCommittedDeclarationKey(current, runtime)) ??
-          EMPTY_ARRAY;
+          committed.get(getCommittedDeclarationKey(current)) ?? EMPTY_ARRAY;
         visited.set(current, ids);
         const activity = hosts.get(current);
         if (activity) activity.ids = ids;
@@ -72,7 +71,7 @@ export const createUnionBranchActivity = <Self extends FieldNodeRecord<Self>>(
           for (const binding of preparation.evidence.get(id) ?? EMPTY_ARRAY) {
             let owner: Self | null = current;
             for (let step = 0; owner && step < binding.distance; step++)
-              owner = owner.parent;
+              owner = owner.__parent__;
             if (owner) {
               const activity = getActivity(owner);
               const branches = (activity.branches ??= new Set());

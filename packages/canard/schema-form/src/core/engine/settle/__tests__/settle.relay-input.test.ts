@@ -36,7 +36,7 @@ describe('committed relay eligibility', () => {
         expect(isRelayedInput(relays, '/0')).toBe(true);
         arrangeFieldNodeItems(root, { kind: 'insert', index: 0, value: 'x' });
         expect(input.path).toBe('/1');
-        expect(input.storedValue).toBe('x');
+        expect(input.__value__).toBe('x');
         expect(isRelayedInput(relays, '/0')).toBe(false);
         expect(isRelayedInput(relays, '/1')).toBe(false);
       });
@@ -50,7 +50,7 @@ describe('committed relay eligibility', () => {
       options: { virtual: { group: { fields: ['a', 'b'] } } },
     });
     dispatchMount(root, { a: 1, b: 'b0' });
-    const group = root.childrenByName!.group;
+    const group = root.__childrenByName__!.group;
     const relayAndSettle = (input: unknown) => {
       let isRelayed: boolean | undefined;
       dispatchRelayInput(group, input, OPTION, (value) => {
@@ -61,7 +61,7 @@ describe('committed relay eligibility', () => {
       return isRelayed;
     };
     expect(relayAndSettle(['2', 'b1'])).toBe(false);
-    expect(group.storedValue).toEqual([2, 'b1']);
+    expect(group.__value__).toEqual([2, 'b1']);
     expect(relayAndSettle([3, 'b2'])).toBe(true);
   });
 
@@ -74,18 +74,18 @@ describe('committed relay eligibility', () => {
       },
     });
     dispatchMount(root, { show: true, input: 'x' });
-    const input = root.childrenByName!.input;
+    const input = root.__childrenByName__!.input;
     dispatchRelayInput(input, 'x', OPTION, () => {
       const relays = runtime.inputRelays!;
       writeFieldNode(
-        root.childrenByName!.show,
+        root.__childrenByName__!.show,
         false,
         FieldNodeWriteKind.CallerReplace,
         OPTION,
       );
       expect(input.isDetached).toBe(true);
       expect(input.isDisposed).toBeFalsy();
-      expect(input.storedValue).toBe('x');
+      expect(input.__value__).toBe('x');
       expect(isRelayedInput(relays, input.path)).toBe(false);
     });
   });

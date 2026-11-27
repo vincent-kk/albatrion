@@ -23,7 +23,7 @@ export const collectPresenceChangeNames = <Self extends FieldNodeRecord<Self>>(
   previous: Readonly<Dictionary<Self>>,
   context: SettlementContext<Self>,
 ): string[] => {
-  const childrenByName = host.childrenByName ?? {};
+  const childrenByName = host.__childrenByName__ ?? {};
   const witness = context.presenceSelections?.get(host);
   const prepared = witness
     ? getHostDerived<'preparedStaticHost', PreparedStaticHost<Self>>(host)

@@ -35,7 +35,7 @@ describe('settled exit policy layers', () => {
       WriteOption.Overwrite,
     );
     writeFieldNode(
-      root.childrenByName!.flag,
+      root.__childrenByName__!.flag,
       false,
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
@@ -63,7 +63,7 @@ describe('settled exit policy layers', () => {
       WriteOption.Overwrite,
     );
     writeFieldNode(
-      root.childrenByName!.flag,
+      root.__childrenByName__!.flag,
       false,
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
@@ -90,7 +90,7 @@ describe('settled exit policy layers', () => {
       WriteOption.Overwrite,
     );
     writeFieldNode(
-      root.childrenByName!.flag,
+      root.__childrenByName__!.flag,
       false,
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
@@ -118,7 +118,7 @@ describe('settled exit policy layers', () => {
       WriteOption.Overwrite,
     );
     writeFieldNode(
-      root.childrenByName!.flag,
+      root.__childrenByName__!.flag,
       false,
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
@@ -150,7 +150,7 @@ describe('settled exit policy layers', () => {
       WriteOption.Overwrite,
     );
     writeFieldNode(
-      root.childrenByName!.flag,
+      root.__childrenByName__!.flag,
       false,
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
@@ -190,14 +190,16 @@ describe('settled exit policy layers', () => {
       WriteOption.Overwrite,
     );
     writeFieldNode(
-      root.childrenByName!.flag,
+      root.__childrenByName__!.flag,
       false,
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
-    expect(root.childrenByName?.addr?.childrenByName?.city?.source).toBe('C');
+    expect(
+      root.__childrenByName__?.addr?.__childrenByName__?.city?.source,
+    ).toBe('C');
     expect(hasRetainedSlotOwnSource(root, '/addr/zip', 'string')).toBe(false);
-    expect(root.childrenByName?.addr?.extras).toEqual({ extra: 'E' });
+    expect(root.__childrenByName__?.addr?.extras).toEqual({ extra: 'E' });
   });
 
   it('WRITE-033 fields subtree policy reaches exiting descendants', () => {
@@ -229,7 +231,7 @@ describe('settled exit policy layers', () => {
       WriteOption.Overwrite,
     );
     writeFieldNode(
-      root.childrenByName!.flag,
+      root.__childrenByName__!.flag,
       false,
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
@@ -278,13 +280,13 @@ describe('settled exit policy layers', () => {
       WriteOption.Overwrite,
     );
     writeFieldNode(
-      root.childrenByName!.branch.childrenByName!.show,
+      root.__childrenByName__!.branch.__childrenByName__!.show,
       false,
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
     writeFieldNode(
-      root.childrenByName!.flag,
+      root.__childrenByName__!.flag,
       false,
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
@@ -324,13 +326,13 @@ describe('settled exit policy layers', () => {
       WriteOption.Overwrite,
     );
     writeFieldNode(
-      root.childrenByName!.branch.childrenByName!.show,
+      root.__childrenByName__!.branch.__childrenByName__!.show,
       false,
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
     writeFieldNode(
-      root.childrenByName!.flag,
+      root.__childrenByName__!.flag,
       false,
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
@@ -361,13 +363,13 @@ describe('settled exit policy layers', () => {
       WriteOption.Overwrite,
     );
     writeFieldNode(
-      root.childrenByName!.clear,
+      root.__childrenByName__!.clear,
       true,
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
     writeFieldNode(
-      root.childrenByName!.flag,
+      root.__childrenByName__!.flag,
       false,
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
@@ -408,7 +410,7 @@ describe('settled exit policy layers', () => {
     });
     const calls = explode.mock.calls.length;
     writeFieldNode(
-      root.childrenByName!.flag,
+      root.__childrenByName__!.flag,
       false,
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
@@ -442,7 +444,7 @@ describe('settled exit policy layers', () => {
       ),
     ).toBe(true);
     writeFieldNode(
-      root.childrenByName!.flag,
+      root.__childrenByName__!.flag,
       false,
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
@@ -469,8 +471,8 @@ describe('settled exit policy layers', () => {
       },
     });
     loadFieldNodeAtMount(root, { hidden: 'held' }, WriteOption.Overwrite);
-    expect(root.childrenByName?.hidden?.isVisible).toBe(false);
-    expect(root.childrenByName?.hidden?.source).toBe('held');
+    expect(root.__childrenByName__?.hidden?.isVisible).toBe(false);
+    expect(root.__childrenByName__?.hidden?.source).toBe('held');
   });
 
   it('FRAGMENT-050 exit not edge evaluates no departing fragment value rule', () => {
@@ -499,7 +501,7 @@ describe('settled exit policy layers', () => {
     );
     const calls = read.mock.calls.length;
     writeFieldNode(
-      root.childrenByName!.flag,
+      root.__childrenByName__!.flag,
       false,
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,

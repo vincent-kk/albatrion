@@ -15,13 +15,13 @@ export const detachPerishedNode = <Self extends FieldNodeRecord<Self>>(
   context: SettlementContext<Self>,
   rekeyed?: { previous: string; current?: string },
 ): void => {
-  if (!departing.runtime.detachedReads?.has(departing))
+  if (departing.__detachedReads__ === undefined)
     captureDetachedFieldNodeReads(departing, {
       outputValue: context.previousOutputValue,
       context: context.previousContext,
       schema:
         context.originalSchemas.get(departing.path)?.schema ??
-        departing.schema.schema,
+        departing.__schema__.schema,
     });
   if (rekeyed?.current !== undefined)
     departing.runtime.misfitPaths.delete(

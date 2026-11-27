@@ -14,21 +14,21 @@ export const observePresenceTree = (root: DispatchTestNode) => {
     nodes.push({
       path: node.path,
       present: true,
-      outputValue: node.storedOutputValue,
+      outputValue: node.__outputValue__,
       isActive: node.isActive,
       isVisible: node.isVisible,
       isReadOnly: node.isReadOnly,
       isDisabled: node.isDisabled,
       declarations: root.runtime.committedDeclarationIds?.get(
-        getCommittedDeclarationKey(node, node.runtime),
+        getCommittedDeclarationKey(node),
       ),
     });
     const children = node.children ?? [];
     for (let index = children.length - 1; index >= 0; index--)
-      if (children[index].parent === node) pending.push(children[index]);
+      if (children[index].__parent__ === node) pending.push(children[index]);
   }
   return {
-    outputValue: root.storedOutputValue,
+    outputValue: root.__outputValue__,
     status: root.runtime.diagnostics.status,
     nodes,
   };

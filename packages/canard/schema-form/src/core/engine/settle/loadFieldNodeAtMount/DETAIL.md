@@ -18,11 +18,11 @@
 
 첫 리스너 전에 전체 리비전과 payload·전역 상태·커밋 번호를 확정합니다. 자식 우선 계산과 문서 순서 배달은 다른 순서이므로 배달 자리를 진입 때 예약하고 확정 뒤 기존 디스패처가 전달하게 합니다. 정착 도중 리스너·보고기를 동기로 부르지 않습니다. 자격 확정 뒤 커밋 하나만 예약하고, 실행이 시작된 뒤 실패해도 다른 마운트 경로로 다시 시도하지 않습니다.
 
-입력 loadSnapshot과 출력 loadBaseline은 다릅니다. 최종 `root.storedOutputValue` 기준은 커밋·전역 상태 확정 뒤 보관하며, 자세한 기준 수명은 부모의 VALUE-044를 따릅니다. 정상·예외 종료 모두 호출 소유 준비물을 해제하고 revision 전이 메모를 진입 전 상태로 복원하여 재진입이 이전 마운트의 증인을 사용하지 않게 합니다.
+입력 loadSnapshot과 출력 loadBaseline은 다릅니다. 최종 `root.__outputValue__` 기준은 커밋·전역 상태 확정 뒤 보관하며, 자세한 기준 수명은 부모의 VALUE-044를 따릅니다. 정상·예외 종료 모두 호출 소유 준비물을 해제하고 revision 전이 메모를 진입 전 상태로 복원하여 재진입이 이전 마운트의 증인을 사용하지 않게 합니다.
 
 ### static-first-admission — 무게이트 로더의 좁은 증명
 
-입력이 undefined이고, 붙어 있는 fresh root에 이전 커밋·배달·pending·자식·source·extras·전역 상태가 없으며 청사진의 StaticFirstLoadCapability가 증명된 경우에만 무게이트 로더를 사용합니다. 명시 입력은 같은 값처럼 보여도 일반 경로로 보냅니다. 게이트·식·파생·watch·virtual·union·통째 host·재귀·controls.default 등 증명 밖 기능을 정적 로더에서 부분 해석하지 않습니다.
+입력이 undefined이고, 붙어 있는 fresh root에 이전 커밋·배달·pending·자식·source·extras·전역 상태가 없으며 청사진의 StaticFirstLoadCapability가 증명된 경우에만 무게이트 로더를 사용합니다. 명시 입력은 같은 값처럼 보여도 일반 경로로 보냅니다. 게이트·식·파생·watch·virtual·union·통째 host·재귀·controls.default 등 증명 밖 기능을 정적 로더에서 부분 해석하지 않습니다. 구멍이나 열거되지 않는 색인이 있는 배열 리터럴 기본값(`[, 'x']`)도 리터럴 증명 밖입니다. 열거되지 않는 색인은 리터럴 검사의 키 열거가 방문하지 않기 때문입니다. 이 경로에서 값 없는 아이템 자리를 만드는 것은 그 구멍뿐입니다. 두 경로 모두 구멍을 값 없는 새 자리로 읽어 아이템 default를 채우지만, default가 없으면 정적 로더는 그 원본을 undefined로 남깁니다. 일반 경로로 보내면 값 없이 정착을 마친 자리를 null로 적는 [settle의 empty-item-position](../DETAIL.md#empty-item-position--아이템-자리는-값이거나-빈-자리입니다) 확정이 한 곳에만 있고, 출력·값·경고는 그대로이며 그 자리의 원본만 null이 됩니다.
 
 이 경로는 부모 default의 명시 분배를 자손 default보다 먼저 적용하고 각 노드를 자식 완료 뒤 한 번 조립합니다. 일반 선택의 occurrence별 임시 선언·dirty·빈 자동/나감 집합과 initialOutputs 목록을 만들지 않습니다. 이미 필요한 O(N) 노드·배달 순서 셀과 O(D) DFS 스택은 남고, O(N) 마운트를 상수 비용이라고 약속하지 않습니다. 입력 없는 무게이트 청사진은 게이트 선택 계획·표를 준비할 이유가 없습니다.
 
@@ -81,6 +81,10 @@ container default·배열·union·disjunction 등 계획이 증명하지 못한 
 ### settle-static-first-load-assembly — 한 번 조립과 사전 판정
 
 [static-first-admission](#static-first-admission--무게이트-로더의-좁은-증명)의 계약을 적용합니다.
+
+### settle-static-first-load-empty-item-null — 두 최초 로드 경로의 빈 아이템 null과 구멍 있는 기본값
+
+[arrayBehavior의 VALUE-034](../../behaviors/arrayBehavior/DETAIL.md#value-034--방출-없는-아이템도-자리를-차지합니다)의 계약을 정적 첫 로드와 일반 로드에 같게 적용하고, 구멍 있는 배열 기본값에는 [static-first-admission](#static-first-admission--무게이트-로더의-좁은-증명)의 일반 경로 전환을 적용합니다.
 
 ## Boundary Exemptions
 

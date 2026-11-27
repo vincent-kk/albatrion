@@ -124,12 +124,12 @@ export const compareWatchExitDeliveries = (
         for (const node of root.runtime.deliveryWatchIndex?.allNodes ?? [])
           if (isRecord(node)) watchers.push(node.path);
         for (const node of root.runtime.deliveryWatchIndex?.allNodes ?? [])
-          if (isRecord(node) && node.watchValuesMemo?.commit === commit)
+          if (isRecord(node) && node.__watchValues__?.commit === commit)
             reread.push(node.path);
         history.push({
           marks: [...marks],
           delivered: [...delivered],
-          outputValue: structuredClone(root.storedOutputValue),
+          outputValue: structuredClone(root.__outputValue__),
           watchers: watchers.sort(),
           reread: reread.sort(),
         });

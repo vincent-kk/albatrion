@@ -37,7 +37,7 @@ export const evaluateInjectTo = <Self extends FieldNodeRecord<Self>>(
   let result: unknown;
   try {
     result = rule.literal(
-      source.storedOutputValue,
+      source.__outputValue__,
       getInjectToContext(source, root),
     );
   } catch (cause) {

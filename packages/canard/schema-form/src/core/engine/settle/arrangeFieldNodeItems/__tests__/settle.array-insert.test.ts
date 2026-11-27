@@ -31,7 +31,7 @@ import type { ArrayWriteRun } from './fixtures/runArrayWrite';
 const itemsOf = (run: ArrayWriteRun) =>
   (run.root.children ?? []).map((item) => ({
     item,
-    key: item.itemKey,
+    key: item.__itemKey__,
     name: item.name,
     path: item.path,
   }));
@@ -48,7 +48,7 @@ const expectInsertIdentity = (run: ArrayWriteRun, index: number) => {
     const { item, key, name, path } = items[position];
     expect(name).toBe('' + position);
     expect(path).toBe('/' + position);
-    expect(item.parent).toBe(run.root);
+    expect(item.__parent__).toBe(run.root);
     if (position === index) {
       expect(run.before).not.toContain(item);
       expect(key).toBeGreaterThan(Math.max(-1, ...run.keys.map(Number)));
@@ -83,9 +83,11 @@ describe('array insert', () => {
         'x',
       );
       expect(inserted.result).toBe(4);
-      expect(inserted.root.storedValue).toEqual(['a', 'x', 'b', 'c']);
+      expect(inserted.root.__value__).toEqual(['a', 'x', 'b', 'c']);
       expect(observe(inserted)).toEqual(observe(whole));
-      expect(inserted.root.revisionLedger).toEqual(whole.root.revisionLedger);
+      expect(inserted.root.__revisionLedger__).toEqual(
+        whole.root.__revisionLedger__,
+      );
       expectInsertIdentity(inserted, 1);
       expect(defaults).toEqual([
         ['', ['a', 'x', 'b', 'c']],
@@ -104,8 +106,8 @@ describe('array insert', () => {
       expect(readFieldNodeRevision(third, FieldNodeEventType.UpdatePath)).toBe(
         1,
       );
-      expect(first.revisionLedger).toEqual(
-        whole.root.children![0].revisionLedger,
+      expect(first.__revisionLedger__).toEqual(
+        whole.root.children![0].__revisionLedger__,
       );
     });
 
@@ -121,21 +123,23 @@ describe('array insert', () => {
         { n: 'x', tags: ['y'] },
       );
       const grandchildren = inserted.before.map(
-        (item) => item.childrenByName?.['n'],
+        (item) => item.__childrenByName__?.['n'],
       );
       expect(inserted.result).toBe(3);
       expect(observe(inserted)).toEqual(observe(whole));
-      expect(inserted.root.revisionLedger).toEqual(whole.root.revisionLedger);
+      expect(inserted.root.__revisionLedger__).toEqual(
+        whole.root.__revisionLedger__,
+      );
       expectInsertIdentity(inserted, 0);
       expect(defaults[0]).toEqual(['', next]);
       grandchildren.forEach((grandchild, position) => {
         expect(
-          inserted.root.children![position + 1].childrenByName?.['n'],
+          inserted.root.children![position + 1].__childrenByName__?.['n'],
         ).toBe(grandchild);
         expect(grandchild?.path).toBe('/' + (position + 1) + '/n');
       });
       expect(
-        inserted.root.children![1].childrenByName?.['tags']?.children?.[0]
+        inserted.root.children![1].__childrenByName__?.['tags']?.children?.[0]
           ?.path,
       ).toBe('/1/tags/0');
     });
@@ -191,17 +195,17 @@ describe('array insert', () => {
         expect(itemsOf(inserted).map(({ key, path }) => [key, path])).toEqual(
           itemsOf(pushed).map(({ key, path }) => [key, path]),
         );
-        expect(inserted.root.storedValue).toEqual(pushed.root.storedValue);
-        expect(inserted.root.storedOutputValue).toEqual(
-          pushed.root.storedOutputValue,
+        expect(inserted.root.__value__).toEqual(pushed.root.__value__);
+        expect(inserted.root.__outputValue__).toEqual(
+          pushed.root.__outputValue__,
         );
         expect(inserted.root.runtime.loadSnapshot).toEqual(
           pushed.root.runtime.loadSnapshot,
         );
         expect(inserted.deliveredPaths).toEqual(pushed.deliveredPaths);
         expect(inserted.changes).toBe(pushed.changes);
-        expect(inserted.root.revisionLedger).toEqual(
-          pushed.root.revisionLedger,
+        expect(inserted.root.__revisionLedger__).toEqual(
+          pushed.root.__revisionLedger__,
         );
       }
     });
@@ -211,9 +215,9 @@ describe('array insert', () => {
     it('35C-06 leaves the array untouched for a negative, larger, fractional or NaN index and returns the length', () => {
       for (const index of [-1, 4, 1.5, Number.NaN]) {
         const run = runArrayWrite(STRINGS, ['a', 'b', 'c'], (root) => {
-          const value = root.storedValue;
+          const value = root.__value__;
           const result = dispatchInsert(root, index, 'x');
-          expect(root.storedValue).toBe(value);
+          expect(root.__value__).toBe(value);
           return result;
         });
         expect(run.result).toBe(3);
@@ -241,11 +245,11 @@ describe('array insert', () => {
           dispatchPush(root, 'x'),
         );
         expect(inserted.result).toBe(1);
-        expect(inserted.root.storedValue).toEqual(['x']);
+        expect(inserted.root.__value__).toEqual(['x']);
         expect(inserted.root.source).toBeUndefined();
         expect(inserted.root.runtime.misfitPaths.size).toBe(0);
-        expect(inserted.root.storedOutputValue).toEqual(
-          pushed.root.storedOutputValue,
+        expect(inserted.root.__outputValue__).toEqual(
+          pushed.root.__outputValue__,
         );
         expect(inserted.deliveredPaths).toEqual(pushed.deliveredPaths);
         expect(inserted.root.runtime.loadSnapshot).toEqual(
@@ -269,7 +273,7 @@ describe('array insert', () => {
       const whole = runArrayWrite(terminal, input, (root) =>
         dispatchSetValue(root, ['a', 'x', 'b'], WriteOption.Overwrite),
       );
-      expect(run.root.storedOutputValue).toEqual(whole.root.storedOutputValue);
+      expect(run.root.__outputValue__).toEqual(whole.root.__outputValue__);
       expect(run.deliveredPaths).toEqual(whole.deliveredPaths);
       for (const index of [-1, 3, 0.5])
         expect(
@@ -310,9 +314,9 @@ describe('array insert', () => {
         FieldNodeWriteKind.CallerReplace,
         WriteOption.Overwrite,
       );
-      const former = root.childrenByName!.list;
+      const former = root.__childrenByName__!.list;
       writeFieldNode(
-        root.childrenByName!.show,
+        root.__childrenByName__!.show,
         false,
         FieldNodeWriteKind.CallerReplace,
         WriteOption.Overwrite,
@@ -329,12 +333,12 @@ describe('array insert', () => {
         'b',
       ]);
       writeFieldNode(
-        root.childrenByName!.show,
+        root.__childrenByName__!.show,
         true,
         FieldNodeWriteKind.CallerReplace,
         WriteOption.Overwrite,
       );
-      expect(root.childrenByName!.list.storedValue).toEqual(['a', 'b']);
+      expect(root.__childrenByName__!.list.__value__).toEqual(['a', 'b']);
     });
   });
 
@@ -354,8 +358,8 @@ describe('array insert', () => {
       ]);
       dispatchSetValue(items[1], 'edited', WriteOption.Overwrite);
       dispatchResetSubtree(items[1], WriteOption.Overwrite);
-      expect(items[1].storedValue).toBe('x');
-      expect(run.root.storedValue).toEqual(['a', 'x', 'b', 'c']);
+      expect(items[1].__value__).toBe('x');
+      expect(run.root.__value__).toEqual(['a', 'x', 'b', 'c']);
     });
 
     it('WRITE-088 WRITE-099 fills an omitted value from the item default and snapshots undefined', () => {
@@ -365,7 +369,7 @@ describe('array insert', () => {
         (root) => dispatchInsert(root, 1),
       );
       expect(run.result).toBe(3);
-      expect(run.root.storedValue).toEqual(['a', 'd', 'b']);
+      expect(run.root.__value__).toEqual(['a', 'd', 'b']);
       expect(run.root.runtime.loadSnapshot).toEqual(['a', undefined, 'b']);
       expect(run.snapshot).toEqual(['a', 'b']);
     });

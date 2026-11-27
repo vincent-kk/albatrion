@@ -5,7 +5,7 @@ import { flushPendingGateReads } from '../utils/gates/flushPendingGateReads';
 import { createGateReadFixture } from './fixtures/createGateReadFixture';
 
 // filid:contract settle-pending-children-read
-describe('pending gate childrenByName reads', () => {
+describe('pending gate __childrenByName__ reads', () => {
   it.each(['dictionary', 'prepared-view'])(
     'checks a %s without own-key descriptors',
     (shape) => {
@@ -24,11 +24,11 @@ describe('pending gate childrenByName reads', () => {
       );
       let descriptors = 0;
       try {
-        const template = root.childrenByName!.child.blueprintNode;
+        const template = root.__childrenByName__!.child.blueprintNode;
         context.pendingOutputs = new Set([root]);
         flushPendingGateReads(template, '/child', context);
         expect(context.pendingOutputs.has(root)).toBe(true);
-        const baseline = root.childrenByName!;
+        const baseline = root.__childrenByName__!;
         const target =
           shape === 'dictionary'
             ? baseline
@@ -38,7 +38,7 @@ describe('pending gate childrenByName reads', () => {
                 [],
                 Object.create(baseline),
               );
-        root.childrenByName = new Proxy(target, {
+        root.__childrenByName__ = new Proxy(target, {
           getOwnPropertyDescriptor(target, name) {
             descriptors++;
             return Reflect.getOwnPropertyDescriptor(target, name);
@@ -73,7 +73,7 @@ describe('pending gate childrenByName reads', () => {
         const template = root.blueprintNode.childEntries.find(
           (entry) => entry.name === 'child',
         )!.node;
-        expect(root.childrenByName![name].storedOutputValue).toBeUndefined();
+        expect(root.__childrenByName__![name].__outputValue__).toBeUndefined();
         context.pendingOutputs = new Set([root]);
         flushPendingGateReads(template, '/child', context);
         expect(context.pendingOutputs.has(root)).toBe(true);
@@ -98,8 +98,8 @@ describe('pending gate childrenByName reads', () => {
       { source: 'yes', child: 'kept' },
     );
     try {
-      const template = root.childrenByName!.child.blueprintNode;
-      delete root.childrenByName!['source'];
+      const template = root.__childrenByName__!.child.blueprintNode;
+      delete root.__childrenByName__!['source'];
       context.pendingOutputs = new Set([root]);
       flushPendingGateReads(template, '/child', context);
       expect(context.pendingOutputs.has(root)).toBe(false);
@@ -123,12 +123,12 @@ describe('pending gate childrenByName reads', () => {
       { source: 'yes', child: 'kept' },
     );
     try {
-      const template = root.childrenByName!.child.blueprintNode;
-      const ordinary = { ...root.childrenByName };
+      const template = root.__childrenByName__!.child.blueprintNode;
+      const ordinary = { ...root.__childrenByName__ };
       const instance = ordinary['source'];
       delete ordinary['source'];
       Object.setPrototypeOf(ordinary, { source: instance });
-      root.childrenByName = ordinary;
+      root.__childrenByName__ = ordinary;
       context.pendingOutputs = new Set([root]);
       flushPendingGateReads(template, '/child', context);
       expect(context.pendingOutputs.has(root)).toBe(false);

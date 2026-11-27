@@ -12,13 +12,16 @@ export const countRetainedSlotNodes = (root: FieldNode): number => {
     const current = pending.pop()!;
     if (seen.has(current)) continue;
     seen.add(current);
-    if (current.parent) pending.push(current.parent);
+    if (current.__parent__) pending.push(current.__parent__);
     if (current.children) pending.push(...current.children);
-    const slots: unknown = Reflect.get(current, 'inactiveSlots');
+    const slots: unknown = Reflect.get(current, '__inactiveSlots__');
     if (slots instanceof Map)
       for (const slot of slots.values())
         if (slot instanceof FieldNode) pending.push(slot);
-    const descendants: unknown = Reflect.get(current, 'inactiveSlotChildren');
+    const descendants: unknown = Reflect.get(
+      current,
+      '__inactiveSlotChildren__',
+    );
     if (descendants instanceof Map)
       for (const child of descendants.values())
         if (child instanceof FieldNode) pending.push(child);

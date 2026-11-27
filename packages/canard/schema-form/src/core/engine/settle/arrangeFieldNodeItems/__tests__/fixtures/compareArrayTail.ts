@@ -76,8 +76,8 @@ export const compareArrayTail = (
   expect(observeArraySettlement(actual)).toEqual(
     observeArraySettlement(oracle),
   );
-  expect(observeDetachedReads(actual, former)).toEqual(
-    observeDetachedReads(oracle, formerOracle),
+  expect(observeDetachedReads(former)).toEqual(
+    observeDetachedReads(formerOracle),
   );
   expect(previousChildren).toEqual(former);
   expect(previousSnapshot).toEqual(snapshotCopy);

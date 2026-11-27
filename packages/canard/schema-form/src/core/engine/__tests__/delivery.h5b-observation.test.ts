@@ -44,7 +44,7 @@ it.each([100, 1000])(
     dispatchMount(root, input, undefined, { deferValidation: true });
     expect(marks).toHaveBeenCalledTimes(0);
     expect(root.runtime.deliveries?.size).toBe(0);
-    expect(root.storedValue).toEqual(input);
+    expect(root.__value__).toEqual(input);
     for (const node of [root, ...root.children!]) {
       expect(
         readFieldNodeRevision(node, records.FieldNodeEventType.UpdateValue),
@@ -52,7 +52,7 @@ it.each([100, 1000])(
       expect(
         readFieldNodeRevision(node, records.FieldNodeEventType.RequestRefresh),
       ).toBe(1);
-      expect(node.pendingRevisionMask).toBe(0);
+      expect(node.__pendingRevisionMask__).toBe(0);
     }
   },
 );
@@ -66,10 +66,10 @@ it('shares immutable unobserved first-load transitions and releases the memo', (
     },
   });
   dispatchMount(root, undefined, undefined, { deferValidation: true });
-  const ledger = root.revisionLedger;
-  expect(root.children!.every((child) => child.revisionLedger === ledger)).toBe(
-    true,
-  );
+  const ledger = root.__revisionLedger__;
+  expect(
+    root.children!.every((child) => child.__revisionLedger__ === ledger),
+  ).toBe(true);
   expect(root.runtime.revisionTransitions).toBeUndefined();
   dispatchSetValue(root.children![0], 3);
   expect(ledger[records.FieldNodeEventType.UpdateValue]).toBe(1);
@@ -126,7 +126,7 @@ it.each(['generic', 'static-first'])(
     expect(counts.constructors).toBe(4);
     expect(installedMemos).toBe(0);
     expect(
-      new Set([root, ...root.children!].map((node) => node.revisionLedger))
+      new Set([root, ...root.children!].map((node) => node.__revisionLedger__))
         .size,
     ).toBe(4);
     expect(root.runtime.revisionTransitions).toBeUndefined();
@@ -160,7 +160,7 @@ it('retains an existing pending previous instead of entering bit-only mode', () 
   // The injected private pending envelope belongs to the shipping tree alone.
   const { root } = createDispatchTree({ type: 'number' });
   dispatchMount(root, 0, undefined, { deferValidation: true });
-  root.pendingDelivery = {
+  root.__pendingDelivery__ = {
     type: records.FieldNodeEventType.UpdateValue,
     payload: {
       [records.FieldNodeEventType.UpdateValue]: { previous: -1, current: 0 },

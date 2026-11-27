@@ -45,8 +45,8 @@ it('matches an inactive merge while cloning only the patched source channels', (
   );
   dispatchSetValue(instance, { n: '7', extraB: 'b' }, WriteOption.Merge);
   dispatchSetValue(getDispatchNode(root, 'open'), false);
-  root.inactiveSlots = new Map([[entry, instance]]);
-  root.inactiveSlotOverlays = new Map([[entry, patch.overlay]]);
+  root.__inactiveSlots__ = new Map([[entry, instance]]);
+  root.__inactiveSlotOverlays__ = new Map([[entry, patch.overlay]]);
   expect(materializeInactiveSlotValues(root)).toEqual([
     { path: '/group/n', value: 7 },
     { path: '/group/text', value: 'kept' },
@@ -101,8 +101,8 @@ it('removes unwritten old channels on a whole replacement overlay', () => {
     undefined,
     true,
   );
-  root.inactiveSlots = new Map([[entry, instance]]);
-  root.inactiveSlotOverlays = new Map([[entry, patch.overlay]]);
+  root.__inactiveSlots__ = new Map([[entry, instance]]);
+  root.__inactiveSlotOverlays__ = new Map([[entry, patch.overlay]]);
   const scratch = getSettlementScratch(runtime);
   const context = createSettlementContext(
     root,

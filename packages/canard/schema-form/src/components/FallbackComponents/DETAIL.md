@@ -10,6 +10,8 @@ branch legend는 FieldRendererProps.labelId를 사용하고 입력·라벨은 �
 
 등록 라벨은 label을, 등록 오류는 em을 루트로 그립니다. Label은 비필수일 때 children 하나만 두고 필수이면 숨김 별표를 보탭니다. 그룹은 묶인 부품을 사용하며 문구가 null·undefined이면 오류 부품을 생략합니다. 빈 em이 없으므로 경로별 오류 관찰은 가장 가까운 data-path가 그 경로인 em만 읽습니다. 배열 라벨 생략·가지 legend·루트 입력 구조는 유지합니다.
 
+배열 항목인 단말은 보이는 Label 대신 `hidden` 속성을 가진 제목 요소에 labelId와 인덱스를 담아 Label이 놓일 자리에 그립니다. 배열 항목의 radio 묶음과 단일 컨트롤은 labelId를 `aria-labelledby`로 참조하므로, 이 요소가 없으면 존재하지 않는 요소를 가리키고 이름이 없습니다. 공개된 0.x 버전이 배열 항목에 제목을 보이지 않았으므로 제목을 보이게 하면 소비자의 화면 배치가 바뀝니다.
+
 기본 LabelRenderer·ErrorMessageRenderer는 훅·Context·부수 효과 없이 props만으로 요소를 반환합니다. 묶인 부품이 이 두 참조만 직접 호출해 컴포넌트 층 하나를 생략하므로 React 렌더 밖의 함수 호출도 유효해야 합니다. 사용자·플러그인 렌더러에는 이 직접 호출 계약을 적용하지 않습니다.
 
 입력 동작과 오류 문구는 전달받은 props에 맡깁니다. 제목 연결은 [FormLabel](../Form/components/FormLabel/DETAIL.md)의 경로·불투명 labelId 규약을 따르며 branch의 legend도 같은 제목 id를 제공합니다. 입력 종류를 추측하여 별도 id 체계를 만들지 않습니다.
@@ -18,7 +20,7 @@ branch legend는 FieldRendererProps.labelId를 사용하고 입력·라벨은 �
 
 ### fallback-components-contract — 최소 표시 경계
 
-루트는 Input만 렌더하여 불필요한 그룹을 중첩하지 않습니다. 아래 필드는 노드 strategy에 맞는 구조를 사용하고 배열 항목의 개별 label은 생략합니다. 잔여 키 전용 UI를 추가하지 않는 이유는 [FormErrorMessage의 REACT-031](../Form/components/FormErrorMessage/DETAIL.md)에 둡니다. 커스텀 렌더러 없이도 같은 오류 배정·표시 의미를 유지합니다.
+루트는 Input만 렌더하여 불필요한 그룹을 중첩하지 않습니다. 아래 필드는 노드 strategy에 맞는 구조를 사용하고 배열 항목의 개별 label은 숨긴 제목으로 대신합니다. 잔여 키 전용 UI를 추가하지 않는 이유는 [FormErrorMessage의 REACT-031](../Form/components/FormErrorMessage/DETAIL.md)에 둡니다. 커스텀 렌더러 없이도 같은 오류 배정·표시 의미를 유지합니다.
 
 라벨·오류 폴백은 React 밖에서 직접 호출해도 요소를 반환하며 훅을 요구하지 않습니다.
 

@@ -13,9 +13,9 @@ export const advanceFieldNodeRevision = <Self>(
   mask: number,
   share: boolean,
 ): void => {
-  const previous = node.revisionLedger;
+  const previous = node.__revisionLedger__;
   if (!share) {
-    node.revisionLedger = new FieldNodeRevisionLedger(previous, mask);
+    node.__revisionLedger__ = new FieldNodeRevisionLedger(previous, mask);
     return;
   }
   const transitions = (node.runtime.revisionTransitions ??= new WeakMap());
@@ -29,5 +29,5 @@ export const advanceFieldNodeRevision = <Self>(
     }
     byMask.set(mask, next);
   }
-  node.revisionLedger = next;
+  node.__revisionLedger__ = next;
 };

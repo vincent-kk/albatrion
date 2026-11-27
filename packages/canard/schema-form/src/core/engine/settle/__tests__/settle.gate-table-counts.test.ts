@@ -58,7 +58,7 @@ describe('untimed attribution at the fixed-width first switch', () => {
           });
         try {
           writeFieldNode(
-            root.childrenByName!.kind,
+            root.__childrenByName__!.kind,
             'kind_79',
             FieldNodeWriteKind.Input,
             WriteOption.Overwrite,

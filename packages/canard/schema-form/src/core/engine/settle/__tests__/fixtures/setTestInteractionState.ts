@@ -12,7 +12,7 @@ export const setTestInteractionState = (
   state: NodeStateFlags,
 ): void => {
   const deltas = new Map<string, number>();
-  accumulateGlobalStateDeltas(deltas, node.storedState, state);
-  node.storedState = state;
+  accumulateGlobalStateDeltas(deltas, node.__state__, state);
+  node.__state__ = state;
   publishGlobalStateDeltas(node.rootNode, deltas);
 };

@@ -21,7 +21,7 @@ it('keeps a gated-out final star child as a literal owner path', () => {
     { '*': 'R' },
   );
 
-  expect(root.childrenByName?.['*']).toBeUndefined();
+  expect(root.__childrenByName__?.['*']).toBeUndefined();
   expect(expandTemplatePaths(root, '/%2A')).toEqual(['/%2A']);
 });
 

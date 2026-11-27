@@ -51,11 +51,11 @@ describe('gate selection original-site shadow precondition', () => {
     expect(() => readProjectedValueWithoutPublication(context, '')).toThrow(
       'consumed or published',
     );
-    context.pendingOutputs!.add(root.childrenByName!.kind);
+    context.pendingOutputs!.add(root.__childrenByName__!.kind);
     expect(() =>
       readProjectedValueWithoutPublication(context, '/kind'),
     ).toThrow('/kind');
-    context.pendingOutputs!.delete(root.childrenByName!.kind);
+    context.pendingOutputs!.delete(root.__childrenByName__!.kind);
     root.source = null;
     expect(() =>
       readProjectedValueWithoutPublication(context, '/kind'),
@@ -65,7 +65,7 @@ describe('gate selection original-site shadow precondition', () => {
   it('full evaluation preserves the fixed branch transition and repeated references', () => {
     const { root } = createTestTree(SCHEMA);
     loadFieldNodeAtMount(root, { kind: 'kind_0' }, WriteOption.Overwrite);
-    expect(root.storedOutputValue).toEqual({
+    expect(root.__outputValue__).toEqual({
       common: 'shared',
       kind: 'kind_0',
       payload_0_a: 'a_0',
@@ -73,13 +73,13 @@ describe('gate selection original-site shadow precondition', () => {
       payload_0_c: true,
     });
     writeFieldNode(
-      root.childrenByName!.kind,
+      root.__childrenByName__!.kind,
       'kind_4',
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
-    const value = root.storedOutputValue;
-    expect(root.storedOutputValue).toBe(value);
+    const value = root.__outputValue__;
+    expect(root.__outputValue__).toBe(value);
     expect(value).toEqual({
       common: 'shared',
       kind: 'kind_4',
@@ -153,7 +153,7 @@ describe('gate selection original-site shadow precondition', () => {
       loadFieldNodeAtMount(root, { kind: 'kind_0' }, WriteOption.Overwrite);
       phase = 'update';
       writeFieldNode(
-        root.childrenByName!.kind,
+        root.__childrenByName__!.kind,
         'kind_4',
         FieldNodeWriteKind.Input,
         WriteOption.Overwrite,

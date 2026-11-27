@@ -38,7 +38,8 @@ export const readSlotSourceTree = <Self extends FieldNodeRecord<Self>>(
         : instance?.extras;
   if (template.kind === 'array') {
     const count =
-      overlay?.itemCount ?? (overlay?.isWhole ? 0 : (instance?.itemCount ?? 0));
+      overlay?.itemCount ??
+      (overlay?.isWhole ? 0 : (instance?.__itemCount__ ?? 0));
     const value: unknown[] = [];
     let declaredCount = 0;
     for (let index = 0; index < count; index++) {
@@ -50,7 +51,7 @@ export const readSlotSourceTree = <Self extends FieldNodeRecord<Self>>(
       declaredCount++;
       let item: unknown;
       const active =
-        !overlay?.isWhole && instance?.childrenByName?.['' + index];
+        !overlay?.isWhole && instance?.__childrenByName__?.['' + index];
       if (active) {
         const entry = entries.find(
           (entry) => entry.node === active.blueprintNode,
@@ -76,7 +77,8 @@ export const readSlotSourceTree = <Self extends FieldNodeRecord<Self>>(
   for (const entry of getSlotEntries(instance, overlay, template)) {
     if (hasOwnProperty(value, entry.name)) continue;
     const child = getSlotSource(instance, entry, overlay);
-    const active = !overlay?.isWhole && instance?.childrenByName?.[entry.name];
+    const active =
+      !overlay?.isWhole && instance?.__childrenByName__?.[entry.name];
     let source: unknown;
     if (active && instance) {
       const binding =

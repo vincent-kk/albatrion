@@ -5,7 +5,7 @@ import type {
   BlueprintGate,
   PropertyDeclaration,
 } from '../../../blueprint';
-import type { TreeMemoStores } from '../../../types/treeMemoStores';
+import type { FieldNodeRecord } from '../../../record';
 import { getBlueprintDerived } from '../../../utils/cache/derivedRecords';
 import { isOwnActiveGate } from './isOwnActiveGate';
 
@@ -88,15 +88,14 @@ const getIndex = (blueprint: Blueprint): GateBudgetIndex => {
 export const getTransitionBudgetCap = (blueprint: Blueprint): number =>
   blueprint.capabilities.isBranchless ? 1 : getIndex(blueprint).transitionCap;
 
-/** Reuse one host ceiling until its relocated gate list changes. */
+/** Reuse one host ceiling, kept in the host's `__budgetCap__`, until its relocated gate list changes. */
 export const getHostWheelBudgetCap = (
-  host: object,
+  host: Pick<FieldNodeRecord<unknown>, '__budgetCap__'>,
   blueprint: Blueprint,
   gates: readonly BlueprintGate[],
-  runtime: Pick<TreeMemoStores<unknown, BlueprintGate>, 'hostBudgetCaps'>,
 ): number => {
   if (blueprint.capabilities.isBranchless) return 1;
-  const cached = runtime.hostBudgetCaps?.get(host);
+  const cached = host.__budgetCap__;
   if (cached && cached.gates.length === gates.length) {
     let unchanged = true;
     for (let index = 0; index < cached.gates.length; index++)
@@ -111,9 +110,6 @@ export const getHostWheelBudgetCap = (
   for (const gate of gates)
     for (const key of index.decisionsByGate.get(gate) ?? []) decisions.add(key);
   const cap = decisions.size + 1;
-  (runtime.hostBudgetCaps ??= new WeakMap()).set(host, {
-    gates: [...gates],
-    cap,
-  });
+  host.__budgetCap__ = { gates: [...gates], cap };
   return cap;
 };

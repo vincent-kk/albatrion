@@ -34,7 +34,7 @@ it('does not run shadow with the internal flag off even when NODE_ENV is test', 
   DeriveConvergenceTargets.set(blueprint, new Set(['/a', '/b']));
   expect(() =>
     writeFieldNode(
-      root.childrenByName!['source'],
+      root.__childrenByName__!['source'],
       3,
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,

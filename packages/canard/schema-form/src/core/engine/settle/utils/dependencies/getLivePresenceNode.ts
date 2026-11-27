@@ -24,8 +24,8 @@ export const getLivePresenceNode = <Self extends FieldNodeRecord<Self>>(
     const name = segment;
     if (typeof name !== 'string') return undefined;
     live =
-      live?.childrenByName && hasOwnProperty(live.childrenByName, name)
-        ? live.childrenByName[name]
+      live?.__childrenByName__ && hasOwnProperty(live.__childrenByName__, name)
+        ? live.__childrenByName__[name]
         : undefined;
     if (!live) break;
   }

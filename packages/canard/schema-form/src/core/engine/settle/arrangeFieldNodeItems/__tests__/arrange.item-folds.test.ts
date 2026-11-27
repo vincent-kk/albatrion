@@ -26,7 +26,7 @@ describe('array verbs with item folds', () => {
         { a: !later, b: later, list: [] },
         WriteOption.Overwrite,
       );
-      const list = root.childrenByName!.list;
+      const list = root.__childrenByName__!.list;
       const first = later ? 7 : 'first';
       const inserted = later ? 8 : 'inserted';
       const updated = later ? 9 : 'updated';
@@ -41,8 +41,8 @@ describe('array verbs with item folds', () => {
       expect(arrangeFieldNodeItems(list, { kind: 'push', value: first })).toBe(
         1,
       );
-      expect(list.childrenByName!['0'].blueprintNode.kind).toBe(kind);
-      expect(list.childrenByName!['0'].source).toBe(first);
+      expect(list.__childrenByName__!['0'].blueprintNode.kind).toBe(kind);
+      expect(list.__childrenByName__!['0'].source).toBe(first);
       expect(
         arrangeFieldNodeItems(list, {
           kind: 'insert',
@@ -50,13 +50,13 @@ describe('array verbs with item folds', () => {
           value: inserted,
         }),
       ).toBe(2);
-      expect(list.childrenByName!['0'].blueprintNode.kind).toBe(kind);
-      expect(list.childrenByName!['0'].source).toBe(inserted);
+      expect(list.__childrenByName__!['0'].blueprintNode.kind).toBe(kind);
+      expect(list.__childrenByName__!['0'].source).toBe(inserted);
       expect(arrangeFieldNodeItems(list, { kind: 'remove', index: 0 })).toBe(
         inserted,
       );
-      expect(list.childrenByName!['0'].blueprintNode.kind).toBe(kind);
-      expect(list.childrenByName!['0'].source).toBe(first);
+      expect(list.__childrenByName__!['0'].blueprintNode.kind).toBe(kind);
+      expect(list.__childrenByName__!['0'].source).toBe(first);
       expect(
         arrangeFieldNodeItems(list, {
           kind: 'update',
@@ -64,8 +64,8 @@ describe('array verbs with item folds', () => {
           value: updated,
         }),
       ).toBe(updated);
-      expect(list.childrenByName!['0'].source).toBe(updated);
-      expect(list.storedValue).toEqual([updated]);
+      expect(list.__childrenByName__!['0'].source).toBe(updated);
+      expect(list.__value__).toEqual([updated]);
       expect(list.runtime.loadSnapshot).toMatchObject({ list: [first] });
     },
   );
@@ -102,7 +102,7 @@ describe('array verbs with item folds', () => {
         { a: true, b: false, list: ['first'] },
         WriteOption.Overwrite,
       );
-      const multi = root.childrenByName!.list;
+      const multi = root.__childrenByName__!.list;
       expect(admitsStaticArrayTail(multi)).toBe(false);
       expect(
         prepareArrayAppend(multi, { kind: 'push', value: 'next' }),

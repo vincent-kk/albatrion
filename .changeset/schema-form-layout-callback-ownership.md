@@ -2,7 +2,7 @@
 "@canard/schema-form": major
 ---
 
-Breaking change: `Form.Input`, `Form.Render`, and `Form.Field` no longer accept `onChange` or `onFileAttach`. Untyped callers cannot replace the library's value storage, interaction tracking, or attachment registration with these props.
+Breaking change: `Form.Input`, `Form.Render` and `Form.Field` (0.16 `Form.Group`) no longer accept `onChange` or `onFileAttach`. In 0.16 these props replaced the library's change and attachment handlers, which skipped the library's value storage, interaction tracking and attachment registration; they are now typed `never` and the field ignores them.
 
 Use the Form callback to observe committed values. To take ownership of a write, relay through a hybrid parent's `<Child onChange>` or a renderer's `<Input onChange>`; their input-write semantics remain intact. File relays likewise belong on Child or renderer Input.
 
@@ -16,14 +16,4 @@ Use the Form callback to observe committed values. To take ownership of a write,
     <Input onChange={(value) => { node.setValue(value); saveName(value); }} />
   )}
 </Form.Render>
-```
-
-Form `readOnly` and `disabled` now also block input callbacks, not only the props they render. In 0.16 a field input's `onChange` checked only the field's own locks and `onFileAttach` checked none. Now, while the Form or the field is read-only or disabled, `onChange` and `onFileAttach` leave the value and the attached files unchanged, including relays through a hybrid parent's `<Child>` or a renderer's `<Input>`. Each call reads the lock the Form last committed: a delayed edit or attachment that arrives after locking is rejected, and one that arrives after unlocking, from the same live input, is applied. A child's layout effect that runs in the commit changing the lock already sees the new lock. Concurrent updates that have not committed keep the previous lock, while React 18 legacy roots can commit the new lock together with a Suspense fallback. Imperative writes such as `node.setValue` are not blocked, so use them when a locked Form must still change.
-
-```tsx
-// Before: a response that arrived while the Form was disabled was written.
-fetchSuggestion().then(onChange);
-
-// After: that onChange is ignored; write through the node to apply it anyway.
-fetchSuggestion().then((value) => node.setValue(value));
 ```

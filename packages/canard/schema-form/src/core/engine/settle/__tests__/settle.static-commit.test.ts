@@ -36,14 +36,14 @@ it('does not revisit 1000 retained required flags and bounds declaration-key wor
   });
   loadFieldNodeAtMount(root, {}, WriteOption.Overwrite);
   writeFieldNode(
-    root.childrenByName!.type,
+    root.__childrenByName__!.type,
     'b',
     FieldNodeWriteKind.Input,
     WriteOption.Overwrite,
   );
   let requiredReads = 0;
   for (let index = 0; index < 1000; index++) {
-    const child = root.childrenByName![`pad_${index}`];
+    const child = root.__childrenByName__![`pad_${index}`];
     let required = child.isRequired;
     Object.defineProperty(child, 'required', {
       configurable: true,
@@ -59,7 +59,7 @@ it('does not revisit 1000 retained required flags and bounds declaration-key wor
   }
   const keys = vi.spyOn(declarationKeys, 'getCommittedDeclarationKey');
   writeFieldNode(
-    root.childrenByName!.type,
+    root.__childrenByName__!.type,
     'a',
     FieldNodeWriteKind.Input,
     WriteOption.Overwrite,
@@ -82,13 +82,13 @@ it('reads static control and default declarations without a committed-key lookup
   });
   loadFieldNodeAtMount(root, {}, WriteOption.Overwrite);
   writeFieldNode(
-    root.childrenByName!.kind,
+    root.__childrenByName__!.kind,
     true,
     FieldNodeWriteKind.Input,
     WriteOption.Overwrite,
   );
   const get = vi.spyOn(root.runtime.committedDeclarationIds!, 'get');
-  const fixed = root.childrenByName!.fixed;
+  const fixed = root.__childrenByName__!.fixed;
   expect(getControlLayers(fixed, new Map()).length).toBeGreaterThan(0);
   expect(readDefault(fixed, new Map())).toBe(7);
   expect(get).not.toHaveBeenCalled();
@@ -105,18 +105,18 @@ it('updates existing required flags when branch required identities differ', () 
     })),
   });
   loadFieldNodeAtMount(root, {}, WriteOption.Overwrite);
-  const shared = root.childrenByName!.shared;
+  const shared = root.__childrenByName__!.shared;
   expect(shared.isRequired).toBe(false);
   writeFieldNode(
-    root.childrenByName!.kind,
+    root.__childrenByName__!.kind,
     true,
     FieldNodeWriteKind.Input,
     WriteOption.Overwrite,
   );
-  expect(root.childrenByName!.shared).toBe(shared);
+  expect(root.__childrenByName__!.shared).toBe(shared);
   expect(shared.isRequired).toBe(true);
   writeFieldNode(
-    root.childrenByName!.kind,
+    root.__childrenByName__!.kind,
     false,
     FieldNodeWriteKind.Input,
     WriteOption.Overwrite,
@@ -135,14 +135,14 @@ it('sets required on newly entering children when the required array is retained
     })),
   });
   loadFieldNodeAtMount(root, {}, WriteOption.Overwrite);
-  expect(root.childrenByName!.a.isRequired).toBe(true);
+  expect(root.__childrenByName__!.a.isRequired).toBe(true);
   writeFieldNode(
-    root.childrenByName!.kind,
+    root.__childrenByName__!.kind,
     true,
     FieldNodeWriteKind.Input,
     WriteOption.Overwrite,
   );
-  expect(root.childrenByName!.b.isRequired).toBe(true);
+  expect(root.__childrenByName__!.b.isRequired).toBe(true);
 });
 
 it('passes only each host own entering children to the required subset', () => {
@@ -154,7 +154,7 @@ it('passes only each host own entering children to the required subset', () => {
     },
   });
   loadFieldNodeAtMount(root, { left: {}, right: {} }, WriteOption.Overwrite);
-  const { left, right } = root.childrenByName!;
+  const { left, right } = root.__childrenByName__!;
   const scratch = getSettlementScratch(root.runtime);
   const context = createSettlementContext(
     root,
@@ -163,17 +163,19 @@ it('passes only each host own entering children to the required subset', () => {
     scratch,
   );
   context.changedNodes.add(left).add(right);
-  context.enteredNodes.add(left.childrenByName!.a).add(right.childrenByName!.b);
-  left.deliveryChanges |= FieldNodeEventType.UpdateChildren;
-  right.deliveryChanges |= FieldNodeEventType.UpdateChildren;
+  context.enteredNodes
+    .add(left.__childrenByName__!.a)
+    .add(right.__childrenByName__!.b);
+  left.__deliveryChanges__ |= FieldNodeEventType.UpdateChildren;
+  right.__deliveryChanges__ |= FieldNodeEventType.UpdateChildren;
   const subsets = vi.spyOn(requiredChildren, 'getRequiredChildren');
   try {
     markCommitDeliveries(context);
     expect(subsets.mock.calls.find(([host]) => host === left)?.[1]).toEqual([
-      left.childrenByName!.a,
+      left.__childrenByName__!.a,
     ]);
     expect(subsets.mock.calls.find(([host]) => host === right)?.[1]).toEqual([
-      right.childrenByName!.b,
+      right.__childrenByName__!.b,
     ]);
   } finally {
     releaseSettlementScratch(scratch);
@@ -193,7 +195,7 @@ it('orders entering required children by canonical integer keys then stable inse
   });
   loadFieldNodeAtMount(root, {}, WriteOption.Overwrite);
   const entering = ['b', '10', '2', '01', '4294967295'].map(
-    (name) => root.childrenByName![name],
+    (name) => root.__childrenByName__![name],
   );
   expect(
     requiredChildren

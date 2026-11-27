@@ -28,7 +28,7 @@ describe('relay cleanup across immediate commits and failed flushes', () => {
       );
       dispatchSetValue(root, value);
     });
-    expect(root.storedValue).toBe('x');
+    expect(root.__value__).toBe('x');
     expect(readFieldNodeRevision(root, FieldNodeEventType.RequestRefresh)).toBe(
       afterReset + 1,
     );
@@ -55,7 +55,7 @@ describe('relay cleanup across immediate commits and failed flushes', () => {
     ).toThrow('Invalid virtual node values at /pair');
     expect(runtime.commitNumber).toBe(before);
     expect(runtime.inputRelays).toBeUndefined();
-    expect(root.storedValue).toEqual({ a: 'old', b: 'old' });
+    expect(root.__value__).toEqual({ a: 'old', b: 'old' });
     const child = getDispatchChild(root, 'a');
     const refresh = readFieldNodeRevision(
       child,
@@ -89,14 +89,14 @@ describe('relay cleanup across immediate commits and failed flushes', () => {
       dispatchSetValue(input, 'marked');
       dispatchResetSubtree(show);
       expect(input.isDetached).toBe(true);
-      expect(root.childrenByName?.input).toBeUndefined();
+      expect(root.__childrenByName__?.input).toBeUndefined();
       dispatchRelayInput(other, 'x', WriteOption.Overwrite, () => undefined);
       expect(runtime.inputRelays).toHaveLength(1);
       expect(runtime.batchWrites).toBeUndefined();
     });
     const remainingRelays = runtime.inputRelays;
     dispatchSetValue(other, 'x');
-    expect(other.storedValue).toBe('x');
+    expect(other.__value__).toBe('x');
     expect(
       readFieldNodeRevision(other, FieldNodeEventType.RequestRefresh),
     ).toBe(before + 1);
@@ -188,8 +188,8 @@ describe('relay cleanup across immediate commits and failed flushes', () => {
       if (batched) dispatchBatch(previous.root, emit);
       else emit();
       expect(previous.root.isDisposed).toBe(true);
-      expect(previous.root.storedValue).toBe('old');
-      expect(next.root.storedValue).toBe('x');
+      expect(previous.root.__value__).toBe('old');
+      expect(next.root.__value__).toBe('x');
       expect(previous.runtime.inputRelays).toBeUndefined();
       expect(next.runtime.inputRelays).toBeUndefined();
     },
@@ -223,7 +223,7 @@ describe('relay cleanup across immediate commits and failed flushes', () => {
     expect(relay).not.toHaveBeenCalled();
     expect(runtime.entryDepth).toBe(0);
     expect(runtime.inputRelays).toBeUndefined();
-    expect(root.storedValue).toBe('old');
+    expect(root.__value__).toBe('old');
   });
 
   it('does not evaluate or record a relay refused during an inactive-value resolver', () => {
@@ -262,7 +262,7 @@ describe('relay cleanup across immediate commits and failed flushes', () => {
     expect(attempt).toHaveBeenCalledOnce();
     expect(updater).not.toHaveBeenCalled();
     expect(relay).not.toHaveBeenCalled();
-    expect(getDispatchChild(root, 'other').storedValue).toBe('old');
+    expect(getDispatchChild(root, 'other').__value__).toBe('old');
   });
 
   it.each(['root', 'child'])(
@@ -299,7 +299,7 @@ describe('relay cleanup across immediate commits and failed flushes', () => {
     });
     dispatchMount(root, { a: 'a', b: 'b' });
     const pair = getDispatchChild(root, 'pair');
-    const committed = pair.storedValue;
+    const committed = pair.__value__;
     const updater = vi.fn((previous: unknown) => {
       expect(previous).toBe(committed);
       return previous;

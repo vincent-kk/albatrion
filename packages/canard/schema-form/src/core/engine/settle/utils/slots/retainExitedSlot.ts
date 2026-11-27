@@ -8,9 +8,9 @@ import { createExitSlotOverlay } from './createExitSlotOverlay';
 import { getRetainedChildEntry } from './getRetainedChildEntry';
 import { markSlotChange } from './markSlotChange';
 
-/** Annotates the lazily created `inactiveSlots`; an argument-less `new Map()` would be `Map<any, any>`. */
+/** Annotates the lazily created `__inactiveSlots__`; an argument-less `new Map()` would be `Map<any, any>`. */
 type InactiveSlots<Self> = Map<BlueprintChildEntry, Self>;
-/** Annotates the lazily created `inactiveSlotOverlays`; an argument-less `new Map()` would be `Map<any, any>`. */
+/** Annotates the lazily created `__inactiveSlotOverlays__`; an argument-less `new Map()` would be `Map<any, any>`. */
 type InactiveSlotOverlays = Map<BlueprintChildEntry, InactiveSlotOverlay>;
 
 /**
@@ -25,14 +25,14 @@ export const retainExitedSlot = <Self extends FieldNodeRecord<Self>>(
   context: SettlementContext<Self>,
   applyPolicy: boolean,
 ): void => {
-  const host = node.parent;
+  const host = node.__parent__;
   if (!host) return;
   const entry = getRetainedChildEntry(host, node.name, node.blueprintNode);
   if (!entry) return;
   if (isReplacedLivePath(context, node.path)) {
     markSlotChange(host, entry, undefined, context);
-    host.inactiveSlots?.delete(entry);
-    host.inactiveSlotOverlays?.delete(entry);
+    host.__inactiveSlots__?.delete(entry);
+    host.__inactiveSlotOverlays__?.delete(entry);
     return;
   }
   const result = createExitSlotOverlay(
@@ -42,15 +42,15 @@ export const retainExitedSlot = <Self extends FieldNodeRecord<Self>>(
     undefined,
     context,
   );
-  node.retainedSourceOverlay = result.overlay;
+  node.__retainedSourceOverlay__ = result.overlay;
   markSlotChange(
     host,
     entry,
     context.enteredNodes.has(node) ? undefined : node,
   );
   if (!result.canRetain) {
-    host.inactiveSlots?.delete(entry);
-    host.inactiveSlotOverlays?.delete(entry);
+    host.__inactiveSlots__?.delete(entry);
+    host.__inactiveSlotOverlays__?.delete(entry);
     return;
   }
   const instance = result.isCompacted
@@ -63,11 +63,11 @@ export const retainExitedSlot = <Self extends FieldNodeRecord<Self>>(
         context.compactedSlotSources,
       )
     : node;
-  const slots: InactiveSlots<Self> = (host.inactiveSlots ??= new Map());
+  const slots: InactiveSlots<Self> = (host.__inactiveSlots__ ??= new Map());
   slots.set(entry, instance);
   if (result.overlay) {
-    const overlays: InactiveSlotOverlays = (host.inactiveSlotOverlays ??=
+    const overlays: InactiveSlotOverlays = (host.__inactiveSlotOverlays__ ??=
       new Map());
     overlays.set(entry, result.overlay);
-  } else host.inactiveSlotOverlays?.delete(entry);
+  } else host.__inactiveSlotOverlays__?.delete(entry);
 };

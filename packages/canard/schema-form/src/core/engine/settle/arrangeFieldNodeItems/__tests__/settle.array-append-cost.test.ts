@@ -129,7 +129,7 @@ describe('an admitted push does prefix work independent of the item count', () =
     expect(admit.mock.results.some((call) => call.value !== undefined)).toBe(
       true,
     );
-    expect(root.children![2000].childrenByName!.a.storedOutputValue).toBe(1);
+    expect(root.children![2000].__childrenByName__!.a.__outputValue__).toBe(1);
     expect(
       scan.mock.calls.filter(([, children]) => children.length >= 1000),
     ).toHaveLength(0);

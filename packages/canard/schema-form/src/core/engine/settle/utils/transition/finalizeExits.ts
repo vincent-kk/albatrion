@@ -43,8 +43,8 @@ export const finalizeExits = <Self extends FieldNodeRecord<Self>>(
   let misfitIndex: Optional<Map<string, Set<string>>>;
   for (const node of context.pendingExits.values()) {
     if (node.isDetached) continue;
-    const parent = node.parent;
-    if (parent?.childrenByName?.[node.name] === node) continue;
+    const parent = node.__parent__;
+    if (parent?.__childrenByName__?.[node.name] === node) continue;
     context.exitedNodes.add(node);
     const rekeyed =
       context.rekeyedArrayMoves &&
@@ -62,13 +62,13 @@ export const finalizeExits = <Self extends FieldNodeRecord<Self>>(
           !context.throwingGateExits?.has(node)
         )
           resolveInactiveValue(departing, node, context);
-        if (!departing.runtime.detachedReads?.has(departing))
+        if (departing.__detachedReads__ === undefined)
           captureDetachedFieldNodeReads(departing, {
             outputValue: context.previousOutputValue,
             context: context.previousContext,
             schema:
               context.originalSchemas.get(departing.path)?.schema ??
-              departing.schema.schema,
+              departing.__schema__.schema,
           });
         if (rekeyed) departing.runtime.misfitPaths.delete(departing.path);
         departing.isDetached = true;
@@ -127,7 +127,11 @@ export const finalizeExits = <Self extends FieldNodeRecord<Self>>(
   const affectedAncestors = new Set<Self>();
   finalizeRestoredSlotSource(context);
   for (const node of context.exitedNodes)
-    for (let ancestor = node.parent; ancestor; ancestor = ancestor.parent)
+    for (
+      let ancestor = node.__parent__;
+      ancestor;
+      ancestor = ancestor.__parent__
+    )
       if (!ancestor.isDetached) affectedAncestors.add(ancestor);
   for (const ancestor of [...affectedAncestors].sort(
     (left, right) => right.path.length - left.path.length,

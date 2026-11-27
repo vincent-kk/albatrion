@@ -9,16 +9,16 @@ import { recordFieldNodeRevealBaseline } from './recordFieldNodeRevealBaseline';
 
 /** Field decisions that contribute to one committed event kind. */
 const CHANGE_BITS = {
-  storedValue: FieldNodeEventType.UpdateValue,
-  storedOutputValue: FieldNodeEventType.UpdateValue,
+  __value__: FieldNodeEventType.UpdateValue,
+  __outputValue__: FieldNodeEventType.UpdateValue,
   path: FieldNodeEventType.UpdatePath,
   children: FieldNodeEventType.UpdateChildren,
   isActive: FieldNodeEventType.UpdateControlledProperties,
   isVisible: FieldNodeEventType.UpdateControlledProperties,
   isReadOnly: FieldNodeEventType.UpdateControlledProperties,
   isDisabled: FieldNodeEventType.UpdateControlledProperties,
-  schema: FieldNodeEventType.UpdateJsonSchema,
-  storedState: FieldNodeEventType.UpdateState,
+  __schema__: FieldNodeEventType.UpdateJsonSchema,
+  __state__: FieldNodeEventType.UpdateState,
 };
 
 /**
@@ -37,37 +37,41 @@ export const captureFieldNodeChange = <
   field: Key,
   value: Value,
 ): Value => {
-  if (node[field] === value || !node.isDeliveryInitialized || node.isDetached)
+  if (
+    node[field] === value ||
+    !node.__isDeliveryInitialized__ ||
+    node.isDetached
+  )
     return value;
-  if (field === 'storedState' || field === 'isActive' || field === 'isVisible')
+  if (field === '__state__' || field === 'isActive' || field === 'isVisible')
     recordFieldNodeRevealBaseline(node);
   const bit = CHANGE_BITS[field];
-  if (!(node.deliveryChanges & bit)) {
+  if (!(node.__deliveryChanges__ & bit)) {
     switch (bit) {
       case FieldNodeEventType.UpdateValue:
-        node.deliveryPreviousValue = node.storedValue;
-        node.deliveryPreviousOutputValue = node.storedOutputValue;
+        node.__deliveryPreviousValue__ = node.__value__;
+        node.__deliveryPreviousOutputValue__ = node.__outputValue__;
         break;
       case FieldNodeEventType.UpdatePath:
-        node.deliveryPreviousPath = node.path;
+        node.__deliveryPreviousPath__ = node.path;
         break;
       case FieldNodeEventType.UpdateChildren:
-        node.deliveryPreviousChildren = node.children;
+        node.__deliveryPreviousChildren__ = node.children;
         break;
       case FieldNodeEventType.UpdateControlledProperties:
-        node.deliveryPreviousComputedBits =
+        node.__deliveryPreviousComputedBits__ =
           +node.isActive |
           (+node.isVisible << VISIBLE_BIT_SHIFT) |
           (+node.isReadOnly << READ_ONLY_BIT_SHIFT) |
           (+node.isDisabled << DISABLED_BIT_SHIFT);
         break;
       case FieldNodeEventType.UpdateJsonSchema:
-        node.deliveryPreviousSchema = node.schema;
+        node.__deliveryPreviousSchema__ = node.__schema__;
         break;
       case FieldNodeEventType.UpdateState:
-        node.deliveryPreviousState = node.storedState;
+        node.__deliveryPreviousState__ = node.__state__;
     }
-    node.deliveryChanges |= bit;
+    node.__deliveryChanges__ |= bit;
   }
   if (
     node.runtime.deliveryWatchIndex?.allNodes.size &&

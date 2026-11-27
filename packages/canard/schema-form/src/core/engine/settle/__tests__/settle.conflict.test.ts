@@ -86,13 +86,13 @@ describe('shared declaration conflicts', () => {
       ],
     });
     loadFieldNodeAtMount(root, { enabled: false }, WriteOption.Overwrite);
-    expect(root.childrenByName?.shared).toBeUndefined();
+    expect(root.__childrenByName__?.shared).toBeUndefined();
     expect(root.runtime.diagnostics.status).toBe('stable');
 
     let caught: unknown;
     try {
       writeFieldNode(
-        root.childrenByName!.enabled,
+        root.__childrenByName__!.enabled,
         true,
         FieldNodeWriteKind.CallerReplace,
         WriteOption.Overwrite,
@@ -104,11 +104,11 @@ describe('shared declaration conflicts', () => {
     expect(
       root.children?.filter((child) => child.name === 'shared'),
     ).toHaveLength(1);
-    expect(root.childrenByName?.shared?.blueprintNode).toBe(
+    expect(root.__childrenByName__?.shared?.blueprintNode).toBe(
       blueprint.root.childEntries.find((entry) => entry.name === 'shared')
         ?.node,
     );
-    expect(root.childrenByName?.enabled?.source).toBe(true);
+    expect(root.__childrenByName__?.enabled?.source).toBe(true);
     if (conflict) {
       expect(caught).toMatchObject({
         code: 'SCHEMA_FORM_ERROR.SHARED_NODE_CONFLICT',
@@ -174,9 +174,9 @@ describe('shared declaration conflicts', () => {
       WriteOption.Overwrite,
     );
     expect(root.runtime.diagnostics.status).toBe('stable');
-    expect(root.childrenByName?.target?.source).toBe('A');
-    expect(root.childrenByName?.filled).toBeUndefined();
-    expect(root.childrenByName?.departed?.source).toBe('held');
+    expect(root.__childrenByName__?.target?.source).toBe('A');
+    expect(root.__childrenByName__?.filled).toBeUndefined();
+    expect(root.__childrenByName__?.departed?.source).toBe('held');
 
     let caught: unknown;
     try {
@@ -192,10 +192,10 @@ describe('shared declaration conflicts', () => {
     expect(caught).toMatchObject({
       code: 'SCHEMA_FORM_ERROR.SHARED_NODE_CONFLICT',
     });
-    expect(root.childrenByName?.shared?.blueprintNode.kind).toBe('number');
-    expect(root.childrenByName?.target?.source).toBe('B');
-    expect(root.childrenByName?.filled?.source).toBe('F');
-    expect(root.childrenByName?.departed).toBeUndefined();
+    expect(root.__childrenByName__?.shared?.blueprintNode.kind).toBe('number');
+    expect(root.__childrenByName__?.target?.source).toBe('B');
+    expect(root.__childrenByName__?.filled?.source).toBe('F');
+    expect(root.__childrenByName__?.departed).toBeUndefined();
     expect(hasRetainedSlotOwnSource(root, '/departed', 'string')).toBe(false);
     expect(root.runtime.diagnostics).toMatchObject({
       status: 'degraded',
@@ -223,7 +223,7 @@ describe('shared declaration conflicts', () => {
     ).toThrow('Active declarations conflict');
     expect(root.source).toBeUndefined();
     expect(root.extras).toEqual({ enabled: true });
-    expect(root.childrenByName?.value?.source).toBe(3);
+    expect(root.__childrenByName__?.value?.source).toBe(3);
     expect(root.runtime.diagnostics).toMatchObject({
       status: 'degraded',
       cause: 'sharedConflict',
@@ -253,7 +253,7 @@ describe('shared declaration conflicts', () => {
         WriteOption.Overwrite,
       ),
     ).toThrow('Active declarations conflict');
-    expect(root.childrenByName?.shared?.blueprintNode.kind).toBe('number');
+    expect(root.__childrenByName__?.shared?.blueprintNode.kind).toBe('number');
     expect(root.runtime.diagnostics.cause).toBe('sharedConflict');
   });
 });

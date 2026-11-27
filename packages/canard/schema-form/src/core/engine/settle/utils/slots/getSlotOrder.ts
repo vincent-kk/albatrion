@@ -36,7 +36,7 @@ export const getSlotOrder = <Self extends FieldNodeRecord<Self>>(
     );
     childName = host.name;
     childTemplate = host.blueprintNode;
-    host = host.parent;
+    host = host.__parent__;
   }
   return order.reverse();
 };

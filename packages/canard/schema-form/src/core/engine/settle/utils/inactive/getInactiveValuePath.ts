@@ -22,15 +22,15 @@ export const getInactiveValuePath = <Self extends FieldNodeRecord<Self>>(
   const lineage: Self[] = [];
   for (
     let current: Nullable<Self> = node;
-    current?.parent;
-    current = current.parent
+    current?.__parent__;
+    current = current.__parent__
   )
     lineage.push(current);
   let path: string = $.Root;
   for (let index = lineage.length - 1; index >= 0; index--) {
     const child = lineage[index];
     const compaction =
-      child.parent && context.compactedSlotSources.get(child.parent);
+      child.__parent__ && context.compactedSlotSources.get(child.__parent__);
     let name = child.name;
     if (compaction) {
       const binding = [...compaction.sources].find(

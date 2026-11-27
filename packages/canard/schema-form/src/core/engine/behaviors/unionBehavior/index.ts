@@ -1,1 +1,1 @@
-export { unionBehavior } from './unionBehavior';
+export { unionBehavior, unionItemLeafBehavior } from './unionBehavior';
