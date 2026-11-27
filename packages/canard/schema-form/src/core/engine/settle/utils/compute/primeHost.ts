@@ -44,7 +44,7 @@ const NO_ACTIVE_DECLARATION_IDS: readonly number[] = EMPTY_ARRAY;
 /**
  * Start a gate wheel with only ungated children and their static overlays.
  * @param node - Branch host starting one bounded calculation wheel
- * @param prior - Previous committed shape retained for identity reuse
+ * @param prior - Previous committed shape retained for identity reuse; a child whose parent is another host stays unchanged
  * @param context - Current write and its record factory
  * @param hasRelocated - Wheel's already collected relocation evidence
  * @returns Nothing; the host now exposes the fixed baseline shape
@@ -122,6 +122,11 @@ export const primeHost = <Self extends FieldNodeRecord<Self>>(
     const priorChild = hasOwnProperty(prior, entry.name)
       ? prior[entry.name]
       : undefined;
+    // A virtual group borrows its parent's constituents; only that parent re-selects their schema.
+    if (priorChild && priorChild.__parent__ !== node) {
+      baseline[entry.name] = priorChild;
+      continue;
+    }
     const key =
       context.pendingExits.size === 0
         ? undefined
