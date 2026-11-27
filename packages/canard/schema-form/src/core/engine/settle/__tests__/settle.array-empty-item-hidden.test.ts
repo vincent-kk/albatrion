@@ -12,34 +12,52 @@ type Tree = ReturnType<typeof mountPublicTree>;
 
 /**
  * Build a form whose `flag` gates a list of string items that default to 'D'.
- * @param level - `item` gates each item, `array` gates the array
+ * @param level - `item` gates each item, `array` gates the array, `branch` gates the object holding it
  * @param controls - Further controls of each item
  * @returns The object schema
  */
 const gatedList = (
-  level: 'item' | 'array',
+  level: 'item' | 'array' | 'branch',
   controls: Readonly<Record<string, unknown>> = {},
-): BlueprintSchema => ({
-  type: 'object',
-  properties: {
-    flag: { type: 'boolean' },
-    list:
-      level === 'item'
-        ? {
-            type: 'array',
-            items: {
-              type: 'string',
-              default: 'D',
-              controls: { active: '../../flag === true', ...controls },
-            },
-          }
-        : {
-            type: 'array',
+): BlueprintSchema =>
+  level === 'branch'
+    ? {
+        type: 'object',
+        properties: {
+          flag: { type: 'boolean' },
+          branch: {
+            type: 'object',
             controls: { active: '../flag === true' },
-            items: { type: 'string', default: 'D' },
+            properties: {
+              list: {
+                type: 'array',
+                items: { type: 'string', default: 'D' },
+              },
+            },
           },
-  },
-});
+        },
+      }
+    : {
+        type: 'object',
+        properties: {
+          flag: { type: 'boolean' },
+          list:
+            level === 'item'
+              ? {
+                  type: 'array',
+                  items: {
+                    type: 'string',
+                    default: 'D',
+                    controls: { active: '../../flag === true', ...controls },
+                  },
+                }
+              : {
+                  type: 'array',
+                  controls: { active: '../flag === true' },
+                  items: { type: 'string', default: 'D' },
+                },
+        },
+      };
 
 /** An array that clears on exit but keeps each string item's own source. */
 const COMPACTING: BlueprintSchema = {
@@ -158,6 +176,41 @@ describe('hidden array item positions and settlements without the fill', () => {
       expect(readSources(fresh)).toEqual(output);
     },
   );
+
+  it('shows a position emptied before its array or enclosing object hid as the default after undefined arrived through the visible parent, under either write option', () => {
+    const options: readonly SetValueOption[] = [
+      SetValueOption.Overwrite,
+      SetValueOption.Merge,
+    ];
+    for (const level of ['array', 'branch'] as const) {
+      for (const option of options) {
+        const isBranch = level === 'branch';
+        const itemPath = isBranch ? '/branch/list/0' : '/list/0';
+        const tree = mountPublicTree(
+          gatedList(level),
+          isBranch
+            ? { flag: true, branch: { list: ['x'] } }
+            : { flag: true, list: ['x'] },
+        );
+        tree.at(itemPath).setValue(null);
+        tree.at('/flag').setValue(false);
+        tree.root.setValue(
+          isBranch
+            ? { flag: false, branch: { list: [undefined] } }
+            : { flag: false, list: [undefined] },
+          option,
+        );
+        tree.at('/flag').setValue(true);
+        const item = tree.at(itemPath);
+        expect({
+          level,
+          option,
+          value: item.value,
+          source: item.source,
+        }).toEqual({ level, option, value: 'D', source: 'D' });
+      }
+    }
+  });
 
   it('discards an emptied item that leaves with unsetOnInactive, so its re-entry takes the default', () => {
     const tree = mountPublicTree(gatedList('item', { unsetOnInactive: true }), {

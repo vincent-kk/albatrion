@@ -94,10 +94,11 @@ export const markWrite = <Self extends FieldNodeRecord<Self>>(
   const known = changedValue !== UNINTERPRETED;
   const value = known ? changedValue : node.behavior.interpret(input, spec);
   if (node.behavior.strategy !== 'branch') {
-    // A caller write that reads as undefined onto an item leaf reading as undefined changes nothing,
-    // except that a null becomes the source of a position still without one; a load is a new lifetime.
+    // A caller write that reads as undefined onto an existing item leaf that reads as undefined changes nothing,
+    // except that a null becomes the source of a position still without one.
+    // A node that entered in this settlement is a new lifetime.
     if (
-      context.kind !== FieldNodeWriteKind.Load &&
+      !context.enteredNodes.has(node) &&
       (value === null || value === undefined) &&
       (node.source === null || node.source === undefined) &&
       isItemLeafBehavior(node.behavior)
