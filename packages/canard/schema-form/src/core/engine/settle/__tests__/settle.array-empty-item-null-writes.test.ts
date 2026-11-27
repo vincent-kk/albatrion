@@ -191,7 +191,7 @@ describe('a null written to a non-nullable leaf item position', () => {
     );
   });
 
-  it("gives an item created by push() without a default its first value delivery when derived or a sibling's injectTo gives it a value in the settlement that creates it", () => {
+  it("gives an item created by push() without a default its first value delivery when derived gives it a value in the settlement that creates it or a sibling's injectTo writes it later in the same batch", () => {
     const derivedSchema = {
       type: 'object',
       properties: {
@@ -221,7 +221,7 @@ describe('a null written to a non-nullable leaf item position', () => {
         'v',
       ],
       [
-        "push() written by a sibling's injectTo in the same batch",
+        "push() then a sibling's injectTo in the same batch, settled after push",
         injectedSchema,
         (tree: Tree) =>
           tree.root.batch(() => {
