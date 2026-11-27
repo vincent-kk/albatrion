@@ -1,10 +1,78 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 
 import { makeFieldNodeTree } from '@/schema-form/core/__tests__/makeFieldNodeTree';
 import { WriteOption } from '@/schema-form/core/engine/types/value';
 import { SchemaFormError } from '@/schema-form/errors';
 
 import { getGateRegistry } from '../utils/gates/getGateRegistry';
+
+/** Records the host kind and path of every child creation, including settlement's own callers. */
+const createdUnder = vi.hoisted(() => vi.fn());
+
+vi.mock('../utils/compute/createChildNode', async (importOriginal) => {
+  const original = await importOriginal<{
+    createChildNode: (
+      host: { behavior: { type: string }; path: string },
+      entry: unknown,
+    ) => unknown;
+  }>();
+  return {
+    ...original,
+    createChildNode: (
+      host: { behavior: { type: string }; path: string },
+      entry: unknown,
+    ) => {
+      createdUnder(host.behavior.type, host.path);
+      return original.createChildNode(host, entry);
+    },
+  };
+});
+
+/**
+ * Read the hosts of child creations made by virtual groups since the last clear.
+ * @returns Paths of virtual hosts that created a child, one per creation
+ */
+const virtualCreations = () =>
+  createdUnder.mock.calls
+    .filter(([type]) => type === 'virtual')
+    .map(([, path]) => path);
+
+/**
+ * Build an object whose constituent `data` is narrowed while `flag` is true and grouped with `y` under `pair`.
+ * @param group - Extra keys of the virtual group `pair`
+ * @returns Authored object schema
+ */
+const narrowedPairSchema = (group: object = {}) => ({
+  type: 'object',
+  properties: {
+    flag: { type: 'boolean' },
+    groupOn: { type: 'boolean' },
+    data: { type: 'string' },
+    y: { type: 'string' },
+  },
+  options: { virtual: { pair: { fields: ['data', 'y'], ...group } } },
+  allOf: [
+    {
+      controls: { active: './flag === true' },
+      properties: { data: { minLength: 3 } },
+    },
+  ],
+});
+
+/**
+ * Find a live node, failing the case when the path is absent.
+ * @param root - Tree root
+ * @param path - Absolute pointer of the node
+ * @returns The live node at the path
+ */
+const at = (
+  root: ReturnType<typeof makeFieldNodeTree>['root'],
+  path: string,
+) => {
+  const node = root.find(path);
+  if (!node) throw new Error(`No node at ${path}`);
+  return node;
+};
 
 const periodSchema = {
   type: 'object',
@@ -178,6 +246,63 @@ describe('virtual writes and referenced siblings', () => {
         new Set(['']),
       ),
     ).toBe(true);
+  });
+
+  it('42C-02 starts a group on its parent constituents without creating nodes at load', () => {
+    createdUnder.mockClear();
+    const { root } = makeFieldNodeTree(narrowedPairSchema(), {
+      snapshot: { flag: true, data: 'abcd', y: 'a' },
+    });
+    root.resetSubtree();
+    const registry = getGateRegistry(Reflect.get(root, 'runtime'));
+    expect(virtualCreations()).toEqual([]);
+    expect(registry.occurrenceCount('/pair/data')).toBe(0);
+    expect(at(root, '/pair').children).toEqual([
+      at(root, '/data'),
+      at(root, '/y'),
+    ]);
+    expect(at(root, '/data').jsonSchema).toEqual({
+      type: 'string',
+      minLength: 3,
+    });
+  });
+
+  it('42C-02 starts a group whose own gate turns on without creating nodes', () => {
+    const { root } = makeFieldNodeTree(
+      narrowedPairSchema({ controls: { active: '../groupOn === true' } }),
+      { snapshot: { flag: true, groupOn: false, data: 'abcd', y: 'a' } },
+    );
+    root.resetSubtree();
+    const registry = getGateRegistry(Reflect.get(root, 'runtime'));
+    expect(root.find('/pair')).toBeNull();
+    createdUnder.mockClear();
+    at(root, '/groupOn').setValue(true);
+    expect(virtualCreations()).toEqual([]);
+    expect(registry.occurrenceCount('/pair/data')).toBe(0);
+    expect(at(root, '/pair').children).toEqual([
+      at(root, '/data'),
+      at(root, '/y'),
+    ]);
+  });
+
+  it('42C-02 starts a group inside a new array item without creating nodes', () => {
+    const { root } = makeFieldNodeTree(
+      {
+        type: 'object',
+        properties: { list: { type: 'array', items: narrowedPairSchema() } },
+      },
+      { snapshot: { list: [] } },
+    );
+    root.resetSubtree();
+    const registry = getGateRegistry(Reflect.get(root, 'runtime'));
+    createdUnder.mockClear();
+    at(root, '/list').setValue([{ flag: true, data: 'abcd', y: 'a' }]);
+    expect(virtualCreations()).toEqual([]);
+    expect(registry.occurrenceCount('/list/0/pair/data')).toBe(0);
+    expect(at(root, '/list/0/pair').children).toEqual([
+      at(root, '/list/0/data'),
+      at(root, '/list/0/y'),
+    ]);
   });
 
   it.each([

@@ -19,6 +19,7 @@ import { cloneFromSlot } from '../slots/cloneFromSlot';
 import { createFromSlotOverlay } from '../slots/createFromSlotOverlay';
 import { getSlotSource } from '../slots/getSlotSource';
 import { applyDepartingSource } from '../source/applyDepartingSource';
+import { getChildOwner } from '../structure/getChildOwner';
 import { isSameChildList } from '../structure/isSameChildList';
 import { getDirectChildSelectionPlan } from './childSelection/getDirectChildSelectionPlan';
 import { createStaticEntryReuser } from './childSelection/utils/createStaticEntryReuser';
@@ -43,8 +44,9 @@ const NO_ACTIVE_DECLARATION_IDS: readonly number[] = EMPTY_ARRAY;
 
 /**
  * Start a gate wheel with only ungated children and their static overlays.
+ * A host that does not own its children starts on its owner's live children and creates or changes none.
  * @param node - Branch host starting one bounded calculation wheel
- * @param prior - Previous committed shape retained for identity reuse; a child whose parent is another host stays unchanged
+ * @param prior - Previous committed shape retained for identity reuse
  * @param context - Current write and its record factory
  * @param hasRelocated - Wheel's already collected relocation evidence
  * @returns Nothing; the host now exposes the fixed baseline shape
@@ -97,6 +99,7 @@ export const primeHost = <Self extends FieldNodeRecord<Self>>(
           )
       : cached;
   const entries = direct?.baseline ?? node.behavior.declareChildren(node);
+  const owner = getChildOwner(node);
   const reuse = createStaticEntryReuser(
     node,
     prior,
@@ -118,15 +121,15 @@ export const primeHost = <Self extends FieldNodeRecord<Self>>(
         }
       if (!hasUngatedDeclaration) continue;
     }
+    if (owner !== node) {
+      const constituent = owner?.__childrenByName__?.[entry.name];
+      if (constituent) baseline[entry.name] = constituent;
+      continue;
+    }
     if (reuse?.(entry)) continue;
     const priorChild = hasOwnProperty(prior, entry.name)
       ? prior[entry.name]
       : undefined;
-    // A virtual group borrows its parent's constituents; only that parent re-selects their schema.
-    if (priorChild && priorChild.__parent__ !== node) {
-      baseline[entry.name] = priorChild;
-      continue;
-    }
     const key =
       context.pendingExits.size === 0
         ? undefined

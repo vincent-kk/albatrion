@@ -64,7 +64,7 @@ export interface Behavior<Self = unknown> {
   ): unknown;
   /** Return a completed input string, or undefined when there is no write. */
   finishInput<Node extends Self>(node: FieldNodeRecord<Node>): Optional<string>;
-  /** Describe children to be created by the caller. */
+  /** Describe the declared child edges; the caller creates them only for a host that owns its children. */
   declareChildren<Node extends Self>(
     node: FieldNodeRecord<Node>,
   ): readonly BlueprintChildEntry[];
