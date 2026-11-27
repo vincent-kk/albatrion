@@ -19,6 +19,7 @@ import { updatePendingExitIndex } from '../../scratch/updatePendingExitIndex';
 import { distributeMovedSource } from '../../slots/distributeMovedSource';
 import { getSlotOrder } from '../../slots/getSlotOrder';
 import { writeSlotPath } from '../../slots/writeSlotPath';
+import { getChildOwner } from '../../structure/getChildOwner';
 import { isSameChildList } from '../../structure/isSameChildList';
 import { canReuseArrayChildren } from './canReuseArrayChildren';
 import { selectTableChildren } from './gateSelection/selectTableChildren';
@@ -129,14 +130,15 @@ export const selectChildren = <Self extends FieldNodeRecord<Self>>(
       }
     }
   }
-  if (node.behavior.type === 'virtual') {
+  const owner = getChildOwner(node);
+  if (owner !== node) {
     const before = node.children ?? [];
     const next: Dictionary<Self> = Object.create(null);
     const children: Self[] = [];
     const fields = node.blueprintNode.fields;
     for (let index = 0; fields && index < fields.length; index++) {
       const field = fields[index];
-      const sibling = node.__parent__?.__childrenByName__?.[field];
+      const sibling = owner?.__childrenByName__?.[field];
       if (!sibling) continue;
       next[field] = sibling;
       children.push(sibling);
