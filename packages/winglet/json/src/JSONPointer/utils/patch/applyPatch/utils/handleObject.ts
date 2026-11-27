@@ -1,45 +1,62 @@
 import { hasOwnProperty } from '@winglet/common-utils/lib';
 import {
-  cloneLite,
   deleteDataProperty,
   equals,
+  getDataProperty,
   setDataProperty,
 } from '@winglet/common-utils/object';
 
-import { getValue } from '@/json/JSONPointer/utils/manipulator/getValue';
-import { setValue } from '@/json/JSONPointer/utils/manipulator/setValue';
 import type { JSONObject, JSONRoot } from '@/json/type';
 
 import { Operation, type Patch } from '../../../patchModel';
 import { JSONPatchError } from './error';
-import { isCircularMoveReference } from './isCircularMoveReference';
+import { isMissingMember } from './isMissingMember';
 
 /**
  * Handles JSON Patch operations on object properties.
  * Supports all standard operations with property existence validation.
  *
  * @param patch - The patch operation to apply
+ * @param value - The value to write: `patch.value` for add and replace, the removed value
+ *                for move, and a deep copy of the `from` value for copy
  * @param object - The target object to modify
  * @param key - The property key to operate on
  * @param source - The root source document for move/copy operations
  * @param patchIndex - The index of the patch for error reporting
- * @param strict - Whether to use strict equality checking
  * @returns The modified source document
  * @throws {JSONPatchError} When operation fails or property validation fails
  * @internal
  */
 export const handleObject = (
   patch: Patch,
+  value: unknown,
   object: JSONObject,
   key: string,
   source: JSONRoot,
   patchIndex: number,
-  strict: boolean,
 ): any => {
   switch (patch.op) {
     case Operation.ADD:
+    case Operation.MOVE:
+    case Operation.COPY:
+      setDataProperty(object, key, value);
+      return source;
+    // RFC 6902 4.3: the replace target must exist, or the patch would add a member
     case Operation.REPLACE:
-      setDataProperty(object, key, patch.value);
+      if (isMissingMember(object, key, getDataProperty(object, key))) {
+        throw new JSONPatchError(
+          'PATCH_OBJECT_PROPERTY_NOT_FOUND',
+          `Cannot replace property '${key}' - property does not exist on object`,
+          {
+            patch,
+            patchIndex,
+            missingProperty: key,
+            availableProperties: Object.keys(object),
+            operation: patch.op,
+          },
+        );
+      }
+      setDataProperty(object, key, value);
       return source;
     case Operation.REMOVE:
       if (!hasOwnProperty(object, key)) {
@@ -57,7 +74,7 @@ export const handleObject = (
       }
       deleteDataProperty(object, key);
       return source;
-    case Operation.TEST:
+    case Operation.TEST: {
       if (!hasOwnProperty(object, key)) {
         throw new JSONPatchError(
           'PATCH_OBJECT_PROPERTY_NOT_FOUND',
@@ -72,52 +89,22 @@ export const handleObject = (
           },
         );
       }
-      if (!strict || equals(object[key], patch.value)) return source;
+      const current = object[key];
+      if (current === patch.value || equals(current, patch.value))
+        return source;
       throw new JSONPatchError(
         'PATCH_TEST_FAILED',
         `Test operation failed for property '${key}'. Expected value does not match actual value`,
         {
           patch,
           patchIndex,
-          actualValue: object[key],
+          actualValue: current,
           expectedValue: patch.value,
           property: key,
           operation: patch.op,
         },
       );
-    case Operation.MOVE:
-      if (isCircularMoveReference(patch.from, patch.path))
-        throw new JSONPatchError(
-          'PATCH_MOVE_INTO_DESCENDANT_FORBIDDEN',
-          `Cannot move location '${patch.from}' to '${patch.path}' - target location is a descendant of or identical to source location. This would create a circular reference.`,
-          {
-            patch,
-            patchIndex,
-            operation: patch.op,
-            from: patch.from,
-            path: patch.path,
-          },
-        );
-      setDataProperty(object, key, getValue(source, patch.from));
-      setValue(source, patch.from, undefined);
-      return source;
-    case Operation.COPY:
-      if (isCircularMoveReference(patch.from, patch.path))
-        throw new JSONPatchError(
-          'PATCH_COPY_INTO_DESCENDANT_FORBIDDEN',
-          `Cannot copy location '${patch.from}' to '${patch.path}' - target location is a descendant of or identical to source location. This would create a circular reference.`,
-          {
-            patch,
-            patchIndex,
-            operation: patch.op,
-            from: patch.from,
-            path: patch.path,
-          },
-        );
-      // RFC 6902 copy yields an independent value; sharing the reference would let a
-      // later edit of the copy mutate the original
-      setDataProperty(object, key, cloneLite(getValue(source, patch.from)));
-      return source;
+    }
     default:
       throw new JSONPatchError(
         'PATCH_OPERATION_INVALID',

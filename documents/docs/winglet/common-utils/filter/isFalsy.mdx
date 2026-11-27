@@ -14,6 +14,13 @@ checking if the value is one of the falsy values in JavaScript
 (false, null, undefined, '', 0, 0n, NaN) and providing TypeScript type
 narrowing to identify falsy types.
 
+## Import
+
+```typescript
+import { isFalsy } from '@winglet/common-utils/filter';
+import { isFalsy } from '@winglet/common-utils';
+```
+
 ## Signature
 
 ```typescript
@@ -278,7 +285,7 @@ console.log('Invalid:', invalid); // [0, '', false, null, undefined, NaN]
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/common-utils": "0.12.3" }}
+  dependencies={{ "@winglet/common-utils": "0.15.0" }}
   code={`import { isFalsy } from '@winglet/common-utils';
 
 // True cases - falsy values

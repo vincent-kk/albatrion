@@ -8,7 +8,7 @@ JSON Pointer로 지정된 위치의 값 조회(`getValue`)와 설정(`setValue`)
 
 ## Conventions
 
-- 예약 멤버 세그먼트(`__proto__`, `constructor`, `prototype`)는 불투명한 문자열로 취급한다: 읽기·쓰기·삭제 모두 소유 fractal(JSONPointer)이 공유하는 `@winglet/common-utils` 데이터 속성 프리미티브를 경유해 own 데이터 속성으로만 접근하고, 프로토타입 체인과 접촉하지 않는다.
+- 예약 멤버 세그먼트(`__proto__`, `constructor`, `prototype`)는 불투명한 문자열로 취급한다. 읽기는 모든 이름에서 공용 자기 속성 검사를 사용한다. 쓰기·삭제는 공용 데이터 속성 프리미티브를 사용한다.
 - 배열 컨텍스트의 `-` 세그먼트는 RFC 6901의 append 별칭으로 해석되어 배열 길이 인덱스로 치환된다.
 - 존재하지 않는 중간 경로를 자동 생성할 때 다음 세그먼트가 배열 인덱스 형태면 배열을, 아니면 객체를 만든다.
 

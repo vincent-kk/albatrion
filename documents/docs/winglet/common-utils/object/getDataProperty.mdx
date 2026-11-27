@@ -1,0 +1,63 @@
+---
+title: 'getDataProperty'
+sidebar_label: 'getDataProperty'
+---
+<!-- sync-winglet-docs:auto -->
+
+import WingletPlayground from '@site/src/components/WingletPlayground';
+
+# getDataProperty
+
+Reads a property while treating reserved member names as opaque own data.
+For the reserved member names (`__proto__`, `constructor`, `prototype`) the
+read never walks the prototype chain: the own data property value is
+returned when present, `undefined` otherwise. Every other key behaves
+exactly like plain property access, including ordinary prototype chain
+lookup and array index access, with no extra cost beyond the name check.
+
+## Import
+
+```typescript
+import { getDataProperty } from '@winglet/common-utils/object';
+import { getDataProperty } from '@winglet/common-utils';
+```
+
+## Signature
+
+```typescript
+const getDataProperty: (target: Dictionary | Array<any>, key: string) => any
+```
+
+## Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `target` | `-` | Object or array to read from |
+| `key` | `-` | Property key to read |
+
+## Returns
+
+The property value, or `undefined` for a reserved member name that is not an own property
+
+## Examples
+
+### Reserved member names never leak the prototype chain
+
+```typescript
+import { getDataProperty } from '@winglet/common-utils';
+
+getDataProperty(JSON.parse('{"__proto__":{"x":1}}'), '__proto__'); // { x: 1 }
+getDataProperty({}, '__proto__'); // undefined (not Object.prototype)
+getDataProperty({}, 'constructor'); // undefined (not Object)
+```
+
+## Playground
+
+<WingletPlayground
+  dependencies={{ "@winglet/common-utils": "0.15.0" }}
+  code={`import { getDataProperty } from '@winglet/common-utils';
+
+getDataProperty(JSON.parse('{"__proto__":{"x":1}}'), '__proto__'); // { x: 1 }
+getDataProperty({}, '__proto__'); // undefined (not Object.prototype)
+getDataProperty({}, 'constructor'); // undefined (not Object)`}
+/>

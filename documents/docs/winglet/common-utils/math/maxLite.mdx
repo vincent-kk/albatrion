@@ -13,6 +13,13 @@ Lightweight alternative to Math.max for comparing exactly two numbers.
 Uses ternary operator for optimal performance and handles all number types
 including special values like Infinity and NaN following JavaScript comparison rules.
 
+## Import
+
+```typescript
+import { maxLite } from '@winglet/common-utils/math';
+import { maxLite } from '@winglet/common-utils';
+```
+
 ## Signature
 
 ```typescript
@@ -61,7 +68,7 @@ console.log(maxLite(0.1 + 0.2, 0.3)); // 0.30000000000000004 (floating point)
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/common-utils": "0.12.3" }}
+  dependencies={{ "@winglet/common-utils": "0.15.0" }}
   code={`import { maxLite } from '@winglet/common-utils';
 
 console.log(maxLite(5, 3)); // 5

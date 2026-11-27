@@ -1,0 +1,1 @@
+export { validateChildTargets } from './validateChildTargets';

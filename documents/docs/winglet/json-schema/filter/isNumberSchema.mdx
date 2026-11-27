@@ -12,6 +12,13 @@ Determines whether a given JSON schema represents a number type (nullable or non
 This is a combined filter that matches both `{ type: 'number' }`, `{ type: 'integer' }`,
 `{ type: ['number', 'null'] }`, and `{ type: ['integer', 'null'] }` schemas.
 
+## Import
+
+```typescript
+import { isNumberSchema } from '@winglet/json-schema/filter';
+import { isNumberSchema } from '@winglet/json-schema';
+```
+
 ## Signature
 
 ```typescript
@@ -42,7 +49,7 @@ isNumberSchema({ type: 'string' }); // false
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/json-schema": "0.15.1" }}
+  dependencies={{ "@winglet/json-schema": "0.16.1" }}
   code={`isNumberSchema({ type: 'number' }); // true
 isNumberSchema({ type: 'integer' }); // true
 isNumberSchema({ type: ['number', 'null'] }); // true

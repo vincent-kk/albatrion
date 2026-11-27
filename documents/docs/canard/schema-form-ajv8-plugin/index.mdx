@@ -21,7 +21,7 @@ Three subpath exports let you pick exactly the draft you need.
 ## Installation
 
 ```bash
-yarn add @canard/schema-form-ajv8-plugin
+yarn add @canard/schema-form @canard/schema-form-ajv8-plugin
 # ajv@^8 is bundled as a direct dependency
 ```
 
@@ -61,8 +61,10 @@ registerPlugin(plugin);
 // Same across all three subpath exports
 {
   allErrors: true,          // collect all errors, not just the first
-  strictSchema: false,      // allow extra schema properties (custom keywords, formType, etc.)
+  strict: false,            // disable all strict-mode checks
   validateFormats: false,   // format validation disabled for performance
+  allowUnionTypes: true,    // accept type arrays without strict-type logging
+  multipleOfPrecision: 9,   // accept decimal multiples such as 19.99 for multipleOf: 0.01
 }
 ```
 
@@ -72,21 +74,27 @@ registerPlugin(plugin);
 import Ajv from 'ajv';
 import { plugin } from '@canard/schema-form-ajv8-plugin';
 
-const ajv = new Ajv({ allErrors: true, strictSchema: false });
+const ajv = new Ajv({ allErrors: true, strict: false });
 
 plugin.validator.bind(ajv);
 ```
 
 ```ts
 // Draft 2020-12 with format validation enabled
-import Ajv2020 from 'ajv/dist/2020';
+import Ajv2020 from 'ajv/dist/2020.js';
 import addFormats from 'ajv-formats';
 import { plugin } from '@canard/schema-form-ajv8-plugin/2020';
 
-const ajv = new Ajv2020({ allErrors: true, strictSchema: false });
+const ajv = new Ajv2020({ allErrors: true, strict: false });
 addFormats(ajv);
 plugin.validator.bind(ajv);
 ```
+
+## Instance requirements
+
+- `bind`, `createValidator` and `createValidatorFactory` throw `ValidatorBindRefusedError` (`group: 'UNHANDLED_ERROR'`, `code: 'UNHANDLED_ERROR.VALIDATOR_BIND_REFUSED'`) for an instance with `coerceTypes`, `useDefaults` or `removeAdditional` enabled; enabling one later makes the next validation or guard compile throw. Use a separate AJV instance for code that should modify data.
+- The plugin compiles each form root on a private compiler and never adds the root's `$id` to your instance. Register with `addSchema` any schema that application code looks up or another root references, and declare `$async: true` on it when it needs asynchronous validation.
+- A custom AJV subclass must not register schemas or meta-schemas in its constructor; register them after constructing the instance.
 
 ## Using `createValidatorFactory` Directly
 
@@ -97,34 +105,129 @@ import { createValidatorFactory } from '@canard/schema-form-ajv8-plugin';
 const ajv = new Ajv({ allErrors: true });
 const validate = createValidatorFactory(ajv)(myJSONSchema);
 
-const errors = await validate(formData); // null | ValidationError[]
+const errors = await validate(formData); // null | ValidationIssue[]
 ```
+
+## Per-Form Validator with `createValidator`
+
+`createValidator(ajv, options?)` returns a complete validator object for a Form's `validatorFactory`, independent of `plugin.validator`. Create it once outside render; a new object makes the Form rebuild its tree.
+
+```tsx
+import { Form } from '@canard/schema-form';
+import { createValidator } from '@canard/schema-form-ajv8-plugin';
+import Ajv from 'ajv';
+
+const validator = createValidator(new Ajv({ allErrors: true, strict: false }));
+const schema = { type: 'object', properties: { name: { type: 'string' } } } as const;
+
+export const NameForm = () => <Form jsonSchema={schema} validatorFactory={validator} />;
+```
+
+## Custom AJV instance and custom keywords
+
+Give a Form your own AJV instance with `createValidator(ajv)`. Create the instance and the validator once at module scope, because a new validator object makes the Form rebuild its tree.
+
+```tsx
+import { Form, type JSONSchema } from '@canard/schema-form';
+import { createValidator } from '@canard/schema-form-ajv8-plugin';
+import Ajv from 'ajv';
+
+const ajv = new Ajv({ strict: false });
+ajv.addKeyword({
+  keyword: 'isEven',
+  schemaType: 'boolean',
+  validate: (schema: boolean, data: unknown) =>
+    typeof data === 'number' && (data % 2 === 0) === schema,
+});
+const validator = createValidator(ajv);
+
+const schema = {
+  type: 'object',
+  properties: { n: { type: 'number' } },
+  if: { type: 'object', properties: { n: { isEven: true } }, required: ['n'] },
+  then: { properties: { evenField: { type: 'string' } } },
+  else: { properties: { oddField: { type: 'string' } } },
+} satisfies JSONSchema;
+
+export const EvenOddForm = () => (
+  <Form jsonSchema={schema} defaultValue={{ n: 2 }} validatorFactory={validator} />
+);
+```
+
+To use the instance for every Form instead, bind it to the plugin and register the plugin:
+
+```ts
+import { registerPlugin } from '@canard/schema-form';
+import { plugin } from '@canard/schema-form-ajv8-plugin';
+
+plugin.validator.bind(ajv);
+registerPlugin(plugin);
+```
+
+The plugin validates and evaluates `if` conditions on private copies of the instance. Keywords and formats you add to the instance before the next compile apply to both, including a format added after `createValidator(ajv)` but before the Form mounts. In the form above, `evenField` exists while `n` is 2, and `oddField` replaces it when `n` becomes 3. The `/2019` and `/2020` entry points behave the same with `Ajv2019` and `Ajv2020` instances.
+
+### Choosing a `oneOf` or `anyOf` branch
+
+A branch is chosen in one of three ways:
+
+1. `controls.active` on the branch.
+2. `controls.discriminator` on the object, with `const` or `enum` tags in each branch.
+3. An `if` on the branch with `else: false`. The validator decides the `if`, so a custom keyword can choose the branch:
+
+```ts
+const schema = {
+  type: 'object',
+  properties: { n: { type: 'number' } },
+  oneOf: [
+    {
+      if: { type: 'object', properties: { n: { isEven: true } }, required: ['n'] },
+      then: { properties: { evenField: { type: 'string' } } },
+      else: false,
+    },
+    {
+      if: { type: 'object', properties: { n: { isEven: false } }, required: ['n'] },
+      then: { properties: { oddField: { type: 'string' } } },
+      else: false,
+    },
+  ],
+} satisfies JSONSchema;
+```
+
+A branch with none of the three is always part of the form. A keyword written directly in such a branch takes part in validation but does not choose the branch: when each branch only carries `n: { isEven: … }` beside its own field, both `evenField` and `oddField` stay in the form. See [composition and conditional gates](../schema-form/schema-reference.mdx#composition) for `controls.active` and the discriminator.
+
+### Limits
+
+- Under `strict: true`, write `type: 'object'` beside `properties` and `required` in the condition. Without it, the guard fails AJV's strict type check when it compiles, even though whole validation of the root compiles.
+- A condition AJV cannot compile fails its guard, for example on a strict instance that lacks a keyword the condition uses. Neither `then` nor `else` applies, `onError` receives one `GUARD_FAILED` record (`FormErrorCode.GuardFailed`), and every later write that evaluates the condition again keeps its value but throws that error. A production build also raises the error, uncaught, when the Form mounts. Add every keyword before the Form compiles, or use `strict: false`, under which AJV ignores unknown keywords.
+- Guards are synchronous: a condition that uses an asynchronous keyword (`async: true`) fails to compile (`async keyword in sync schema`).
+- A guard receives only the value of the object that holds the `if`; a keyword that reads parent or root data, and `$data`, see only that value.
+- The plugin refuses an instance with `coerceTypes`, `useDefaults` or `removeAdditional` enabled. It does not refuse a keyword declared with `modifying: true`; keeping such a keyword from changing the form's values is your responsibility.
 
 ## Validator Plugin Comparison
 
 | Feature | ajv6-plugin | ajv7-plugin | ajv8-plugin |
 |---|---|---|---|
-| Draft-04 | Yes | No | No |
-| Draft-06 | Yes | No | No |
+| Draft-04 | With the Draft-04 meta-schema and `schemaId` on a bound instance | No | No |
+| Draft-06 | With its meta-schema on a bound instance | With its meta-schema on a bound instance | With its meta-schema on a default-entry instance |
 | Draft-07 | Yes | Yes | Yes |
-| Draft 2019-09 | No | Yes | Yes (`/2019`) |
+| Draft 2019-09 | No | With a bound `Ajv2019` instance | Yes (`/2019`) |
 | Draft 2020-12 | No | No | Yes (`/2020`) |
 | Subpath exports | No | No | Yes |
-| Path transformation | JSONPath→JSONPointer | None needed | None needed |
+| Error paths | Native JSON Pointer (`jsonPointers: true`) | Native JSON Pointer | Native JSON Pointer |
 | Recommended for | Legacy schemas | Migration path | **New projects** |
 
 <ForAI>
 
 ## AI Reference
 
-**Package**: `@canard/schema-form-ajv8-plugin` v0.10.0
+**Package**: `@canard/schema-form-ajv8-plugin`
 **Purpose**: AJV 8.x validator plugin — recommended for new projects. Supports Draft-07, 2019-09, 2020-12.
 
 ### Exports (3 subpath variants, each exports the same API)
 ```ts
-import { plugin, createValidatorFactory } from '@canard/schema-form-ajv8-plugin';       // Draft-07
-import { plugin, createValidatorFactory } from '@canard/schema-form-ajv8-plugin/2019';  // Draft 2019-09
-import { plugin, createValidatorFactory } from '@canard/schema-form-ajv8-plugin/2020';  // Draft 2020-12
+import { plugin, createValidator, createValidatorFactory } from '@canard/schema-form-ajv8-plugin';       // Draft-07
+import { plugin, createValidator, createValidatorFactory } from '@canard/schema-form-ajv8-plugin/2019';  // Draft 2019-09
+import { plugin, createValidator, createValidatorFactory } from '@canard/schema-form-ajv8-plugin/2020';  // Draft 2020-12
 ```
 
 ### Usage
@@ -132,10 +235,11 @@ import { plugin, createValidatorFactory } from '@canard/schema-form-ajv8-plugin/
 registerPlugin(plugin);                         // use default AJV config
 plugin.validator.bind(new Ajv({ ... }));        // bind custom AJV instance
 createValidatorFactory(ajv)(schema);            // standalone usage without plugin
+createValidator(ajv);                            // per-Form validatorFactory object
 ```
 
 ### Default AJV config (all subpaths)
-`{ allErrors: true, strictSchema: false, validateFormats: false }`
+`{ allErrors: true, strict: false, validateFormats: false, allowUnionTypes: true, multipleOfPrecision: 9 }`
 
 ### Draft selection guide
 | Subpath | AJV import | Use when |

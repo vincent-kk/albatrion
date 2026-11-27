@@ -1,0 +1,452 @@
+import { EMPTY_ARRAY } from '@winglet/common-utils/constant';
+import { isArray } from '@winglet/common-utils/filter';
+
+import type { Fn, Optional } from '@aileron/declare';
+
+import { BIT_MASK_NONE } from '@/schema-form/constants/bitmask';
+import { INPUT_VALUE_REVISION } from '@/schema-form/constants/externalValueRevision';
+import {
+  JSONPointer as $,
+  isDescendantPath,
+  resolvePointer,
+} from '@/schema-form/helpers/jsonPointer';
+
+import { getFeatureNodeIndex } from '../../../blueprint';
+import {
+  DISABLED_BIT_SHIFT,
+  FieldNodeEventType,
+  FieldNodeRevisionLedger,
+  READ_ONLY_BIT_SHIFT,
+  VISIBLE_BIT_SHIFT,
+  advanceFieldNodeRevision,
+  canOmitFieldNodePayload,
+  clearFieldNodeChanges,
+  markFieldNodeEvent,
+} from '../../../record';
+import type { FieldNodeRecord } from '../../../record';
+import { FieldNodeWriteKind } from '../../../types/value';
+import type { SettlementContext } from '../../types/settlement';
+import { readFieldNodeWatchValues } from '../controls/readFieldNodeWatchValues';
+import { commitGlobalState } from './commitGlobalState';
+import { createWatchDeliveryIndex } from './utils/createWatchDeliveryIndex';
+import { getInputCommitTracking } from './utils/getInputCommitTracking';
+import { getRequiredChildren } from './utils/getRequiredChildren';
+import { getWatchDeliveryPaths } from './utils/getWatchDeliveryPaths';
+import { isExternalBranchValueChange } from './utils/isExternalBranchValueChange';
+import { isSameDeliveryValue } from './utils/isSameDeliveryValue';
+import { readSettlementSource } from './utils/readSettlementSource';
+
+/**
+ * Mark one committed delivery set and advance its per-bit revision ledgers.
+ * @param context - Final settlement observations and write origin
+ * @param visit - Mismatch and refresh work sharing this record visit
+ * @returns Nothing; records hold committed baselines and pending deliveries
+ */
+export const markCommitDeliveries = <Self extends FieldNodeRecord<Self>>(
+  context: SettlementContext<Self>,
+  visit?: Fn<[node: Self]>,
+): void => {
+  const runtime = context.root.runtime;
+  runtime.deliveries ??= new Set();
+  const previousTransitions = runtime.revisionTransitions;
+  try {
+    const isLoad = context.kind === FieldNodeWriteKind.Load;
+    const inputTracking = isLoad
+      ? undefined
+      : getInputCommitTracking(context, !!runtime.inputRelays?.length);
+    const refreshTargets = runtime.refreshTargets;
+    const loadScope = isLoad ? context.loadScope : undefined;
+    const watchIndex = runtime.deliveryWatchIndex;
+    const watchNodes = getFeatureNodeIndex(runtime.blueprint).watchNodes;
+    let affectedPaths: Optional<Set<string>>;
+    if (watchIndex?.allNodes.size) {
+      affectedPaths = runtime.deliveryAffectedPaths ?? new Set();
+      for (const node of context.enteredNodes) affectedPaths.add(node.path);
+      for (const node of context.exitedNodes)
+        affectedPaths.add(node.__deliveryPreviousPath__ ?? node.path);
+      for (const node of context.perishedNodes)
+        affectedPaths.add(node.__deliveryPreviousPath__ ?? node.path);
+      for (const change of context.pathChanges) {
+        affectedPaths.add(change.previous);
+        affectedPaths.add(change.current);
+      }
+      // A deleted ancestor's chain was already covered by the surviving descendant.
+      for (const path of affectedPaths) {
+        let ancestor = path;
+        while (ancestor) {
+          ancestor = resolvePointer(ancestor, $.Parent);
+          if (!context.changedSource.has(ancestor))
+            affectedPaths.delete(ancestor);
+        }
+      }
+    }
+    const candidates = new Set<unknown>();
+    const enteredByParent = new Map<Self, Self[]>();
+    for (const child of context.enteredNodes) {
+      const parent = child.__parent__;
+      if (!parent) continue;
+      const children = enteredByParent.get(parent);
+      if (children) children.push(child);
+      else enteredByParent.set(parent, [child]);
+    }
+    for (const host of context.changedNodes) {
+      if (
+        host.isDetached ||
+        host.blueprintNode.kind !== 'object' ||
+        !host.children
+      )
+        continue;
+      if (
+        host.__isDeliveryInitialized__ &&
+        host.__deliveryPreviousSchema__ === undefined &&
+        !(host.__deliveryChanges__ & FieldNodeEventType.UpdateChildren)
+      )
+        continue;
+      const schema = host.__schema__.schema;
+      const required = typeof schema === 'object' ? schema.required : undefined;
+      const children = getRequiredChildren(
+        host,
+        enteredByParent.get(host) ?? EMPTY_ARRAY,
+      );
+      for (let index = 0; index < children.length; index++) {
+        const child = children[index];
+        if (child.__parent__ !== host || child.blueprintNode.kind === 'virtual')
+          continue;
+        const next = isArray(required) && required.indexOf(child.name) !== -1;
+        if (child.isRequired === next) continue;
+        child.isRequired = next;
+        candidates.add(child);
+        if (child.__isDeliveryInitialized__)
+          markFieldNodeEvent(
+            child,
+            FieldNodeEventType.UpdateControlledProperties,
+          );
+      }
+    }
+    candidates.add(context.root);
+    for (const change of context.pathChanges) candidates.add(change.node);
+    if (watchIndex) {
+      if (runtime.deliveredContext !== runtime.context)
+        for (const watcher of watchIndex.contextNodes) candidates.add(watcher);
+      if (affectedPaths)
+        for (const path of affectedPaths)
+          watchIndex.collectAffected(path, candidates);
+    }
+    const isTreeNode = (value: unknown): value is Self =>
+      value !== null &&
+      typeof value === 'object' &&
+      Reflect.get(value, 'runtime') === runtime;
+    let silentMask = BIT_MASK_NONE;
+    const markSilent = (_node: Self, bit: FieldNodeEventType): void => {
+      silentMask |= bit;
+    };
+    let mark: Fn<
+      [
+        node: Self,
+        bit: FieldNodeEventType,
+        payload?: unknown,
+        options?: unknown,
+      ]
+    > = markFieldNodeEvent;
+    for (const node of runtime.revisionNodes ?? []) candidates.add(node);
+    if (
+      runtime.deliveredDiagnostics &&
+      runtime.deliveredDiagnostics !== runtime.diagnostics
+    )
+      mark(context.root, FieldNodeEventType.UpdateDiagnostics);
+    runtime.deliveredDiagnostics = runtime.diagnostics;
+    const globalState = commitGlobalState(context);
+    const { departing: globalDeparting, loadNodes } = globalState;
+    const { enteredNodes, changedNodes, stateDirtyNodes } = context;
+    const sources: readonly Optional<ReadonlySet<unknown>>[] = [
+      globalDeparting,
+      enteredNodes,
+      changedNodes,
+      stateDirtyNodes,
+      loadNodes,
+      candidates,
+    ];
+    let sourceIndex = 0;
+    let iterator: Iterator<unknown> = globalDeparting.values();
+    while (true) {
+      const next = iterator.next();
+      if (next.done) {
+        do sourceIndex++;
+        while (sourceIndex < sources.length && !sources[sourceIndex]?.size);
+        if (sourceIndex === sources.length) break;
+        iterator = sources[sourceIndex]!.values();
+        continue;
+      }
+      const candidate = next.value;
+      if (!isTreeNode(candidate)) continue;
+      const node = candidate;
+      if (
+        (sourceIndex > 0 &&
+          globalDeparting.size &&
+          globalDeparting.has(node)) ||
+        (sourceIndex > 1 && enteredNodes.size && enteredNodes.has(node)) ||
+        (sourceIndex > 2 && changedNodes.size && changedNodes.has(node)) ||
+        (sourceIndex > 3 &&
+          stateDirtyNodes.size &&
+          stateDirtyNodes.has(node)) ||
+        (sourceIndex > 4 && loadNodes?.size && loadNodes.has(node))
+      )
+        continue;
+      visit?.(node);
+      if (sourceIndex < 5) globalState.visit(node);
+      if (
+        !(sourceIndex >= 1 && sourceIndex <= 3) &&
+        sourceIndex !== 5 &&
+        !candidates.has(node) &&
+        !(enteredNodes.size && enteredNodes.has(node)) &&
+        !(changedNodes.size && changedNodes.has(node)) &&
+        !(stateDirtyNodes.size && stateDirtyNodes.has(node))
+      ) {
+        clearFieldNodeChanges(node);
+        continue;
+      }
+      if (node.isDetached) {
+        clearFieldNodeChanges(node);
+        node.__deliveryWatchValues__ = undefined;
+        watchIndex?.remove(node);
+        continue;
+      }
+      const initialized = node.__isDeliveryInitialized__;
+      const changes = node.__deliveryChanges__;
+      const previousWatchValues = node.__deliveryWatchValues__ ?? EMPTY_ARRAY;
+      const pendingPayload = node.__pendingDelivery__?.payload;
+      const hasWatch = watchNodes.has(node.blueprintNode.id);
+      const watched = hasWatch ? readFieldNodeWatchValues(node) : EMPTY_ARRAY;
+      if (hasWatch) {
+        if (watched.length) {
+          const index = (runtime.deliveryWatchIndex ??=
+            createWatchDeliveryIndex<Self>(runtime));
+          index.update(node, getWatchDeliveryPaths(node));
+        } else runtime.deliveryWatchIndex?.remove(node);
+      }
+      let watchChanged =
+        initialized && watched.length !== previousWatchValues.length;
+      for (
+        let index = 0;
+        initialized && !watchChanged && index < watched.length;
+        index++
+      )
+        if (!isSameDeliveryValue(watched[index], previousWatchValues[index]))
+          watchChanged = true;
+      const silent = canOmitFieldNodePayload(node);
+      mark = silent ? markSilent : markFieldNodeEvent;
+      silentMask = BIT_MASK_NONE;
+      if (initialized) {
+        if (
+          changes & FieldNodeEventType.UpdateValue &&
+          (!isSameDeliveryValue(
+            node.__deliveryPreviousValue__,
+            node.__value__,
+          ) ||
+            !isSameDeliveryValue(
+              node.__deliveryPreviousOutputValue__,
+              node.__outputValue__,
+            ))
+        ) {
+          if (
+            inputTracking &&
+            node.behavior.strategy === 'branch' &&
+            (inputTracking.hasInputBatch ||
+              inputTracking.hasRelay ||
+              node.path === inputTracking.inputPath) &&
+            !isExternalBranchValueChange(context, node)
+          )
+            node.__pendingRevisionMask__ |= INPUT_VALUE_REVISION;
+          if (silent) mark(node, FieldNodeEventType.UpdateValue);
+          else {
+            const pendingValue =
+              pendingPayload?.[FieldNodeEventType.UpdateValue];
+            const oldValue =
+              pendingValue !== null && typeof pendingValue === 'object'
+                ? Reflect.get(pendingValue, 'previous')
+                : node.behavior.strategy === 'branch'
+                  ? {
+                      value: node.__deliveryPreviousValue__,
+                      outputValue: node.__deliveryPreviousOutputValue__,
+                    }
+                  : node.__deliveryPreviousValue__;
+            const current =
+              node.behavior.strategy === 'branch'
+                ? {
+                    value: node.__value__,
+                    outputValue: node.__outputValue__,
+                  }
+                : node.__value__;
+            const payload = { previous: oldValue, current };
+            const source =
+              context.retainedSources?.get(node)?.hasAutomaticWrite ||
+              context.filledNodes.has(node)
+                ? FieldNodeWriteKind.Automatic
+                : readSettlementSource(context, node.path);
+            mark(
+              node,
+              FieldNodeEventType.UpdateValue,
+              process.env.NODE_ENV !== 'production'
+                ? Object.freeze(payload)
+                : payload,
+              { source },
+            );
+          }
+        }
+        if (
+          changes & FieldNodeEventType.UpdatePath &&
+          node.__deliveryPreviousPath__ !== node.path
+        ) {
+          if (silent) mark(node, FieldNodeEventType.UpdatePath);
+          else {
+            const pendingPath = pendingPayload?.[FieldNodeEventType.UpdatePath];
+            const oldPath =
+              pendingPath !== null && typeof pendingPath === 'object'
+                ? Reflect.get(pendingPath, 'previous')
+                : node.__deliveryPreviousPath__;
+            const payload = { previous: oldPath, current: node.path };
+            mark(
+              node,
+              FieldNodeEventType.UpdatePath,
+              process.env.NODE_ENV !== 'production'
+                ? Object.freeze(payload)
+                : payload,
+            );
+          }
+        }
+        if (
+          changes & FieldNodeEventType.UpdateChildren &&
+          node.__deliveryPreviousChildren__ !== node.children
+        )
+          mark(node, FieldNodeEventType.UpdateChildren);
+        if (
+          changes & FieldNodeEventType.UpdateState &&
+          node.__deliveryPreviousState__ !== node.__state__
+        ) {
+          runtime.hasStateChanged = true;
+          if (
+            !(
+              (node.__pendingNonSettleDelivery__?.type ?? BIT_MASK_NONE) &
+              FieldNodeEventType.UpdateState
+            )
+          )
+            mark(node, FieldNodeEventType.UpdateState);
+        }
+        if (
+          (changes & FieldNodeEventType.UpdateControlledProperties &&
+            node.__deliveryPreviousComputedBits__ !==
+              (+node.isActive |
+                (+node.isVisible << VISIBLE_BIT_SHIFT) |
+                (+node.isReadOnly << READ_ONLY_BIT_SHIFT) |
+                (+node.isDisabled << DISABLED_BIT_SHIFT))) ||
+          watchChanged
+        )
+          mark(node, FieldNodeEventType.UpdateControlledProperties);
+        if (
+          changes & FieldNodeEventType.UpdateJsonSchema &&
+          node.__deliveryPreviousSchema__ !== node.__schema__
+        ) {
+          if (silent) mark(node, FieldNodeEventType.UpdateJsonSchema);
+          else {
+            const pendingSchema =
+              pendingPayload?.[FieldNodeEventType.UpdateJsonSchema];
+            const oldSchema =
+              pendingSchema !== null && typeof pendingSchema === 'object'
+                ? Reflect.get(pendingSchema, 'previous')
+                : node.__deliveryPreviousSchema__?.schema;
+            const payload = {
+              previous: oldSchema,
+              current: node.__schema__.schema,
+            };
+            mark(
+              node,
+              FieldNodeEventType.UpdateJsonSchema,
+              process.env.NODE_ENV !== 'production'
+                ? Object.freeze(payload)
+                : payload,
+            );
+          }
+        }
+      } else if (context.changedNodes.has(node)) {
+        if (silent) mark(node, FieldNodeEventType.UpdateValue);
+        else {
+          const current =
+            node.behavior.strategy === 'branch'
+              ? { value: node.__value__, outputValue: node.__outputValue__ }
+              : node.__value__;
+          const payload = { previous: undefined, current };
+          const source =
+            context.retainedSources?.get(node)?.hasAutomaticWrite ||
+            context.filledNodes.has(node)
+              ? FieldNodeWriteKind.Automatic
+              : readSettlementSource(context, node.path);
+          mark(
+            node,
+            FieldNodeEventType.UpdateValue,
+            process.env.NODE_ENV !== 'production'
+              ? Object.freeze(payload)
+              : payload,
+            { source },
+          );
+        }
+      }
+      if (
+        loadScope &&
+        (node === loadScope || isDescendantPath(node.path, loadScope.path))
+      )
+        mark(node, FieldNodeEventType.RequestRefresh);
+      else if (refreshTargets?.has(node.path))
+        mark(node, FieldNodeEventType.RequestRefresh);
+      node.__isDeliveryInitialized__ = true;
+      if (hasWatch) node.__deliveryWatchValues__ = watched;
+      clearFieldNodeChanges(node);
+      if (silentMask) node.__pendingRevisionMask__ |= silentMask;
+      if (node.__pendingRevisionMask__) {
+        if (silent)
+          advanceFieldNodeRevision(node, node.__pendingRevisionMask__, silent);
+        else
+          node.__revisionLedger__ = new FieldNodeRevisionLedger(
+            node.__revisionLedger__,
+            node.__pendingRevisionMask__,
+          );
+        node.__pendingRevisionMask__ = BIT_MASK_NONE;
+      }
+    }
+    globalState.finish();
+    runtime.revisionNodes?.clear();
+    const departing: Self[] = [];
+    for (const node of context.exitedNodes) departing.push(node);
+    for (const node of context.perishedNodes) departing.push(node);
+    const seenDeparting = new Set<Self>();
+    while (departing.length) {
+      const node = departing.pop();
+      if (!node || !node.isDetached || seenDeparting.has(node)) continue;
+      seenDeparting.add(node);
+      clearFieldNodeChanges(node);
+      node.__deliveryWatchValues__ = undefined;
+      node.__pendingDelivery__ = undefined;
+      node.__pendingRevisionMask__ = BIT_MASK_NONE;
+      node.__pendingNonSettleDelivery__ = undefined;
+      runtime.deliveryWatchIndex?.remove(node);
+      runtime.deliveries?.delete(node);
+      runtime.revisionNodes?.delete(node);
+      runtime.queuedNonSettleEvents?.delete(node);
+      runtime.validationErrors?.delete(node);
+      runtime.nodeErrors?.delete(node);
+      if (runtime.externalContributions?.has(node))
+        (runtime.pendingExternalErrorNodes ??= new Set()).add(node);
+      runtime.combinedErrors?.delete(node);
+      runtime.validationChangedNodes?.delete(node);
+      runtime.validationTargets?.delete(node);
+      runtime.validationPendingTargets?.delete(node);
+      const children = node.children;
+      for (let index = 0; children && index < children.length; index++)
+        departing.push(children[index]);
+    }
+    runtime.deliveredContext = runtime.context;
+    runtime.deliveryAffectedPaths = undefined;
+  } finally {
+    if (runtime.revisionTransitions !== previousTransitions)
+      runtime.revisionTransitions = previousTransitions;
+  }
+};

@@ -1,0 +1,55 @@
+---
+title: 'isForwardRefComponent'
+sidebar_label: 'isForwardRefComponent'
+---
+<!-- sync-winglet-docs:auto -->
+
+import WingletPlayground from '@site/src/components/WingletPlayground';
+
+# isForwardRefComponent
+
+Checks whether a value is a component created by `React.forwardRef`.
+`forwardRef` returns an object rather than a function, so the function-shaped
+checks miss it and callers that gate rendering on them drop it silently.
+
+## Import
+
+```typescript
+import { isForwardRefComponent } from '@winglet/react-utils/filter';
+import { isForwardRefComponent } from '@winglet/react-utils';
+```
+
+## Signature
+
+```typescript
+const isForwardRefComponent: <Props extends object = any, Component extends ForwardRefExoticComponent<Props> = ForwardRefExoticComponent<Props>>(component: unknown) => component is Component
+```
+
+## Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `component` | `-` | Value to inspect |
+
+## Returns
+
+Whether the value is a forwardRef component
+
+## Examples
+
+### Example 1
+
+```typescript
+const Input = forwardRef<HTMLInputElement>((props, ref) => <input ref={ref} />);
+isForwardRefComponent(Input); // true
+isForwardRefComponent(() => null); // false
+```
+
+## Playground
+
+<WingletPlayground
+  dependencies={{ "@winglet/react-utils": "0.14.1" }}
+  code={`const Input = forwardRef<HTMLInputElement>((props, ref) => <input ref={ref} />);
+isForwardRefComponent(Input); // true
+isForwardRefComponent(() => null); // false`}
+/>

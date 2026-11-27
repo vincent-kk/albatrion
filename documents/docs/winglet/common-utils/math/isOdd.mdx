@@ -13,6 +13,13 @@ Checks whether the given number is not divisible by 2. Uses appropriate
 modulo comparison based on the sign of the number to handle JavaScript's
 modulo behavior with negative numbers correctly.
 
+## Import
+
+```typescript
+import { isOdd } from '@winglet/common-utils/math';
+import { isOdd } from '@winglet/common-utils';
+```
+
 ## Signature
 
 ```typescript
@@ -62,7 +69,7 @@ console.log(isOdd(1000001)); // true
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/common-utils": "0.12.3" }}
+  dependencies={{ "@winglet/common-utils": "0.15.0" }}
   code={`import { isOdd } from '@winglet/common-utils';
 
 console.log(isOdd(1)); // true

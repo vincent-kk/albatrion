@@ -24,18 +24,3 @@ export function startMarker(blockId: string): string {
 export function endMarker(blockId: string): string {
   return `<!-- ${MARKER_PREFIX}:END:${blockId} -->`;
 }
-
-/**
- * Build a fresh global pattern matching every block this tool wrote.
- *
- * A new instance is returned on each call because a global regex carries
- * `lastIndex` between uses, and a shared one would skip matches.
- *
- * @returns pattern with capture groups `1` = blockId, `2` = body
- */
-export function createBlockPattern(): RegExp {
-  return new RegExp(
-    `<!-- ${MARKER_PREFIX}:START:(.+?) -->\\n([\\s\\S]*?)<!-- ${MARKER_PREFIX}:END:\\1 -->\\n?`,
-    'g',
-  );
-}

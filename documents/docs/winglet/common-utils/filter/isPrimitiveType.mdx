@@ -13,6 +13,13 @@ Identifies JavaScript primitive types including null, undefined, string,
 number, boolean, symbol, and bigint. Uses efficient type checking that
 excludes objects and functions, providing reliable primitive detection.
 
+## Import
+
+```typescript
+import { isPrimitiveType } from '@winglet/common-utils/filter';
+import { isPrimitiveType } from '@winglet/common-utils';
+```
+
 ## Signature
 
 ```typescript
@@ -259,7 +266,7 @@ function insertRecord(data: Record<string, unknown>) {
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/common-utils": "0.12.3" }}
+  dependencies={{ "@winglet/common-utils": "0.15.0" }}
   code={`import { isPrimitiveType } from '@winglet/common-utils';
 
 // True cases - primitive types

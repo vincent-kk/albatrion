@@ -13,6 +13,13 @@ Performs shallow cloning of arrays and plain objects by creating new instances
 with copied references to their elements/properties. Primitive values, functions,
 and special objects (Date, Map, etc.) are returned as-is without copying.
 
+## Import
+
+```typescript
+import { shallowClone } from '@winglet/common-utils/object';
+import { shallowClone } from '@winglet/common-utils';
+```
+
 ## Signature
 
 ```typescript
@@ -233,7 +240,7 @@ console.log(apiResponse.pagination === processedResponse.pagination); // true
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/common-utils": "0.12.3" }}
+  dependencies={{ "@winglet/common-utils": "0.15.0" }}
   code={`import { shallowClone } from '@winglet/common-utils';
 
 // Simple object cloning

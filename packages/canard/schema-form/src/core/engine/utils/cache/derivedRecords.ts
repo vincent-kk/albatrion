@@ -1,0 +1,93 @@
+/** Independently filled BlueprintDerived slots; concrete value types stay with their builders. */
+export interface BlueprintDerived {
+  deriveRuleTable?: unknown;
+  featureNodeIndex?: unknown;
+  deriveConvergenceTargets?: unknown;
+  gateBudgetIndex?: unknown;
+  gateExpressions?: unknown;
+  ifGateReadNames?: unknown;
+  exitPolicyExpressions?: unknown;
+  dependencyIndex?: unknown;
+  contextOwners?: unknown;
+  virtualReferenceIndex?: unknown;
+  recursiveExpansion?: unknown;
+  recursiveRelativeSpan?: unknown;
+  independentLeafDefaults?: unknown;
+  splitOwnersPrepared?: unknown;
+  controlExpressions?: unknown;
+}
+/** Independently filled HostDerived slots; concrete value types stay with their builders. */
+export interface HostDerived {
+  /** Bounded concrete syntax owned by a runtime; values never contain live lookups. */
+  pointerSegments?: unknown;
+  /** Fixed baseline of one live object host; keyed by the field node, and kept here because its steps depend on the engine mode. */
+  preparedStaticHost?: unknown;
+  controlLayerIndex?: unknown;
+  childOrderIndex?: unknown;
+  watchPaths?: unknown;
+  deriveChildren?: unknown;
+  declaredNames?: unknown;
+  declarationIds?: unknown;
+  objectChildren?: unknown;
+  readPlans?: unknown;
+  staticGateList?: unknown;
+  gateSelectionTable?: unknown;
+  directChildSelectionPlan?: unknown;
+  staticShape?: unknown;
+  staticIds?: unknown;
+  admittedEdgeSchemas?: unknown;
+  staticObjectEntries?: unknown;
+  itemEntries?: unknown;
+  defaultEffectiveSchema?: unknown;
+  effectiveSchemaMemo?: unknown;
+  staticPartition?: unknown;
+}
+
+type SlotValue<Record, Slot extends keyof Record, Value> = Omit<
+  Record,
+  Slot
+> & { [Key in Slot]?: Value };
+/**
+ * Owners fill only the requested property. `blueprintRecords` is keyed by immutable analyses. `hostRecords` is keyed by
+ * blueprint nodes and tree runtimes, plus the live object hosts of `preparedStaticHost`, whose content depends on the
+ * engine mode. Every other value keyed by a field node is mode-independent and lives in that node's own field, which
+ * a mode transition does not reach.
+ */
+let blueprintRecords = new WeakMap<object, BlueprintDerived>();
+let hostRecords = new WeakMap<object, HostDerived>();
+
+/** Read one analysis record without preparing any slot. */
+export const getBlueprintDerived = <
+  Slot extends keyof BlueprintDerived = never,
+  Value = never,
+>(
+  blueprint: object,
+): SlotValue<BlueprintDerived, Slot, Value> => {
+  let record = blueprintRecords.get(blueprint);
+  if (!record) {
+    record = {};
+    blueprintRecords.set(blueprint, record);
+  }
+  return record as SlotValue<BlueprintDerived, Slot, Value>;
+};
+
+/** Read one host record without preparing any slot. */
+export const getHostDerived = <
+  Slot extends keyof HostDerived = never,
+  Value = never,
+>(
+  host: object,
+): SlotValue<HostDerived, Slot, Value> => {
+  let record = hostRecords.get(host);
+  if (!record) {
+    record = {};
+    hostRecords.set(host, record);
+  }
+  return record as SlotValue<HostDerived, Slot, Value>;
+};
+
+/** Only mode transitions replace the two roots; creation facts are not stored here. */
+export const resetEngineDerivedRecords = (): void => {
+  blueprintRecords = new WeakMap<object, BlueprintDerived>();
+  hostRecords = new WeakMap<object, HostDerived>();
+};

@@ -1,16 +1,18 @@
-import type React from 'react';
-import { useState } from 'react';
-import { Box, Text } from 'ink';
+import { Box, Text, useInput } from 'ink';
 import SelectInput from 'ink-select-input';
+import { useState } from 'react';
+import type React from 'react';
 
-import type { Warning } from '../types/index.js';
+import type { Fn } from '@aileron/declare';
+
 import { colors } from '../theme/colors.js';
 import { icons } from '../theme/icons.js';
 import { limits } from '../theme/layout.js';
+import type { Warning } from '../types/index.js';
 
 interface ConfirmForceProps {
   readonly warnings: readonly Warning[];
-  readonly onAnswer: (ok: boolean) => void;
+  readonly onAnswer: Fn<[ok: boolean]>;
 }
 
 type Choice = 'accept' | 'cancel' | 'expand';
@@ -19,8 +21,13 @@ export function ConfirmForce({
   warnings,
   onAnswer,
 }: ConfirmForceProps): React.ReactElement {
+  useInput((input, key) => {
+    if (input.toLowerCase() === 'y') onAnswer(true);
+    else if (input.toLowerCase() === 'n' || key.escape) onAnswer(false);
+  });
   const [expanded, setExpanded] = useState(false);
-  const showAll = expanded || warnings.length <= limits.maxWarningsBeforeCollapse;
+  const showAll =
+    expanded || warnings.length <= limits.maxWarningsBeforeCollapse;
   const shown = showAll
     ? warnings
     : warnings.slice(0, limits.maxWarningsBeforeCollapse);
@@ -29,8 +36,16 @@ export function ConfirmForce({
   const diverged = warnings.filter((w) => w.kind === 'warn-diverged').length;
   const orphans = warnings.filter((w) => w.kind === 'warn-orphan').length;
 
+  // The answer must name what accepting does: a deletion-only plan overwrites
+  // nothing, and an "overwrite" label would understate it.
+  const verb =
+    orphans === 0
+      ? 'overwrite'
+      : diverged === 0
+        ? 'delete'
+        : 'overwrite or delete';
   const items: Array<{ label: string; value: Choice }> = [
-    { label: `Yes, overwrite ${warnings.length} path(s)`, value: 'accept' },
+    { label: `Yes, ${verb} ${warnings.length} path(s)`, value: 'accept' },
     { label: 'No, cancel', value: 'cancel' },
   ];
   if (!showAll) {
@@ -49,12 +64,18 @@ export function ConfirmForce({
       </Box>
       <Box flexDirection="column" marginLeft={2} marginTop={1}>
         {shown.map((warning) => (
-          <Box key={`${warning.packageName}:${warning.relPath}`}>
+          <Box
+            key={`${warning.packageName}:${warning.agent}:${warning.relPath}`}
+          >
             <Text
-              color={warning.kind === 'warn-diverged' ? colors.warn : colors.accent}
+              color={
+                warning.kind === 'warn-diverged' ? colors.warn : colors.accent
+              }
               bold
             >
-              {warning.kind === 'warn-diverged' ? icons.warning : icons.question}{' '}
+              {warning.kind === 'warn-diverged'
+                ? icons.warning
+                : icons.question}{' '}
             </Text>
             <Text color={colors.muted} dimColor>
               [{warning.packageName}]{' '}

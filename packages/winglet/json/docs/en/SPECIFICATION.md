@@ -63,8 +63,9 @@ const theme = getValue(document, '/settings/theme');
 setValue(document, '/settings/theme', 'light');
 
 // Generate a diff
+const source = { name: 'Alice', age: 30 };
 const patches = compare(
-  { name: 'Alice', age: 30 },
+  source,
   { name: 'Alice', age: 31, city: 'Seoul' },
 );
 // [
@@ -73,8 +74,8 @@ const patches = compare(
 // ]
 
 // Apply patches
-const updated = applyPatch(document, patches);
-// original document unchanged (immutable: true by default)
+const updated = applyPatch(source, patches);
+// source remains unchanged (immutable: true by default)
 ```
 
 ---
@@ -90,7 +91,7 @@ Use sub-path imports to minimize bundle size:
 | `@winglet/json/pointer-manipulator` | `getValue`, `setValue`                              |
 | `@winglet/json/pointer-patch`       | `compare`, `applyPatch`, `difference`, `mergePatch` |
 | `@winglet/json/pointer-escape`      | `escapePath`, `unescapePath`, `escapeSegment`       |
-| `@winglet/json/pointer-common`      | `JSONPointer` constants, `convertJSONPointerToPath` |
+| `@winglet/json/pointer-common`      | `convertJSONPointerToPath`, `getJSONPointer` |
 | `@winglet/json/path`                | `JSONPath` constants                                |
 | `@winglet/json/path-common`         | `getJSONPath`, `convertJSONPathToPointer`           |
 
@@ -117,6 +118,8 @@ A JSON Pointer (RFC 6901) is a string that identifies a specific value within a 
 | `"/a~1b"`    | Key `a/b` (slash escaped as `~1`) |
 | `"/a~0b"`    | Key `a~b` (tilde escaped as `~0`) |
 
+A pointer that starts with `#` is a URI fragment (`"#"` is the whole document, `"#/a%20b"` is the key `a b`): percent escapes are decoded once before `~1` and `~0` are unescaped. A plain `/a%20b` keeps the percent text as key data. A malformed percent escape throws `JSONPointerError` with code `INVALID_POINTER_TYPE`, and `applyPatch` throws `JSONPatchError` with code `PATCH_PATH_INVALID`.
+
 ### getValue
 
 Reads a value from a JSON document at the location specified by a JSON Pointer.
@@ -135,9 +138,9 @@ function getValue<Output>(
 | `value`   | `object \| any[]`    | Source JSON document (plain object or array)     |
 | `pointer` | `string \| string[]` | JSON Pointer string or array of reference tokens |
 
-**Returns**: The value at the specified location.
+**Returns**: The value at the specified location, or `undefined` when the location does not exist. Object paths read own members. Array paths read own elements at canonical decimal indices, so both `getValue({}, '/toString')` and `getValue({ a: [1] }, '/a/length')` return `undefined`.
 
-**Throws**: `JSONPointerError` with code `INVALID_INPUT`, `INVALID_POINTER`, or `PROPERTY_NOT_FOUND`.
+**Throws**: `JSONPointerError` with code `INVALID_INPUT` or `INVALID_POINTER_TYPE`. A missing location is not an error.
 
 ```typescript
 import { getValue } from '@winglet/json/pointer-manipulator';
@@ -160,6 +163,9 @@ getValue(doc, ['store', 'books', '0']); // { title: 'RFC 6901', ... }
 const data = { 'a/b': 'slash', 'a~b': 'tilde' };
 getValue(data, '/a~1b'); // 'slash'
 getValue(data, '/a~0b'); // 'tilde'
+
+// Missing locations
+getValue(doc, '/store/missing'); // undefined
 ```
 
 ### setValue
@@ -264,18 +270,21 @@ const pointer = `/${escapeSegment(key)}/status`;
 
 ### convertJSONPointerToPath
 
-Converts a JSON Pointer string to an array of unescaped reference tokens.
+Converts a JSON Pointer string to a data path string in dot and bracket form (the Ajv `dataPath` shape). Numeric segments become bracket indexes, `-` becomes `[]`, and a segment containing `.` is wrapped in brackets. Reference tokens are not unescaped: `~0` and `~1` stay as written. Input that already starts with `.`, `$.` or `@.` is returned unchanged, so a second call is safe. To get unescaped reference tokens, use `compilePointer` from `@winglet/json/pointer-manipulator`.
 
 ```typescript
-function convertJSONPointerToPath(pointer: string): string[];
+function convertJSONPointerToPath(pointer: string): string;
 ```
 
 ```typescript
 import { convertJSONPointerToPath } from '@winglet/json/pointer-common';
 
-convertJSONPointerToPath('/foo/bar'); // ['foo', 'bar']
-convertJSONPointerToPath('/a~1b/c~0d'); // ['a/b', 'c~d']
-convertJSONPointerToPath(''); // []
+convertJSONPointerToPath('/foo/bar'); // '.foo.bar'
+convertJSONPointerToPath('/users/0/name'); // '.users[0].name'
+convertJSONPointerToPath('/items/-/id'); // '.items[].id'
+convertJSONPointerToPath('/a.b/c'); // '.[a.b].c'
+convertJSONPointerToPath('/a~1b/c~0d'); // '.a~1b.c~0d' (escapes kept)
+convertJSONPointerToPath(''); // '.'
 ```
 
 ---
@@ -343,11 +352,13 @@ function applyPatch<Result>(
   source: object | any[],
   patches: Patch[],
   options?: {
-    strict?: boolean; // default: false
+    strict?: boolean; // deprecated and ignored — test always compares values
     immutable?: boolean; // default: true
   },
 ): Result;
 ```
+
+With `immutable: true` (the default) the source and the patch values are never modified, but the result is not a deep copy: only the containers on each written path are copied, so unwritten subtrees are shared with `source`, and `add`/`replace` values are installed by reference and shared with the patch. When the last operation is a root `add` or `replace`, the patch value itself is returned. Deep-copy the result before mutating it in place when the source or the patch must stay unchanged.
 
 ```typescript
 import { applyPatch } from '@winglet/json/pointer-patch';
@@ -374,6 +385,8 @@ applyPatch({ status: 'draft' }, [
 ]);
 // { status: 'published' }
 ```
+
+**Throws** `JSONPatchError` (name `'JSONPatch'`, bare code on `specific`) in every mode: a `test` whose value differs or whose location is missing; `remove` or `replace` of a missing member; an array index that is non-numeric, has a leading zero (`/a/01`), is out of bounds or exceeds `4294967294`; an unknown `op`; a `move` or `copy` whose `from` does not exist; a `move` into its own `from` subtree; a path that does not start with `/` or `#`; a missing intermediate container. Codes: `PATCH_TEST_FAILED`, `PATCH_OBJECT_PROPERTY_NOT_FOUND`, `PATCH_ARRAY_INDEX_INVALID`, `PATCH_ARRAY_INDEX_OUT_OF_BOUNDS`, `PATCH_OPERATION_INVALID`, `PATCH_TARGET_NOT_OBJECT`, `PATCH_PATH_INVALID`, `PATCH_PATH_INVALID_INTERMEDIATE`, `PATCH_PATH_PROCESSING_ERROR`, `PATCH_MOVE_INTO_DESCENDANT_FORBIDDEN`. With `immutable: false`, operations before the failing one have already been written.
 
 ### difference
 
@@ -481,7 +494,7 @@ function getJSONPath<Root extends object, Target>(
 ): string | null;
 ```
 
-Returns `null` when `target` is not reachable from `root` or is a primitive at a leaf node.
+Returns the first matching path for reachable objects or primitive values, and `null` when `target` is not reachable from `root`.
 
 ```typescript
 import { getJSONPath } from '@winglet/json/path-common';
@@ -511,10 +524,10 @@ function convertJSONPathToPointer(jsonPath: string): string;
 ```typescript
 import { convertJSONPathToPointer } from '@winglet/json/path-common';
 
-convertJSONPathToPointer('$.foo.bar'); // '/foo/bar'
-convertJSONPathToPointer('$.users[0].name'); // '/users/0/name'
-convertJSONPathToPointer('$'); // ''
-convertJSONPathToPointer("$['a/b'].c"); // '/a~1b/c'
+convertJSONPathToPointer('$.foo.bar'); // '/$/foo/bar'
+convertJSONPathToPointer('$.users[0].name'); // '/$/users/0/name'
+convertJSONPathToPointer('$'); // '/$'
+convertJSONPathToPointer("$['a/b'].c"); // "/$/'a/b'/c"
 ```
 
 ---
@@ -573,6 +586,7 @@ type Patch =
 // Options
 type CompareOptions = { strict?: boolean; immutable?: boolean };
 type ApplyPatchOptions = {
+  /** @deprecated ignored */
   strict?: boolean;
   immutable?: boolean;
 };
@@ -584,7 +598,7 @@ type ApplyPatchOptions = {
 
 ### Prototype Pollution Protection
 
-The reserved member names `__proto__`, `constructor`, and `prototype` are opaque strings, handled as own data properties — exactly how RFC 6901/6902/7396 define member names and how `JSON.parse` already materializes them. Reads never walk the prototype chain (a non-own reserved member reads as `undefined`), writes define own data properties without triggering the `__proto__` setter, and no input can modify `Object.prototype` or any other inherited object. This safety is structural — no option exists to switch it off.
+The reserved member names `__proto__`, `constructor`, and `prototype` are opaque strings, handled as own data properties — exactly how RFC 6901/6902/7396 define member names and how `JSON.parse` already materializes them. Reads of these names never walk the prototype chain (a non-own reserved member reads as `undefined`), writes define own data properties without triggering the `__proto__` setter, and no input can modify `Object.prototype` or any other inherited object. This safety is structural — no option exists to switch it off.
 
 ```typescript
 // Own data property — the prototype chain is untouched, no error
@@ -615,30 +629,25 @@ getValue(new Map(), '/path'); // throws INVALID_INPUT
 
 ## Error Handling
 
-```typescript
-import { JSONPointerError, isJSONPointerError } from '@winglet/json';
+`getValue` and `setValue` throw `JSONPointerError`; `applyPatch` throws `JSONPatchError`. Neither class nor its type guard is exported, so identify an error by its `name` (`'JSONPointer'` or `'JSONPatch'`) and its bare code on `specific`. The `code` property carries the namespaced form, such as `'JSON_POINTER.INVALID_INPUT'`.
 
-class JSONPointerError extends Error {
-  code: 'INVALID_INPUT' | 'INVALID_POINTER' | 'PROPERTY_NOT_FOUND';
-  details: Record<string, unknown>;
-}
-```
+| Code                   | Trigger                                                                                                        |
+| ---------------------- | -------------------------------------------------------------------------------------------------------------- |
+| `INVALID_INPUT` | Input is not a plain object or array, or `setValue` would write below a primitive value (for example `/a/b` when `a` is `1`) |
+| `INVALID_POINTER_TYPE` | Pointer is not a string or an array of strings and numbers, or a string pointer does not start with `/` or `#` |
 
-| Code                 | Trigger                              |
-| -------------------- | ------------------------------------ |
-| `INVALID_INPUT`      | Input is not a plain object or array |
-| `INVALID_POINTER`    | Pointer syntax is malformed          |
-| `PROPERTY_NOT_FOUND` | Path does not exist in the document  |
+A missing location is not an error: `getValue` returns `undefined`.
 
 ```typescript
-import { JSONPointerError, getValue } from '@winglet/json';
+import { getValue } from '@winglet/json';
+
+getValue({}, '/missing'); // undefined
 
 try {
-  getValue({}, '/missing');
+  getValue(new Map(), '/a');
 } catch (e) {
-  if (e instanceof JSONPointerError) {
-    console.log(e.code); // 'PROPERTY_NOT_FOUND'
-    console.log(e.details); // { pointer: '/missing', ... }
+  if (e instanceof Error && e.name === 'JSONPointer') {
+    console.log((e as Error & { specific: string }).specific); // 'INVALID_INPUT'
   }
 }
 ```
@@ -647,17 +656,15 @@ try {
 
 ## Performance
 
-| Scenario                      | Recommendation                                                   |
-| ----------------------------- | ---------------------------------------------------------------- |
-| Large deeply-nested documents | `immutable: false` to avoid deep clone overhead                  |
-| Sequential patch application  | `strict: false` (default) — skips extra validation per operation |
-| Memory-sensitive environments | `immutable: false` in `mergePatch` to avoid cloning              |
+| Scenario                      | Recommendation                                      |
+| ----------------------------- | --------------------------------------------------- |
+| Large deeply-nested documents | `immutable: false` to skip copying the containers on each written path |
+| Memory-sensitive environments | `immutable: false` in `mergePatch` to avoid cloning |
 
 ```typescript
 // Maximum performance (trusted environment only)
 applyPatch(source, patches, {
   immutable: false,
-  strict: false,
 });
 ```
 

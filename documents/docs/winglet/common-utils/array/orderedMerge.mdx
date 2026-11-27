@@ -12,10 +12,17 @@ Merges two string arrays with priority-based ordering and duplicate removal.
 This function is used when merging object property keys in JSON schema,
 preserving the order of important properties defined in the schema while including additional properties.
 
+## Import
+
+```typescript
+import { orderedMerge } from '@winglet/common-utils/array';
+import { orderedMerge } from '@winglet/common-utils';
+```
+
 ## Signature
 
 ```typescript
-const orderedMerge: (preferred: string[], source: string[]) => string[]
+const orderedMerge: (preferred: readonly string[], source: readonly string[]) => string[]
 ```
 
 ## Parameters
@@ -41,7 +48,7 @@ orderedMerge(['name', 'email'], ['id', 'name', 'phone'])
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/common-utils": "0.12.3" }}
+  dependencies={{ "@winglet/common-utils": "0.15.0" }}
   code={`orderedMerge(['name', 'email'], ['id', 'name', 'phone'])
 // Result: ['name', 'email', 'id', 'phone']`}
 />

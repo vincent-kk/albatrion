@@ -178,8 +178,7 @@ describe.skipIf(blocker !== null)(
     });
 
     it('keeps diagnostics off stdout when the run fails before rendering', () => {
-      // An unresolvable package exits inside target resolution, upstream of the
-      // renderer. stdout must still stay clean so a parser sees "no document".
+      // Resolution failures keep stderr diagnostics beside one stdout document.
       const result = runJSON([
         '--package',
         '@does/not-exist',
@@ -187,7 +186,10 @@ describe.skipIf(blocker !== null)(
         '--scope=project',
       ]);
       expect(result.status).toBe(2);
-      expect(result.stdout).toBe('');
+      expect(JSON.parse(result.stdout)).toMatchObject({
+        exitCode: 2,
+        units: [],
+      });
       expect(result.stderr).toContain('@does/not-exist');
     });
   },

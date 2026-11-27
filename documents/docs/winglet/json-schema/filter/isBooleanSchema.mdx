@@ -12,6 +12,13 @@ Determines whether a given JSON schema represents a boolean type (nullable or no
 This is a combined filter that matches both `{ type: 'boolean' }` and
 `{ type: ['boolean', 'null'] }` schemas.
 
+## Import
+
+```typescript
+import { isBooleanSchema } from '@winglet/json-schema/filter';
+import { isBooleanSchema } from '@winglet/json-schema';
+```
+
 ## Signature
 
 ```typescript
@@ -41,7 +48,7 @@ isBooleanSchema({ type: 'string' }); // false
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/json-schema": "0.15.1" }}
+  dependencies={{ "@winglet/json-schema": "0.16.1" }}
   code={`isBooleanSchema({ type: 'boolean' }); // true
 isBooleanSchema({ type: ['boolean', 'null'] }); // true
 isBooleanSchema({ type: 'string' }); // false`}

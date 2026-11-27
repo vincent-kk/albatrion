@@ -1,0 +1,20 @@
+import { spawnSync } from 'node:child_process';
+import { resolve } from 'node:path';
+import { pathToFileURL } from 'node:url';
+import { expect, it } from 'vitest';
+
+it.each(['', '{x:y'])('terminates on repeated URL tokens before an unfinished rule: %s', suffix => {
+  const module = pathToFileURL(resolve(__dirname, '../utils/RuleScoper.ts')).href;
+  const css = 'url(a)'.repeat(30) + suffix;
+  const code = `import { RuleScoper } from ${JSON.stringify(module)}; new RuleScoper(${JSON.stringify(css)}, '.s').scopeSheet();`;
+  const result = spawnSync(process.execPath, ['--single-threaded', '--import', 'tsx', '--input-type=module', '--eval', code], { timeout: 3000 });
+  expect(result.status, result.error?.message).toBe(0);
+});
+
+it.each(['\n', '\r', '\r\n', '\f'])('terminates after repeated bad-string boundaries: %j', newline => {
+  const module = pathToFileURL(resolve(__dirname, '../utils/RuleScoper.ts')).href;
+  const css = '.a:is(' + ('"x' + newline).repeat(30);
+  const code = `import { RuleScoper } from ${JSON.stringify(module)}; new RuleScoper(${JSON.stringify(css)}, '.s').scopeSheet();`;
+  const result = spawnSync(process.execPath, ['--single-threaded', '--import', 'tsx', '--input-type=module', '--eval', code], { timeout: 3000 });
+  expect(result.status, result.error?.message).toBe(0);
+});

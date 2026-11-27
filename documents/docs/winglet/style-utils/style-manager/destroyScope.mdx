@@ -16,10 +16,17 @@ This function completely cleans up a style scope by:
 - Clearing all cached styles for the scope
 - Removing the scope instance from the StyleManager registry
 
+## Import
+
+```typescript
+import { destroyScope } from '@winglet/style-utils/style-manager';
+import { destroyScope } from '@winglet/style-utils';
+```
+
 ## Signature
 
 ```typescript
-const destroyScope: (scopeId: string) => void
+const destroyScope: (scopeId: string, config?: StyleManagerConfig) => void
 ```
 
 ## Parameters
@@ -27,6 +34,11 @@ const destroyScope: (scopeId: string) => void
 | Name | Type | Description |
 |------|------|-------------|
 | `scopeId` | `-` | The unique identifier of the scope to destroy |
+| `config` | `-` | The ShadowRoot target; omitted for the document scope |
+
+## Returns
+
+Nothing after releasing the target scope
 
 ## Examples
 
@@ -44,7 +56,7 @@ destroyScope('my-scope');
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/style-utils": "0.12.2" }}
+  dependencies={{ "@winglet/style-utils": "0.14.1" }}
   code={`// Create and use a style scope
 const addStyle = styleManagerFactory('my-scope');
 const removeStyle = addStyle('button-style', '.button { color: red; }');

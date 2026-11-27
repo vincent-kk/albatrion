@@ -7,7 +7,7 @@
 // `scripts/build-hashes.mjs` that calls `buildHashes` directly with their
 // own parsed values.
 //
-// Convention: `pkg.agents?.assetPath` with a fallback of `'agents'`.
+// Only a non-empty string `pkg.agents?.assetPath` opts in; otherwise this is a no-op.
 // This convention is purely consumer-side — the library itself enforces
 // nothing about package.json shape.
 import { readFile } from 'node:fs/promises';
@@ -18,26 +18,31 @@ import { buildHashes } from './buildHashes.mjs';
 try {
   const packageRoot = process.cwd();
   const pkg = JSON.parse(
-    await readFile(resolve(packageRoot, 'package.json'), 'utf-8'),
+    (await readFile(resolve(packageRoot, 'package.json'), 'utf-8')).replace(
+      /^\uFEFF/,
+      '',
+    ),
   );
-  if (typeof pkg.name !== 'string' || typeof pkg.version !== 'string') {
-    throw new Error(
-      `${packageRoot}/package.json must define "name" and "version".`,
+  if (
+    typeof pkg.agents?.assetPath === 'string' &&
+    pkg.agents.assetPath.length > 0
+  ) {
+    if (typeof pkg.name !== 'string' || typeof pkg.version !== 'string') {
+      throw new Error(
+        `${packageRoot}/package.json must define "name" and "version".`,
+      );
+    }
+    const assetPath = pkg.agents.assetPath;
+    const { outPath, fileCount } = await buildHashes({
+      packageRoot,
+      packageName: pkg.name,
+      packageVersion: pkg.version,
+      assetPath,
+    });
+    console.log(
+      `✓ agents-hashes.json written: ${fileCount} file(s) → ${outPath}`,
     );
   }
-  const assetPath =
-    typeof pkg.agents?.assetPath === 'string' && pkg.agents.assetPath.length > 0
-      ? pkg.agents.assetPath
-      : 'agents';
-  const { outPath, fileCount } = await buildHashes({
-    packageRoot,
-    packageName: pkg.name,
-    packageVersion: pkg.version,
-    assetPath,
-  });
-  console.log(
-    `✓ agents-hashes.json written: ${fileCount} file(s) → ${outPath}`,
-  );
 } catch (err) {
   console.error('❌ buildHashes failed:', err?.message ?? err);
   process.exit(1);

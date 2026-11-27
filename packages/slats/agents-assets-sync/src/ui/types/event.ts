@@ -1,11 +1,18 @@
+import type { Fn } from '@aileron/declare';
+
+import type {
+  AgentType,
+  InjectReport,
+  RunResult,
+  Scope,
+} from '../../core/index.js';
 import type { ConsumerPackage } from '../../types/index.js';
-import type { AgentType, InjectReport, Scope } from '../../core/index.js';
 import type { PlanStepState, TargetPlan, Warning } from './target.js';
 
 export type InjectEvent =
   | {
       readonly type: 'agent-needed';
-      readonly pending: (agents: readonly AgentType[]) => void;
+      readonly pending: Fn<[agents: readonly AgentType[]]>;
     }
   | {
       readonly type: 'agent-selected';
@@ -14,7 +21,7 @@ export type InjectEvent =
   | {
       readonly type: 'scope-needed';
       readonly agents: readonly AgentType[];
-      readonly pending: (scope: Scope) => void;
+      readonly pending: Fn<[scope: Scope]>;
     }
   | { readonly type: 'scope-selected'; readonly scope: Scope }
   | {
@@ -28,7 +35,7 @@ export type InjectEvent =
   | {
       readonly type: 'force-confirm-required';
       readonly warnings: readonly Warning[];
-      readonly pending: (ok: boolean) => void;
+      readonly pending: Fn<[ok: boolean]>;
     }
   | { readonly type: 'force-answer'; readonly ok: boolean }
   | { readonly type: 'apply-start'; readonly total: number }
@@ -42,6 +49,8 @@ export type InjectEvent =
       readonly reports: readonly InjectReport[];
       readonly exitCode: 0 | 1 | 2;
       readonly dryRun: boolean;
+      readonly plans?: readonly TargetPlan[];
+      readonly result?: RunResult;
     }
-  | { readonly type: 'fail'; readonly error: Error }
+  | { readonly type: 'fail'; readonly error: Error; readonly exitCode?: 1 | 2 }
   | { readonly type: 'focus-target'; readonly index: number };

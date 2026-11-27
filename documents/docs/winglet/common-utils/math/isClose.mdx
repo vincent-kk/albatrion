@@ -13,6 +13,13 @@ Handles floating-point precision issues by using a combined relative and absolut
 tolerance comparison. This approach works correctly across all number magnitudes,
 from very small numbers near zero to very large numbers.
 
+## Import
+
+```typescript
+import { isClose } from '@winglet/common-utils/math';
+import { isClose } from '@winglet/common-utils';
+```
+
 ## Signature
 
 ```typescript
@@ -92,7 +99,7 @@ function findFixedPoint(f: (x: number) => number, x0: number) {
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/common-utils": "0.12.3" }}
+  dependencies={{ "@winglet/common-utils": "0.15.0" }}
   code={`import { isClose } from '@winglet/common-utils/math';
 
 // Standard equality fails due to floating-point precision

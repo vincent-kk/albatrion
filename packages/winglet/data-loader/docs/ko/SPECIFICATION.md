@@ -83,7 +83,7 @@ const [user1, user2, user3] = await Promise.all([
 
 1. 키가 **현재 배치**에 추가됩니다.
 2. 스케줄러가 등록되지 않은 경우, 설정된 `batchScheduler`(기본값: `process.nextTick`)로 스케줄러를 등록합니다.
-3. 동일 틱 내에서 동기적으로 발생하는 모든 `load()` 호출이 같은 배치에 누적됩니다.
+3. 기본값처럼 비동기 스케줄러를 쓰면, 동일 틱 내에서 동기적으로 발생하는 모든 `load()` 호출이 같은 배치에 누적됩니다. `(fn) => fn()` 같은 동기 스케줄러는 배치가 등록되는 즉시 디스패치하므로 모든 `load()`가 키 하나짜리 배치가 되며, 반복된 키는 여전히 캐시에서 해석됩니다.
 4. 스케줄러가 실행되면 `__dispatchBatch__`가 누적된 모든 키로 `BatchLoader`를 호출합니다.
 
 ```
@@ -138,7 +138,7 @@ class DataLoader<Key = string, Value = any, CacheKey = Key> {
 
 단일 키의 값을 로드합니다. 자동으로 현재 배치에 합쳐지며 결과가 캐시됩니다.
 
-- `key`가 `null` 또는 `undefined`이면 `DataLoaderError`(코드: `INVALID_KEY`)를 **즉시 throws**합니다.
+- `key`가 `null` 또는 `undefined`이면 `DataLoaderError`(코드: `DATA_LOADER.INVALID_KEY`)를 **즉시 throws**합니다.
 - 동일 캐시 범위 내에서 같은 키에 대해 동일한 Promise를 반환합니다(중복 제거).
 
 ```typescript
@@ -149,7 +149,7 @@ const user = await userLoader.load('user-42');
 
 여러 키의 값을 로드합니다. 키별 실패는 예외를 throw하는 대신 결과 배열의 `Error` 인스턴스로 반환되어 부분 성공이 기본 동작입니다.
 
-- `keys`가 배열형 객체가 아니면 `DataLoaderError`(코드: `INVALID_KEYS`)를 **throws**합니다.
+- `keys`가 배열형 객체가 아니면 `DataLoaderError`(코드: `DATA_LOADER.INVALID_KEYS`)를 **throws**합니다.
 - 각 요소는 해결된 `Value` 또는 `Error`입니다.
 
 ```typescript
@@ -199,7 +199,10 @@ type DataLoaderOptions<Key, Value, CacheKey = Key> = {
   cache?: MapLike<CacheKey, Promise<Value>> | false;
   batchScheduler?: (task: () => void) => void;
   cacheKeyFn?: (key: Key) => CacheKey;
-} & ({ maxBatchSize?: number } | { disableBatch: true });
+} & (
+  | { disableBatch?: false; maxBatchSize?: number }
+  | { disableBatch: true; maxBatchSize?: never }
+);
 ```
 
 | 옵션             | 타입                                         | 기본값              | 설명                                                                                                                                              |
@@ -208,8 +211,18 @@ type DataLoaderOptions<Key, Value, CacheKey = Key> = {
 | `cache`          | `MapLike<CacheKey, Promise<Value>> \| false` | `new Map()`         | 커스텀 캐시 구현체. `false`를 전달하면 캐싱이 완전히 비활성화됩니다.                                                                              |
 | `batchScheduler` | `(task: () => void) => void`                 | `process.nextTick`  | 배치 디스패치 시점을 제어합니다. `queueMicrotask`, `setTimeout`, `requestAnimationFrame`, 또는 즉시 실행을 위한 `fn => fn()`으로 교체 가능합니다. |
 | `cacheKeyFn`     | `(key: Key) => CacheKey`                     | identity (`k => k`) | 로더 키를 캐시 키로 변환합니다. 키가 객체인 경우(참조 동등성 실패) 필수입니다.                                                                    |
-| `maxBatchSize`   | `number`                                     | `Infinity`          | 배치당 최대 키 수. 초과 시 새 배치가 자동으로 시작됩니다. 양의 정수여야 합니다.                                                                   |
-| `disableBatch`   | `true`                                       | —                   | 배칭 비활성화. 각 `load()` 호출이 즉시 디스패치됩니다(`maxBatchSize: 1`과 동일). `maxBatchSize`와 상호 배타적입니다.                              |
+| `maxBatchSize`   | `number`                                     | `Infinity`          | 배치당 최대 키 수. 초과 시 새 배치가 자동으로 시작됩니다. 양의 정수 또는 `Infinity`여야 합니다. `disableBatch: true`와 함께 쓰면 타입 오류입니다. |
+| `disableBatch`   | `boolean`                                    | —                   | `true`이면 배칭을 끕니다. 배치 함수가 호출마다 키 하나를 받으며(`maxBatchSize: 1`과 동일), 각 배치는 여전히 `batchScheduler`를 기다립니다. `false`는 생략과 같습니다. |
+
+배칭 옵션은 두 형태 중 하나이며, `maxBatchSize`와 `disableBatch: true`는 서로 모순되므로 함께 넘기면 타입 오류입니다.
+
+```typescript
+new DataLoader(batchLoad, { maxBatchSize: 100 }); // 배칭 켜기, 호출당 최대 100개 키
+new DataLoader(batchLoad, { disableBatch: true }); // 배칭 끄기, 호출당 키 하나
+new DataLoader(batchLoad, { disableBatch: true, maxBatchSize: 100 }); // maxBatchSize에서 TS2322
+```
+
+`boolean` 타입의 `disableBatch`는 `true`일 수 있으므로 역시 `maxBatchSize`와 함께 쓸 수 없습니다. `flag ? { disableBatch: true } : { maxBatchSize: 100 }`처럼 분기마다 형태를 고르세요. 타입 검사를 거치지 않는 JavaScript 호출이 둘을 함께 넘기면 호출마다 키 하나를 받습니다. `disableBatch: true`가 우선하고, `maxBatchSize`는 읽지도 검증하지도 않습니다.
 
 ---
 
@@ -230,6 +243,8 @@ type BatchLoader<Key, Value> = (
 3. 반환된 배열의 길이는 입력 키 배열과 **정확히 동일**해야 합니다.
 4. 인덱스 `i`의 값은 인덱스 `i`의 키에 대응해야 합니다.
 5. 키별 실패는 throw하는 예외가 아닌 `Error` 인스턴스로 표현하세요.
+
+키별 `Error` 결과는 `clear(key)` 또는 `clearAll()`을 호출할 때까지 캐시에 남습니다. 배치 전체가 실패하면 배치 Promise를 거부하여 해당 캐시 항목이 자동으로 제거되게 합니다.
 
 규칙 3 또는 4를 위반하면 해당 배치의 모든 키가 `DataLoaderError`로 거부됩니다.
 
@@ -376,7 +391,7 @@ class TtlMap<K, V> {
 }
 
 const cachedLoader = new DataLoader(batchLoad, {
-  cacheMap: new TtlMap(60_000), // 1분 TTL
+  cache: new TtlMap(60_000), // 1분 TTL
 });
 ```
 
@@ -406,7 +421,9 @@ const userLoader = new DataLoader(batchLoadUsers, { maxBatchSize: 100 });
 ### 커스텀 스케줄러
 
 ```typescript
-// 즉시 디스패치 — 테스트 또는 레이턴시 민감 코드에 유용
+// 즉시 디스패치 — 모든 load()가 반환되기 전에 키 하나짜리 배치를 디스패치하고,
+// 반복된 키는 여전히 캐시에서 해석됩니다. 테스트 또는 레이턴시 민감 코드에 유용하지만
+// 배칭은 일어나지 않습니다.
 const testLoader = new DataLoader(batchLoad, {
   batchScheduler: (fn) => fn(),
 });
@@ -455,6 +472,6 @@ const { successes, failures } = results.reduce(
 ### 싱글톤 로더를 위한 배칭 비활성화
 
 ```typescript
-// 각 load가 즉시 디스패치됩니다 — 병합 없음
-const immediateLoader = new DataLoader(batchLoad, { disableBatch: true });
+// 각 배치가 키를 최대 하나만 담습니다 — 병합 없음. 배치는 여전히 batchScheduler를 기다립니다
+const singleKeyLoader = new DataLoader(batchLoad, { disableBatch: true });
 ```

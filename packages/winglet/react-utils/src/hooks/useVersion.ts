@@ -1,8 +1,8 @@
-import { useRef, useState } from 'react';
+import { useReducer, useRef } from 'react';
 
 import type { Fn } from '@aileron/declare';
 
-import { useReference } from './useReference';
+import { useCommittedReference } from './utils/useCommittedReference';
 
 /**
  * Provides a manual re-render trigger with optional side effects and render counting.
@@ -247,17 +247,37 @@ import { useReference } from './useReference';
  * };
  * ```
  *
+ * @remarks Callback reads use the last committed render. React 18 and 19 publish
+ * before layout effects; older supported React peers publish in the parent layout effect.
+ *
  * @param callback - Optional function to execute before incrementing the version and triggering re-render
  * @returns A tuple of [version, updateVersion]:
  *   - version: Current version number (starts at 0, increments with each update)
  *   - updateVersion: Function to increment version and trigger re-render
  */
 export const useVersion = (callback?: Fn) => {
-  const [version, setVersion] = useState(0);
-  const callbackRef = useReference(callback);
-  const update = useRef(() => {
-    callbackRef.current?.();
-    setVersion((prev) => prev + 1);
-  });
-  return [version, update.current] as const;
+  const [version, update] = useReducer(increment, 0);
+  type VersionReference = { current: typeof callback; update: () => void };
+  const holder = useRef<VersionReference | null>(null);
+  if (holder.current === null) {
+    const reference: VersionReference = {
+      current: callback,
+      update: () => {
+        reference.current?.();
+        update();
+      },
+    };
+    holder.current = reference;
+  }
+  return [
+    version,
+    useCommittedReference(holder.current, callback).update,
+  ] as const;
 };
+
+/**
+ * Advances a version counter without allocating a reducer per render.
+ * @param version - Current version.
+ * @returns The next version.
+ */
+const increment = (version: number) => version + 1;

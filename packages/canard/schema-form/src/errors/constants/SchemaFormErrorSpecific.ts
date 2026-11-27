@@ -1,0 +1,23 @@
+/** Internal bare specifics for the SchemaFormError group, in public contract order. */
+export const SchemaFormErrorSpecific = {
+  SharedNodeConflict: 'SHARED_NODE_CONFLICT',
+  BudgetExceeded: 'BUDGET_EXCEEDED',
+  ExpressionThrew: 'EXPRESSION_THREW',
+  GuardFailed: 'GUARD_FAILED',
+  InjectTargetMissing: 'INJECT_TARGET_MISSING',
+  FeedbackLimitExceeded: 'FEEDBACK_LIMIT_EXCEEDED',
+  ListenerThrew: 'LISTENER_THREW',
+  MultipleErrors: 'MULTIPLE_ERRORS',
+  FieldInputMap: 'FIELD_INPUT_MAP',
+  InvalidErrorVisibility: 'INVALID_ERROR_VISIBILITY',
+  InvalidWriteOption: 'INVALID_WRITE_OPTION',
+  DisposedNodeWrite: 'DISPOSED_NODE_WRITE',
+  WriteInObserver: 'WRITE_IN_OBSERVER',
+  SubmitWhileDegraded: 'SUBMIT_WHILE_DEGRADED',
+  ValidatorCompileFailed: 'VALIDATOR_COMPILE_FAILED',
+  ValidatorThrew: 'VALIDATOR_THREW',
+  RenderFailed: 'RENDER_FAILED',
+  InvalidVirtualNodeValues: 'INVALID_VIRTUAL_NODE_VALUES',
+  ArrayMethodOnNonArray: 'ARRAY_METHOD_ON_NON_ARRAY',
+  RecursiveShapeDiverged: 'RECURSIVE_SHAPE_DIVERGED',
+} as const;

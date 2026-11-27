@@ -129,7 +129,7 @@ This monorepo contains the following packages:
 ### Prerequisites
 
 - Node.js 18+
-- Yarn 4.9.1+
+- Yarn 4.12.0 (pinned by packageManager)
 
 ### Installation
 
@@ -149,40 +149,7 @@ yarn workspace @canard/schema-form build
 
 ## 📋 Version Management
 
-This project uses [Changesets](https://github.com/changesets/changesets) for version management and publishing.
-
-### Creating a Changeset
-
-When you make changes to any package, create a changeset to document your changes:
-
-```bash
-yarn changeset
-```
-
-This will:
-
-1. Ask which packages have changed
-2. Ask what type of change (major/minor/patch)
-3. Ask for a summary of the changes (write in English)
-4. Generate a changeset file
-
-### Releasing
-
-You can release manually using the following commands:
-
-```bash
-# Update package versions based on changesets
-yarn changeset:version
-
-# Publish packages to npm
-yarn changeset:publish
-```
-
-### Changeset Guidelines
-
-- **patch**: Bug fixes, documentation updates, internal refactoring
-- **minor**: New features, new exports, non-breaking changes
-- **major**: Breaking changes, removed exports, API changes
+Releases are recorded with [Changesets](https://github.com/changesets/changesets). Which pull requests add a changeset, and how to write one, is set in the change records section of [DOCUMENTATION.md](DOCUMENTATION.md). `yarn changeset:version` turns pending changesets into version bumps and `CHANGELOG.md` entries (it needs a `GITHUB_TOKEN`), and the manual publish workflow publishes the versions that are not yet on npm, as [scripts/PUBLISHING.md](scripts/PUBLISHING.md) describes.
 
 ## 🔧 Scripts
 
@@ -191,7 +158,6 @@ yarn changeset:publish
 - `yarn build:all` - Build all packages
 - `yarn changeset` - Create a new changeset
 - `yarn changeset:version` - Update versions based on changesets
-- `yarn changeset:publish` - Publish packages to npm
 
 ### Package Tagging
 

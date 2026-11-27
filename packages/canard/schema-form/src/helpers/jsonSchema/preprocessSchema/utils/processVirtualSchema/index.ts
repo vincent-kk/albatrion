@@ -1,1 +1,0 @@
-export { processVirtualSchema } from './processVirtualSchema';

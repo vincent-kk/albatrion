@@ -4,6 +4,7 @@ import { describe, expect, it } from 'vitest';
 import type { UnknownSchema } from '@/json-schema/types/jsonSchema';
 
 import { JSONSchemaScanner } from '../sync/JSONSchemaScanner';
+import { createTestResolver } from './fixtures/createTestResolver';
 
 /**
  * Resolver that returns the ORIGINAL subtree by reference — the real-world
@@ -26,7 +27,9 @@ describe('JSONSchemaScanner - invariants', () => {
       };
       const before = JSON.stringify(schema);
       new JSONSchemaScanner({
-        options: { resolveReference: originalRefResolver(schema) },
+        options: {
+          resolveReference: createTestResolver(originalRefResolver(schema)),
+        },
       })
         .scan(schema)
         .getValue();
@@ -42,7 +45,9 @@ describe('JSONSchemaScanner - invariants', () => {
         },
       };
       const out = new JSONSchemaScanner({
-        options: { resolveReference: originalRefResolver(schema) },
+        options: {
+          resolveReference: createTestResolver(originalRefResolver(schema)),
+        },
       })
         .scan(schema)
         .getValue<UnknownSchema>()!;
@@ -59,14 +64,16 @@ describe('JSONSchemaScanner - invariants', () => {
         definitions: { A: { type: 'object' } },
       };
       const out = new JSONSchemaScanner({
-        options: { resolveReference: originalRefResolver(schema) },
+        options: {
+          resolveReference: createTestResolver(originalRefResolver(schema)),
+        },
       })
         .scan(schema)
         .getValue<UnknownSchema>()!;
       expect(out.properties.x).not.toBe(out.properties.y);
     });
 
-    it('cloneResolvedSchema:false opts out of cloning (shares the resolver result)', () => {
+    it('always isolates the resolver result', () => {
       const schema: UnknownSchema = {
         type: 'object',
         properties: { x: { $ref: '#/definitions/A' } },
@@ -74,13 +81,12 @@ describe('JSONSchemaScanner - invariants', () => {
       };
       const out = new JSONSchemaScanner({
         options: {
-          cloneResolvedSchema: false,
-          resolveReference: originalRefResolver(schema),
+          resolveReference: createTestResolver(originalRefResolver(schema)),
         },
       })
         .scan(schema)
         .getValue<UnknownSchema>()!;
-      expect(out.properties.x).toBe(schema.definitions.A);
+      expect(out.properties.x).not.toBe(schema.definitions.A);
     });
   });
 
@@ -106,9 +112,15 @@ describe('JSONSchemaScanner - invariants', () => {
         options: {
           mutate: (e) => {
             if (e.path === '#/$defs/a~1b')
-              return { ...e.schema, title: 'SLASH' };
+              return {
+                ...(typeof e.schema === 'object' ? e.schema : {}),
+                title: 'SLASH',
+              };
             if (e.path === '#/$defs/c~0d')
-              return { ...e.schema, title: 'TILDE' };
+              return {
+                ...(typeof e.schema === 'object' ? e.schema : {}),
+                title: 'TILDE',
+              };
             return undefined;
           },
         },
@@ -133,9 +145,9 @@ describe('JSONSchemaScanner - invariants', () => {
       // `never`, which would narrow scan()'s parameter to `never`.
       const scanner = new JSONSchemaScanner<UnknownSchema>({
         options: {
-          resolveReference: () => {
+          resolveReference: createTestResolver(() => {
             throw new Error('boom');
-          },
+          }),
         },
       });
       expect(() => scanner.scan(schema)).toThrow('boom');
@@ -150,13 +162,13 @@ describe('JSONSchemaScanner - invariants', () => {
     });
   });
 
-  describe('subschema guards — object-only policy (R5)', () => {
-    it('does not visit boolean items:false as a garbage node', () => {
+  describe('subschema guards — object and boolean policy (R5)', () => {
+    it('visits boolean items:false as a leaf', () => {
       const visited: string[] = [];
       new JSONSchemaScanner({
         visitor: { enter: (e) => visited.push(e.path) },
       }).scan({ type: 'array', items: false });
-      expect(visited).toEqual(['#']);
+      expect(visited).toEqual(['#', '#/items']);
     });
 
     it('does not explode a non-object properties value into index entries', () => {
@@ -170,14 +182,14 @@ describe('JSONSchemaScanner - invariants', () => {
       expect(visited).toEqual(['#']);
     });
 
-    it('skips non-object composition elements but keeps object ones', () => {
+    it('skips non-schema composition elements but keeps objects and booleans', () => {
       const visited: string[] = [];
       new JSONSchemaScanner({
         visitor: { enter: (e) => visited.push(e.path) },
       }).scan({
         allOf: [{ type: 'string' }, false, 'x'],
       } as unknown as UnknownSchema);
-      expect(visited).toEqual(['#', '#/allOf/0']);
+      expect(visited).toEqual(['#', '#/allOf/0', '#/allOf/1']);
     });
 
     it('does not crash on null / primitive property values', () => {
@@ -196,11 +208,6 @@ describe('JSONSchemaScanner - invariants', () => {
     it('honors a mutate that returns a valid falsy schema (false)', () => {
       const out = new JSONSchemaScanner({
         options: {
-          // JSON Schema's boolean form (`false`) is a valid schema and the scanner
-          // honors it, but UnknownSchema models object schemas only — so `mutate`'s
-          // declared return type cannot express it. Kept as an expected error so
-          // widening that type later surfaces here instead of going unnoticed.
-          // @ts-expect-error — boolean-form schema is outside UnknownSchema
           mutate: (e) => (e.path === '#/properties/a' ? false : undefined),
         },
       })
@@ -223,10 +230,10 @@ describe('JSONSchemaScanner - invariants', () => {
       const out = new JSONSchemaScanner({
         options: {
           maxDepth: 1,
-          resolveReference: (ref) => {
+          resolveReference: createTestResolver((ref) => {
             calls++;
             return getValue(schema, ref);
-          },
+          }),
         },
       })
         .scan(schema)
@@ -247,7 +254,9 @@ describe('JSONSchemaScanner - invariants', () => {
         },
       };
       const out = new JSONSchemaScanner({
-        options: { resolveReference: (ref) => getValue(schema, ref) },
+        options: {
+          resolveReference: createTestResolver((ref) => getValue(schema, ref)),
+        },
       })
         .scan(schema)
         .getValue<UnknownSchema>()!;

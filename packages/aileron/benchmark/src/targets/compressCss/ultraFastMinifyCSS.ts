@@ -1,10 +1,7 @@
 /**
- * Ultra Fast CSS Minifier - 최고 성능 CSS 압축기
- * Uint8Array + TextEncoder/Decoder 사용으로 최적화
- * 단일 패스 처리로 성능 극대화
- *
- * @param css - 압축할 CSS 문자열
- * @returns 압축된 CSS 문자열
+ * Minifies CSS in one pass using an encoded byte buffer.
+ * @param css - CSS text to minify.
+ * @returns Minified CSS text.
  */
 export const compressCss = (css: string): string => {
   if (css.length === 0) return '';

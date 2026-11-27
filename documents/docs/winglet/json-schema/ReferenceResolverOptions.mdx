@@ -1,0 +1,36 @@
+---
+title: 'ReferenceResolverOptions'
+sidebar_label: 'ReferenceResolverOptions'
+---
+<!-- sync-winglet-docs:auto -->
+
+import WingletPlayground from '@site/src/components/WingletPlayground';
+
+# ReferenceResolverOptions
+
+Construction options never cause implicit filesystem or network access.
+
+## Import
+
+```typescript
+import type { ReferenceResolverOptions } from '@winglet/json-schema';
+```
+
+## Signature
+
+```typescript
+interface ReferenceResolverOptions {
+    /** Retrieval base for an otherwise anonymous root. */
+    baseURI?: string;
+    /** Root fallback dialect. */
+    defaultDialect?: Dialect;
+    /** Explicit custom metaschema aliases to supported dialects. */
+    dialects?: Readonly<Record<string, Dialect>>;
+    /** Lazily indexed documents keyed by absolute retrieval URI. */
+    resources?: Readonly<Record<string, SchemaValue>>;
+    /** Complete replacement vocabulary shared with indexing and template inspection. */
+    keywords?: readonly KeywordDescriptor[];
+    /** Additional schema-position descriptors. */
+    additionalKeywords?: readonly KeywordDescriptor[];
+}
+```

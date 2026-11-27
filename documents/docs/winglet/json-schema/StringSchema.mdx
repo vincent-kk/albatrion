@@ -1,0 +1,23 @@
+---
+title: 'StringSchema'
+sidebar_label: 'StringSchema'
+---
+<!-- sync-winglet-docs:auto -->
+
+import WingletPlayground from '@site/src/components/WingletPlayground';
+
+# StringSchema
+
+String type schema
+
+## Import
+
+```typescript
+import type { StringSchema } from '@winglet/json-schema';
+```
+
+## Signature
+
+```typescript
+export type StringSchema<Options extends Dictionary = object, Schema extends UnknownSchema = JSONSchema> = NonNullableStringSchema<Options, Schema> | NullableStringSchema<Options, Schema>
+```

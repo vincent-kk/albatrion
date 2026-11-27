@@ -474,4 +474,21 @@ describe('useRestProperties', () => {
 
     expect(propertyReads).toBe(readsAfterFirstComparison);
   });
+
+  it('should return the new object when a key is renamed and both values are undefined', () => {
+    const { result, rerender } = renderHook(
+      ({ props }) => useRestProperties(props),
+      {
+        initialProps: {
+          props: { a: 1, c: undefined } as Record<string, unknown>,
+        },
+      },
+    );
+
+    const next: Record<string, unknown> = { a: 1, b: undefined };
+    rerender({ props: next });
+
+    expect(result.current).toBe(next);
+    expect(Object.keys(result.current)).toEqual(['a', 'b']);
+  });
 });

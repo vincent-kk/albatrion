@@ -13,6 +13,13 @@ Provides reliable string type detection using native typeof check,
 distinguishing primitive string values from string-like objects
 or other data types that might contain text.
 
+## Import
+
+```typescript
+import { isString } from '@winglet/common-utils/filter';
+import { isString } from '@winglet/common-utils';
+```
+
 ## Signature
 
 ```typescript
@@ -273,7 +280,7 @@ console.log(result); // 'Hello John, you have 5 messages'
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/common-utils": "0.12.3" }}
+  dependencies={{ "@winglet/common-utils": "0.15.0" }}
   code={`import { isString } from '@winglet/common-utils';
 
 // True cases - string type

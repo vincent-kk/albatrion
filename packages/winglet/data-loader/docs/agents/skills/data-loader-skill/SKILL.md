@@ -23,7 +23,7 @@ Applies when the project imports `@winglet/data-loader`, or when the question in
 | Bounded or expiring storage, or a cache shared by two loaders | `cache: <MapLike>` — any `get`/`set`/`delete`/`clear` object    |
 | Value must never be served stale                              | `cache: false` — dedup off, batching still on                   |
 | Backend caps how many keys one call may carry                 | `maxBatchSize: n`                                               |
-| Backend accepts exactly one key per call                      | `disableBatch: true` (equivalent to `maxBatchSize: 1`)          |
+| Backend accepts exactly one key per call                      | `disableBatch: true` (equivalent to `maxBatchSize: 1`), never beside `maxBatchSize` |
 | One key, failure should reject                                | `load()`                                                        |
 | Many keys, partial success acceptable                         | `loadMany()` — failures arrive as `Error` _values_ in the array |
 | Wider batching window than the default tick                   | `batchScheduler` (e.g. `setTimeout(fn, 10)`)                    |
@@ -75,7 +75,7 @@ Every code below belongs to `DataLoaderError`, whose `code` is `DATA_LOADER.<COD
 | `INVALID_KEY`             | `load()`, synchronously     | Key is `null` or `undefined`                                              |
 | `INVALID_KEYS`            | `loadMany()`, synchronously | `keys` is not array-like                                                  |
 | `INVALID_BATCH_LOADER`    | Constructor / dispatch      | Not a function, non-thenable return, non-array result, or length mismatch |
-| `INVALID_MAX_BATCH_SIZE`  | Constructor                 | `maxBatchSize` is not a number, or is below 1                             |
+| `INVALID_MAX_BATCH_SIZE`  | Constructor                 | `maxBatchSize` is neither `Infinity` nor a positive integer (for example `0`, `2.5` or `NaN`) |
 | `INVALID_CACHE`           | Constructor                 | Custom `cache` is missing any of `get`/`set`/`delete`/`clear`             |
 | `INVALID_CACHE_KEY_FN`    | Constructor                 | `cacheKeyFn` is not a function                                            |
 | `INVALID_BATCH_SCHEDULER` | Constructor                 | `batchScheduler` is not a function                                        |
@@ -93,7 +93,6 @@ Every code below belongs to `DataLoaderError`, whose `code` is `DATA_LOADER.<COD
 | Calling `prime()` to overwrite a cached key | `prime()` is a no-op when the key exists — `clear(key).prime(key, next)` is the only replace sequence |
 | Passing `null`/`undefined` to `load()`      | Throws `INVALID_KEY` synchronously; guard before calling                                              |
 | Object keys without `cacheKeyFn`            | Objects are compared by identity, so equal-shaped keys always miss — derive a string key              |
-| `cacheKeyFn` that can return `''` or `0`    | A falsy cache key silently bypasses the cache in both directions — no read, no write, no dedup        |
 | Awaiting loads one at a time                | Each `await` closes the batch — issue the loads concurrently, then await                              |
 
 ## Knowledge Router
@@ -120,7 +119,7 @@ const loader = new DataLoader<Key, Value, CacheKey>(
     cacheKeyFn, // (key) => CacheKey — defaults to identity
     batchScheduler, // (task) => void — defaults to scheduleNextTick
     maxBatchSize, // number — defaults to Infinity
-    // disableBatch: true is the mutually exclusive alternative to maxBatchSize
+    // or disableBatch: true instead of maxBatchSize; passing both is a type error
   },
 );
 

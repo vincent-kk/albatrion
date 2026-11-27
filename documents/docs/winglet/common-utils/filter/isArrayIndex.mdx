@@ -13,6 +13,13 @@ Performs character-by-character validation to check if a string consists
 entirely of numeric digits, making it suitable for use as an array index.
 Optimized for performance with manual character code checking.
 
+## Import
+
+```typescript
+import { isArrayIndex } from '@winglet/common-utils/filter';
+import { isArrayIndex } from '@winglet/common-utils';
+```
+
 ## Signature
 
 ```typescript
@@ -40,10 +47,10 @@ console.log(isArrayIndex('0')); // true
 console.log(isArrayIndex('123')); // true
 console.log(isArrayIndex('999')); // true
 console.log(isArrayIndex('42')); // true
+console.log(isArrayIndex('01')); // true (digits only — leading zeros are not rejected)
 
 // Invalid array index strings
 console.log(isArrayIndex('')); // false (empty string)
-console.log(isArrayIndex('01')); // false (leading zero, but still digits)
 console.log(isArrayIndex('12.5')); // false (contains decimal point)
 console.log(isArrayIndex('abc')); // false (contains letters)
 console.log(isArrayIndex('12a')); // false (mixed alphanumeric)
@@ -109,17 +116,17 @@ function parseFormArrayData(formData: Record<string, string>) {
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/common-utils": "0.12.3" }}
+  dependencies={{ "@winglet/common-utils": "0.15.0" }}
   code={`import { isArrayIndex } from '@winglet/common-utils';
 
 console.log(isArrayIndex('0')); // true
 console.log(isArrayIndex('123')); // true
 console.log(isArrayIndex('999')); // true
 console.log(isArrayIndex('42')); // true
+console.log(isArrayIndex('01')); // true (digits only — leading zeros are not rejected)
 
 // Invalid array index strings
 console.log(isArrayIndex('')); // false (empty string)
-console.log(isArrayIndex('01')); // false (leading zero, but still digits)
 console.log(isArrayIndex('12.5')); // false (contains decimal point)
 console.log(isArrayIndex('abc')); // false (contains letters)
 console.log(isArrayIndex('12a')); // false (mixed alphanumeric)

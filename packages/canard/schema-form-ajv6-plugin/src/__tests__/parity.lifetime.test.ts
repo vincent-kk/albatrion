@@ -1,0 +1,36 @@
+// Shared validator parity, lifetime scenarios: rows come from @aileron/schema-form-scenarios/validator.
+import { indexDeclaredRows, lifetimeScenarios } from '@aileron/schema-form-scenarios/validator';
+import { describe, it } from 'vitest';
+
+import { loadParityValidator } from './utils/loadParityValidator';
+import { runLifetimeStep } from './utils/runLifetimeStep';
+
+const support = {
+  entries: [
+    { entry: 'default', draft: '07' },
+  ],
+  features: [],
+} as const;
+
+/** Rows this file runs, listed literally so they can be counted; checked against the catalogue at collection. */
+const rows = [
+  ['lifetime.guard-before-compile.self-contained', 'default', 'default', true],
+  ['lifetime.guard-before-compile.root-ref', 'default', 'default', true],
+  ['lifetime.release-twice', 'default', 'default', true],
+  ['lifetime.two-roots-same-id', 'default', 'default', true],
+  ['lifetime.two-roots-same-id', 'default', 'default', false],
+  ['lifetime.recompile-after-registration-failure', 'default', 'default', true],
+  ['lifetime.consumer-schema-kept', 'default', 'custom', true],
+  ['lifetime.consumer-meta-schema-kept', 'default', 'custom', true],
+] as const;
+
+const scenarios = indexDeclaredRows(rows.map((row) => row), lifetimeScenarios, support);
+
+describe('validator parity: lifetime scenarios (ajv6)', () => {
+  it.each(rows)('%s [%s %s directGuardCompile=%s]', async (id, entry, profile, directGuardCompile) => {
+    const scenario = scenarios.get(id);
+    if (!scenario) throw new Error(`Unknown parity scenario ${id}`);
+    const { validator, instance } = await loadParityValidator(entry, profile, directGuardCompile);
+    for (const step of scenario.steps) await runLifetimeStep(step, validator, instance);
+  });
+});

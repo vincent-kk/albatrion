@@ -9,9 +9,16 @@ import WingletPlayground from '@site/src/components/WingletPlayground';
 # isPlainObject
 
 Determines whether a value is a plain data object (not a class instance or built-in).
-Performs sophisticated plain object detection by checking prototype chain
-and constructor properties, distinguishing plain data objects from class
-instances, built-in objects, and objects with custom prototypes.
+Performs plain object detection by checking the prototype chain and default
+object tag, distinguishing plain data objects from class instances, built-in
+objects, and objects with custom prototypes.
+
+## Import
+
+```typescript
+import { isPlainObject } from '@winglet/common-utils/filter';
+import { isPlainObject } from '@winglet/common-utils';
+```
 
 ## Signature
 
@@ -52,6 +59,7 @@ console.log(isPlainObject('string')); // false (primitive)
 console.log(isPlainObject(1)); // false (primitive)
 console.log(isPlainObject(null)); // false (null)
 console.log(isPlainObject(undefined)); // false (undefined)
+console.log(isPlainObject({ [Symbol.toStringTag]: 'Tagged' })); // false
 ```
 
 ### Class instance vs plain object
@@ -143,7 +151,7 @@ function isJSONLike(value: unknown): boolean {
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/common-utils": "0.12.3" }}
+  dependencies={{ "@winglet/common-utils": "0.15.0" }}
   code={`import { isPlainObject } from '@winglet/common-utils';
 
 // Plain objects (return true)
@@ -161,15 +169,18 @@ console.log(isPlainObject(new Set())); // false (Set instance)
 console.log(isPlainObject('string')); // false (primitive)
 console.log(isPlainObject(1)); // false (primitive)
 console.log(isPlainObject(null)); // false (null)
-console.log(isPlainObject(undefined)); // false (undefined)`}
+console.log(isPlainObject(undefined)); // false (undefined)
+console.log(isPlainObject({ [Symbol.toStringTag]: 'Tagged' })); // false`}
 />
 
 ## Notes
 
 **Detection Criteria:**
 1. Must be a non-null object type
-2. Prototype must be null, Object.prototype, or have Object.prototype as grandparent
+2. Prototype must be null, Object.prototype, or itself have a null prototype
 3. Must have '[object Object]' toString tag
+4. An otherwise plain object with `Symbol.toStringTag` is rejected when the
+   custom tag changes the result of `Object.prototype.toString`
 
 **Use Cases:**
 - Configuration object validation

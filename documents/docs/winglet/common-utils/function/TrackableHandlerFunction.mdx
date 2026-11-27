@@ -1,0 +1,101 @@
+---
+title: 'TrackableHandlerFunction'
+sidebar_label: 'TrackableHandlerFunction'
+---
+<!-- sync-winglet-docs:auto -->
+
+import WingletPlayground from '@site/src/components/WingletPlayground';
+
+# TrackableHandlerFunction
+
+Type definition for trackable handler function.
+A function with state management, subscription pattern, and direct state property access
+features added to the original async function.
+
+## Import
+
+```typescript
+import type { TrackableHandlerFunction } from '@winglet/common-utils/function';
+import type { TrackableHandlerFunction } from '@winglet/common-utils';
+```
+
+## Signature
+
+```typescript
+export type TrackableHandlerFunction<Args extends any[] = [], Result = void, State extends Dictionary = {}> = {
+    /**
+     * Executes the original function.
+     *
+     * @param args - Arguments to pass to the original function
+     * @returns Promise containing the result, or `undefined` when `preventConcurrent`
+     *   turned the call away because an execution was already in flight
+     */
+    (...args: Args): Promise<Result | undefined>;
+    /**
+     * Subscribes to state change events.
+     *
+     * @param listener - Callback function to call when state changes
+     * @returns Function to unsubscribe
+     *
+     * @example
+     * ```typescript
+     * const unsubscribe = handler.subscribe(() => {
+     *   console.log('State has changed:', handler.state);
+     * });
+     *
+     * // Unsubscribe
+     * unsubscribe();
+     * ```
+     */
+    readonly subscribe: Fn<[listener: Fn], Fn>;
+    /**
+     * Whether the function is currently executing
+     * @readonly
+     */
+    readonly pending: boolean;
+    /**
+     * Provides read-only access to the current state object.
+     * @readonly
+     */
+    readonly state: State;
+}
+```
+
+## Examples
+
+### Example 1
+
+```typescript
+const handler: TrackableHandlerFunction<[string], User, { loading: boolean }> =
+  getTrackableHandler(fetchUser, options);
+
+// Function call
+const user = await handler('user-id');
+
+// State subscription
+const unsubscribe = handler.subscribe(() => console.log('State changed'));
+
+// State and execution status access
+console.log(handler.state.loading); // boolean
+console.log(handler.pending);       // boolean
+console.log(handler.state);         // { loading: boolean }
+```
+
+## Playground
+
+<WingletPlayground
+  dependencies={{ "@winglet/common-utils": "0.15.0" }}
+  code={`const handler: TrackableHandlerFunction<[string], User, { loading: boolean }> =
+  getTrackableHandler(fetchUser, options);
+
+// Function call
+const user = await handler('user-id');
+
+// State subscription
+const unsubscribe = handler.subscribe(() => console.log('State changed'));
+
+// State and execution status access
+console.log(handler.state.loading); // boolean
+console.log(handler.pending);       // boolean
+console.log(handler.state);         // { loading: boolean }`}
+/>

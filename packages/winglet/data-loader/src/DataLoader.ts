@@ -6,10 +6,13 @@ import type { Fn } from '@aileron/declare';
 import type { Batch, BatchLoader, DataLoaderOptions, MapLike } from './type';
 import {
   createBatch,
+  enqueueCacheHit,
+  enqueueKey,
   failedDispatch,
   resolveCacheHits,
 } from './utils/dispatch';
 import { DataLoaderError } from './utils/error';
+import { isLoaderError } from './utils/isLoaderError';
 import {
   prepareBatchLoader,
   prepareBatchScheduler,
@@ -56,9 +59,11 @@ import {
  * });
  *
  * // Load individual users - automatically batched
- * const user1 = await userLoader.load('user-1');
- * const user2 = await userLoader.load('user-2');
- * const user3 = await userLoader.load('user-3');
+ * const [user1, user2, user3] = await Promise.all([
+ *   userLoader.load('user-1'),
+ *   userLoader.load('user-2'),
+ *   userLoader.load('user-3'),
+ * ]);
  * // Results in ONE database query: SELECT * FROM users WHERE id IN ('user-1', 'user-2', 'user-3')
  * ```
  *
@@ -243,23 +248,32 @@ export class DataLoader<Key = string, Value = any, CacheKey = Key> {
   /** The function that converts loader keys to cache keys */
   private readonly __cacheKeyFn__: Fn<[key: Key], CacheKey>;
 
-  /** The currently processing batch */
+  /** The most recently scheduled batch, which collects keys until it is dispatched */
   private __currentBatch__: Batch<Key, Value> | null = null;
 
   /**
-   * Acquires the current batch or creates a new batch
-   * @returns The currently available batch or a newly created batch
+   * Finds the scheduled batch that can still accept another key
+   * @returns The current batch while it is undispatched and below `maxBatchSize`, otherwise null
    */
-  private __acquireBatch__(): Batch<Key, Value> {
+  private __findOpenBatch__(): Batch<Key, Value> | null {
     const batch = this.__currentBatch__;
     if (batch && !batch.isResolved && batch.keys.length < this.__maxBatchSize__)
       return batch;
-    const nextBatch = createBatch<Key, Value>();
-    this.__currentBatch__ = nextBatch;
-    this.__batchScheduler__(() => {
-      this.__dispatchBatch__(nextBatch);
+    return null;
+  }
+
+  /**
+   * Makes a batch the current one and hands its dispatch to the batch scheduler.
+   * Called only after the batch holds its first request and cache entry, because a
+   * synchronous scheduler dispatches the batch before this method returns.
+   * @param batch - A new batch that already holds its first key or cache hit
+   */
+  private __scheduleBatch__(batch: Batch<Key, Value>): void {
+    this.__currentBatch__ = batch;
+    const schedule = this.__batchScheduler__;
+    schedule(() => {
+      this.__dispatchBatch__(batch);
     });
-    return nextBatch;
   }
 
   /**
@@ -421,23 +435,43 @@ export class DataLoader<Key = string, Value = any, CacheKey = Key> {
         `DataLoader > load's key must be a non-nil value: ${key}`,
         { key },
       );
-    const batch = this.__acquireBatch__();
+    const openBatch = this.__findOpenBatch__();
+    const batch = openBatch || createBatch<Key, Value>();
     const cacheMap = this.__cacheMap__;
-    const cacheKey = cacheMap ? this.__cacheKeyFn__(key) : null;
-    if (cacheMap && cacheKey) {
+    let promise: Promise<Value>;
+    if (cacheMap === null) promise = enqueueKey(batch, key);
+    else {
+      const cacheKey = this.__cacheKeyFn__(key);
       const cachedPromise = cacheMap.get(cacheKey);
-      if (cachedPromise) {
-        const cacheHits = batch.cacheHits || (batch.cacheHits = []);
-        return new Promise((resolve) =>
-          cacheHits.push(() => resolve(cachedPromise)),
-        );
+      if (cachedPromise) promise = enqueueCacheHit(batch, cachedPromise);
+      else {
+        const keyIndex = batch.keys.length;
+        promise = enqueueKey(batch, key);
+        try {
+          cacheMap.set(cacheKey, promise);
+        } catch (error) {
+          batch.keys.splice(keyIndex, 1);
+          batch.promises.splice(keyIndex, 1);
+          cacheMap.delete(cacheKey);
+          throw error;
+        }
       }
     }
-    batch.keys.push(key);
-    const promise = new Promise<Value>((resolve, reject) =>
-      batch.promises.push({ resolve, reject }),
-    );
-    if (cacheMap && cacheKey) cacheMap.set(cacheKey, promise);
+    if (openBatch === null) {
+      try {
+        this.__scheduleBatch__(batch);
+      } catch (error) {
+        batch.isResolved = true;
+        if (this.__currentBatch__ === batch) this.__currentBatch__ = null;
+        // The throwing load never exposes this promise to its caller.
+        void promise.catch(() => {});
+        failedDispatch(this, batch, error);
+        batch.keys = [];
+        batch.promises = [];
+        batch.cacheHits = [];
+        throw error;
+      }
+    }
     return promise;
   }
 
@@ -539,8 +573,13 @@ export class DataLoader<Key = string, Value = any, CacheKey = Key> {
         { keys },
       );
     const loadPromises = new Array(keys.length);
-    for (let i = 0, l = keys.length; i < l; i++)
-      loadPromises[i] = this.load(keys[i]).catch((error) => error);
+    for (let i = 0, l = keys.length; i < l; i++) {
+      try {
+        loadPromises[i] = this.load(keys[i]).catch((error) => error);
+      } catch (error) {
+        loadPromises[i] = error;
+      }
+    }
     return Promise.all(loadPromises);
   }
 
@@ -763,7 +802,7 @@ export class DataLoader<Key = string, Value = any, CacheKey = Key> {
       const cacheKey = this.__cacheKeyFn__(key);
       if (cacheMap.get(cacheKey) === undefined) {
         let promise: Promise<Value>;
-        if (value instanceof Error) {
+        if (isLoaderError(value)) {
           promise = Promise.reject(value);
           promise.catch(NOOP_FUNCTION);
         } else promise = Promise.resolve(value);
@@ -812,7 +851,7 @@ export class DataLoader<Key = string, Value = any, CacheKey = Key> {
         resolveCacheHits(batch);
         for (let i = 0, l = batch.promises.length; i < l; i++) {
           const value = values[i];
-          if (value instanceof Error) batch.promises[i].reject(value);
+          if (isLoaderError(value)) batch.promises[i].reject(value);
           else batch.promises[i].resolve(value);
         }
       })

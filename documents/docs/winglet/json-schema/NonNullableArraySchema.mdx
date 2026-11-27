@@ -1,0 +1,25 @@
+---
+title: 'NonNullableArraySchema'
+sidebar_label: 'NonNullableArraySchema'
+---
+<!-- sync-winglet-docs:auto -->
+
+import WingletPlayground from '@site/src/components/WingletPlayground';
+
+# NonNullableArraySchema
+
+Non-nullable array schema (type: 'array')
+
+## Import
+
+```typescript
+import type { NonNullableArraySchema } from '@winglet/json-schema';
+```
+
+## Signature
+
+```typescript
+interface NonNullableArraySchema<Options extends Dictionary = object, Schema extends UnknownSchema = JSONSchema> extends BaseArraySchema<ArrayValue, Options, Schema> {
+    type: 'array';
+}
+```

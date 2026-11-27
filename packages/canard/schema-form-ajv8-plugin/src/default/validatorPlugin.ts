@@ -1,24 +1,9 @@
-import type { ValidatorPlugin } from '@canard/schema-form';
-import Ajv, { type Options } from 'ajv';
+import AjvConstructor, { type Ajv } from 'ajv';
 
 import { createValidatorFactory } from '../validator/createValidatorFactory';
+import { createValidatorPlugin } from '../validator/utils/createValidatorPlugin';
 
 export { createValidatorFactory };
-
-/**
- * Default AJV8 settings optimized for schema-form validation.
- *
- * - allErrors: true - Collect all validation errors, not just the first one
- * - strictSchema: false - Allow additional schema properties for flexibility
- * - validateFormats: false - Disable format validation for better performance
- */
-const defaultSettings: Options = {
-  allErrors: true,
-  strictSchema: false,
-  validateFormats: false,
-};
-
-let ajvInstance: Ajv | null = null;
 
 /**
  * AJV8 validator plugin for schema-form (Draft-07 compatible version).
@@ -31,21 +16,13 @@ let ajvInstance: Ajv | null = null;
  *
  * @example
  * ```typescript
- * import { ajvValidatorPlugin } from '@canard/schema-form-ajv8-plugin';
+ * import { registerPlugin } from '@canard/schema-form';
+ * import { plugin } from '@canard/schema-form-ajv8-plugin';
+ * import Ajv from 'ajv';
  *
- * // Use with custom AJV instance
- * const customAjv = new Ajv({ allErrors: false });
- * ajvValidatorPlugin.bind(customAjv);
- *
- * // Compile a validator
- * const validator = ajvValidatorPlugin.compile(schema);
- * const errors = await validator(data);
+ * // Use a custom AJV instance: bind it before registering
+ * plugin.validator.bind(new Ajv({ allErrors: false }));
+ * registerPlugin(plugin);
  * ```
  */
-export const ajvValidatorPlugin: ValidatorPlugin = {
-  bind: (instance: Ajv) => (ajvInstance = instance),
-  compile: (jsonSchema) => {
-    if (!ajvInstance) ajvInstance = new Ajv(defaultSettings);
-    return createValidatorFactory(ajvInstance)(jsonSchema);
-  },
-};
+export const ajvValidatorPlugin: ReturnType<typeof createValidatorPlugin<Ajv>> = createValidatorPlugin(AjvConstructor, 'http://json-schema.org/draft-07/schema#');

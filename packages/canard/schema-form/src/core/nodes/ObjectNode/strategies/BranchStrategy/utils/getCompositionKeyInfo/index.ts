@@ -1,1 +1,0 @@
-export { getCompositionKeyInfo } from './getCompositionKeyInfo';

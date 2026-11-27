@@ -1,0 +1,33 @@
+---
+title: 'BasePortal'
+sidebar_label: 'BasePortal'
+---
+<!-- sync-winglet-docs:auto -->
+
+import WingletPlayground from '@site/src/components/WingletPlayground';
+
+# BasePortal
+
+Renders children into the current anchor while preserving their source React ancestry.
+
+## Import
+
+```typescript
+import type { BasePortal } from '@winglet/react-utils/portal';
+```
+
+## Signature
+
+```typescript
+const Portal: PortalComponent
+```
+
+## Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `children` | `-` | Content placed at Portal.Anchor once its DOM node attaches |
+
+## Returns
+
+A React portal, or null while no anchor is mounted, including server rendering

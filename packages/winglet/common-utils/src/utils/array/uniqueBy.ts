@@ -1,3 +1,5 @@
+import type { Fn } from '@aileron/declare';
+
 /**
  * Removes duplicate elements from an array using a transformation function to determine uniqueness.
  *
@@ -222,7 +224,7 @@
  */
 export const uniqueBy = <Type, SubType>(
   source: readonly Type[],
-  mapper: (item: Type) => SubType,
+  mapper: Fn<[item: Type], SubType>,
 ): Type[] => {
   const map = new Map<SubType, Type>();
   for (let i = 0, e = source[0], l = source.length; i < l; i++, e = source[i]) {

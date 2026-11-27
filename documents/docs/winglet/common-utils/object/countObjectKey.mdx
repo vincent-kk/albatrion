@@ -14,6 +14,13 @@ to count only properties that belong directly to the object, not inherited
 from the prototype chain. This provides the same count as Object.keys().length
 but with better performance by avoiding array creation.
 
+## Import
+
+```typescript
+import { countObjectKey } from '@winglet/common-utils/object';
+import { countObjectKey } from '@winglet/common-utils';
+```
+
 ## Signature
 
 ```typescript
@@ -155,7 +162,7 @@ for (const key in data) {
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/common-utils": "0.12.3" }}
+  dependencies={{ "@winglet/common-utils": "0.15.0" }}
   code={`import { countObjectKey } from '@winglet/common-utils';
 
 // Plain object with own properties

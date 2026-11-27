@@ -1,9 +1,8 @@
 import { useEffect, useRef } from 'react';
 
-export function useInterval(
-  callback: () => void,
-  delayMs: number | null,
-): void {
+import type { Fn } from '@aileron/declare';
+
+export function useInterval(callback: Fn, delayMs: number | null): void {
   const saved = useRef(callback);
 
   useEffect(() => {

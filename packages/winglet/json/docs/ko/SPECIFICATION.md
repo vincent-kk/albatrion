@@ -63,17 +63,18 @@ const theme = getValue(document, '/settings/theme');
 setValue(document, '/settings/theme', 'light');
 
 // 두 객체의 차이를 패치 배열로 생성
+const source = { name: 'Alice', age: 30 };
 const patches = compare(
-  { name: 'Alice', age: 25 },
-  { name: 'Alice', age: 26, city: 'Seoul' },
+  source,
+  { name: 'Alice', age: 31, city: 'Seoul' },
 );
 // [
-//   { op: 'replace', path: '/age', value: 26 },
+//   { op: 'replace', path: '/age', value: 31 },
 //   { op: 'add', path: '/city', value: 'Seoul' }
 // ]
 
 // 패치 적용 (기본값: 원본 불변)
-const updated = applyPatch(document, patches);
+const updated = applyPatch(source, patches);
 ```
 
 ---
@@ -89,7 +90,7 @@ const updated = applyPatch(document, patches);
 | `@winglet/json/pointer-manipulator` | `getValue`, `setValue`                              |
 | `@winglet/json/pointer-patch`       | `compare`, `applyPatch`, `difference`, `mergePatch` |
 | `@winglet/json/pointer-escape`      | `escapePath`, `unescapePath`, `escapeSegment`       |
-| `@winglet/json/pointer-common`      | `JSONPointer` 상수, `convertJSONPointerToPath`      |
+| `@winglet/json/pointer-common`      | `convertJSONPointerToPath`, `getJSONPointer` |
 | `@winglet/json/path`                | `JSONPath` 상수                                     |
 | `@winglet/json/path-common`         | `getJSONPath`, `convertJSONPathToPointer`           |
 
@@ -116,6 +117,8 @@ JSON Pointer(RFC 6901)는 JSON 문서 내의 특정 값을 식별하는 문자�
 | `"/a~1b"`    | 키 `a/b` (슬래시를 `~1`로 이스케이프) |
 | `"/a~0b"`    | 키 `a~b` (틸드를 `~0`으로 이스케이프) |
 
+`#`로 시작하는 포인터는 URI 프래그먼트입니다(`"#"`은 문서 전체, `"#/a%20b"`는 키 `a b`). 퍼센트 이스케이프를 한 번 해석한 뒤 `~1`과 `~0`을 해제합니다. 일반 포인터 `/a%20b`는 퍼센트 텍스트를 키 데이터로 유지합니다. 잘못된 퍼센트 이스케이프는 `JSONPointerError`(코드 `INVALID_POINTER_TYPE`)를, `applyPatch`에서는 `JSONPatchError`(코드 `PATCH_PATH_INVALID`)를 던집니다.
+
 ### getValue
 
 JSON Pointer로 지정된 위치의 값을 읽습니다.
@@ -134,9 +137,9 @@ function getValue<Output>(
 | `value`   | `object \| any[]`    | 원본 JSON 문서 (일반 객체 또는 배열)    |
 | `pointer` | `string \| string[]` | JSON Pointer 문자열 또는 참조 토큰 배열 |
 
-**반환값**: 지정된 위치의 값.
+**반환값**: 지정된 위치의 값. 위치가 없으면 `undefined`를 반환합니다. 객체에서는 자기 멤버를 읽습니다. 배열에서는 정규 십진 인덱스의 자기 요소를 읽으므로 `getValue({}, '/toString')`과 `getValue({ a: [1] }, '/a/length')`는 모두 `undefined`를 반환합니다.
 
-**예외**: `INVALID_INPUT`, `INVALID_POINTER`, `PROPERTY_NOT_FOUND` 코드의 `JSONPointerError`.
+**예외**: `INVALID_INPUT` 또는 `INVALID_POINTER_TYPE` 코드의 `JSONPointerError`. 위치가 없는 것은 예외가 아닙니다.
 
 ```typescript
 import { getValue } from '@winglet/json/pointer-manipulator';
@@ -159,6 +162,9 @@ getValue(doc, ['store', 'books', '0']); // { title: 'RFC 6901', ... }
 const data = { 'a/b': 'slash', 'a~b': 'tilde' };
 getValue(data, '/a~1b'); // 'slash'
 getValue(data, '/a~0b'); // 'tilde'
+
+// 없는 위치
+getValue(doc, '/store/missing'); // undefined
 ```
 
 ### setValue
@@ -258,18 +264,21 @@ const pointer = `/${escapeSegment(key)}/status`;
 
 ### convertJSONPointerToPath
 
-JSON Pointer 문자열을 언이스케이프된 참조 토큰 배열로 변환합니다.
+JSON Pointer 문자열을 점과 대괄호 표기의 데이터 경로 문자열(Ajv `dataPath` 형태)로 변환합니다. 숫자 세그먼트는 대괄호 인덱스가 되고, `-`는 `[]`가 되며, `.`을 포함한 세그먼트는 대괄호로 감쌉니다. 참조 토큰의 이스케이프는 풀지 않습니다: `~0`과 `~1`은 쓰인 그대로 남습니다. 이미 `.`, `$.`, `@.`로 시작하는 입력은 그대로 반환하므로 두 번 호출해도 안전합니다. 이스케이프를 푼 참조 토큰이 필요하면 `@winglet/json/pointer-manipulator`의 `compilePointer`를 사용합니다.
 
 ```typescript
-function convertJSONPointerToPath(pointer: string): string[];
+function convertJSONPointerToPath(pointer: string): string;
 ```
 
 ```typescript
 import { convertJSONPointerToPath } from '@winglet/json/pointer-common';
 
-convertJSONPointerToPath('/foo/bar'); // ['foo', 'bar']
-convertJSONPointerToPath('/a~1b/c~0d'); // ['a/b', 'c~d']
-convertJSONPointerToPath(''); // []
+convertJSONPointerToPath('/foo/bar'); // '.foo.bar'
+convertJSONPointerToPath('/users/0/name'); // '.users[0].name'
+convertJSONPointerToPath('/items/-/id'); // '.items[].id'
+convertJSONPointerToPath('/a.b/c'); // '.[a.b].c'
+convertJSONPointerToPath('/a~1b/c~0d'); // '.a~1b.c~0d' (이스케이프 유지)
+convertJSONPointerToPath(''); // '.'
 ```
 
 ---
@@ -337,11 +346,13 @@ function applyPatch<Result>(
   source: object | any[],
   patches: Patch[],
   options?: {
-    strict?: boolean; // 기본값: false
+    strict?: boolean; // 사용 중단(deprecated) — 무시됨, test는 항상 값을 비교
     immutable?: boolean; // 기본값: true
   },
 ): Result;
 ```
+
+`immutable: true`(기본값)에서는 소스와 patch 값을 수정하지 않지만, 결과는 깊은 복사본이 아닙니다. 쓰기 경로에 있는 컨테이너만 복사하므로 쓰지 않은 하위 트리는 `source`와 공유하고, `add`·`replace`의 값은 참조 그대로 설치되어 patch와 공유합니다. 마지막 연산이 루트 `add` 또는 `replace`이면 patch 값 자체를 반환합니다. 소스나 patch를 그대로 유지해야 하면 결과를 직접 변경하기 전에 깊은 복사를 하세요.
 
 ```typescript
 import { applyPatch } from '@winglet/json/pointer-patch';
@@ -368,6 +379,8 @@ applyPatch({ status: 'draft' }, [
 ]);
 // { status: 'published' }
 ```
+
+**예외**: `JSONPatchError`(name `'JSONPatch'`, `specific`에 코드)를 모든 모드에서 던집니다. 값이 다르거나 위치가 없는 `test`, 없는 멤버의 `remove`·`replace`, 숫자가 아니거나 앞자리 0(`/a/01`)이 있거나 범위를 벗어나거나 `4294967294`를 넘는 배열 인덱스, 알 수 없는 `op`, `from`이 없는 `move`·`copy`, 자기 `from` 하위로의 `move`, `/` 또는 `#`로 시작하지 않는 경로, 없는 중간 컨테이너가 해당합니다. 코드: `PATCH_TEST_FAILED`, `PATCH_OBJECT_PROPERTY_NOT_FOUND`, `PATCH_ARRAY_INDEX_INVALID`, `PATCH_ARRAY_INDEX_OUT_OF_BOUNDS`, `PATCH_OPERATION_INVALID`, `PATCH_TARGET_NOT_OBJECT`, `PATCH_PATH_INVALID`, `PATCH_PATH_INVALID_INTERMEDIATE`, `PATCH_PATH_PROCESSING_ERROR`, `PATCH_MOVE_INTO_DESCENDANT_FORBIDDEN`. `immutable: false`에서는 실패한 연산 이전의 연산이 이미 기록되어 있습니다.
 
 ### difference
 
@@ -475,7 +488,7 @@ function getJSONPath<Root extends object, Target>(
 ): string | null;
 ```
 
-`target`이 `root` 내에서 찾을 수 없거나 리프 노드의 원시값이면 `null`을 반환합니다.
+`target`이 객체 또는 원시값으로 도달 가능하면 첫 일치 경로를 반환하고, `root`에서 찾을 수 없으면 `null`을 반환합니다.
 
 ```typescript
 import { getJSONPath } from '@winglet/json/path-common';
@@ -505,10 +518,10 @@ function convertJSONPathToPointer(jsonPath: string): string;
 ```typescript
 import { convertJSONPathToPointer } from '@winglet/json/path-common';
 
-convertJSONPathToPointer('$.foo.bar'); // '/foo/bar'
-convertJSONPathToPointer('$.users[0].name'); // '/users/0/name'
-convertJSONPathToPointer('$'); // ''
-convertJSONPathToPointer("$['a/b'].c"); // '/a~1b/c'
+convertJSONPathToPointer('$.foo.bar'); // '/$/foo/bar'
+convertJSONPathToPointer('$.users[0].name'); // '/$/users/0/name'
+convertJSONPathToPointer('$'); // '/$'
+convertJSONPathToPointer("$['a/b'].c"); // "/$/'a/b'/c"
 ```
 
 ---
@@ -567,6 +580,7 @@ type Patch =
 // 옵션 타입
 type CompareOptions = { strict?: boolean; immutable?: boolean };
 type ApplyPatchOptions = {
+  /** @deprecated ignored */
   strict?: boolean;
   immutable?: boolean;
 };
@@ -578,7 +592,7 @@ type ApplyPatchOptions = {
 
 ### 프로토타입 오염 방지
 
-예약 멤버 이름 `__proto__`, `constructor`, `prototype`은 불투명한 문자열, 즉 own 데이터 속성으로 처리됩니다 — RFC 6901/6902/7396이 멤버 이름을 규정하는 방식이며 `JSON.parse`가 이미 만들어내는 형태입니다. 읽기는 프로토타입 체인으로 넘어가지 않고(own이 아닌 예약 멤버는 `undefined`), 쓰기는 `__proto__` setter를 트리거하지 않는 own 데이터 속성을 만들며, 어떤 입력도 `Object.prototype` 등 상속 객체를 변경할 수 없습니다. 이 안전성은 구조적이어서 끌 수 있는 옵션이 존재하지 않습니다.
+예약 멤버 이름 `__proto__`, `constructor`, `prototype`은 불투명한 문자열, 즉 own 데이터 속성으로 처리됩니다 — RFC 6901/6902/7396이 멤버 이름을 규정하는 방식이며 `JSON.parse`가 이미 만들어내는 형태입니다. 이 이름들의 읽기는 프로토타입 체인으로 넘어가지 않고(own이 아닌 예약 멤버는 `undefined`), 쓰기는 `__proto__` setter를 트리거하지 않는 own 데이터 속성을 만들며, 어떤 입력도 `Object.prototype` 등 상속 객체를 변경할 수 없습니다. 이 안전성은 구조적이어서 끌 수 있는 옵션이 존재하지 않습니다.
 
 ```typescript
 // own 데이터 속성 — 프로토타입 체인은 건드리지 않고, 에러도 없음
@@ -609,42 +623,25 @@ getValue(new Map(), '/path'); // INVALID_INPUT 예외
 
 ## 에러 처리
 
-```typescript
-import { JSONPointerError, isJSONPointerError } from '@winglet/json';
+`getValue`와 `setValue`는 `JSONPointerError`를, `applyPatch`는 `JSONPatchError`를 던집니다. 두 클래스와 타입 가드는 내보내지 않으므로, 에러는 `name`(`'JSONPointer'` 또는 `'JSONPatch'`)과 `specific`에 담긴 코드로 식별합니다. `code` 속성에는 `'JSON_POINTER.INVALID_INPUT'`처럼 네임스페이스가 붙은 형태가 담깁니다.
 
-class JSONPointerError extends Error {
-  code: 'INVALID_INPUT' | 'INVALID_POINTER' | 'PROPERTY_NOT_FOUND';
-  details: Record<string, unknown>;
-}
-```
+| 코드                   | 발생 조건                                                                                          |
+| ---------------------- | -------------------------------------------------------------------------------------------------- |
+| `INVALID_INPUT` | 입력이 일반 객체 또는 배열이 아니거나, `setValue`가 원시값 아래에 써야 하는 경우(예: `a`가 `1`일 때 `/a/b`) |
+| `INVALID_POINTER_TYPE` | 포인터가 문자열이나 문자열·숫자 배열이 아니거나, 문자열 포인터가 `/` 또는 `#`로 시작하지 않는 경우 |
 
-| 코드                 | 발생 조건                              |
-| -------------------- | -------------------------------------- |
-| `INVALID_INPUT`      | 입력이 일반 객체 또는 배열이 아닌 경우 |
-| `INVALID_POINTER`    | 포인터 문법이 잘못된 경우              |
-| `PROPERTY_NOT_FOUND` | 경로가 문서에 존재하지 않는 경우       |
+위치가 없는 것은 에러가 아닙니다: `getValue`는 `undefined`를 반환합니다.
 
 ```typescript
-import { JSONPointerError, getValue } from '@winglet/json';
+import { getValue } from '@winglet/json';
+
+getValue({}, '/missing'); // undefined
 
 try {
-  getValue({}, '/missing');
+  getValue(new Map(), '/a');
 } catch (e) {
-  if (e instanceof JSONPointerError) {
-    console.log(e.code); // 'PROPERTY_NOT_FOUND'
-    console.log(e.details); // { pointer: '/missing', ... }
-  }
-}
-
-// 타입 가드 활용
-function safeGet<T>(obj: object, ptr: string, fallback: T): T {
-  try {
-    return getValue(obj, ptr) as T;
-  } catch (e) {
-    if (isJSONPointerError(e) && e.code === 'PROPERTY_NOT_FOUND') {
-      return fallback;
-    }
-    throw e;
+  if (e instanceof Error && e.name === 'JSONPointer') {
+    console.log((e as Error & { specific: string }).specific); // 'INVALID_INPUT'
   }
 }
 ```
@@ -653,17 +650,15 @@ function safeGet<T>(obj: object, ptr: string, fallback: T): T {
 
 ## 성능
 
-| 상황                         | 권장 설정                                       |
-| ---------------------------- | ----------------------------------------------- |
-| 깊은 중첩 구조의 대용량 문서 | `immutable: false` — 딥 클론 오버헤드 제거      |
-| 순차적 패치 다량 적용        | `strict: false`(기본값) — 연산별 추가 검증 생략 |
-| 메모리 제약 환경             | `mergePatch`의 `immutable: false`               |
+| 상황                         | 권장 설정                                  |
+| ---------------------------- | ------------------------------------------ |
+| 깊은 중첩 구조의 대용량 문서 | `immutable: false` — 쓰기 경로마다 컨테이너를 복사하는 비용 제거 |
+| 메모리 제약 환경             | `mergePatch`의 `immutable: false`          |
 
 ```typescript
 // 최고 성능 (신뢰할 수 있는 환경에서만 사용)
 applyPatch(source, patches, {
   immutable: false,
-  strict: false,
 });
 ```
 

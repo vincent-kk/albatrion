@@ -2,21 +2,25 @@
 
 ## Requirements
 
-모달 종류별 확인·취소 결과를 공통 상태 및 구독 생명주기에 연결합니다.
+settled는 최초 resolve 또는 reject에서 true가 되며 후속 결과는 무시합니다. 파괴는 미확정 노드를 먼저 취소하고 표시와 생존을 내린 뒤 변경을 알립니다.
 
 ## API Contracts
 
-- alert는 닫기 시 void, confirm은 확인 시 true와 취소 시 false로 완료합니다.
-- prompt는 확인 시 입력값, 취소 시 null로 완료하며 returnOnCancel이 켜져 있으면 취소 시 현재 입력값을 반환합니다.
-- subscribe는 listener를 제거하는 cleanup 함수를 반환합니다. onDestroy는 alive 상태를 내리고 manualDestroy일 때 변경을 알리지만 listener 집합을 직접 비우지 않습니다.
+- 종료 애니메이션을 위한 매니저의 표시 조회는 앵커와 해당 프레임의 실제 연결 여부를 읽습니다. 이 기록은 콘텐츠가 suspend 중 정착하면 애니메이션을 억제하는 계약이며, 페이지 격리와 같은 조건을 사용하는 포커스 복귀 권한과는 별개입니다. 기존 정착 기록 슬롯은 확정 전에는 조회 함수를, 최초 resolve·reject 뒤에는 visible과 실제 표시 여부를 합친 boolean을 보관합니다. 별도 인스턴스 필드나 외부 메타데이터 저장소를 만들지 않으며, 공개 isVisibleAtSettlement는 확정 전 false와 최초 확정의 boolean만 반환합니다. 확정 뒤의 재등록은 최초 기록을 바꾸지 않습니다. 같은 커밋에서 경로 숨김과 확정이 연달아 일어나거나 동시 렌더가 중단되어도 이 사실이 정확해야 하므로, 프레임의 별도 구독이나 렌더 기록이 아니라 노드가 소유합니다. 숨긴 상태에서 확정된 수동 파괴 모달은 종료 애니메이션을 표시하지 않습니다.
+- 이 기록은 해당 기능을 제공하는 사본이 만든 노드에 존재합니다. 같은 레지스트리의 이전 호환 사본 노드에는 기록이 없을 수 있으며, 알려진 한계로 그 노드는 기존 종료 동작을 유지합니다. 프레임은 명시적인 false만 억제 근거로 사용하고 레지스트리 구조 버전과 공유 규칙은 유지합니다.
+
+- 각 노드는 유효 closeOnEscape와 trapFocus·lockScroll 옵션을 보존하여 매니저가 전역 접근성 동작을 결정합니다.
+
+- prompt 확인과 returnOnCancel 취소는 현재 값을 그대로 반환하고 일반 취소만 null입니다. 결과 채널은 T | undefined | null을 수용합니다.
+- 확정됐거나 파괴된 노드는 다시 표시하지 않습니다. group과 subtype은 모든 종류에서 유지합니다.
+- prompt의 현재 값은 노드에서 읽으므로 Provider 재마운트 뒤 화면도 입력값을 유지합니다. 일반 취소는 거부가 아닙니다.
 
 ## Acceptance Criteria
 
 ### modal-node-contract — 관찰 가능한 동작
 
-- 일반 취소를 Promise rejection으로 표현하지 않습니다.
-- 소비자는 구독 시 받은 cleanup을 실행해 listener를 해제하며, UI는 노드 외부에서 Promise를 직접 완료하지 않습니다.
+- 파괴는 취소를 완료하고 표시·생존을 내립니다. 중복 확정과 확정 뒤 재표시는 무효입니다.
 
 ## Last Updated
 
-2026-09-16 — destroy와 구독 cleanup의 책임을 현재 생명주기에 맞춤.
+공개 결과·설정·초기화 또는 표시 계약이 바뀔 때 갱신합니다.

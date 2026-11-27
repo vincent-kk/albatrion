@@ -1,16 +1,12 @@
-import { type ReactNode, createContext } from 'react';
+import { type Dispatch, type SetStateAction, createContext } from 'react';
 
+/** Anchor state shared by one Portal.with scope. */
 type PortalContextType = {
-  /**
-   * Callback ref for the anchor element. It is a state setter rather than a ref
-   * object so that attaching or replacing the anchor re-renders the provider —
-   * a ref read during render cannot observe either.
-   */
-  setPortalAnchor: (element: HTMLDivElement | null) => void;
-  /** Registers or replaces the content of the portal owning `id`, keeping its render position. */
-  register: (id: string, element: ReactNode) => void;
-  /** Removes the portal owning `id` from the anchor. */
-  unregister: (id: string) => void;
+  /** Current destination; null until its callback ref attaches. */
+  anchor: HTMLDivElement | null;
+  /** Stable state setter used for attachment and deletion of the current destination. */
+  setPortalAnchor: Dispatch<SetStateAction<HTMLDivElement | null>>;
 };
 
+/** Internal context supplied by Portal.with and consumed by Portal and its anchor. */
 export const PortalContext = createContext<PortalContextType | null>(null);

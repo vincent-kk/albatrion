@@ -1,7 +1,14 @@
-import type { JSONSchemaError } from '@canard/schema-form';
+import type { ValidationIssue } from '@canard/schema-form';
 import type { ErrorObject } from 'ajv';
 
-const JSON_POINTER_SEPARATOR = '/';
+import type { Dictionary } from '@aileron/declare';
+
+import { isChildSchemaPath } from './isChildSchemaPath';
+
+/** Escape tilde before slash when a required-property name needs encoding. */
+const TILDE = /~/g;
+/** Escape slash after tilde when encoding a required-property name. */
+const SLASH = /\//g;
 
 /**
  * Transforms AJV7 error objects to schema-form error format.
@@ -11,20 +18,63 @@ const JSON_POINTER_SEPARATOR = '/';
  * keyword errors by appending the missing property to the dataPath.
  *
  * @param errors - Array of AJV7 error objects
- * @returns Array of transformed JSONSchemaError objects
+ * @param root - Detached schema used to identify single negative requirements.
+ * @param notRequiredKeys - Results retained for the compiled schema by native error path.
+ * @returns Array of transformed ValidationIssue objects
  */
-export const transformErrors = (errors: ErrorObject[]): JSONSchemaError[] => {
+export const transformErrors = (
+  errors: ErrorObject[],
+  root?: object,
+  notRequiredKeys?: Map<string, string | null>,
+): ValidationIssue[] => {
   if (!Array.isArray(errors)) return [];
-  const result = new Array<JSONSchemaError>(errors.length);
+  const result = new Array<ValidationIssue>(errors.length);
   for (let i = 0, l = errors.length; i < l; i++) {
     const ajvError = errors[i];
+    let dataPath = transformDataPath(ajvError);
+    let rejectedKey: string | undefined;
+    if (ajvError.keyword === 'false schema' && dataPath && isChildSchemaPath(ajvError.schemaPath)) {
+      const lastSlash = dataPath.lastIndexOf('/');
+      rejectedKey = dataPath.slice(lastSlash + 1)
+        .replace(/~1/g, '/').replace(/~0/g, '~');
+      dataPath = dataPath.slice(0, lastSlash);
+    }
+    if (ajvError.keyword === 'additionalProperties' && 'additionalProperty' in ajvError.params)
+      rejectedKey = String(ajvError.params.additionalProperty);
+    if (ajvError.keyword === 'unevaluatedProperties' && 'unevaluatedProperty' in ajvError.params)
+      rejectedKey = String(ajvError.params.unevaluatedProperty);
+    if (ajvError.keyword === 'propertyNames' && 'propertyName' in ajvError.params)
+      rejectedKey = String(ajvError.params.propertyName);
+    if (typeof ajvError.propertyName === 'string')
+      rejectedKey = ajvError.propertyName;
+    if (ajvError.keyword === 'not' && root && ajvError.schemaPath.startsWith('#/')) {
+      const path = ajvError.schemaPath;
+      let key = notRequiredKeys?.get(path);
+      if (key === undefined) {
+        key = null;
+        const segments = path.slice(2).split('/');
+        let target: unknown = root;
+        for (const segment of segments) {
+          const token = segment.includes('%') ? decodeURIComponent(segment) : segment;
+          target = typeof target === 'object' && target !== null
+            ? (target as Dictionary<unknown>)[token.replace(/~1/g, '/').replace(/~0/g, '~')]
+            : undefined;
+        }
+        if (typeof target === 'object' && target !== null && 'required' in target &&
+            Array.isArray(target.required) && target.required.length === 1 &&
+            typeof target.required[0] === 'string') key = target.required[0];
+        notRequiredKeys?.set(path, key);
+      }
+      rejectedKey = key ?? rejectedKey;
+    }
     result[i] = {
-      dataPath: transformDataPath(ajvError),
+      dataPath,
       schemaPath: ajvError.schemaPath,
       keyword: ajvError.keyword,
       message: ajvError.message,
       details: ajvError.params,
       source: ajvError,
+      ...(rejectedKey === undefined ? {} : { rejectedKey }),
     };
   }
   return result;
@@ -40,15 +90,12 @@ export const transformErrors = (errors: ErrorObject[]): JSONSchemaError[] => {
  * @returns Transformed dataPath in JSONPointer format
  */
 const transformDataPath = (error: ErrorObject): string => {
-  const dataPath = error.dataPath;
+  const dataPath = error.dataPath || '';
+  if (error.keyword !== 'required') return dataPath;
   const missingProperty = error.params?.missingProperty;
-  const hasMissingProperty = error.keyword === 'required' && missingProperty;
-  if (dataPath)
-    return hasMissingProperty
-      ? dataPath + JSON_POINTER_SEPARATOR + missingProperty
-      : dataPath;
-  else
-    return hasMissingProperty
-      ? JSON_POINTER_SEPARATOR + missingProperty
-      : JSON_POINTER_SEPARATOR;
+  if (typeof missingProperty !== 'string') return dataPath;
+  const name = missingProperty.indexOf('~') === -1 && missingProperty.indexOf('/') === -1
+    ? missingProperty
+    : missingProperty.replace(TILDE, '~0').replace(SLASH, '~1');
+  return dataPath + '/' + name;
 };

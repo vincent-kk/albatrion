@@ -3,22 +3,23 @@
 ## Requirements
 
 - `scan(schema)`은 인스턴스를 반환해 체이닝 가능하며, 실패(예외) 시 원본·처리된 스키마·수집된 참조 상태를 모두 초기화한 뒤 예외를 다시 던진다.
-- `getValue()`는 `scan` 이전 호출 시 `undefined`를, 참조가 전혀 해석되지 않은 스캔 이후에는 원본 스키마 참조를 그대로, 참조가 있었던 스캔 이후에는 원본을 깊은 복제한 뒤 참조 위치에 해석된 값을 채운 새 객체를 반환한다.
-- `getValue()`의 결과는 최초 호출 시 계산되어 캐시되고, 이후 재호출은 같은 캐시를 반환한다.
-- `additionalKeywords`를 지정하면 내장 키워드 뒤에 이어붙이며, 이름이 겹치는 키워드는 나중(사용자) 항목이 내장 항목의 순회 방식을 덮어쓴다.
+- `getValue()`는 공통 출력 계약을 따른다. 연산이 없으면 입력 참조를 그대로 반환하고, 연산이 있으면 입력과 콜백 반환값에 쓰지 않고 출력 사본을 만든다. 해석된 대상은 출현마다 분리한다.
+- `getValue()`의 결과는 최초 호출 시 계산되어 캐시되고, `false`를 포함한 이후 재호출은 같은 캐시를 반환한다.
+- 동기 콜백 안에서 같은 인스턴스의 `scan` 또는 `getValue`를 호출하면 `scan-in-progress` 오류를 던진다. 이 오류를 콜백이 처리하면 바깥 스캔은 계속할 수 있다.
+- `keywords`는 내장 어휘를 대체하고 `additionalKeywords`는 그 뒤에 이어붙인다. 같은 이름은 나중 항목의 순서·종류·방언을 사용한다. 방언과 boolean·inert·정의 역할은 루트의 공통 순회 계약을 따른다.
+- 프로미스 판별을 위해 콜백 반환값의 `then` 속성을 읽지 않는다. 판별의 부수효과가 동기 순회에 섞이지 않게 비동기 드라이버만 대기 기능을 켠다.
 
 ## API Contracts
 
-- `new JSONSchemaScanner(props?)`: `props.visitor`(`enter`/`exit`)와 `props.options`를 받는다. `options.cloneResolvedSchema`는 기본값 `true`(해석된 하위 스키마를 인라인 시점에 깊은 복제), `options.cacheResolvedReference`는 기본값 `false`(참조 문자열별 재해석 결과 메모이제이션)다.
-- `scan(schema): this`: 동기로 순회를 완료한 뒤 `this`를 반환한다.
-- `getValue<OutputSchema>(): OutputSchema | undefined`: 처리된 최종 스키마를 반환한다.
-- entry point는 순회 어휘 상수도 이름으로 재수출한다 — 상수 값 자체는 상위 organ 소유다.
+공통 방문·출력·참조 보존 규칙은 [루트 계약](../../../DETAIL.md)이 소유합니다. 이 드라이버는 콜백 반환값의 then을 읽지 않으며, 동기 해소기의 thenable 결과는 잘못된 프로토콜 결과로 거절합니다. 두 경로를 섞어 사용자 getter나 Promise가 동기 순서를 바꾸지 않게 합니다.
+
+상위 스캐너 모듈이 소유한 어휘 컴파일·방언 판별·복제 구현을 organ 파일로 사용하고, 방언과 기본 키워드 선언은 keyword 모듈 진입점에서 가져옵니다. 이 진입점이 공개되는 하위 경로라는 이유로 구현 헬퍼를 재수출하지 않습니다.
 
 ## Acceptance Criteria
 
 ### real-schema-resolution — 실제 스키마 데이터로 검증한 참조 해석
 
-- exit 방문자에서 수집한 `$ref` → 정의 Map을 `resolveReference` 옵션으로 되돌려주면, `getValue()`가 참조를 정의 내용으로 치환한 스키마를 반환함을 단일 `$defs`·중첩된 `$defs`·`oneOf` 내부 `$ref` 시나리오별로 검증한다.
+- 내장 해소기 또는 명시적인 객체 프로토콜로 참조 대상을 제공하면, `getValue()`가 참조를 정의 내용으로 치환한 스키마를 반환함을 단일 `$defs`·중첩된 `$defs`·`oneOf` 내부 `$ref` 시나리오별로 검증한다.
 - `additionalProperties: false`처럼 해석과 무관한 키워드는 결과 스키마에 원본 그대로 유지됨을 검증한다.
 
 ### cycle-safety — 순환 참조 안전 종료
@@ -33,10 +34,6 @@
 - **Direct import**: `allowed`
 - **Reason**: 디렉터리명이 이미 async 변형과의 구분자 역할을 하므로, 파일명은 담고 있는 클래스명을 그대로 쓴다 — 디렉터리명으로 다시 감싸면 이름이 중복된다. 클래스 본체가 root에 그대로 남아 있어야 파일 경로만으로 클래스 정의를 바로 찾을 수 있다.
 
-## History
-
-- 2026-09-19 — 0.16.0: 0.15.0에서 유지하던 이전 표기 공개 별칭 제거(breaking).
-
 ## Last Updated
 
-2026-09-19 — 0.16.0 공개 별칭 제거 반영
+sync의 공개 경계·입력 해석·반환값 또는 실패 처리 계약이 바뀔 때 갱신합니다.

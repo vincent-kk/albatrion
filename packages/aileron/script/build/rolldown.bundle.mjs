@@ -14,6 +14,7 @@
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
+import { BUILD_PLATFORM } from './utils/buildPlatform.mjs';
 import { createClearDir } from './utils/createClearDir.mjs';
 import { createCopyDeclarations } from './utils/createCopyDeclarations.mjs';
 import {
@@ -21,6 +22,7 @@ import {
   getCodegenOptions,
 } from './utils/getCodegenOptions.mjs';
 import { isExternalModule } from './utils/isExternalModule.mjs';
+import { mapInputs } from './utils/mapInputs.mjs';
 import { validateBundleOptions } from './utils/validateBuildOptions.mjs';
 
 export const getBundleBuildOptions = (callerUrl) => ({
@@ -29,7 +31,7 @@ export const getBundleBuildOptions = (callerUrl) => ({
    *   entry?: string;
    *   entrypoints?: string[];
    *   format: 'esm' | 'cjs' | 'umd' | 'iife';
-   *   outFile?: string;
+   *   outFile?: string | { types?: string; default: string };
    *   outDir?: string;
    *   name?: string;
    *   sourcemap?: boolean;
@@ -52,7 +54,7 @@ const createBundleBuildOptions = (callerUrl) => async (options) => {
     entry,
     entrypoints,
     format,
-    outFile,
+    outFile: outputTarget,
     outDir,
     name,
     sourcemap = false,
@@ -60,6 +62,9 @@ const createBundleBuildOptions = (callerUrl) => async (options) => {
     external,
     tsconfig,
   } = options;
+
+  const outFile = typeof outputTarget === 'object' && outputTarget !== null
+    ? outputTarget.default : outputTarget;
 
   const callerDir = dirname(fileURLToPath(callerUrl));
   const packagesRoot = resolve(callerDir, '../../');
@@ -92,6 +97,7 @@ const createBundleBuildOptions = (callerUrl) => async (options) => {
   return {
     input: inputConfig,
     external: external || isExternalModule,
+    platform: BUILD_PLATFORM,
     tsconfig: tsconfig || join(callerDir, 'tsconfig.json'),
     transform: { target: TRANSFORM_TARGET },
     plugins: [
@@ -120,18 +126,4 @@ const createBundleBuildOptions = (callerUrl) => async (options) => {
           ...esmOnly,
         },
   };
-};
-
-/** @type {(dirName: string, srcFiles: string[]) => Record<string, string>} */
-const mapInputs = (dirName, srcFiles) => {
-  if (!srcFiles || srcFiles.length === 0) {
-    throw new Error('No source files provided');
-  }
-
-  return Object.fromEntries(
-    srcFiles.map((file) => [
-      file.replace(/^(\.\/)?src\//, '').replace(/\.[cm]?(js|ts)$/, ''),
-      join(dirName, file),
-    ]),
-  );
 };

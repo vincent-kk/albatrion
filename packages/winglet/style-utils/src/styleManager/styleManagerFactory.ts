@@ -14,7 +14,11 @@ import { StyleManager, type StyleManagerConfig } from './StyleManager';
  * The returned function adds CSS styles that are automatically scoped with `className=".${scopeId}"`,
  * ensuring styles only apply to elements within that scope.
  *
+ * The injector follows the current scope manager after destroyScope. Each
+ * cleanup removes styles only from the manager that received its injection.
+ *
  * @param scopeId - The unique identifier for the style scope
+ * @param config - Optional ShadowRoot target, omitted for document styles
  * @returns A function that accepts (styleId, cssString) and returns a cleanup function
  *
  * @example
@@ -59,10 +63,5 @@ import { StyleManager, type StyleManagerConfig } from './StyleManager';
 export const styleManagerFactory = (
   scopeId: string,
   config?: StyleManagerConfig,
-): Fn<[styleId: string, cssString: string, compress?: boolean], Fn> => {
-  const manager = StyleManager.get(scopeId, config);
-  return (styleId: string, cssString: string, compress = false) => {
-    manager.add(styleId, cssString, compress);
-    return () => manager.remove(styleId);
-  };
-};
+): Fn<[styleId: string, cssString: string, compress?: boolean], Fn> =>
+  StyleManager.createInjector(scopeId, config);

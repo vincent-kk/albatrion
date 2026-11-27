@@ -1,14 +1,25 @@
-import { performance } from 'node:perf_hooks';
 import { describe, expect, it, vi } from 'vitest';
 
 import { delay } from '../delay';
 
 describe('delay', () => {
-  it('100ms delay 동작 확인', async () => {
-    const start = performance.now();
-    await delay(100);
-    const end = performance.now();
-    expect(end - start).greaterThanOrEqual(99);
+  it('100ms delay는 99ms에는 resolve되지 않고 100ms에 resolve된다', async () => {
+    // 실제 타이머의 경과 시간은 이벤트 루프 시각 기준이라 1ms 짧게 측정될 수 있다.
+    // 가상 타이머로 경계를 고정한다.
+    vi.useFakeTimers();
+    try {
+      const resolved = vi.fn();
+      const promise = delay(100).then(resolved);
+
+      await vi.advanceTimersByTimeAsync(99);
+      expect(resolved).not.toHaveBeenCalled();
+
+      await vi.advanceTimersByTimeAsync(1);
+      expect(resolved).toHaveBeenCalledTimes(1);
+      await promise;
+    } finally {
+      vi.useRealTimers();
+    }
   });
 
   it('AbortSignal을 통한 delay 취소', async () => {

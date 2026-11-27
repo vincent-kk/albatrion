@@ -14,6 +14,8 @@
   - 그 외 `isReactComponent(Component)`가 true면 `createElement(Component, props)` 결과를 반환한다.
   - 위 어느 것에도 해당하지 않으면(문자열·숫자 등 truthy 비컴포넌트 값 포함) `null`을 반환한다.
 
+`0`과 빈 문자열도 다른 falsy 값과 같은 비렌더 입력입니다. 이 헬퍼는 텍스트를 렌더하는 경로를 제공하지 않으므로 유효한 ReactNode라는 이유만으로 직접 출력하지 않습니다.
+
 ## Acceptance Criteria
 
 ### falsy-to-null — falsy·비컴포넌트 truthy 입력은 null
@@ -38,10 +40,6 @@
 - **Direct import**: `allowed`
 - **Reason**: 이 fractal도 공개 유닛이 하나뿐이라 organ으로 감싸는 재배치는 배럴 홉만 늘릴 뿐이다 — 루트 flat 파일이 정본 형태다. zero-peer 승인은 `.filid` 설정의 scoped exempt와 쌍이다.
 
-## History
-
-- 2026-08-18 — falsy·비컴포넌트 truthy 입력을 렌더하지 않는 기존 동작을 `renderComponent.falsy.test.tsx`로 고정했다. 감사는 `0`·`''`를 유효한 ReactNode로 보고 렌더되지 않는 것을 버그로 지적했으나, 문자열을 렌더하지 않는 기존 계약과 일관되므로 의도된 동작으로 확정했다. 구현(`renderComponent.tsx`) 자체는 변경하지 않았다.
-
 ## Last Updated
 
-2026-08-18 — 최초 계약 작성. `renderComponent` 단일 유닛 계약 수립.
+render의 공개 경계·입력 해석·반환값 또는 실패 처리 계약이 바뀔 때 갱신합니다.

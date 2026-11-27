@@ -14,6 +14,13 @@ prototype chain and therefore no inherited properties or methods from
 Object.prototype. This creates the purest form of an empty object in
 JavaScript, ideal for use as a map or dictionary.
 
+## Import
+
+```typescript
+import { getEmptyObject } from '@winglet/common-utils/object';
+import { getEmptyObject } from '@winglet/common-utils';
+```
+
 ## Signature
 
 ```typescript
@@ -153,7 +160,7 @@ console.timeEnd('regular object'); // ~1.2ms
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/common-utils": "0.12.3" }}
+  dependencies={{ "@winglet/common-utils": "0.15.0" }}
   code={`import { getEmptyObject } from '@winglet/common-utils';
 
 // Create a truly empty object

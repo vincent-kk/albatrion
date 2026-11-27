@@ -1,16 +1,18 @@
-import { Fragment, memo, useCallback, useMemo, useState } from 'react';
+import { Fragment, memo, useMemo, useRef, useState } from 'react';
 
 import { isFunction, isString } from '@winglet/common-utils/filter';
-import { withErrorBoundary } from '@winglet/react-utils/hoc';
+import { isReactComponent } from '@winglet/react-utils/filter';
 import { useHandle } from '@winglet/react-utils/hook';
 import { renderComponent } from '@winglet/react-utils/render';
 
-import type { PromptNode } from '@/promise-modal/core';
+import type { Fn } from '@aileron/declare';
+
+import type { PromptNode } from '@/promise-modal/core/node';
+import type { ModalActions } from '@/promise-modal/core/node';
 import {
   useConfigurationContext,
   useUserDefinedContext,
 } from '@/promise-modal/providers';
-import type { ModalActions } from '@/promise-modal/types';
 
 interface PromptInnerProps<T, B> {
   modal: PromptNode<T, B>;
@@ -30,14 +32,16 @@ export const PromptInner = memo(
     } = useMemo(
       () => ({
         ...modal,
-        Input: memo(withErrorBoundary(modal.Input)),
+        Input: modal.Input,
       }),
       [modal],
     );
 
     const { context: userDefinedContext } = useUserDefinedContext();
 
-    const [value, setValue] = useState<T | undefined>(defaultValue);
+    const [value, setValue] = useState<T | undefined>(modal.value);
+
+    const valueRef = useRef(modal.value);
 
     const { onChange, onClose, onConfirm } = useMemo(
       () => handlers,
@@ -46,17 +50,17 @@ export const PromptInner = memo(
 
     const handleClose = useHandle(onClose);
     const handleChange = useHandle(
-      (inputValue?: T | ((prevState: T | undefined) => T | undefined)) => {
-        const input = isFunction(inputValue) ? inputValue(value) : inputValue;
+      (inputValue?: T | Fn<[prevState: T | undefined], T | undefined>) => {
+        const input = isFunction(inputValue)
+          ? inputValue(valueRef.current)
+          : inputValue;
+        valueRef.current = input;
         setValue(input);
         onChange(input);
       },
     );
 
-    const handleConfirm = useCallback(() => {
-      // Wait for the next tick to ensure the value is updated
-      requestAnimationFrame(onConfirm);
-    }, [onConfirm]);
+    const handleConfirm = useHandle(onConfirm);
 
     const disabled = useMemo(
       () => (checkDisabled ? !!checkDisabled(value) : false),
@@ -93,12 +97,14 @@ export const PromptInner = memo(
             <ContentComponent context={userDefinedContext}>
               {content}
             </ContentComponent>
-          ) : (
+          ) : typeof content === 'function' || isReactComponent(content) ? (
             renderComponent(content, {
               onConfirm: handleConfirm,
               onCancel: handleClose,
               context: userDefinedContext,
             })
+          ) : (
+            content
           ))}
 
         {Input && (

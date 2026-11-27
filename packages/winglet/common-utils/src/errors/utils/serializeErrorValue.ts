@@ -53,7 +53,7 @@ export const serializeErrorValue = (
   if (Array.isArray(value)) {
     const result: unknown[] = new Array(value.length);
     for (let i = 0, l = value.length; i < l; i++)
-      result[i] = serializeErrorValue(value[i], path, String(i)) ?? null;
+      result[i] = serializeErrorValue(value[i], path, '' + i) ?? null;
     return result;
   }
 

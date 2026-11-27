@@ -1,0 +1,25 @@
+---
+title: 'UseErrorBoundaryReporter'
+sidebar_label: 'UseErrorBoundaryReporter'
+---
+<!-- sync-winglet-docs:auto -->
+
+import WingletPlayground from '@site/src/components/WingletPlayground';
+
+# UseErrorBoundaryReporter
+
+Reads an optional render error reporter from the current React context.
+
+## Import
+
+```typescript
+import type { UseErrorBoundaryReporter } from '@winglet/react-utils/hoc';
+import type { UseErrorBoundaryReporter } from '@winglet/react-utils';
+```
+
+## Signature
+
+```typescript
+export type UseErrorBoundaryReporter = Fn<[
+], ErrorBoundaryReporter | undefined>
+```

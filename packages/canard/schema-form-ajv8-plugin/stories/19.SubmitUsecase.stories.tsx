@@ -1,6 +1,6 @@
 import { useCallback, useRef, useState } from 'react';
 
-import type { FormHandle, JSONSchemaError } from '@canard/schema-form';
+import type { FormHandle, ValidationIssue } from '@canard/schema-form';
 import {
   Form,
   type JSONSchema,
@@ -45,7 +45,7 @@ export const UseSubmitHandler = () => {
   } satisfies JSONSchema;
 
   const [value, setValue] = useState<Record<string, unknown>>();
-  const [errors, setErrors] = useState<JSONSchemaError[]>();
+  const [errors, setErrors] = useState<readonly ValidationIssue[]>();
 
   const handleSubmit = useCallback((value?: Record<string, unknown>) => {
     return new Promise<void>((resolve) => {
@@ -76,7 +76,7 @@ export const UseSubmitHandler = () => {
           } catch (e) {
             if (isValidationError(e))
               console.log('Error', e.message, e.details);
-            refHandle.current?.showError(true);
+            refHandle.current?.revealErrors();
           }
         }}
         disabled={pending}
@@ -134,7 +134,7 @@ export const UseSubmitHandlerWithNoValidation = () => {
   } satisfies JSONSchema;
 
   const [value, setValue] = useState<Record<string, unknown>>();
-  const [errors, setErrors] = useState<JSONSchemaError[]>();
+  const [errors, setErrors] = useState<readonly ValidationIssue[]>();
 
   const handleSubmit = useCallback((value?: Record<string, unknown>) => {
     return new Promise<void>((resolve) => {
@@ -166,7 +166,7 @@ export const UseSubmitHandlerWithNoValidation = () => {
           } catch (e) {
             if (isValidationError(e))
               console.log('Error', e.message, e.details);
-            refHandle.current?.showError(true);
+            refHandle.current?.revealErrors();
           }
         }}
         disabled={pending}
@@ -204,7 +204,7 @@ export const UseSubmitHandlerWithOnRequestValidation = () => {
   } satisfies JSONSchema;
 
   const [value, setValue] = useState<Record<string, unknown>>();
-  const [errors, setErrors] = useState<JSONSchemaError[]>();
+  const [errors, setErrors] = useState<readonly ValidationIssue[]>();
 
   const handleSubmit = useCallback((value?: Record<string, unknown>) => {
     return new Promise<void>((resolve) => {
@@ -236,7 +236,7 @@ export const UseSubmitHandlerWithOnRequestValidation = () => {
           } catch (e) {
             if (isValidationError(e))
               console.log('Error', e.message, e.details);
-            refHandle.current?.showError(true);
+            refHandle.current?.revealErrors();
           }
         }}
         disabled={pending}

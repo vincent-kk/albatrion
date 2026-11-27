@@ -1,7 +1,7 @@
 import {
   type CSSProperties,
   type ComponentType,
-  type PropsWithChildren,
+  type PropsWithChildren, type ReactElement,
   memo,
   useMemo,
 } from 'react';
@@ -21,17 +21,18 @@ import {
   FallbackSubtitle,
   FallbackTitle,
 } from '@/promise-modal/components/FallbackComponents';
+import { mergeDefined } from '@/promise-modal/helpers/mergeDefined';
+import { normalizeDuration } from '@/promise-modal/helpers/normalizeDuration';
 import type {
+  BackgroundComponent,
   FooterComponentProps,
-  ModalFrameProps,
-  ModalOptions,
+  ForegroundComponent,
   WrapperComponentProps,
-} from '@/promise-modal/types';
+} from '@/promise-modal/types/base';
+import type { ConfigurationContextProps } from '@/promise-modal/types/context';
+import type { ModalOptions } from '@/promise-modal/types/option';
 
-import {
-  ConfigurationContext,
-  type ConfigurationContextProps,
-} from './ConfigurationContext';
+import { ConfigurationContext } from './ConfigurationContext';
 
 const DEFAULT_OPTIONS = {
   zIndex: DEFAULT_Z_INDEX,
@@ -39,11 +40,15 @@ const DEFAULT_OPTIONS = {
   backdrop: { backgroundColor: DEFAULT_BACKDROP_COLOR },
   closeOnBackdropClick: true,
   manualDestroy: false,
-} satisfies Required<ConfigurationContextProps['options']>;
+  trapFocus: true,
+  lockScroll: true,
+} satisfies Required<
+  Omit<ConfigurationContextProps['options'], 'closeOnEscape'>
+>;
 
 export interface ConfigurationContextProviderProps {
-  BackgroundComponent?: ComponentType<ModalFrameProps>;
-  ForegroundComponent?: ComponentType<ModalFrameProps>;
+  BackgroundComponent?: BackgroundComponent;
+  ForegroundComponent?: ForegroundComponent;
   TitleComponent?: ComponentType<WrapperComponentProps>;
   SubtitleComponent?: ComponentType<WrapperComponentProps>;
   ContentComponent?: ComponentType<WrapperComponentProps>;
@@ -61,7 +66,7 @@ export const ConfigurationContextProvider = memo(
     FooterComponent,
     options: inputOptions,
     children,
-  }: PropsWithChildren<ConfigurationContextProviderProps>) => {
+  }: PropsWithChildren<ConfigurationContextProviderProps>): ReactElement => {
     const constant = useMemorize(() => ({
       BackgroundComponent,
       ForegroundComponent: ForegroundComponent || FallbackForegroundFrame,
@@ -82,7 +87,14 @@ export const ConfigurationContextProvider = memo(
         SubtitleComponent: constant.SubtitleComponent,
         ContentComponent: constant.ContentComponent,
         FooterComponent: constant.FooterComponent,
-        options: { ...defaultOptions, ...options, backdrop },
+        options: {
+          ...mergeDefined(defaultOptions, options ?? {}),
+          backdrop,
+          duration: normalizeDuration(
+            options?.duration,
+            DEFAULT_ANIMATION_DURATION,
+          ),
+        },
       };
     }, [constant, options]);
     return (

@@ -1,21 +1,21 @@
 # CLAUDE.md
 
-`@winglet/common-utils` — 범용 TypeScript 유틸리티 라이브러리. 런타임 의존성 없음. Sub-path export로 tree-shaking 최적화.
+`@winglet/common-utils` is a general-purpose TypeScript utility library with no runtime dependencies. Sub-path exports optimize tree-shaking.
 
 ## Commands
 
 ```bash
-yarn build             # ESM + CJS 빌드 + 타입 선언 + agents-hashes.json
-yarn build:hashes      # docs/agents/** 해시 매니페스트만 재생성
-yarn test              # Vitest 테스트 (Node 환경)
-yarn test --coverage   # 커버리지 포함
+yarn build             # ESM + CJS build + type declarations + agents-hashes.json
+yarn build:hashes      # Regenerate only the docs/agents/** hash manifest
+yarn test              # Vitest tests (Node environment)
+yarn test --coverage   # Include coverage
 yarn lint              # ESLint
 ```
 
 ## Agent Docs Injector
 
-`docs/agents/**` 자산을 선택한 에이전트 위치에 주입. 엔진: `@slats/agents-assets-sync` (bin: `inject-agents-settings`).
-`--agent` 로 대상 에이전트를 고른다 — `claude` 는 `.claude/{skills,rules,commands}`, `codex`/`agents` 는 `.agents/skills` + `AGENTS.md` 마커 블록(project scope 기준).
+Inject `docs/agents/**` assets into the selected agent's locations. Engine: `@slats/agents-assets-sync` (bin: `inject-agents-settings`).
+Select agents with `--agent`: `claude` uses `.claude/{skills,rules,commands}`; `codex`/`agents` use `.agents/skills` and marker blocks in `AGENTS.md` (at project scope).
 
 ```bash
 npx -p @slats/agents-assets-sync inject-agents-settings --package=@winglet/common-utils --agent=claude --scope=user
@@ -26,8 +26,8 @@ npx -p @slats/agents-assets-sync inject-agents-settings --package=@winglet/commo
 
 ### Isolation Guardrails
 
-- `src/**` 는 `docs/**` 와 `@slats/agents-assets-sync` 어느 것도 import 금지.
-- **절대 `exports` 에 `./docs/*` 를 추가하지 말 것.**
+- `src/**` MUST NOT import from `docs/**` or `@slats/agents-assets-sync`.
+- **Never add `./docs/*` to `exports`.**
 
 ## Sub-path Exports
 
@@ -36,15 +36,15 @@ import { chunk } from '@winglet/common-utils/array';
 import { isArray, isObject } from '@winglet/common-utils/filter';
 import { debounce, throttle } from '@winglet/common-utils/function';
 import { delay, timeout } from '@winglet/common-utils/promise';
-// 또는 전체: import { ... } from '@winglet/common-utils';
+// Or import the full package: import { ... } from '@winglet/common-utils';
 ```
 
 ## Utility Categories
 
-| 경로 | 주요 함수 |
+| Path | Main Functions |
 |------|---------|
 | `array` | `chunk`, `unique`, `groupBy`, `difference`, `intersection`, `forEach*` |
-| `filter` | `isString/Number/Boolean/Object/Array/Nil/Date...` 타입 체크 |
+| `filter` | `isString/Number/Boolean/Object/Array/Nil/Date...` type checks |
 | `object` | `clone`, `merge`, `equals`, `stringifyGraph`, `createFingerprint`, `transformKeys` |
 | `function` | `debounce`, `throttle`, `getTrackableHandler` |
 | `promise` | `delay`, `timeout`, `withTimeout`, `waitAndExecute` |

@@ -57,6 +57,7 @@ Resolve these before starting. If any is missing, stop and ask.
 Stop and report on any failure. Do not attempt to fix silently.
 
 - [ ] `${TARGET_PATH}/docs/agents/skills/<name>/SKILL.md` and `knowledge/*.md` exist — the docs to be injected.
+- [ ] Every `${TARGET_PATH}/docs/agents/rules/**` file closes its fenced code blocks and HTML comments and keeps fences at the top level — none inside a list item or blockquote, none indented with a tab or four or more spaces. The engine refuses such a rule with exit code 1, even on `--dry-run`.
 - [ ] `${TARGET_PATH}/package.json` has `"type": "module"` and `"sideEffects": false`.
 - [ ] Build pipeline uses `rolldown -c && yarn build:types` where `build:types` runs `node ../../aileron/script/build/buildTypes.mjs`.
 - [ ] `git status` in `${TARGET_PATH}` is clean. Unrelated changes present → confirm with user before proceeding.

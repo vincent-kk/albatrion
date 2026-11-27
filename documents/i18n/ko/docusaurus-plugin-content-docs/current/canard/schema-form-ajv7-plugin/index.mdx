@@ -9,24 +9,24 @@ import ForAI from '@site/src/components/ForAI';
 
 <PackageHeader name="@canard/schema-form-ajv7-plugin" />
 
-`@canard/schema-form`를 위한 AJV 7.x 검증 플러그인입니다.
-JSON Schema Draft-07과 Draft 2019-09를 지원합니다.
+`@canard/schema-form`을 위한 AJV 7.x 검증 플러그인입니다.
+기본 인스턴스는 JSON Schema Draft-07을 검증하며, Draft 2019-09에는 `Ajv2019` 인스턴스(`ajv/dist/2019.js`)를 바인딩하십시오.
 AJV 6에서 AJV 8로의 마이그레이션 단계로 유용하며,
 AJV 8으로 업그레이드하지 않고 Draft 2019-09 지원이 필요한 경우에 사용하세요.
 
 :::tip 공식 문서
-- [AJV Documentation](https://ajv.js.org/)
+- [AJV 문서](https://ajv.js.org/)
 - [JSON Schema Draft 2019-09](https://json-schema.org/draft/2019-09/release-notes)
 :::
 
-## Installation
+## 설치 {#installation}
 
 ```bash
-yarn add @canard/schema-form-ajv7-plugin
+yarn add @canard/schema-form @canard/schema-form-ajv7-plugin
 # ajv@^7 is bundled as a direct dependency
 ```
 
-## Quick Setup
+## 빠른 설정 {#quick-setup}
 
 ```ts
 import { registerPlugin } from '@canard/schema-form';
@@ -35,7 +35,7 @@ import { plugin } from '@canard/schema-form-ajv7-plugin';
 registerPlugin(plugin);
 ```
 
-## Default Configuration
+## 기본 설정 {#default-configuration}
 
 ```ts
 // Internal defaults applied when no custom AJV instance is bound
@@ -43,10 +43,11 @@ registerPlugin(plugin);
   allErrors: true,          // collect all errors, not just the first
   strict: false,            // disable strict mode for schema compatibility
   validateFormats: false,   // format validation disabled for performance
+  multipleOfPrecision: 9,   // accept decimal multiples such as 19.99 for multipleOf: 0.01
 }
 ```
 
-## Custom AJV Instance
+## 사용자 정의 AJV 인스턴스 {#custom-ajv-instance}
 
 ```ts
 import Ajv from 'ajv';
@@ -57,7 +58,13 @@ const ajv = new Ajv({ allErrors: true, strict: false });
 plugin.validator.bind(ajv);
 ```
 
-## Using `createValidatorFactory` Directly
+## 인스턴스 요구 사항 {#instance-requirements}
+
+- `bind`, `createValidator`, `createValidatorFactory`는 `coerceTypes`, `useDefaults`, `removeAdditional` 중 하나가 켜진 인스턴스에 `ValidatorBindRefusedError`(`group: 'UNHANDLED_ERROR'`, `code: 'UNHANDLED_ERROR.VALIDATOR_BIND_REFUSED'`)를 던집니다. 나중에 이 옵션을 켜면 다음 검증 또는 가드 컴파일이 예외를 던집니다. 데이터를 수정해야 하는 코드에는 별도의 AJV 인스턴스를 사용하십시오.
+- 플러그인은 폼 루트를 사적 컴파일러에서 컴파일하며 루트의 `$id`를 애플리케이션 인스턴스에 추가하지 않습니다. 애플리케이션 코드가 조회하거나 다른 루트가 참조하는 스키마는 `addSchema`로 등록하고, 비동기 검증이 필요하면 `$async: true`를 선언하십시오.
+- 사용자 지정 AJV 하위 클래스는 생성자에서 스키마나 메타 스키마를 등록하지 않아야 합니다. 인스턴스를 생성한 뒤 등록하십시오.
+
+## `createValidatorFactory` 직접 사용하기 {#using-createvalidatorfactory-directly}
 
 ```ts
 import Ajv from 'ajv';
@@ -66,41 +73,137 @@ import { createValidatorFactory } from '@canard/schema-form-ajv7-plugin';
 const ajv = new Ajv({ allErrors: true });
 const validate = createValidatorFactory(ajv)(myJSONSchema);
 
-const errors = await validate(formData); // null | ValidationError[]
+const errors = await validate(formData); // null | ValidationIssue[]
 ```
 
-## AJV 7.x Notes
+## `createValidator`로 Form별 검증기 만들기 {#per-form-validator-with-createvalidator}
 
-- Error paths use **JSONPointer** format natively — no path transformation needed (unlike AJV 6).
-- `strict: false` is set by default for compatibility with schemas that use custom keywords.
-- Does not support Draft 2020-12. Use `@canard/schema-form-ajv8-plugin/2020` for that.
+`createValidator(ajv, options?)`는 `plugin.validator`와 독립된 완전한 검증기 객체를 돌려주며 Form의 `validatorFactory`에 전달합니다. 새 객체는 Form이 트리를 다시 만들게 하므로 렌더 밖에서 한 번만 만드십시오.
+
+```tsx
+import { Form } from '@canard/schema-form';
+import { createValidator } from '@canard/schema-form-ajv7-plugin';
+import Ajv from 'ajv';
+
+const validator = createValidator(new Ajv({ allErrors: true }));
+const schema = { type: 'object', properties: { name: { type: 'string' } } } as const;
+
+export const NameForm = () => <Form jsonSchema={schema} validatorFactory={validator} />;
+```
+
+## 커스텀 AJV 인스턴스와 사용자 정의 키워드 {#custom-ajv-instance-and-custom-keywords}
+
+`createValidator(ajv)`로 사용자 AJV 인스턴스를 Form에 전달합니다. 새 검증기 객체는 Form이 트리를 다시 만들게 하므로 인스턴스와 검증기는 모듈 범위에서 한 번만 만드십시오.
+
+```tsx
+import { Form, type JSONSchema } from '@canard/schema-form';
+import { createValidator } from '@canard/schema-form-ajv7-plugin';
+import Ajv from 'ajv';
+
+const ajv = new Ajv({ strict: false });
+ajv.addKeyword({
+  keyword: 'isEven',
+  schemaType: 'boolean',
+  validate: (schema: boolean, data: unknown) =>
+    typeof data === 'number' && (data % 2 === 0) === schema,
+});
+const validator = createValidator(ajv);
+
+const schema = {
+  type: 'object',
+  properties: { n: { type: 'number' } },
+  if: { type: 'object', properties: { n: { isEven: true } }, required: ['n'] },
+  then: { properties: { evenField: { type: 'string' } } },
+  else: { properties: { oddField: { type: 'string' } } },
+} satisfies JSONSchema;
+
+export const EvenOddForm = () => (
+  <Form jsonSchema={schema} defaultValue={{ n: 2 }} validatorFactory={validator} />
+);
+```
+
+모든 Form에서 이 인스턴스를 쓰려면 대신 플러그인에 바인딩하고 플러그인을 등록하십시오.
+
+```ts
+import { registerPlugin } from '@canard/schema-form';
+import { plugin } from '@canard/schema-form-ajv7-plugin';
+
+plugin.validator.bind(ajv);
+registerPlugin(plugin);
+```
+
+플러그인은 인스턴스의 사적 사본으로 검증하고 `if` 조건을 평가합니다. 다음 컴파일 전에 인스턴스에 추가한 키워드와 포맷은 양쪽에 모두 적용되며, `createValidator(ajv)` 뒤 Form이 마운트되기 전에 추가한 포맷도 마찬가지입니다. 위 폼에서는 `n`이 2인 동안 `evenField`가 있고, `n`이 3이 되면 `oddField`가 그 자리를 대신합니다.
+
+### `oneOf`·`anyOf` 분기 선택 {#choosing-a-oneof-or-anyof-branch}
+
+분기는 다음 세 방법 중 하나로 선택됩니다.
+
+1. 분기에 둔 `controls.active`
+2. 객체에 둔 `controls.discriminator`와 각 분기의 `const`·`enum` 태그
+3. 분기에 둔 `if`와 `else: false`. `if`는 검증기가 판정하므로 사용자 정의 키워드로 분기를 선택할 수 있습니다.
+
+```ts
+const schema = {
+  type: 'object',
+  properties: { n: { type: 'number' } },
+  oneOf: [
+    {
+      if: { type: 'object', properties: { n: { isEven: true } }, required: ['n'] },
+      then: { properties: { evenField: { type: 'string' } } },
+      else: false,
+    },
+    {
+      if: { type: 'object', properties: { n: { isEven: false } }, required: ['n'] },
+      then: { properties: { oddField: { type: 'string' } } },
+      else: false,
+    },
+  ],
+} satisfies JSONSchema;
+```
+
+세 방법 중 어느 것도 없는 분기는 항상 폼에 포함됩니다. 그런 분기에 직접 쓴 키워드는 검증에는 참여하지만 분기를 선택하지 않습니다. 각 분기가 자기 필드 옆에 `n: { isEven: … }`만 두면 `evenField`와 `oddField`가 모두 폼에 남습니다. `controls.active`와 discriminator는 [조합과 조건 게이트](../schema-form/schema-reference.mdx#composition)를 참고하십시오.
+
+### 한계 {#limits}
+
+- AJV가 컴파일할 수 없는 조건은 그 가드를 실패시킵니다. AJV 7이 기본으로 켜는 엄격 모드 인스턴스에 조건이 쓰는 키워드가 없는 경우가 그 예입니다. 이때 `then`과 `else` 어느 쪽도 적용되지 않고 `onError`는 `GUARD_FAILED` 기록(`FormErrorCode.GuardFailed`) 하나를 받으며, 이후 조건을 다시 평가하는 쓰기는 값을 반영하되 그 오류를 던집니다. 프로덕션 빌드에서는 Form이 마운트될 때에도 이 오류가 잡히지 않은 오류로 발생합니다. Form이 컴파일하기 전에 모든 키워드를 추가하거나, AJV가 알 수 없는 키워드를 무시하는 `strict: false`를 사용하십시오.
+- 가드는 동기적입니다. 비동기 키워드(`async: true`)를 쓰는 조건은 컴파일에 실패합니다(`async keyword in sync schema`).
+- 가드는 `if`를 가진 객체의 값만 받습니다. 부모나 루트 데이터를 읽는 키워드와 `$data`도 그 값만 봅니다.
+- 플러그인은 `coerceTypes`, `useDefaults`, `removeAdditional`이 켜진 인스턴스를 거부합니다. `modifying: true`로 선언한 키워드는 거부하지 않으므로, 그런 키워드가 폼의 값을 바꾸지 않게 하는 것은 소비자의 책임입니다.
+
+## AJV 7.x 참고 사항 {#ajv-7x-notes}
+
+- 오류 경로는 AJV 6·8 플러그인과 마찬가지로 기본적으로 **JSONPointer** 형식을 사용하며, `required` issue는 누락된 속성 이름을 `dataPath`에 덧붙입니다.
+- 사용자 정의 키워드를 사용하는 스키마와의 호환성을 위해 기본적으로 `strict: false`를 설정합니다.
+- Draft 2020-12는 지원하지 않습니다. 해당 Draft에는 `@canard/schema-form-ajv8-plugin/2020`을 사용하십시오.
 
 <ForAI>
 
-## AI Reference
+## AI 참조 {#ai-reference}
 
-**Package**: `@canard/schema-form-ajv7-plugin` v0.10.0
-**Purpose**: AJV 7.x validator plugin — Draft-07 and Draft 2019-09 support.
+**패키지**: `@canard/schema-form-ajv7-plugin`
+**목적**: AJV 7.x 검증 플러그인으로, 기본값은 Draft-07이며 Draft 2019-09는 `Ajv2019` 인스턴스를 바인딩해 사용합니다.
 
-### Exports
+### 내보내기 {#exports}
 ```ts
 import { plugin } from '@canard/schema-form-ajv7-plugin';
 import { createValidatorFactory } from '@canard/schema-form-ajv7-plugin';
+import { createValidator } from '@canard/schema-form-ajv7-plugin';
 ```
 
-### Usage
+### 사용법 {#usage}
 ```ts
 registerPlugin(plugin);                         // use default AJV config
 plugin.validator.bind(new Ajv({ ... }));        // bind custom AJV instance
 createValidatorFactory(ajv)(schema);            // standalone usage without plugin
+createValidator(ajv);                            // per-Form validatorFactory object
 ```
 
-### Default AJV config
-`{ allErrors: true, strict: false, validateFormats: false }`
+### 기본 AJV 설정 {#default-ajv-config}
+`{ allErrors: true, strict: false, validateFormats: false, multipleOfPrecision: 9 }`
 
-### Key behaviors
-- Native JSONPointer error paths (no transform needed unlike AJV 6)
-- `strict: false` for custom keyword compatibility
-- Does NOT support Draft 2020-12 → use ajv8-plugin/2020
+### 주요 동작 {#key-behaviors}
+- AJV 6·8 플러그인과 마찬가지로 기본적으로 JSONPointer 오류 경로를 사용합니다.
+- 사용자 정의 키워드와의 호환성을 위해 `strict: false`를 사용합니다.
+- Draft 2020-12는 지원하지 않으므로 ajv8-plugin/2020을 사용하십시오.
 
 </ForAI>

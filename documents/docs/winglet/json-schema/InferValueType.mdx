@@ -1,0 +1,44 @@
+---
+title: 'InferValueType'
+sidebar_label: 'InferValueType'
+---
+<!-- sync-winglet-docs:auto -->
+
+import WingletPlayground from '@site/src/components/WingletPlayground';
+
+# InferValueType
+
+Infers the value type from a JSON Schema type definition.
+- For single types (e.g., 'string'), returns the corresponding value type
+- For nullable types (e.g., ['string', 'null']), returns the value type | null
+- For the officially supported OpenAPI 3.0 `nullable: true`, also returns the value type | null
+- For single-member arrays (e.g., ['string']), unwraps to the member's value type
+- For pure null type, returns NullValue
+- For 'object'/'array', recurses into literal `properties`/`prefixItems`/`items`
+(i.e. the schema is `as const`); otherwise falls back to ObjectValue/ArrayValue
+`nullable: true` is the officially supported OpenAPI 3.0 compatible notation,
+equivalent to adding 'null' to the type array. Consumers interpret both at
+runtime (@canard/schema-form accepts null for a nullable node), so inference
+follows the same contract. The type array is checked first, so a schema
+carrying both never gets NullValue added twice.
+Known limit: `nullable` must be the literal `true` at the type level. A schema
+whose `nullable` widened to `boolean` (no `as const`/`satisfies`, or an explicit
+`boolean` annotation) infers without `| null`, because a static type cannot know
+the runtime value. That direction is deliberate — stricter than the runtime never
+admits a value the form would reject.
+
+## Import
+
+```typescript
+import type { InferValueType } from '@winglet/json-schema';
+```
+
+## Signature
+
+```typescript
+export type InferValueType<T extends {
+    type?: string | readonly string[] | string[];
+}> = T extends {
+    type: infer Type;
+} ? IsNullableSchema<T, Type> extends true ? InferNonNullableValueType<T, ExtractPrimaryType<Type>> | NullValue : InferNonNullableValueType<T, ExtractPrimaryType<Type>> : AnyValue
+```

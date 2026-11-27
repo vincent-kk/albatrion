@@ -19,6 +19,7 @@
     "node_modules",
     "dist",
     "**/__tests__/**",
+    "**/__benchmarks__/**",
     "**/coverage/**",
     "**/stories/**",
     "**/*.test.ts",

@@ -34,4 +34,4 @@
 
 ## Last Updated
 
-2026-08-18 — 최초 계약 작성. `remainOnlyReactComponent` 단일 유닛 계약 수립.
+object의 공개 경계·입력 해석·반환값 또는 실패 처리 계약이 바뀔 때 갱신합니다.

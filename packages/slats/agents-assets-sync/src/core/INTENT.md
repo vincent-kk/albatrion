@@ -2,7 +2,7 @@
 
 ## Purpose
 
-에이전트 자산 주입에 필요한 UI 비의존 기본 연산을 소유합니다. 프로젝트 위치·에이전트 목적지·해시 비교·적용 계획·실제 적용을 조합할 수 있게 제공하며, 전체 실행을 조율하는 함수는 이 모듈에 두지 않습니다. 대화형·일반 텍스트·JSON 렌더러가 이 연산을 조합합니다.
+출력 방식과 독립적인 자산 주입의 검증·계획·적용 경계를 소유합니다. 파일시스템 스냅샷을 읽고 하나의 계획과 결과를 만들며 UI에는 입력 요청과 표시 모델만 전달합니다.
 
 ## Structure
 
@@ -18,16 +18,16 @@
 
 ### Always do
 
-- Each sub-fractal is reachable only through its `index.ts` barrel
-- Propagate exit code through `InjectReport.exitCode` (0 / 1 / 2)
+- 각 하위 프랙탈은 자신의 `index.ts` 배럴로만 접근합니다.
+- 종료 코드는 `InjectReport.exitCode`(0 / 1 / 2)로 전달합니다.
 
 ### Ask first
 
-- Adding a sub-fractal, or an agent to `AgentType`
-- Expanding the public API beyond what `commands/` and `ui/` consume
+- 하위 프랙탈을 추가하거나 `AgentType`에 에이전트를 추가할 때.
+- `commands/`와 `ui/`가 소비하는 범위를 넘어 공개 API를 넓힐 때.
 
 ### Never do
 
-- Import from `commands/` or `ui/` anywhere in this tree
-- Perform TTY prompts — prompting is a renderer concern
-- Touch content in a shared document outside this tool's own markers
+- 이 트리 안에서는 `commands/`나 `ui/`에서 가져오지 않습니다.
+- TTY 질문을 수행하지 않습니다. 질문은 렌더러의 책임입니다.
+- 공유 문서에서 이 도구 소유 마커 밖의 내용을 변경하지 않습니다.

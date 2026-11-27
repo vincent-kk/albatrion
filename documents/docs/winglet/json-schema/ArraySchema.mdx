@@ -1,0 +1,23 @@
+---
+title: 'ArraySchema'
+sidebar_label: 'ArraySchema'
+---
+<!-- sync-winglet-docs:auto -->
+
+import WingletPlayground from '@site/src/components/WingletPlayground';
+
+# ArraySchema
+
+Array type schema
+
+## Import
+
+```typescript
+import type { ArraySchema } from '@winglet/json-schema';
+```
+
+## Signature
+
+```typescript
+export type ArraySchema<Options extends Dictionary = object, Schema extends UnknownSchema = JSONSchema> = NonNullableArraySchema<Options, Schema> | NullableArraySchema<Options, Schema>
+```

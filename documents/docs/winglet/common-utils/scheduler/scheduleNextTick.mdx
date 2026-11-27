@@ -14,6 +14,13 @@ current I/O events and microtasks but before subsequent I/O polling. Automatical
 selects the most appropriate scheduling mechanism for the runtime environment, providing
 optimal performance for server-side applications and consistent behavior across platforms.
 
+## Import
+
+```typescript
+import { scheduleNextTick } from '@winglet/common-utils/scheduler';
+import { scheduleNextTick } from '@winglet/common-utils';
+```
+
 ## Signature
 
 ```typescript
@@ -361,7 +368,7 @@ function getEnvironmentInfo() {
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/common-utils": "0.12.3" }}
+  dependencies={{ "@winglet/common-utils": "0.15.0" }}
   code={`import { scheduleNextTick } from '@winglet/common-utils';
 
 console.log('1: Synchronous code');
@@ -396,8 +403,11 @@ console.log('2: More synchronous code');
 **Event Loop Integration:**
 - **Node.js**: Executes after current I/O phase, before next I/O polling cycle
 - **Browsers**: Executes after current macrotask, similar to setImmediate timing
-- **Universal**: Consistent "next tick" semantics across all platforms
-- **Priority**: Lower than microtasks, higher than regular macrotasks
+- **Not Universal**: the two paths sit on opposite sides of the macrotask boundary.
+  Under Node the callback runs in the microtask/nextTick phase, so it lands *before*
+  a `setTimeout(0)` queued alongside it; in a browser it runs as a macrotask and lands
+  *after* one. Code that depends on ordering against timers must not assume either
+- **Priority**: below microtasks in a browser; alongside them under Node
 
 **Platform-Specific Behavior:**
 - **Node.js**: Uses `Promise.resolve().then(() => process.nextTick(task))` for I/O coordination

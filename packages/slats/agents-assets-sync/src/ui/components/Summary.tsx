@@ -62,7 +62,7 @@ function Row({
         </Text>
       </Box>
       <Text color={valueColor ?? colors.muted} bold={valueBold}>
-        {String(value).padStart(3)}
+        {('' + value).padStart(3)}
       </Text>
     </Box>
   );

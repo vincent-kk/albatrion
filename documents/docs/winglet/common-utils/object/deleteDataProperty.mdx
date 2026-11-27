@@ -1,0 +1,62 @@
+---
+title: 'deleteDataProperty'
+sidebar_label: 'deleteDataProperty'
+---
+<!-- sync-winglet-docs:auto -->
+
+import WingletPlayground from '@site/src/components/WingletPlayground';
+
+# deleteDataProperty
+
+Deletes a property with plain `delete` semantics, as the deletion
+counterpart of the data-property primitives.
+`delete` only ever removes own properties, so a reserved member name
+(`__proto__`, `constructor`, `prototype`) never removes an inherited member
+from the prototype chain — the primitive exists so reserved-member call
+sites can stay on one access contract. Like the `delete` operator, deleting
+a non-configurable own property throws in strict mode.
+
+## Import
+
+```typescript
+import { deleteDataProperty } from '@winglet/common-utils/object';
+import { deleteDataProperty } from '@winglet/common-utils';
+```
+
+## Signature
+
+```typescript
+const deleteDataProperty: (target: Dictionary | Array<any>, key: string) => boolean
+```
+
+## Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `target` | `-` | Object or array to delete from |
+| `key` | `-` | Property key to delete |
+
+## Returns
+
+The `delete` operator result: `true` unless the own property could not be removed
+
+## Examples
+
+### Reserved member names never touch inherited members
+
+```typescript
+import { deleteDataProperty } from '@winglet/common-utils';
+
+deleteDataProperty({}, 'constructor'); // true
+({}).constructor === Object; // true (inherited member untouched)
+```
+
+## Playground
+
+<WingletPlayground
+  dependencies={{ "@winglet/common-utils": "0.15.0" }}
+  code={`import { deleteDataProperty } from '@winglet/common-utils';
+
+deleteDataProperty({}, 'constructor'); // true
+({}).constructor === Object; // true (inherited member untouched)`}
+/>

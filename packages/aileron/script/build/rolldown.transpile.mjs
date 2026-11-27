@@ -13,6 +13,7 @@
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
+import { BUILD_PLATFORM } from './utils/buildPlatform.mjs';
 import { createClearDir } from './utils/createClearDir.mjs';
 import { createCopyDeclarations } from './utils/createCopyDeclarations.mjs';
 import {
@@ -20,6 +21,7 @@ import {
   getCodegenOptions,
 } from './utils/getCodegenOptions.mjs';
 import { isExternalModule } from './utils/isExternalModule.mjs';
+import { mapInputs } from './utils/mapInputs.mjs';
 import { validateBuildOptions } from './utils/validateBuildOptions.mjs';
 
 export { getEntrypoints } from './utils/getEntrypoints.mjs';
@@ -63,6 +65,7 @@ const createLibBuildOptions = (callerUrl) => async (options) => {
   return {
     input: mapInputs(callerDir, entrypoints),
     external: external || isExternalModule,
+    platform: BUILD_PLATFORM,
     tsconfig: tsconfig || join(callerDir, 'tsconfig.json'),
     transform: { target: TRANSFORM_TARGET },
     // Cross-module constant inlining (rolldown default: `{ mode: 'smart' }`)
@@ -86,20 +89,6 @@ const createLibBuildOptions = (callerUrl) => async (options) => {
       ...getCodegenOptions(sourcemap),
     },
   };
-};
-
-/** @type {(dirName: string, srcFiles: string[]) => Record<string, string>} */
-const mapInputs = (dirName, srcFiles) => {
-  if (!srcFiles || srcFiles.length === 0) {
-    throw new Error('No source files provided');
-  }
-
-  return Object.fromEntries(
-    srcFiles.map((file) => [
-      file.replace(/^(\.\/)?src\//, '').replace(/\.[cm]?(js|ts)$/, ''),
-      join(dirName, file),
-    ]),
-  );
 };
 
 /** @type {(extension?: string) => {entryFileNames: string, chunkFileNames: string}} */

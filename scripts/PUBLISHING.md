@@ -52,13 +52,33 @@ yarn npm:setup-trust               # 16개 패키지 일괄 등록
 
 ## 평상시 릴리스 절차 (기본 경로)
 
-1. 로컬에서 배포할 패키지의 버전을 올리고 커밋·푸시합니다.
-   (예: `yarn workspace @winglet/json version:patch`, 또는 `yarn patch:all`)
-2. GitHub → **Actions** 탭 → **release** 워크플로 → **Run workflow**.
+1. 배포할 패키지의 버전을 올리고 커밋·푸시합니다.
+   - changeset으로 기록하는 릴리스는 `yarn changeset:version`으로 올립니다(`GITHUB_TOKEN` 필요). 대기 중인 changeset이 버전 올림과 `CHANGELOG.md` 항목이 됩니다.
+   - changeset이 없는 변경을 내보내는 릴리스는 손으로 올립니다(예: `yarn workspace @winglet/json version:patch`, 또는 `yarn patch:all`).
+   - 한 릴리스에서 두 방식을 섞지 않습니다. changeset이 남은 패키지를 손으로 올리면 다음 `yarn changeset:version`에서 한 번 더 오릅니다.
+2. GitHub → **Actions** 탭 → **publish-npm-packages** 워크플로 → **Run workflow**.
    - 먼저 확인만 하려면 `dry_run: true`로 한 번 돌립니다 (팩+레지스트리 대조만, 실제 배포 없음).
 3. 로그의 `=== summary ===`에서 `published` / `skipped`를 확인합니다.
+   - 패키지는 의존되는 쪽부터 먼저 게시하며, 게시가 처음 실패한 시점에서 실행을 멈추므로 그 뒤의 패키지는 시도하지 않습니다. 순서는 `yarn workspaces list --verbose`가 알려 주는 작업 공간 의존 관계에서 계산하므로, 패키지를 더하거나 의존 관계를 바꿔도 스크립트를 고칠 필요가 없습니다. 작업 공간끼리 순환 의존이 있으면 아무것도 게시하지 않고 실패합니다.
+
+배포 워크플로를 실행하기 전에 같은 커밋에서 `pre-release` 워크플로로 전체 검사를 실행하시는 것을 권장합니다.
 
 버전을 올리지 않은 패키지는 자동으로 `skipped` 처리되므로, 일부만 버전업해도 안전합니다.
+
+---
+
+## 배포 권한과 복구의 경계
+
+배포 job의 `contents: write`는 패키지 Git 태그를 push하기 위한 권한이고,
+`id-token: write`는 npm OIDC 인증을 위한 권한입니다. GitHub 권한을 npm 게시 토큰으로
+취급하지 않습니다. 두 인증을 혼동하면 태그 권한만으로 npm 게시가 가능하다고 오인합니다.
+
+`dry_run`의 팩·레지스트리 대조는 설치한 tarball의 소비자 동작을 검증하지 않습니다.
+`pre-release`는 별도로 전체 워크스페이스 검사를 실행하며 게시 workflow를 자동으로 막는
+선행 job은 아닙니다. 두 결과를 구별해야 포장 성공을 릴리스 시험 통과로 오인하지 않습니다.
+
+이미 게시된 버전에 수정이 필요하면 수정본의 버전을 올려 다시 배포합니다.
+버전 차이 가드는 기존 버전을 건너뛰므로 같은 버전의 재실행을 수정 배포로 보지 않습니다.
 
 ---
 

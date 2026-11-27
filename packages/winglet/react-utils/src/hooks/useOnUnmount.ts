@@ -1,8 +1,8 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 
 import type { Fn } from '@aileron/declare';
 
-import { useReference } from './useReference';
+import { useCommittedReference } from './utils/useCommittedReference';
 
 /**
  * Executes a cleanup function when the component unmounts.
@@ -19,13 +19,13 @@ import { useReference } from './useReference';
  * - **Analytics Tracking**: Record session duration or usage metrics
  *
  * ### Handler Freshness
- * The handler passed on the most recent render is the one that runs, so it observes the
+ * The handler passed on the most recent committed render is the one that runs, so it observes the
  * props and state of that render — no `useRef` dance is needed to reach current values.
  * The handler is never invoked on re-renders, only on unmount.
  *
  * @example
  * ```typescript
- * // Reads the value from the last render, not from mount
+ * // Reads the value from the last committed render, not from mount
  * const [count, setCount] = useState(0);
  * useOnUnmount(() => reportSessionLength(count));
  *
@@ -55,6 +55,6 @@ import { useReference } from './useReference';
  * @see useOnUnmountLayout - Runs the same cleanup synchronously, before the browser paints
  */
 export const useOnUnmount = (handler: Fn) => {
-  const handlerRef = useReference(handler);
+  const handlerRef = useCommittedReference(useRef(handler), handler);
   useEffect(() => () => handlerRef.current(), [handlerRef]);
 };

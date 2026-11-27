@@ -1,0 +1,113 @@
+---
+title: 'withErrorBoundary'
+sidebar_label: 'withErrorBoundary'
+---
+<!-- sync-winglet-docs:auto -->
+
+import WingletPlayground from '@site/src/components/WingletPlayground';
+
+# withErrorBoundary
+
+Wraps a React component with error boundary protection to prevent application crashes.
+This Higher-Order Component (HOC) provides a robust error handling mechanism by catching
+JavaScript errors that occur within the component tree and displaying a fallback UI
+instead of letting the entire application crash. It's essential for creating resilient
+React applications that can gracefully handle unexpected errors.
+### Use Cases
+- **Component Error Isolation**: Prevent errors in one component from crashing the entire app
+- **Third-party Integration**: Safely render components from external libraries or APIs
+- **Production Error Handling**: Display user-friendly error messages in production builds
+- **Development Debugging**: Capture detailed error information during development
+### Key Features
+- Catches all JavaScript errors in the component tree below it
+- Prevents error propagation to parent components
+- Allows custom fallback UI for better user experience
+- Maintains component props and functionality when no errors occur
+
+## Import
+
+```typescript
+import { withErrorBoundary } from '@winglet/react-utils/hoc';
+import { withErrorBoundary } from '@winglet/react-utils';
+```
+
+## Signature
+
+```typescript
+const withErrorBoundary: <Props extends Dictionary>(Component: ComponentType<Props>, fallback?: ReactNode, useReporter?: UseErrorBoundaryReporter) => ComponentType<Props>
+```
+
+## Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `Component` | `-` | The React component to wrap with error boundary protection |
+| `fallback` | `-` | Optional custom fallback JSX to display when an error occurs. If not provided, uses default error message |
+| `useReporter` | `-` | Hook called on every render to read an optional error reporter |
+
+## Returns
+
+A new component that renders the original component with error boundary protection
+
+## Examples
+
+### Example 1
+
+```typescript
+// Basic usage with default fallback
+const SafeUserProfile = withErrorBoundary(UserProfile);
+
+// Custom fallback UI
+const SafeDataTable = withErrorBoundary(
+  DataTable,
+  <div>Sorry, unable to load data. Please try again.</div>
+);
+
+// Usage in component
+const App = () => {
+  return (
+    <div>
+      <SafeUserProfile userId={123} />
+      <SafeDataTable data={tableData} />
+    </div>
+  );
+};
+
+// Error will be caught and fallback displayed instead of app crash
+const ProblematicComponent = () => {
+  throw new Error('Something went wrong!');
+  return <div>This won't render</div>;
+};
+const SafeProblematic = withErrorBoundary(ProblematicComponent);
+```
+
+## Playground
+
+<WingletPlayground
+  dependencies={{ "@winglet/react-utils": "0.14.1" }}
+  code={`// Basic usage with default fallback
+const SafeUserProfile = withErrorBoundary(UserProfile);
+
+// Custom fallback UI
+const SafeDataTable = withErrorBoundary(
+  DataTable,
+  <div>Sorry, unable to load data. Please try again.</div>
+);
+
+// Usage in component
+const App = () => {
+  return (
+    <div>
+      <SafeUserProfile userId={123} />
+      <SafeDataTable data={tableData} />
+    </div>
+  );
+};
+
+// Error will be caught and fallback displayed instead of app crash
+const ProblematicComponent = () => {
+  throw new Error('Something went wrong!');
+  return <div>This won't render</div>;
+};
+const SafeProblematic = withErrorBoundary(ProblematicComponent);`}
+/>

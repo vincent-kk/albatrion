@@ -35,6 +35,13 @@ intentionally ignore later changes, without `exhaustive-deps` friction
 - **Stable context values**: provider values that must keep one identity for
 the provider's lifetime
 
+## Import
+
+```typescript
+import { useLazyConstant } from '@winglet/react-utils/hook';
+import { useLazyConstant } from '@winglet/react-utils';
+```
+
 ## Signature
 
 ```typescript
@@ -78,7 +85,7 @@ const detection = useLazyConstant(() =>
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/react-utils": "0.12.2" }}
+  dependencies={{ "@winglet/react-utils": "0.14.1" }}
   code={`// A lifecycle-managed coordinator that must keep one identity
 const Provider = ({ options, children }: Props) => {
   const contextValue = useLazyConstant(() => ({

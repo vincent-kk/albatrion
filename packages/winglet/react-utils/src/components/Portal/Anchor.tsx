@@ -1,6 +1,7 @@
-import { type HTMLAttributes, memo } from 'react';
+import { type HTMLAttributes, type ReactElement, memo, useRef } from 'react';
 
 import { usePortalAnchor } from './context/usePortalContext';
+import { useAnchorLifecycle } from './utils/useAnchorLifecycle';
 
 /**
  * Defines the exact DOM location where Portal content will be rendered.
@@ -21,7 +22,7 @@ import { usePortalAnchor } from './context/usePortalContext';
  * - Creates a stable DOM reference point for portal rendering
  * - Accepts all standard HTML div attributes for styling and behavior
  * - Automatically connects to the nearest Portal context provider
- * - Supports multiple anchors within the same Portal context (first one wins)
+ * - Use one anchor per Portal.with scope
  * - Maintains accessibility and document structure
  *
  * ### Positioning and Styling
@@ -119,9 +120,35 @@ import { usePortalAnchor } from './context/usePortalContext';
  * @returns A div element that serves as the mounting point for Portal content. The div reports itself to the portal context through a callback ref, so replacing this anchor moves the content with it
  */
 export const Anchor = memo(
-  (props: Omit<HTMLAttributes<HTMLDivElement>, 'children'>) => {
+  (props: Omit<HTMLAttributes<HTMLDivElement>, 'children'>): ReactElement => {
     const setPortalAnchor = usePortalAnchor();
-    return <div role="none" style={style} {...props} ref={setPortalAnchor} />;
+    type Connection = {
+      element: HTMLDivElement | null;
+      attach: (element: HTMLDivElement | null) => void;
+    };
+    const connection = useRef<Connection | null>(null);
+    if (connection.current === null) {
+      const state: Connection = {
+        element: null,
+        attach: (element) => {
+          if (element === null) return;
+          state.element = element;
+          setPortalAnchor(element);
+        },
+      };
+      connection.current = state;
+    }
+    const state = connection.current;
+    useAnchorLifecycle(
+      () => () => {
+        const retired = state.element;
+        queueMicrotask(() =>
+          setPortalAnchor((current) => (current === retired ? null : current)),
+        );
+      },
+      [setPortalAnchor],
+    );
+    return <div role="none" style={style} {...props} ref={state.attach} />;
   },
 );
 

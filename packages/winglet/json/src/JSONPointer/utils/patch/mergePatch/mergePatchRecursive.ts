@@ -1,16 +1,11 @@
 import { isPlainObject } from '@winglet/common-utils/filter';
-import { hasOwnProperty } from '@winglet/common-utils/lib';
-import {
-  deleteDataProperty,
-  getDataProperty,
-  isReservedName,
-  setDataProperty,
-} from '@winglet/common-utils/object';
 
 import type { JSONObject } from '@/json/type';
 
+import { mergePatchDeep } from './utils/mergePatchDeep';
+
 /**
- * Merge the patch into the source object recursively
+ * Merges a patch into the source using explicit depth-first work frames
  *
  * Reserved member names (`__proto__`, `constructor`, `prototype`) in the patch
  * are merged as own data properties at every depth — reads and writes go
@@ -39,22 +34,5 @@ export const mergePatchRecursive = (
   // RFC 7396 replaces a non-object target with an empty object before merging; the
   // default parameter only covers undefined, leaving numbers, strings, null and arrays
   if (!isPlainObject(source)) source = {};
-  for (const key in patch) {
-    if (!hasOwnProperty(patch, key)) continue;
-    const value = patch[key];
-    // Reserved names take the own-data path; ordinary keys keep plain access
-    const reserved = isReservedName(key);
-    if (value === null) {
-      if (reserved) deleteDataProperty(source, key);
-      else delete source[key];
-    } else {
-      const merged = mergePatchRecursive(
-        reserved ? getDataProperty(source, key) : source[key],
-        value,
-      );
-      if (reserved) setDataProperty(source, key, merged);
-      else source[key] = merged;
-    }
-  }
-  return source;
+  return mergePatchDeep(source, patch);
 };

@@ -36,7 +36,7 @@ const schema = {
       type: "object",
       title: "Personal Information",
       nullable: true,
-      computed: {
+      controls: {
         active: "#/userType === 'individual'",
       },
       properties: {
@@ -51,7 +51,7 @@ const schema = {
       type: "object",
       title: "Premium Features",
       nullable: true,
-      computed: {
+      controls: {
         active: "#/userType === 'individual' && #/accountTier === 'premium'",
       },
       properties: {
@@ -65,7 +65,7 @@ const schema = {
       type: "object",
       title: "Extended Data",
       nullable: true,
-      computed: {
+      controls: {
         active:
           "#/userType === 'individual' && #/accountTier === 'premium' && #/dataSelection === 'extended'",
       },
@@ -91,7 +91,7 @@ const schema = {
       type: "object",
       title: "Basic Data",
       nullable: true,
-      computed: {
+      controls: {
         active:
           "#/userType === 'individual' && #/accountTier === 'premium' && #/dataSelection !== 'extended'",
       },
@@ -105,7 +105,7 @@ const schema = {
       type: "object",
       title: "Free Features",
       nullable: true,
-      computed: {
+      controls: {
         active: "#/userType === 'individual' && #/accountTier === 'free'",
       },
       properties: {
@@ -119,7 +119,7 @@ const schema = {
       type: "object",
       title: "Company Information",
       nullable: true,
-      computed: {
+      controls: {
         active: "#/userType === 'company'",
       },
       properties: {
@@ -134,7 +134,7 @@ const schema = {
       type: "object",
       title: "Enterprise Features",
       nullable: true,
-      computed: {
+      controls: {
         active: "#/userType === 'company' && #/accountTier === 'enterprise'",
       },
       properties: {
@@ -159,7 +159,7 @@ const schema = {
       type: "object",
       title: "Business Features",
       nullable: true,
-      computed: {
+      controls: {
         active: "#/userType === 'company' && #/accountTier === 'premium'",
       },
       properties: {
@@ -173,7 +173,7 @@ const schema = {
       type: "object",
       title: "Trial Features",
       nullable: true,
-      computed: {
+      controls: {
         active: "#/userType === 'company' && #/accountTier === 'free'",
       },
       properties: {
@@ -187,7 +187,7 @@ const schema = {
       type: "object",
       title: "Basic Information",
       nullable: true,
-      computed: {
+      controls: {
         active: "#/userType === 'none'",
       },
       properties: {
@@ -219,8 +219,9 @@ const schema = {
   // OneOf for additional conditional logic
   oneOf: [
     {
-      computed: {
-        if: "#/userType === 'individual' && #/accountTier === 'premium' && #/dataSelection === 'full'",
+      controls: {
+        active:
+          "#/userType === 'individual' && #/accountTier === 'premium' && #/dataSelection === 'full'",
       },
       properties: {
         fullAccessData: {
@@ -239,8 +240,9 @@ const schema = {
       },
     },
     {
-      computed: {
-        if: "#/userType === 'company' && #/accountTier === 'enterprise' && #/dataSelection === 'full'",
+      controls: {
+        active:
+          "#/userType === 'company' && #/accountTier === 'enterprise' && #/dataSelection === 'full'",
       },
       properties: {
         advancedAnalytics: {
@@ -259,9 +261,9 @@ const schema = {
 } satisfies JSONSchema;
 
 /**
- * `defaultValue` 로 넘기는 객체 리터럴이 Form 의 `Value` 를 required 키로 추론시켜
- * `FormHandle` 의 기본 `Value`(InferValueType — 모든 키 optional)와 어긋난다.
- * 양쪽이 같은 인스턴스화를 쓰도록 `Value` 를 여기서 고정한다.
+ * An object literal defaultValue infers required keys for Form.Value, while
+ * FormHandle defaults to InferValueType with optional keys. Fix Value here
+ * so the form and handle use the same instantiation.
  */
 type FormSchema = typeof schema;
 type FormValue = InferValueType<FormSchema>;

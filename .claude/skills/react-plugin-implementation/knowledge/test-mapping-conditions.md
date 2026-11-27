@@ -1,350 +1,339 @@
-# Test 조건 작성 가이드
+# Test Condition Guide
 
-FormTypeInputDefinition의 `test` 조건을 작성하는 방법과 우선순위 설정 가이드입니다.
+How to write `test` conditions on FieldInputDefinition, and how to set their priority.
 
-## Test 조건 두 가지 방식
+## Two Ways to Write a Test Condition
 
-### 1. 객체 형태 (FormTypeTestObject)
+### 1. Object Form (FieldInputTestObject)
 
-**사용 시기**: 단순 조건, 명확한 매칭
+**When to use**: simple conditions, a clear match
 
-**장점**:
-- 간결하고 읽기 쉬움
-- 타입 안전성
-- 자동 완성 지원
+**Benefits**:
+- Concise and easy to read
+- Type safety
+- Autocomplete support
 
-**구조**:
+**Shape**:
 
 ```typescript
-type OptionalString = string | undefined;
+import type { FieldInputTestObject } from '@canard/schema-form';
 
-type FormTypeTestObject = Partial<{
-  type: JSONSchemaType | JSONSchemaType[];  // 'string', 'number' 등
-  path: string | string[];  // JSONPointer 경로
-  format: OptionalString | OptionalString[];  // 'email', 'date' 등
-  formType: OptionalString | OptionalString[];  // 'textarea', 'slider' 등
-}>;
+const textareaTest = {
+  type: 'string',
+  inputType: 'textarea', // Authored as presentation.inputType on the schema
+} satisfies FieldInputTestObject;
 ```
 
-**예제**:
+**Examples**:
 
 ```typescript
-// 단일 type
-export const FormTypeInputStringDefinition = {
-  Component: FormTypeInputString,
+// Single type
+export const FieldInputStringDefinition = {
+  Component: FieldInputString,
   test: { type: 'string' },
-} satisfies FormTypeInputDefinition;
+} satisfies FieldInputDefinition;
 
-// 여러 type
-export const FormTypeInputNumberDefinition = {
-  Component: FormTypeInputNumber,
-  test: { type: ['number', 'integer'] },
-} satisfies FormTypeInputDefinition;
+// Several types
+export const FieldInputNumberDefinition = {
+  Component: FieldInputNumber,
+  test: { schemaType: ['number', 'integer'] },
+} satisfies FieldInputDefinition;
 
 // type + format
-export const FormTypeInputPasswordDefinition = {
-  Component: FormTypeInputPassword,
+export const FieldInputPasswordDefinition = {
+  Component: FieldInputPassword,
   test: { type: 'string', format: 'password' },
-} satisfies FormTypeInputDefinition;
+} satisfies FieldInputDefinition;
 
-// type + formType
-export const FormTypeInputTextareaDefinition = {
-  Component: FormTypeInputTextarea,
-  test: { type: 'string', formType: 'textarea' },
-} satisfies FormTypeInputDefinition;
+// type + inputType
+export const FieldInputTextareaDefinition = {
+  Component: FieldInputTextarea,
+  test: { type: 'string', inputType: 'textarea' },
+} satisfies FieldInputDefinition;
 
-// 여러 format
-export const FormTypeInputDateTimeDefinition = {
-  Component: FormTypeInputDateTime,
+// Several formats
+export const FieldInputDateTimeDefinition = {
+  Component: FieldInputDateTime,
   test: { type: 'string', format: ['date', 'date-time'] },
-} satisfies FormTypeInputDefinition;
+} satisfies FieldInputDefinition;
 
-// path 조건
-export const FormTypeInputUserNameDefinition = {
-  Component: FormTypeInputUserName,
+// path condition
+export const FieldInputUserNameDefinition = {
+  Component: FieldInputUserName,
   test: { type: 'string', path: '/user/name' },
-} satisfies FormTypeInputDefinition;
+} satisfies FieldInputDefinition;
 ```
 
-### 2. 함수 형태 (FormTypeTestFn)
+### 2. Function Form (FieldInputTestFn)
 
-**사용 시기**: 복합 조건, 동적 판단
+**When to use**: compound conditions, dynamic decisions
 
-**장점**:
-- 복잡한 로직 표현 가능
-- jsonSchema의 다양한 속성 접근
-- 동적 조건 판단
+**Benefits**:
+- Can express complex logic
+- Can read many jsonSchema properties
+- Can decide conditions dynamically
 
-**구조**:
+**Shape**:
 
 ```typescript
-type Hint = {
-  type: JSONSchemaType;
-  path: string;
-  jsonSchema: JSONSchemaWithVirtual;
-  format?: string;
-  formType?: string;
-};
+import type { FieldInputHint, FieldInputTestFn, StringSchema, NumberSchema, ArraySchema } from '@canard/schema-form';
+import { isStringSchema } from '@winglet/json-schema/filter';
 
-type FormTypeTestFn = (hint: Hint) => boolean;
+const isString: FieldInputTestFn = (hint: FieldInputHint) => hint.type === 'string';
 ```
 
-**예제**:
+**Examples**:
 
 ```typescript
-// Enum 조건
-export const FormTypeInputStringEnumDefinition = {
-  Component: FormTypeInputStringEnum,
-  test: ({ type, jsonSchema }: Hint) =>
+// Enum condition
+export const FieldInputStringEnumDefinition = {
+  Component: FieldInputStringEnum,
+  test: ({ type, jsonSchema }: FieldInputHint) =>
     type === 'string' &&
     jsonSchema.enum !== undefined &&
     jsonSchema.enum.length > 0,
-} satisfies FormTypeInputDefinition;
+} satisfies FieldInputDefinition;
 
-// Array + Enum 조건
-export const FormTypeInputMultiSelectDefinition = {
-  Component: FormTypeInputMultiSelect,
-  test: ({ type, jsonSchema }: Hint) =>
+// Array + Enum condition
+export const FieldInputMultiSelectDefinition = {
+  Component: FieldInputMultiSelect,
+  test: ({ type, jsonSchema }: FieldInputHint) =>
     type === 'array' &&
-    jsonSchema.items?.type === 'string' &&
-    jsonSchema.items?.enum !== undefined &&
-    jsonSchema.items.enum.length > 0,
-} satisfies FormTypeInputDefinition;
+    isStringSchema(jsonSchema.items) &&
+    !!jsonSchema.items.enum?.length,
+} satisfies FieldInputDefinition;
 
-// 복합 format 조건
-export const FormTypeInputRichTextDefinition = {
-  Component: FormTypeInputRichText,
-  test: ({ type, format, jsonSchema }: Hint) =>
+// Compound format condition
+export const FieldInputRichTextDefinition = {
+  Component: FieldInputRichText,
+  test: ({ type, format, jsonSchema }: FieldInputHint) =>
     type === 'string' &&
     (format === 'html' || format === 'markdown' || jsonSchema.richText === true),
-} satisfies FormTypeInputDefinition;
+} satisfies FieldInputDefinition;
 
-// Range 조건
-export const FormTypeInputSliderDefinition = {
-  Component: FormTypeInputSlider,
-  test: ({ type, formType, jsonSchema }: Hint) =>
-    (type === 'number' || type === 'integer') &&
-    formType === 'slider' &&
+// Range condition
+export const FieldInputSliderDefinition = {
+  Component: FieldInputSlider,
+  test: ({ type, inputType, jsonSchema }: FieldInputHint) =>
+    type === 'number' &&
+    inputType === 'slider' &&
     jsonSchema.minimum !== undefined &&
     jsonSchema.maximum !== undefined,
-} satisfies FormTypeInputDefinition;
+} satisfies FieldInputDefinition;
 
-// Path 기반 조건
-export const FormTypeInputCustomDefinition = {
-  Component: FormTypeInputCustom,
-  test: ({ path, jsonSchema }: Hint) =>
+// Path-based condition
+export const FieldInputCustomDefinition = {
+  Component: FieldInputCustom,
+  test: ({ path, jsonSchema }: FieldInputHint) =>
     path.startsWith('/settings/') &&
     jsonSchema.customComponent === true,
-} satisfies FormTypeInputDefinition;
+} satisfies FieldInputDefinition;
 ```
 
-## 조건 우선순위 및 순서
+## Condition Priority and Order
 
-**중요**: formTypeInputDefinitions 배열의 순서가 매핑 우선순위입니다.
+**Important**: the order of the fieldInputDefinitions array is the mapping priority.
 
-### 우선순위 원칙
+### Priority Principles
 
-1. **가장 구체적 조건 먼저** (format + formType + 기타)
-2. **중간 구체성** (format 또는 formType)
-3. **Enum 조건** (함수 형태, 복합 조건)
-4. **구조 타입** (array, object)
-5. **일반 타입** (type만)
+1. **Most specific conditions first** (format + inputType + other)
+2. **Medium specificity** (format or inputType)
+3. **Enum conditions** (function form, compound conditions)
+4. **Structural types** (array, object)
+5. **General types** (type only)
 
-### 권장 순서
+### Recommended Order
 
 ```typescript
-export const formTypeInputDefinitions: FormTypeInputDefinition[] = [
-  // === Priority 1: 가장 구체적 (format + formType 등) ===
-  
-  // type + format + 추가 조건
-  FormTypeInputRichTextDefinition,     // string + format: html/markdown + richText
-  FormTypeInputPhoneDefinition,        // string + format: tel + pattern
-  
-  // type + formType + 추가 조건  
-  FormTypeInputSliderDefinition,       // number + formType: slider + min/max
-  FormTypeInputColorPickerDefinition,  // string + formType: color + pattern
-  
-  // === Priority 2: 중간 (format 또는 formType) ===
-  
+export const fieldInputDefinitions: FieldInputDefinition[] = [
+  // === Priority 1: most specific (format + inputType, and similar) ===
+
+  // type + format + extra conditions
+  FieldInputRichTextDefinition,     // string + format: html/markdown + richText
+  FieldInputPhoneDefinition,        // string + format: tel + pattern
+
+  // type + inputType + extra conditions
+  FieldInputSliderDefinition,       // number + inputType: slider + min/max
+  FieldInputColorPickerDefinition,  // string + inputType: color + pattern
+
+  // === Priority 2: medium (format or inputType) ===
+
   // type + format
-  FormTypeInputPasswordDefinition,     // string + format: password
-  FormTypeInputTextareaDefinition,     // string + format: textarea
-  FormTypeInputEmailDefinition,        // string + format: email
-  FormTypeInputUrlDefinition,          // string + format: url
-  FormTypeInputDateDefinition,         // string + format: date
-  FormTypeInputTimeDefinition,         // string + format: time
-  FormTypeInputDateTimeDefinition,     // string + format: date-time
-  
-  // type + formType
-  FormTypeInputRadioGroupDefinition,   // string + formType: radio
-  FormTypeInputSwitchDefinition,       // boolean + formType: switch
-  
-  // === Priority 3: Enum 조건 (함수 형태, 복합) ===
-  
-  FormTypeInputStringEnumDefinition,   // string + enum exists (함수)
-  FormTypeInputNumberEnumDefinition,   // number + enum exists (함수)
-  FormTypeInputMultiSelectDefinition,  // array + items.enum exists (함수)
-  
-  // === Priority 4: 구조 타입 ===
-  
-  FormTypeInputArrayDefinition,        // type: array
-  FormTypeInputObjectDefinition,       // type: object
-  
-  // === Priority 5: 일반 타입 (마지막!) ===
-  
-  FormTypeInputNumberDefinition,       // type: number | integer
-  FormTypeInputBooleanDefinition,      // type: boolean
-  FormTypeInputStringDefinition,       // type: string (가장 마지막!)
+  FieldInputPasswordDefinition,     // string + format: password
+  FieldInputTextareaDefinition,     // string + format: textarea
+  FieldInputEmailDefinition,        // string + format: email
+  FieldInputUrlDefinition,          // string + format: url
+  FieldInputDateDefinition,         // string + format: date
+  FieldInputTimeDefinition,         // string + format: time
+  FieldInputDateTimeDefinition,     // string + format: date-time
+
+  // type + inputType
+  FieldInputRadioGroupDefinition,   // string + inputType: radio
+  FieldInputSwitchDefinition,       // boolean + inputType: switch
+
+  // === Priority 3: enum conditions (function form, compound) ===
+
+  FieldInputStringEnumDefinition,   // string + enum exists (function)
+  FieldInputNumberEnumDefinition,   // number + enum exists (function)
+  FieldInputMultiSelectDefinition,  // array + items.enum exists (function)
+
+  // === Priority 4: structural types ===
+
+  FieldInputArrayDefinition,        // type: array
+  // Object branches use the core fallback unless the plugin defines a custom input.
+
+  // === Priority 5: general types (last!) ===
+
+  FieldInputNumberDefinition,       // type: number | integer
+  FieldInputBooleanDefinition,      // type: boolean
+  FieldInputStringDefinition,       // type: string (very last!)
 ];
 ```
 
-### 순서가 중요한 이유
+### Why Order Matters
 
 ```typescript
-// ❌ 잘못된 순서 - 일반 조건이 먼저
+// ❌ Wrong order - the general condition comes first
 const badOrder = [
-  FormTypeInputStringDefinition,     // type: string (너무 일반적!)
-  FormTypeInputPasswordDefinition,   // type: string, format: password
-  // ↑ Password는 절대 매칭 안 됨! String이 먼저 매칭되기 때문
+  FieldInputStringDefinition,     // type: string (too general!)
+  FieldInputPasswordDefinition,   // type: string, format: password
+  // ↑ Password never matches! String matches first
 ];
 
-// ✅ 올바른 순서 - 구체적 조건이 먼저
+// ✅ Correct order - the specific condition comes first
 const goodOrder = [
-  FormTypeInputPasswordDefinition,   // type: string, format: password
-  FormTypeInputStringDefinition,     // type: string
-  // ✅ Password가 먼저 체크되므로 올바르게 매칭됨
+  FieldInputPasswordDefinition,   // type: string, format: password
+  FieldInputStringDefinition,     // type: string
+  // ✅ Password is checked first, so it matches correctly
 ];
 ```
 
-## 실전 예제
+## Practical Examples
 
-### 예제 1: Email 입력
+### Example 1: Email Input
 
 ```typescript
-interface EmailSchema extends JSONSchema {
-  type: 'string';
-  format: 'email';
-}
+type EmailSchema = StringSchema & { format: 'email' };
 
-// 객체 형태 사용 (단순 조건)
-export const FormTypeInputEmailDefinition = {
-  Component: FormTypeInputEmail,
+// Use the object form (simple condition)
+export const FieldInputEmailDefinition = {
+  Component: FieldInputEmail,
   test: { type: 'string', format: 'email' },
-} satisfies FormTypeInputDefinition;
+} satisfies FieldInputDefinition;
 ```
 
-**배치 위치**: Priority 2 (type + format)
+**Placement**: Priority 2 (type + format)
 
-### 예제 2: Slider (Range 입력)
+### Example 2: Slider (Range Input)
 
 ```typescript
-interface SliderSchema extends JSONSchema {
-  type: 'number' | 'integer';
-  formType: 'slider';
+type SliderSchema = NumberSchema & {
+  presentation: { inputType: 'slider' };
   minimum: number;
   maximum: number;
-  step?: number;
-}
+};
 
-// 함수 형태 사용 (복합 조건)
-export const FormTypeInputSliderDefinition = {
-  Component: FormTypeInputSlider,
-  test: ({ type, formType, jsonSchema }: Hint) =>
-    (type === 'number' || type === 'integer') &&
-    formType === 'slider' &&
+// Use the function form (compound condition)
+export const FieldInputSliderDefinition = {
+  Component: FieldInputSlider,
+  test: ({ type, inputType, jsonSchema }: FieldInputHint) =>
+    type === 'number' &&
+    inputType === 'slider' &&
     jsonSchema.minimum !== undefined &&
     jsonSchema.maximum !== undefined,
-} satisfies FormTypeInputDefinition;
+} satisfies FieldInputDefinition;
 ```
 
-**배치 위치**: Priority 1 (type + formType + 추가 조건)
+**Placement**: Priority 1 (type + inputType + extra conditions)
 
-### 예제 3: Multi-Select (Array + Enum)
+### Example 3: Multi-Select (Array + Enum)
 
 ```typescript
-interface MultiSelectSchema extends JSONSchema {
+type MultiSelectSchema = ArraySchema & {
   type: 'array';
   items: {
     type: 'string';
     enum: string[];
   };
-}
+};
 
-// 함수 형태 사용 (중첩 속성 체크)
-export const FormTypeInputMultiSelectDefinition = {
-  Component: FormTypeInputMultiSelect,
-  test: ({ type, jsonSchema }: Hint) =>
+// Use the function form (checks nested properties)
+export const FieldInputMultiSelectDefinition = {
+  Component: FieldInputMultiSelect,
+  test: ({ type, jsonSchema }: FieldInputHint) =>
     type === 'array' &&
-    jsonSchema.items?.type === 'string' &&
-    jsonSchema.items?.enum !== undefined &&
-    jsonSchema.items.enum.length > 0,
-} satisfies FormTypeInputDefinition;
+    isStringSchema(jsonSchema.items) &&
+    !!jsonSchema.items.enum?.length,
+} satisfies FieldInputDefinition;
 ```
 
-**배치 위치**: Priority 3 (Enum 조건, 함수 형태)
+**Placement**: Priority 3 (enum condition, function form)
 
-### 예제 4: Radio Group
+### Example 4: Radio Group
 
 ```typescript
-interface RadioGroupSchema extends JSONSchema {
-  type: 'string' | 'number';
-  formType: 'radio';
-  enum: any[];
-}
+type RadioGroupSchema = (StringSchema | NumberSchema) & {
+  presentation: { inputType: 'radio' };
+  enum: Array<string | number>;
+};
 
-// 함수 형태 사용 (여러 타입 + 조건)
-export const FormTypeInputRadioGroupDefinition = {
-  Component: FormTypeInputRadioGroup,
-  test: ({ type, formType, jsonSchema }: Hint) =>
-    (type === 'string' || type === 'number' || type === 'integer') &&
-    formType === 'radio' &&
+// Use the function form (several types + conditions)
+export const FieldInputRadioGroupDefinition = {
+  Component: FieldInputRadioGroup,
+  test: ({ type, inputType, jsonSchema }: FieldInputHint) =>
+    (type === 'string' || type === 'number') &&
+    inputType === 'radio' &&
     jsonSchema.enum !== undefined &&
     jsonSchema.enum.length > 0,
-} satisfies FormTypeInputDefinition;
+} satisfies FieldInputDefinition;
 ```
 
-**배치 위치**: Priority 2 (type + formType) 또는 Priority 3 (enum 체크 때문)
+**Placement**: Priority 2 (type + inputType), or Priority 3 (because of the enum check)
 
-## 의사결정 플로우
+## Decision Flow
 
 ```
-조건이 단순한가? (type, format, formType만)
-├─ Yes → 객체 형태 사용
+Is the condition simple? (type, format, and inputType only)
+├─ Yes → use the object form
 │         { type: 'string', format: 'email' }
 │
-└─ No → 함수 형태 사용
-          ({ type, jsonSchema }) => 
+└─ No → use the function form
+          ({ type, jsonSchema }) =>
             type === 'string' && jsonSchema.enum?.length > 0
 ```
 
 ```
-조건이 얼마나 구체적인가?
-├─ 매우 구체적 (format + formType + 추가 속성)
-│  → Priority 1에 배치
+How specific is the condition?
+├─ Very specific (format + inputType + extra properties)
+│  → place in Priority 1
 │
-├─ 중간 (format 또는 formType)
-│  → Priority 2에 배치
+├─ Medium (format or inputType)
+│  → place in Priority 2
 │
-├─ Enum 조건 (함수 형태)
-│  → Priority 3에 배치
+├─ Enum condition (function form)
+│  → place in Priority 3
 │
-├─ 구조 타입 (array, object)
-│  → Priority 4에 배치
+├─ Structural type (array, object)
+│  → place in Priority 4
 │
-└─ 일반 타입 (type만)
-   → Priority 5 (마지막)에 배치
+└─ General type (type only)
+   → place in Priority 5 (last)
 ```
 
-## 테스트 조건 검증
+## Verifying Test Conditions
 
-### 수동 검증
+### Manual Verification
 
 ```typescript
-import { Hint } from '@canard/schema-form';
+import type { FieldInputHint, FieldInputTestFn } from '@canard/schema-form';
 
-// Test hint 생성
-const testHint: Hint = {
+// Build a test hint
+const testHint: FieldInputHint = {
   type: 'string',
+  schemaType: 'string',
+  misfit: false,
+  required: false,
+  nullable: false,
   path: '/email',
   jsonSchema: {
     type: 'string',
@@ -353,35 +342,34 @@ const testHint: Hint = {
   format: 'email',
 };
 
-// 조건 테스트
-const shouldMatch = FormTypeInputEmailDefinition.test(testHint);
+// Test the condition
+const testEmail: FieldInputTestFn = ({ type, format }) => type === 'string' && format === 'email';
+const shouldMatch = testEmail(testHint);
 console.log(shouldMatch);  // true
 ```
 
-## 디버깅 팁
+## Debugging Tips
 
-### 매칭 로깅
+### Match Logging
 
 ```typescript
-// 개발 환경에서만 활성화
-if (process.env.NODE_ENV === 'development') {
-  export const FormTypeInputStringDefinition = {
-    Component: FormTypeInputString,
-    test: (hint: Hint) => {
-      const matches = hint.type === 'string';
-      console.log('FormTypeInputString test:', { hint, matches });
-      return matches;
-    },
-  };
-}
+export const FieldInputStringDefinition = {
+  Component: FieldInputString,
+  test: (hint: FieldInputHint) => {
+    const matches = hint.type === 'string';
+    if (process.env.NODE_ENV === 'development') {
+      console.log('FieldInputString test:', { hint, matches });
+    }
+    return matches;
+  },
+} satisfies FieldInputDefinition;
 ```
 
 ---
 
-**핵심 원칙**:
-1. 단순 조건 → 객체 형태
-2. 복합 조건 → 함수 형태
-3. 구체적 조건 → 배열 앞쪽
-4. 일반 조건 → 배열 뒤쪽
-5. 순서가 매핑 우선순위를 결정
-
+**Core principles**:
+1. Simple condition → object form
+2. Compound condition → function form
+3. Specific condition → toward the front of the array
+4. General condition → toward the back of the array
+5. Order decides mapping priority

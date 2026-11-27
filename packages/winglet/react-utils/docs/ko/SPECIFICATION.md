@@ -55,7 +55,7 @@ yarn add @winglet/react-utils
 
 ```bash
 npm install react react-dom
-# React 16, 17, 18, 19 모두 지원
+# React와 React DOM >=16.14 <20 지원
 ```
 
 ---
@@ -113,7 +113,7 @@ const SafeWidget = withErrorBoundary(Widget, <p>로드에 실패했습니다.</p
 | `@winglet/react-utils/hook`   | 18개 훅 전체                                                                                       |
 | `@winglet/react-utils/hoc`    | `withErrorBoundary`, `withErrorBoundaryForwardRef`, `withUploader`                                 |
 | `@winglet/react-utils/portal` | `Portal` 복합 객체                                                                                 |
-| `@winglet/react-utils/filter` | `isReactComponent`, `isReactElement`, `isClassComponent`, `isFunctionComponent`, `isMemoComponent` |
+| `@winglet/react-utils/filter` | `isReactComponent`, `isReactElement`, `isClassComponent`, `isFunctionComponent`, `isMemoComponent`, `isForwardRefComponent`, `isLazyComponent` |
 | `@winglet/react-utils/object` | `remainOnlyReactComponent`                                                                         |
 | `@winglet/react-utils/render` | `renderComponent`                                                                                  |
 
@@ -129,7 +129,7 @@ const SafeWidget = withErrorBoundary(Widget, <p>로드에 실패했습니다.</p
 function useConstant<T>(input: T): T;
 ```
 
-첫 번째 렌더링에서 값을 저장하고 이후 재계산하지 않습니다. 함수를 전달하면 함수 자체가 저장됩니다(호출되지 않음). 팩토리 함수로 지연 초기화가 필요하다면 `useTruthyConstant`를 사용하세요.
+첫 번째 렌더링에서 값을 저장하고 이후 재계산하지 않습니다. 함수를 전달하면 함수 자체가 저장됩니다(호출되지 않음). 팩토리를 한 번 호출하려면 `useLazyConstant`를, 결과가 falsy일 때 다시 시도해야 하면 `useTruthyConstant`를 사용하세요.
 
 **매개변수**:
 
@@ -142,8 +142,8 @@ const MyComponent = () => {
   // 안정적인 객체 — React.memo 자식 컴포넌트를 불필요하게 리렌더링하지 않음
   const defaultConfig = useConstant({ showIcon: true, pageSize: 20 });
 
-  // 비용이 큰 초기화 연산 (함수가 저장되며 호출되지 않음)
-  // 호출을 원하면 useTruthyConstant를 사용하세요
+  // 함수 값: 함수 자체가 저장되며 호출되지 않음
+  // 팩토리를 한 번 호출하려면 useLazyConstant를 사용하세요
   const callback = useConstant(() => (value: string) => console.log(value));
 
   return <ExpensiveChild config={defaultConfig} onLog={callback} />;
@@ -277,7 +277,7 @@ useEffect(() => {
 
 ### useHandle
 
-제공된 핸들러의 최신 버전을 항상 호출하는 안정적인 콜백 함수를 생성합니다.
+마지막으로 커밋된 렌더의 핸들러를 호출하는 안정적인 콜백 함수를 생성합니다. 핸들러는 커밋 단계에서 반영되므로 이후 렌더 도중의 호출은 이전에 커밋된 핸들러를 실행하고, 커밋되지 않은 이후 렌더의 핸들러는 호출되지 않습니다. 첫 렌더에는 아직 커밋된 핸들러가 없으므로 그 렌더 도중의 호출은 그 렌더 자신의 핸들러를 실행하며, 그 렌더가 커밋되지 않더라도 마찬가지입니다.
 
 ```typescript
 function useHandle<P extends any[], R>(
@@ -355,7 +355,7 @@ function useSnapshotReference<T extends object | undefined>(
 - `input` — 추적할 객체.
 - `omit` — 선택적. 깊은 비교에서 제외할 프로퍼티.
 
-**반환값**: 내용이 변경될 때만 `current`가 업데이트되는 `RefObject<T>`.
+**반환값**: 내용이 변경될 때만 `current`가 업데이트되는 `RefObject<T>`. 새 스냅샷은 커밋 단계에서 반영되므로 변경된 입력을 받은 렌더 도중에는 `current`가 이전에 커밋된 스냅샷이며, 커밋되지 않은 렌더는 `current`를 바꾸지 않습니다.
 
 ```tsx
 const dataRef = useSnapshotReference(complexData);
@@ -450,18 +450,13 @@ function useOnUnmount(handler: Fn): void;
 
 **매개변수**:
 
-- `handler` — 클린업 함수. 마운트 시점의 값을 캡처합니다 (오래된 클로저).
-
-**중요**: 클린업 함수 내에서 현재 state 값에 접근하려면 `useReference`를 사용하세요.
+- `handler` — 클린업 함수. 마지막으로 커밋된 렌더의 핸들러가 실행되므로 그 렌더의 props와 state를 읽습니다. 커밋되지 않은 렌더의 핸들러는 사용하지 않습니다. 리렌더 때는 실행되지 않고 언마운트 때만 실행됩니다.
 
 ```tsx
-// 언마운트 시 현재 state 접근
-const formDataRef = useReference(formData);
-const isDirtyRef = useReference(isDirty);
-
+// 마운트 시점의 값이 아니라 현재 formData와 isDirty를 읽습니다
 useOnUnmount(() => {
-  if (isDirtyRef.current) {
-    localStorage.setItem('draft', JSON.stringify(formDataRef.current));
+  if (isDirty) {
+    localStorage.setItem('draft', JSON.stringify(formData));
   }
 });
 ```
@@ -470,7 +465,7 @@ useOnUnmount(() => {
 
 ### useOnUnmountLayout
 
-`useLayoutEffect`를 통한 동기 언마운트 클린업.
+`useLayoutEffect`를 통한 동기 언마운트 클린업. `useOnUnmount`와 마찬가지로 마지막으로 커밋된 렌더의 핸들러를 실행합니다.
 
 ```typescript
 function useOnUnmountLayout(handler: Fn): void;
@@ -597,7 +592,7 @@ function useTimeout(
 **반환값**:
 
 - `isIdle()` — 대기 중인 타임아웃이 없으면 `true`.
-- `schedule()` — 타임아웃을 시작하거나 재설정.
+- `schedule()` — 타임아웃을 시작하거나 재설정. 컴포넌트가 언마운트된 뒤에는 아무 동작도 하지 않으며, 대기 중인 타임아웃은 언마운트 때 취소됩니다.
 - `cancel()` — 대기 중인 타임아웃 취소.
 
 ```tsx
@@ -672,6 +667,8 @@ return (
 
 ## Portal 시스템
 
+Portal은 소스 위치에서 원시 React 포털을 반환하여 `Portal.Anchor`에 내용을 배치합니다. 컨텍스트 읽기와 클릭 버블링은 소스의 React 조상을 따라 `Portal.with`와 그 위까지 전달됩니다. 소스만 감싼 프로바이더도 포털 안에서 읽습니다. 클릭을 격리하려면 포털 내용에서 전파를 중단하고, 범위 전체에서 값을 공유하려면 프로바이더를 `Portal.with` 위에 두십시오. Activity 숨김·표시 사이에는 상태를 유지합니다. 서버와 첫 hydration 렌더를 포함하여 앵커가 연결되기 전에는 내용이 없으며, 앵커 연결·교체가 렌더 위치를 갱신합니다.
+
 React 컴포넌트 계층구조(컨텍스트, 이벤트 버블링)를 유지하면서 다른 DOM 위치에 콘텐츠를 렌더링합니다.
 
 ### 설정
@@ -709,7 +706,7 @@ const App = Portal.with(() => {
 
 #### `Portal`
 
-자식 요소를 `Portal.Anchor` 위치에 렌더링합니다. 자신의 위치에서는 `null`을 반환합니다.
+자식 요소를 `Portal.Anchor` 위치에 렌더링합니다. 앵커가 있으면 `createPortal` 결과를 반환합니다.
 
 ```tsx
 <Portal>
@@ -840,6 +837,8 @@ const SafeChart = withErrorBoundary(
 - 이벤트 핸들러 내부의 에러는 잡지 않습니다 (try/catch 사용)
 - 비동기 에러는 잡지 않습니다 (에러 state 패턴 사용)
 
+두 HOC가 렌더링하는 클래스인 `ErrorBoundary`(props: `children`, 선택적 `fallback`, 선택적 `onError`)도 패키지 루트와 `@winglet/react-utils/hoc`에서 내보내므로 JSX로 직접 사용할 수 있습니다.
+
 ---
 
 ### withErrorBoundaryForwardRef
@@ -927,7 +926,7 @@ function isReactComponent<Props = any>(
 
 함수 컴포넌트, 클래스 컴포넌트, `React.memo` 래핑 컴포넌트에 대해 `true`를 반환합니다.
 
-**감지하지 않음**: `React.forwardRef` 컴포넌트.
+`React.forwardRef`와 `React.lazy` 컴포넌트도 감지합니다. 각각 `isForwardRefComponent`와 `isLazyComponent`로 구분합니다.
 
 ```tsx
 isReactComponent(() => <div />); // true
@@ -939,7 +938,7 @@ isReactComponent(
     }
   },
 ); // true
-isReactComponent(React.forwardRef((_, ref) => <div ref={ref} />)); // false
+isReactComponent(React.forwardRef((_, ref) => <div ref={ref} />)); // true
 isReactComponent(<div />); // false (엘리먼트, 컴포넌트 아님)
 ```
 
@@ -1054,7 +1053,7 @@ type EffectCallback = () => void | (() => void);
 
 // Portal 타입
 type Portal = {
-  (props: PropsWithChildren): null;
+  (props: PropsWithChildren): ReactPortal | null;
   with: typeof withPortal;
   Anchor: typeof Anchor;
 };
@@ -1073,8 +1072,8 @@ type UseTimeoutReturn = {
 
 | 환경       | 요구사항                        |
 | ---------- | ------------------------------- |
-| React      | 16, 17, 18, 19                  |
-| React DOM  | 16, 17, 18, 19                  |
+| React      | 16.14 이상, 17, 18, 19 (`>=16.14 <20`) |
+| React DOM  | 16.14 이상, 17, 18, 19 (`>=16.14 <20`) |
 | Node.js    | 14.0.0 이상                     |
 | 브라우저   | ES2020을 지원하는 모던 브라우저 |
 | 모듈 형식  | ESM (`.mjs`) 및 CJS (`.cjs`)    |

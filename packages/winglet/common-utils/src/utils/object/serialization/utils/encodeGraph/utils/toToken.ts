@@ -18,7 +18,7 @@ export function toToken(value: unknown, state: TraversalState): Token {
           ? '-0'
           : Number.isFinite(value)
             ? value
-            : String(value),
+            : '' + value,
       ];
     case 'bigint':
       return ['bigint', String(value)];

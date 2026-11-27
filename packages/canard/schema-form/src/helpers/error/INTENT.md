@@ -2,28 +2,20 @@
 
 ## Purpose
 
-schema-form 내부에서 발생하는 에러 메시지 포맷팅과 검증 에러 변환을 담당하는 헬퍼 모음.
-
-## Conventions
-
-- `formatErrorMessage` 포맷터는 개발자 콘솔용 멀티라인 ASCII 박스 형식 사용
-- `formatValidationError`는 `FormatError` 타입 시그니처 준수
-- `transformErrors`는 입력 배열을 직접 변형(`@warning THIS FUNCTION CHANGE INPUT ERRORS`)
-- `sequence` 카운터는 모듈 수준 변수 (키 할당 시 단조 증가)
+개발자 진단 문자열의 공유 원소를 제공하고 입력 판정의 메시지 포맷터를 연결합니다. 개별 오류 도메인의 문구와 보고 정책은 소유하지 않습니다.
 
 ## Boundaries
 
 ### Always do
 
-- 새 스키마 에러 포맷터는 `formatErrorMessage/` 하위에 개별 파일로 추가하고 `index.ts`에 export
-- `formatValidationError`는 `FormatError` 인터페이스 시그니처를 반드시 준수
+- 개별 진단 포맷터는 그 진단을 소비하는 모듈에 둡니다.
+- 입력 판정의 메시지 선택·치환은 formatValidationError의 계약에 남깁니다.
 
 ### Ask first
 
-- `transformErrors`의 `ENHANCED_KEY` 필터 조건 변경
-- `sequence` 카운터 초기화 또는 리셋 로직 추가
+- 공유 진단 박스의 표현 계약이나 포맷터의 호출 경계를 바꿀 때.
 
 ### Never do
 
-- `transformErrors` 호출 후 원본 에러 배열이 변경됨을 가정하지 않는 코드 작성
-- `formatErrorMessage` 포맷터에서 에러를 throw하거나 외부 상태 변경
+- 표현 보조에서 외부 상태를 변경하거나 오류를 보고하지 않습니다.
+- 일반 메시지 추출을 임의의 예외를 격리하는 경계로 사용하지 않습니다.

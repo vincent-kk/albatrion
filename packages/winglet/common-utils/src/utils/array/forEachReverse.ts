@@ -1,3 +1,5 @@
+import type { Fn } from '@aileron/declare';
+
 /**
  * Executes a callback function for each element in an array in reverse order with early termination support.
  *
@@ -179,7 +181,10 @@
  */
 export const forEachReverse = <Type>(
   array: readonly Type[],
-  callback: (item: Type, index: number, array: readonly Type[]) => boolean | void,
+  callback: Fn<
+    [item: Type, index: number, array: readonly Type[]],
+    boolean | void
+  >,
 ) => {
   for (let i = array.length - 1; i >= 0; i--)
     if (callback(array[i], i, array) === false) break;

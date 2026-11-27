@@ -1,0 +1,71 @@
+import type { ReactElement } from 'react';
+import { type ComponentType, memo } from 'react';
+
+import { NULL_FUNCTION } from '@winglet/common-utils/constant';
+
+import { LabelRenderer as FallbackLabelRenderer } from '@/schema-form/components/FallbackComponents';
+import { type FieldNode, FieldNodeEventType } from '@/schema-form/core';
+import { resolveFieldIdentifiers } from '@/schema-form/helpers/fieldId/resolveFieldIdentifiers';
+import { useFieldNodeTracker } from '@/schema-form/hooks';
+import type { FieldRendererProps, LabelRendererProps } from '@/schema-form/types';
+
+import { hasArrayAncestor } from './hasArrayAncestor';
+
+/**
+ * Bind a label, tracking mutable addresses and directly rendering the pure fallback.
+ * @param Renderer - Registered component that owns the label root.
+ * @param node - Source node, or absence for an empty part.
+ * @param required - The group's resolved display requirement.
+ * @param jsonSchema - Current schema, present whenever node is present.
+ * @param formId - Scope used to resolve identifiers after the node moves.
+ * @param identifierPath - Path used to resolve the captured identifiers.
+ * @param identifiers - Resolved addresses shared with the field renderer.
+ * @returns A memoized label whose explicit props override defaults except node.
+ */
+export const createLabelPart = (
+  Renderer: ComponentType<LabelRendererProps>,
+  node: FieldNode | null | undefined,
+  required: boolean,
+  jsonSchema: FieldNode['jsonSchema'] | undefined,
+  formId: string,
+  identifierPath: string | undefined,
+  identifiers: Pick<FieldRendererProps, 'inputId' | 'labelId'> | null,
+): ComponentType<Partial<LabelRendererProps>> => {
+  if (!node) return NULL_FUNCTION;
+  const isFallback = Renderer === FallbackLabelRenderer;
+  const render = function Label({
+    children,
+    ...props
+  }: Partial<LabelRendererProps>): ReactElement {
+    const path = node.path;
+    const name = node.name;
+    const { inputId, labelId } =
+      identifiers && path === identifierPath
+        ? identifiers
+        : resolveFieldIdentifiers(formId, path, false);
+    const rendererProps: LabelRendererProps = {
+      path,
+      name,
+      jsonSchema: jsonSchema!,
+      required,
+      htmlFor: inputId,
+      id: labelId,
+      ...props,
+      children: children === undefined ? name : children,
+      node,
+    };
+    return isFallback ? (
+      FallbackLabelRenderer(rendererProps)
+    ) : (
+      <Renderer {...rendererProps} />
+    );
+  };
+  return memo(
+    hasArrayAncestor(node)
+      ? function Label(props: Partial<LabelRendererProps>): ReactElement {
+          useFieldNodeTracker(node, FieldNodeEventType.UpdatePath);
+          return render(props);
+        }
+      : render,
+  );
+};

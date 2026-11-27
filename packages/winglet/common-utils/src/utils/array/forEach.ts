@@ -1,3 +1,5 @@
+import type { Fn } from '@aileron/declare';
+
 /**
  * Executes a callback function for each element in an array with early termination support.
  *
@@ -150,7 +152,10 @@
  */
 export const forEach = <Type>(
   array: readonly Type[],
-  callback: (item: Type, index: number, array: readonly Type[]) => boolean | void,
+  callback: Fn<
+    [item: Type, index: number, array: readonly Type[]],
+    boolean | void
+  >,
 ) => {
   for (let i = 0, l = array.length; i < l; i++)
     if (callback(array[i], i, array) === false) break;

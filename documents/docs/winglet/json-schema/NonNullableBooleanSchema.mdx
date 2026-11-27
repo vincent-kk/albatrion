@@ -1,0 +1,25 @@
+---
+title: 'NonNullableBooleanSchema'
+sidebar_label: 'NonNullableBooleanSchema'
+---
+<!-- sync-winglet-docs:auto -->
+
+import WingletPlayground from '@site/src/components/WingletPlayground';
+
+# NonNullableBooleanSchema
+
+Non-nullable boolean schema (type: 'boolean')
+
+## Import
+
+```typescript
+import type { NonNullableBooleanSchema } from '@winglet/json-schema';
+```
+
+## Signature
+
+```typescript
+interface NonNullableBooleanSchema<Options extends Dictionary = object, Schema extends UnknownSchema = JSONSchema> extends BasicSchema<BooleanValue, Options, Schema> {
+    type: 'boolean';
+}
+```

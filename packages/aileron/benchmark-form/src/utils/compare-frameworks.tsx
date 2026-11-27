@@ -28,7 +28,7 @@ function flag(name: string): string | undefined {
 }
 
 function row(r: BenchResult): string {
-  const mount = `${pad(r.mountMs.toFixed(1), 6)} /${pad(String(r.mountRenders), 4)}`;
+  const mount = `${pad(r.mountMs.toFixed(1), 6)} /${pad('' + r.mountRenders, 4)}`;
   const key = `${pad(r.keystrokeMs.toFixed(3), 6)} /${pad(r.keystrokeRenders.toFixed(1), 6)}`;
   const set = `${pad(r.setValueMs.toFixed(3), 6)} /${pad(r.setValueRenders.toFixed(1), 6)}`;
   return `  ${r.name.padEnd(34)}  ${mount}  ${key}  ${set}`;

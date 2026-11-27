@@ -13,6 +13,13 @@ Provides reliable non-nil detection using loose inequality check, serving as
 a type guard to exclude null and undefined values. This is the inverse of
 `isNil()` and is particularly useful for filtering and type narrowing.
 
+## Import
+
+```typescript
+import { isNotNil } from '@winglet/common-utils/filter';
+import { isNotNil } from '@winglet/common-utils';
+```
+
 ## Signature
 
 ```typescript
@@ -222,7 +229,7 @@ console.log(nullResult); // null
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/common-utils": "0.12.3" }}
+  dependencies={{ "@winglet/common-utils": "0.15.0" }}
   code={`import { isNotNil } from '@winglet/common-utils';
 
 // True cases - non-nil values

@@ -1,0 +1,65 @@
+---
+title: 'convertJSONPointerToPath'
+sidebar_label: 'convertJSONPointerToPath'
+---
+<!-- sync-winglet-docs:auto -->
+
+import WingletPlayground from '@site/src/components/WingletPlayground';
+
+# convertJSONPointerToPath
+
+Converts JSON Pointer format to AJV dataPath format.
+
+## Import
+
+```typescript
+import { convertJSONPointerToPath } from '@winglet/json/pointer-common';
+import { convertJSONPointerToPath } from '@winglet/json/pointer';
+import { convertJSONPointerToPath } from '@winglet/json';
+```
+
+## Signature
+
+```typescript
+const convertJSONPointerToPath: (jsonPointer: string) => string
+```
+
+## Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `jsonPointer` | `-` | JSON Pointer string to convert (e.g., "/data/users/0/name") |
+
+## Returns
+
+AJV dataPath format string (e.g., ".data.users[0].name")
+
+## Examples
+
+### Example 1
+
+```typescript
+convertJSONPointerToPath('/data/users/0/name') // '.data.users[0].name'
+convertJSONPointerToPath('/items/-/id')        // '.items[].id'
+convertJSONPointerToPath('/0/value')           // '.[0].value'
+convertJSONPointerToPath('/')                  // '.'
+```
+
+## Playground
+
+<WingletPlayground
+  dependencies={{ "@winglet/json": "0.16.0" }}
+  code={`convertJSONPointerToPath('/data/users/0/name') // '.data.users[0].name'
+convertJSONPointerToPath('/items/-/id')        // '.items[].id'
+convertJSONPointerToPath('/0/value')           // '.[0].value'
+convertJSONPointerToPath('/')                  // '.'`}
+/>
+
+## Notes
+
+Empty tokens keep their dot separators; for example `//x` becomes `..x`.
+Conversion is lossy: root `''` and `/`; numeric `/0` and bracket `/[0]`;
+append `/-` and bracket `/[]`; dot `/a.b/c.d` and bracket-containing `/a.b][c.d`;
+and numeric paths `/0` and `//0` can each collide. Keep the JSON Pointer as
+the lossless address. `getJSONPath` uses different spellings for numeric object
+keys, hyphens and dot-containing names; compare only their shared spelling domain.

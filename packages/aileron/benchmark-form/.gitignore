@@ -25,3 +25,6 @@ dist-ssr
 
 # StoryBook 빌드 결과
 storybook-static
+
+# 힙 스냅숏 결과 (파일마다 수십 MB라 저장소에 넣지 않음)
+*.heapsnapshot

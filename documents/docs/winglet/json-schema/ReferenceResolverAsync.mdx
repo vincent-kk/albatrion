@@ -1,0 +1,26 @@
+---
+title: 'ReferenceResolverAsync'
+sidebar_label: 'ReferenceResolverAsync'
+---
+<!-- sync-winglet-docs:auto -->
+
+import WingletPlayground from '@site/src/components/WingletPlayground';
+
+# ReferenceResolverAsync
+
+Async protocol changes only resolve; root, child and dialect stay synchronous.
+
+## Import
+
+```typescript
+import type { ReferenceResolverAsync } from '@winglet/json-schema';
+```
+
+## Signature
+
+```typescript
+interface ReferenceResolverAsync<Context = unknown> extends Omit<ReferenceResolver<Context>, 'resolve'> {
+    /** Resolve using caller-controlled asynchronous document loading if needed. */
+    resolve(reference: string, keyword: ReferenceKeyword, context: Context): ReferenceStep | PromiseLike<ReferenceStep>;
+}
+```

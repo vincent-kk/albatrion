@@ -2,10 +2,10 @@ import { isArray, isPlainObject } from '@winglet/common-utils';
 import { JSONPath } from '@winglet/json';
 
 /**
- * 중첩된 데이터 구조에서 JSON 경로 목록을 추출합니다.
- * @param data - 검색할 데이터 구조
- * @param initialPath - 초기 경로 (기본값: '')
- * @returns JSON 경로 목록
+ * Collects JSON paths from nested data.
+ * @param data - Nested data to traverse.
+ * @param initialPath - Prefix for collected paths; defaults to an empty string.
+ * @returns Collected JSON paths.
  */
 export const getJSONPaths = (data: any, initialPath = ''): string[] => {
   const result: string[] = [];

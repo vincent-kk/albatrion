@@ -8,7 +8,13 @@ import {
 
 import type { Dictionary } from '@aileron/declare';
 
-import { ErrorBoundary } from './components/ErrorBoundary';
+import {
+  ErrorBoundary,
+  type UseErrorBoundaryReporter,
+} from './components/ErrorBoundary';
+
+/** Returns no reporter when the wrapper's optional reporter hook is omitted. */
+const useDefaultReporter: UseErrorBoundaryReporter = () => undefined;
 
 /**
  * Wraps a forwardRef component with error boundary protection while preserving ref forwarding.
@@ -76,15 +82,20 @@ import { ErrorBoundary } from './components/ErrorBoundary';
  * @typeParam Ref - The type of the ref being forwarded to the component
  * @param Component - The forwardRef component to wrap with error boundary protection
  * @param fallback - Optional custom fallback JSX to display when an error occurs. If not provided, uses default error message
+ * @param useReporter - Hook called on every render to read an optional error reporter
  * @returns A new forwardRef component that renders the original component with error boundary protection
  */
 export const withErrorBoundaryForwardRef = <Props extends Dictionary, Ref>(
   Component: ForwardRefExoticComponent<Props & RefAttributes<Ref>>,
   fallback?: ReactNode,
+  useReporter: UseErrorBoundaryReporter = useDefaultReporter,
 ): ForwardRefExoticComponent<PropsWithoutRef<Props> & RefAttributes<Ref>> => {
-  return forwardRef<Ref, Props>((props, ref) => (
-    <ErrorBoundary fallback={fallback}>
-      <Component {...(props as Props)} ref={ref} />
-    </ErrorBoundary>
-  ));
+  return forwardRef<Ref, Props>((props, ref) => {
+    const onError = useReporter();
+    return (
+      <ErrorBoundary fallback={fallback} onError={onError}>
+        <Component {...(props as Props)} ref={ref} />
+      </ErrorBoundary>
+    );
+  });
 };

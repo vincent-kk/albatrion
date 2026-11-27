@@ -1,0 +1,95 @@
+---
+title: 'destroyGlobalScheduler'
+sidebar_label: 'destroyGlobalScheduler'
+---
+<!-- sync-winglet-docs:auto -->
+
+import WingletPlayground from '@site/src/components/WingletPlayground';
+
+# destroyGlobalScheduler
+
+Destroys the global scheduler and releases all associated resources.
+Provides clean shutdown with proper resource cleanup and makes
+operation idempotent for safe repeated calls.
+
+## Import
+
+```typescript
+import { destroyGlobalScheduler } from '@winglet/common-utils/scheduler';
+import { destroyGlobalScheduler } from '@winglet/common-utils';
+```
+
+## Signature
+
+```typescript
+const destroyGlobalScheduler: () => void
+```
+
+## Examples
+
+### Application shutdown
+
+```typescript
+// During app cleanup
+window.addEventListener('beforeunload', () => {
+  destroyGlobalScheduler();
+});
+
+// Or in framework cleanup
+useEffect(() => {
+  return () => {
+    destroyGlobalScheduler();
+  };
+}, []);
+```
+
+### Test cleanup
+
+```typescript
+afterEach(() => {
+  // Clean up between tests
+  destroyGlobalScheduler();
+});
+
+afterAll(() => {
+  // Final cleanup
+  destroyGlobalScheduler();
+});
+```
+
+## Playground
+
+<WingletPlayground
+  dependencies={{ "@winglet/common-utils": "0.15.0" }}
+  code={`// During app cleanup
+window.addEventListener('beforeunload', () => {
+  destroyGlobalScheduler();
+});
+
+// Or in framework cleanup
+useEffect(() => {
+  return () => {
+    destroyGlobalScheduler();
+  };
+}, []);`}
+/>
+
+## Notes
+
+**Resource Cleanup:**
+- Cancels all pending tasks
+- Closes MessageChannel ports
+- Removes event listeners
+- Clears all internal references
+
+**Idempotent Operation:**
+- Safe to call multiple times
+- No exceptions on repeated calls
+- Handles already destroyed state gracefully
+- Consistent state after any number of calls
+
+**Post-Destruction Behavior:**
+- New scheduler will be created on next function call
+- Previous task IDs become permanently invalid
+- Memory used by old scheduler becomes eligible for GC
+- Fresh start with new scheduler instance

@@ -27,10 +27,17 @@ complete before the user sees the screen update.
 Since this runs synchronously and blocks painting, it can impact performance.
 Only use when the synchronous behavior is necessary to prevent visual issues.
 
+## Import
+
+```typescript
+import { useLayoutEffectUntil } from '@winglet/react-utils/hook';
+import { useLayoutEffectUntil } from '@winglet/react-utils';
+```
+
 ## Signature
 
 ```typescript
-const useLayoutEffectUntil: <Dependencies extends DependencyList>(effect: () => boolean, dependencies?: Dependencies) => void
+const useLayoutEffectUntil: (effect: Fn<[], boolean>, dependencies?: DependencyList) => void
 ```
 
 ## Parameters
@@ -38,7 +45,7 @@ const useLayoutEffectUntil: <Dependencies extends DependencyList>(effect: () => 
 | Name | Type | Description |
 |------|------|-------------|
 | `effect` | `-` | A function that performs synchronous side effects and returns `true` when done |
-| `dependencies` | `-` | Optional dependency array that triggers re-execution when changed |
+| `dependencies` | `-` | Optional dependency array that triggers re-execution when changed. Omitting it re-runs the effect on every render until it returns `true` |
 
 ## Examples
 
@@ -86,7 +93,7 @@ useLayoutEffectUntil(() => {
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/react-utils": "0.12.2" }}
+  dependencies={{ "@winglet/react-utils": "0.14.1" }}
   code={`// Measure and adjust layout until it fits
 useLayoutEffectUntil(() => {
   const element = ref.current;

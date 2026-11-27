@@ -1,0 +1,48 @@
+import type { ReactElement } from 'react';
+import { type ChangeEvent, useLayoutEffect, useRef } from 'react';
+
+import { useHandle } from '@winglet/react-utils/hook';
+
+import type { Nullable } from '@aileron/declare';
+
+import type { FieldInputProps } from '@/schema-form/types';
+
+import { readArrayItemTitleId } from '../../utils/readArrayItemTitleId';
+
+/** Render a boolean node as a checkbox; a non-boolean value shows as indeterminate. */
+export const FieldInputBoolean = ({
+  inputId: fieldId,
+  labelId,
+  node,
+  name,
+  readOnly,
+  disabled,
+  misfit,
+  value,
+  onChange,
+  style,
+  className,
+}: FieldInputProps<Nullable<boolean>>): ReactElement => {
+  const ref = useRef<HTMLInputElement>(null);
+  useLayoutEffect(() => {
+    if (ref.current) ref.current.indeterminate = typeof value !== 'boolean';
+  }, [value]);
+  const handleChange = useHandle((event: ChangeEvent<HTMLInputElement>) => {
+    onChange(event.target.checked);
+  });
+  return (
+    <input
+      ref={ref}
+      type="checkbox"
+      id={fieldId}
+      name={name}
+      disabled={disabled || readOnly}
+      checked={value === true}
+      onChange={handleChange}
+      style={style}
+      className={className}
+      aria-labelledby={readArrayItemTitleId(node, labelId)}
+      aria-invalid={misfit || undefined}
+    />
+  );
+};

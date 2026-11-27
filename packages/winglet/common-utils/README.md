@@ -37,7 +37,7 @@ import { chunk, intersection, unique } from '@winglet/common-utils/array';
 // Console utilities
 import { printError } from '@winglet/common-utils/console';
 // Constants
-import { TIME_UNITS, TYPE_TAGS } from '@winglet/common-utils/constant';
+import { SECOND, ARRAY_TAG } from '@winglet/common-utils/constant';
 // Convert utilities
 import { convertMsFromDuration } from '@winglet/common-utils/convert';
 // Error classes
@@ -106,6 +106,8 @@ This package is written using ECMAScript 2020 (ES2020) syntax.
 - Node.js 14.0.0 or higher
 - Modern browsers (with ES2020 support)
 
+`withTimeout` requires a global `AbortController` implementation. Provide a compatible polyfill on hosts without it; this helper throws before starting the wrapped operation when the capability is absent.
+
 **For Legacy Environment Support:**
 Use transpilers like Babel to convert the code to match your target environment.
 
@@ -171,7 +173,7 @@ Use transpilers like Babel to convert the code to match your target environment.
 
 #### DataLoader
 
-- **[`DataLoader`](./src/utils/DataLoader/DataLoader.ts)**: Utility class for efficiently loading data by processing requests in batches and caching
+DataLoader lives in the separate `@winglet/data-loader` package.
 
 #### Filter
 
@@ -188,7 +190,7 @@ Use transpilers like Babel to convert the code to match your target environment.
 - **[`isEmptyArray`](./src/utils/filter/isEmptyArray.ts)**: Function to check if an array is empty
 - **[`isEmptyObject`](./src/utils/filter/isEmptyObject.ts)**: Function to check if an object is empty
 - **[`isEmptyPlainObject`](./src/utils/filter/isEmptyPlainObject.ts)**: Function to check if a plain object is empty
-- **[`isEmpty`](./src/utils/filter/isEmpty.ts)**: Function to comprehensively check if a value is empty (null, undefined, empty string, empty array, empty object, etc.)
+- **[`isEmpty`](./src/utils/filter/isEmpty.ts)**: Checks empty values. Map and Set sizes are recognized only for instances from the current realm; foreign collections are checked by own enumerable keys.
 - **[`isError`](./src/utils/filter/isError.ts)**: Function to check if a value is an Error object
 - **[`isFile`](./src/utils/filter/isFile.ts)**: Function to check if a value is a File object
 - **[`isFunction`](./src/utils/filter/isFunction.ts)**: Function to check if a value is a function
@@ -267,22 +269,21 @@ Use transpilers like Babel to convert the code to match your target environment.
 - **[`countKey`](./src/utils/object/countKey.ts)**: Function to count all enumerable properties including inherited ones
 - **[`countObjectKey`](./src/utils/object/countObjectKey.ts)**: Function to count only own enumerable properties of an object
 - **[`deleteDataProperty`](./src/utils/object/deleteDataProperty.ts)**: Function to delete a property with plain `delete` semantics, as the deletion counterpart of the data-property primitives
-- **[`equals`](./src/utils/object/equals.ts)**: Function to compare the equality of two objects
+- **[`equals`](./src/utils/object/equals/equals.ts)**: Function to compare the equality of two objects
 - **[`getDataProperty`](./src/utils/object/getDataProperty.ts)**: Function to read a property while treating reserved member names (`__proto__`, `constructor`, `prototype`) as opaque own data
 - **[`getEmptyObject`](./src/utils/object/getEmptyObject.ts)**: Function to create a truly empty object with no prototype chain
 - **[`getFirstKey`](./src/utils/object/getFirstKey.ts)**: Function to retrieve the first enumerable property key from an object
-- **[`getJSONPointer`](./src/utils/object/getJSONPointer.ts)**: Function to get a value from an object using a JSON Pointer
 - **[`getObjectKeys`](./src/utils/object/getObjectKeys.ts)**: Function to return all keys of an object as an array
 - **[`getSymbols`](./src/utils/object/getSymbols.ts)**: Function to return all symbol properties of an object as an array
 - **[`hasUndefined`](./src/utils/object/hasUndefined.ts)**: Function to check if an object has undefined values
 - **[`isReservedName`](./src/utils/object/isReservedName.ts)**: Function to check whether a key is a reserved member name that must go through the data-property primitives
-- **[`merge`](./src/utils/object/merge.ts)**: Function to merge multiple objects
+- **[`merge`](./src/utils/object/merge/merge.ts)**: Function to merge multiple objects
 - **[`removePrototype`](./src/utils/object/removePrototype.ts)**: Function to remove the prototype chain from an existing object
 - **[`removeUndefined`](./src/utils/object/removeUndefined.ts)**: Function to remove properties with undefined values from an object
 - **[`setDataProperty`](./src/utils/object/setDataProperty.ts)**: Function to write a property while treating reserved member names as opaque own data, never triggering the `__proto__` setter
 - **[`shallowClone`](./src/utils/object/shallowClone.ts)**: Function to create shallow copies of arrays and plain objects, preserving references for nested structures
 - **[`sortObjectKeys`](./src/utils/object/sortObjectKeys.ts)**: Function to sort an object's keys alphabetically
-- **[`stableEquals`](./src/utils/object/stableEquals.ts)**: Function to compare the equality of two objects in a stable way
+- **[`stableEquals`](./src/utils/object/equals/utils/stableEquals.ts)**: Function to compare the equality of two objects in a stable way
 - **[`transformKeys`](./src/utils/object/transformKeys.ts)**: Function to apply a transformation function to all keys of an object
 - **[`transformValues`](./src/utils/object/transformValues.ts)**: Function to apply a transformation function to all values of an object
 
@@ -349,10 +350,10 @@ async function fetchWithTimeout(url: string) {
 ### Using Array Utilities
 
 ```typescript
-import { array } from '@winglet/common-utils';
+import { chunk } from '@winglet/common-utils/array';
 
 // Example code:
-const chunks = array.chunk([1, 2, 3, 4, 5, 6], 2);
+const chunks = chunk([1, 2, 3, 4, 5, 6], 2);
 console.log(chunks); // [[1, 2], [3, 4], [5, 6]]
 ```
 

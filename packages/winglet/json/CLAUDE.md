@@ -24,8 +24,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Agent Docs Injector
 
-`docs/agents/**` 자산을 선택한 에이전트 위치에 주입. 엔진: `@slats/agents-assets-sync` (bin: `inject-agents-settings`).
-`--agent` 로 대상 에이전트를 고른다 — `claude` 는 `.claude/{skills,rules,commands}`, `codex`/`agents` 는 `.agents/skills` + `AGENTS.md` 마커 블록(project scope 기준).
+Inject `docs/agents/**` assets into the selected agent's locations. Engine: `@slats/agents-assets-sync` (bin: `inject-agents-settings`).
+Select agents with `--agent`: `claude` uses `.claude/{skills,rules,commands}`; `codex`/`agents` use `.agents/skills` and marker blocks in `AGENTS.md` (at project scope).
 
 ```bash
 npx -p @slats/agents-assets-sync inject-agents-settings --package=@winglet/json --agent=claude --scope=user
@@ -36,8 +36,8 @@ npx -p @slats/agents-assets-sync inject-agents-settings --package=@winglet/json 
 
 ### Isolation Guardrails
 
-- `src/**` 는 `docs/**` 와 `@slats/agents-assets-sync` 어느 것도 import 금지.
-- **절대 `exports` 에 `./docs/*` 를 추가하지 말 것.**
+- `src/**` MUST NOT import from `docs/**` or `@slats/agents-assets-sync`.
+- **Never add `./docs/*` to `exports`.**
 
 ## Architecture
 
@@ -64,7 +64,7 @@ This is a TypeScript library implementing RFC 6901 (JSON Pointer) and RFC 6902 (
 
 **Security Features:**
 
-- Reserved member names (`__proto__`, `constructor`, `prototype`) are handled as opaque own data properties (RFC 6901/6902/7396-aligned) — reads never walk the prototype chain, writes never mutate inherited objects
+- Reserved member names (`__proto__`, `constructor`, `prototype`) are handled as opaque own data properties (RFC 6901/6902/7396-aligned) — reads of these names never walk the prototype chain, writes never mutate inherited objects; pointer reads require an own member and accept canonical array indices
 - Input validation for plain objects/arrays only
 - RFC-compliant escape sequence handling (`~0` for `~`, `~1` for `/`)
 
@@ -77,11 +77,10 @@ Most functions accept options objects with properties like:
 - `immutable: boolean` - Preserve original objects (default: true)
 
 **Error Handling:**
-Custom `JSONPointerError` class with structured error codes:
+Custom `JSONPointerError` class with structured error codes; a missing path is not an error (`getValue` returns `undefined`):
 
 - `INVALID_INPUT` - Invalid input types
-- `INVALID_POINTER` - Malformed pointer syntax
-- `PROPERTY_NOT_FOUND` - Non-existent paths
+- `INVALID_POINTER_TYPE` - Pointer of the wrong type or without a leading `/` or `#`
 
 **Type Safety:**
 Extensive TypeScript generics and type constraints using `Dictionary` and `Array<any>` types.

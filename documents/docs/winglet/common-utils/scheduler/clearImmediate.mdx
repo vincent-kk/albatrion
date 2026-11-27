@@ -1,0 +1,96 @@
+---
+title: 'clearImmediate'
+sidebar_label: 'clearImmediate'
+---
+<!-- sync-winglet-docs:auto -->
+
+import WingletPlayground from '@site/src/components/WingletPlayground';
+
+# clearImmediate
+
+Cancels a previously scheduled immediate task by ID.
+Provides fast cancellation with optimized early return paths
+for invalid task IDs and edge cases.
+
+## Import
+
+```typescript
+import { clearImmediate } from '@winglet/common-utils/scheduler';
+import { clearImmediate } from '@winglet/common-utils';
+```
+
+## Signature
+
+```typescript
+const clearImmediate: (taskId: number) => boolean
+```
+
+## Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `taskId` | `-` | ID returned from setImmediate() call |
+
+## Returns
+
+true if task was found and cancelled, false otherwise
+
+## Examples
+
+### Conditional task cancellation
+
+```typescript
+const taskId = setImmediate(() => {
+  performExpensiveOperation();
+});
+
+// Cancel based on condition
+if (shouldCancel) {
+  const cancelled = clearImmediate(taskId);
+  console.log(cancelled ? 'Task cancelled' : 'Task already executed');
+}
+```
+
+### Cleanup pattern
+
+```typescript
+let pendingTask: number;
+
+function scheduleWork() {
+  clearImmediate(pendingTask); // Safe to call with undefined
+  pendingTask = setImmediate(doWork);
+}
+
+function cleanup() {
+  clearImmediate(pendingTask);
+}
+```
+
+## Playground
+
+<WingletPlayground
+  dependencies={{ "@winglet/common-utils": "0.15.0" }}
+  code={`const taskId = setImmediate(() => {
+  performExpensiveOperation();
+});
+
+// Cancel based on condition
+if (shouldCancel) {
+  const cancelled = clearImmediate(taskId);
+  console.log(cancelled ? 'Task cancelled' : 'Task already executed');
+}`}
+/>
+
+## Notes
+
+**Fast Path Optimizations:**
+- Early return for invalid task IDs (≤ 0)
+- Single scheduler access for valid cancellation attempts
+- O(1) task lookup and removal
+- Safe to call multiple times with same ID
+
+**Edge Case Handling:**
+- Returns false for invalid task IDs (-1, 0, negative numbers)
+- Handles already executed or cancelled tasks gracefully
+- No exceptions thrown for any input values
+- Idempotent operation - safe for repeated calls

@@ -1,3 +1,4 @@
+import { format } from 'node:util';
 import { describe, expect, it, vi } from 'vitest';
 
 import { printError } from '../printError';
@@ -11,15 +12,15 @@ describe('printError', () => {
     printError(title, message);
 
     expect(consoleErrorSpy).toHaveBeenCalledTimes(1);
-    expect(consoleErrorSpy.mock.calls[0][0]).toContain('⚠️ Test Error ⚠️');
-    expect(consoleErrorSpy.mock.calls[0][0]).toContain('Error message 1');
-    expect(consoleErrorSpy.mock.calls[0][0]).toContain('Error message 2');
-    expect(consoleErrorSpy.mock.calls[0][1]).toBe('color: #666;');
-    expect(consoleErrorSpy.mock.calls[0][2]).toBe(
+    expect(format(...consoleErrorSpy.mock.calls[0])).toContain('⚠️ Test Error ⚠️');
+    expect(format(...consoleErrorSpy.mock.calls[0])).toContain('Error message 1');
+    expect(format(...consoleErrorSpy.mock.calls[0])).toContain('Error message 2');
+    expect(consoleErrorSpy.mock.calls[0].filter(value => typeof value === 'string' && value.startsWith('color:'))[0]).toBe('color: #666;');
+    expect(consoleErrorSpy.mock.calls[0].filter(value => typeof value === 'string' && value.startsWith('color:'))[1]).toBe(
       'color: #ff0000; font-weight: bold; font-size: 1.25em;',
     );
-    expect(consoleErrorSpy.mock.calls[0][3]).toBe('color: #ff6b6b');
-    expect(consoleErrorSpy.mock.calls[0][4]).toBe('color: #ff6b6b');
+    expect(consoleErrorSpy.mock.calls[0].filter(value => typeof value === 'string' && value.startsWith('color:'))[2]).toBe('color: #ff6b6b');
+    expect(consoleErrorSpy.mock.calls[0].filter(value => typeof value === 'string' && value.startsWith('color:'))[3]).toBe('color: #ff6b6b');
 
     consoleErrorSpy.mockRestore();
   });
@@ -38,14 +39,14 @@ describe('printError', () => {
     printError(title, message, options);
 
     expect(consoleErrorSpy).toHaveBeenCalledTimes(1);
-    expect(consoleErrorSpy.mock.calls[0][0]).toContain('Additional info');
-    expect(consoleErrorSpy.mock.calls[0][0]).toContain('🚨 Custom Error 🚨');
-    expect(consoleErrorSpy.mock.calls[0][0]).toContain('Custom error message');
-    expect(consoleErrorSpy.mock.calls[0][1]).toBe('color: #666;');
-    expect(consoleErrorSpy.mock.calls[0][2]).toBe(
+    expect(format(...consoleErrorSpy.mock.calls[0])).toContain('Additional info');
+    expect(format(...consoleErrorSpy.mock.calls[0])).toContain('🚨 Custom Error 🚨');
+    expect(format(...consoleErrorSpy.mock.calls[0])).toContain('Custom error message');
+    expect(consoleErrorSpy.mock.calls[0].filter(value => typeof value === 'string' && value.startsWith('color:'))[0]).toBe('color: #666;');
+    expect(consoleErrorSpy.mock.calls[0].filter(value => typeof value === 'string' && value.startsWith('color:'))[1]).toBe(
       'color: #00ff00; font-weight: bold; font-size: 1.25em;',
     );
-    expect(consoleErrorSpy.mock.calls[0][3]).toBe('color: #0000ff');
+    expect(consoleErrorSpy.mock.calls[0].filter(value => typeof value === 'string' && value.startsWith('color:'))[2]).toBe('color: #0000ff');
 
     consoleErrorSpy.mockRestore();
   });
@@ -58,8 +59,8 @@ describe('printError', () => {
     printError(title, message);
 
     expect(consoleErrorSpy).toHaveBeenCalledTimes(1);
-    expect(consoleErrorSpy.mock.calls[0][0]).toContain('⚠️ Empty Message ⚠️');
-    expect(consoleErrorSpy.mock.calls[0].length).toBe(3); // title, style1, style2
+    expect(format(...consoleErrorSpy.mock.calls[0])).toContain('⚠️ Empty Message ⚠️');
+    expect(consoleErrorSpy.mock.calls[0].length).toBe(5);
 
     consoleErrorSpy.mockRestore();
   });

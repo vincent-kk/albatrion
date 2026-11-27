@@ -1,0 +1,15 @@
+name: pre-release
+
+# Run every workspace check and the complete schema-form suites before a release,
+# typically on the commit about to be published; publishing is a separate workflow.
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    uses: ./.github/workflows/ci.yml
+    with:
+      tier: pre-release

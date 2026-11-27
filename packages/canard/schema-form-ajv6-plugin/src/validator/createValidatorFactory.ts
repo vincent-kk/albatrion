@@ -1,32 +1,43 @@
 import type { JSONSchema, ValidateFunction } from '@canard/schema-form';
-import type { Ajv } from 'ajv';
+import type Ajv from 'ajv';
+import { assertBindableInstance } from './utils/assertBindableInstance';
+import { cloneInstance } from './utils/cloneInstance';
+import { registerSchemaRoot, type SchemaRootRegistry } from './utils/registerSchemaRoot';
 
+import { collectSchemaResources, type SchemaResource } from './utils/schemaPath/collectSchemaResources';
 import { transformDataPath } from './utils/transformDataPath';
 
 /**
- * Creates a validator factory function that transforms AJV6 error dataPaths.
- *
- * This factory function creates validators that automatically convert AJV6's JSONPath format
- * error dataPaths to JSONPointer format for consistency with the schema-form library.
- *
- * @param ajv - The AJV instance to use for validation
- * @returns A factory function that creates validators for given JSON schemas
+ * Create promise-returning validation from an Ajv 6 instance and optional root key.
  */
 export const createValidatorFactory =
-  (ajv: Ajv) =>
-  (jsonSchema: JSONSchema): ValidateFunction => {
-    const validate = ajv.compile({
-      ...jsonSchema,
-      $async: true,
-    });
-    return async (data) => {
-      try {
-        await validate(data);
-        return null;
-      } catch (thrown: any) {
-        if (Array.isArray(thrown?.errors))
-          return transformDataPath(thrown.errors);
-        throw thrown;
-      }
+  (ajv: Ajv.Ajv, key?: string, roots?: SchemaRootRegistry) => {
+    if (!roots) assertBindableInstance(ajv);
+    const registry = roots ?? new WeakMap();
+    return (jsonSchema: JSONSchema): ValidateFunction => {
+      if (key !== undefined) assertBindableInstance(ajv);
+      const validate =
+        key === undefined
+          ? registerSchemaRoot(registry, ajv, jsonSchema)
+          : cloneInstance(ajv, 'validation').getSchema(key);
+      if (!validate) throw new Error(`Registered Ajv schema was not found: ${key}`);
+      const schema = typeof validate.schema === 'object' ? validate.schema : undefined;
+      const { schemaId } = ajv._opts;
+      let resources: SchemaResource[] | undefined;
+      const getResources = schema && (() => resources ??= collectSchemaResources(schema, schemaId));
+      return async (data) => {
+        try {
+          const result = validate(data);
+          if (typeof result === 'boolean')
+            return result ? null : transformDataPath(validate.errors ?? [], schema, undefined, getResources);
+          await result;
+          return null;
+        } catch (thrown) {
+          if (thrown instanceof Error && 'ajv' in thrown && thrown.ajv === true &&
+              'validation' in thrown && thrown.validation === true && 'errors' in thrown && Array.isArray(thrown.errors))
+            return transformDataPath(thrown.errors, schema, undefined, getResources);
+          throw thrown;
+        }
+      };
     };
   };

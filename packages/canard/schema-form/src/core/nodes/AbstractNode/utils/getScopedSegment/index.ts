@@ -1,1 +1,0 @@
-export { getScopedSegment } from './getScopedSegment';

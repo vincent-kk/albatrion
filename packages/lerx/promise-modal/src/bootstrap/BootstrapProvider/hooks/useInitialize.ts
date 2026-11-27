@@ -2,22 +2,94 @@ import { useRef } from 'react';
 
 import { useVersion } from '@winglet/react-utils/hook';
 
+import type { Fn } from '@aileron/declare';
+
 import { ModalManager } from '@/promise-modal/app';
+import { useIsomorphicLayoutEffect } from '@/promise-modal/hooks/useIsomorphicLayoutEffect';
 
-export const useInitialize = () => {
+/**
+ * Connects a bootstrap to its last declared or imperative root.
+ * @param root - Undefined selects body, null defers, and an element selects a container.
+ * @param mode - Manual mode defers the initial root until initialize or a prop change.
+ * @returns A stable element initializer and the owned portal anchor.
+ */
+export const useInitialize = (
+  root?: HTMLElement | null,
+  mode: 'auto' | 'manual' = 'auto',
+) => {
   const [, update] = useVersion();
-  const anchorRef = useRef<HTMLElement | null>(null);
-  const handleInitialize = useRef((root?: HTMLElement) => {
-    if (ModalManager.anchored) return;
-    anchorRef.current = ModalManager.anchor({ root });
-    ModalManager.applyStyleSheet();
-    update();
+  const identity = useRef({});
+  const lifetime = useRef<{
+    generation: number;
+    observer?: MutationObserver;
+    pending?: {
+      anchor: HTMLElement | null;
+      marker: Element | null | undefined;
+    };
+  }>({
+    generation: 0,
   });
-  const handleReset = useRef(() => ModalManager.reset());
-
+  const anchorRef = useRef<HTMLElement | null>(null);
+  const effectiveRoot = useRef(mode === 'manual' ? null : root);
+  const previousRoot = useRef(root);
+  const handleInitialize = useRef(
+    (element: HTMLElement | null = document.body) => {
+      lifetime.current.generation++;
+      lifetime.current.observer?.disconnect();
+      lifetime.current.observer = undefined;
+      effectiveRoot.current = element;
+      ModalManager.attach(identity.current, element, (anchor) => {
+        if (!anchor) {
+          const pending = lifetime.current.pending;
+          if (pending) pending.anchor = pending.marker = null;
+          lifetime.current.pending = undefined;
+          lifetime.current.generation++;
+        }
+        if (anchorRef.current === anchor) return;
+        anchorRef.current = anchor;
+        update();
+      });
+    },
+  );
+  const handleReset = useRef(() => {
+    const pending = {
+      anchor: anchorRef.current,
+      marker: anchorRef.current?.firstElementChild,
+    };
+    lifetime.current.pending = pending;
+    const generation = ++lifetime.current.generation;
+    ModalManager.suspend(identity.current);
+    queueMicrotask(() => {
+      if (generation !== lifetime.current.generation) return;
+      lifetime.current.pending = undefined;
+      const { anchor, marker } = pending;
+      if (!anchor || !marker || marker.parentNode !== anchor) {
+        ModalManager.detach(identity.current);
+        return;
+      }
+      const observer = new MutationObserver(() => {
+        if (marker.parentNode === anchor) return;
+        observer.disconnect();
+        lifetime.current.observer = undefined;
+        ModalManager.detach(identity.current);
+      });
+      observer.observe(anchor, { childList: true });
+      lifetime.current.observer = observer;
+    });
+  });
+  useIsomorphicLayoutEffect(() => {
+    if (previousRoot.current !== root) effectiveRoot.current = root;
+    previousRoot.current = root;
+    handleInitialize.current(
+      effectiveRoot.current === undefined
+        ? document.body
+        : effectiveRoot.current,
+    );
+  }, [root]);
+  useIsomorphicLayoutEffect(() => handleReset.current, []);
+  const initialize: Fn<[element: HTMLElement]> = handleInitialize.current;
   return {
     anchorRef,
-    handleInitialize: handleInitialize.current,
-    handleReset: handleReset.current,
+    handleInitialize: initialize,
   } as const;
 };

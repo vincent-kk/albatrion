@@ -14,6 +14,13 @@ an iterative stack-based approach to detect undefined values. Efficiently
 handles deeply nested structures without recursion depth limitations while
 maintaining optimal performance through early termination.
 
+## Import
+
+```typescript
+import { hasUndefined } from '@winglet/common-utils/object';
+import { hasUndefined } from '@winglet/common-utils';
+```
+
 ## Signature
 
 ```typescript
@@ -216,7 +223,7 @@ console.log(hasUndefined(funcWithProps)); // true
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/common-utils": "0.12.3" }}
+  dependencies={{ "@winglet/common-utils": "0.15.0" }}
   code={`import { hasUndefined } from '@winglet/common-utils';
 
 // Direct undefined values

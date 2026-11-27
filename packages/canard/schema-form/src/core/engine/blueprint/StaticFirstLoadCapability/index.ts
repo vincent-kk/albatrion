@@ -1,0 +1,1 @@
+export { StaticFirstLoadCapability } from './StaticFirstLoadCapability';

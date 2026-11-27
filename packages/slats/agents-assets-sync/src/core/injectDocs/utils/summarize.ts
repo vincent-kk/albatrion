@@ -1,4 +1,4 @@
-import type { InjectPlan } from '../../buildPlan/index.js';
+import type { Action, InjectPlan } from '../../buildPlan/index.js';
 import type { InjectReport } from '../type.js';
 
 /**
@@ -9,9 +9,19 @@ import type { InjectReport } from '../type.js';
  *
  * @param plan - the plan whose actions were applied, or previewed
  * @param exitCode - code the caller decided on for this target
+ * @param failedActions - attempted actions that failed and must not count as applied
+ * @param appliedActions - submitted actions; omitted previews the plan, empty means none applied
  * @returns per-category path lists plus the exit code
  */
-export function summarize(plan: InjectPlan, exitCode: 0 | 1 | 2): InjectReport {
+export function summarize(
+  plan: InjectPlan,
+  exitCode: 0 | 1 | 2,
+  failedActions: readonly Action[] = [],
+  appliedActions?: readonly Action[],
+): InjectReport {
+  const failed = new Set(failedActions);
+  const applied =
+    appliedActions === undefined ? undefined : new Set(appliedActions);
   const report: InjectReport = {
     created: [],
     updated: [],
@@ -21,16 +31,33 @@ export function summarize(plan: InjectPlan, exitCode: 0 | 1 | 2): InjectReport {
     exitCode,
   };
   for (const action of plan.actions) {
-    if (action.kind === 'copy') report.created.push(action.relPath);
-    else if (action.kind === 'skip-uptodate')
+    if (action.sourceHashReconciled)
+      report.warnings.push({
+        relPath: action.relPath,
+        reason: 'source-hash-reconciled',
+      });
+    if (failed.has(action)) {
+      report.warnings.push({ relPath: action.relPath, reason: 'failed' });
+      continue;
+    }
+    if (action.kind === 'copy') {
+      if (applied === undefined || applied.has(action))
+        report.created.push(action.relPath);
+    } else if (action.kind === 'skip-uptodate')
       report.skipped.push(action.relPath);
     else if (action.kind === 'skip-unsupported')
       report.skipped.push(action.relPath);
-    else if (action.kind === 'warn-diverged')
-      report.warnings.push({ relPath: action.relPath, reason: 'diverged' });
-    else if (action.kind === 'warn-orphan')
+    else if (action.kind === 'warn-diverged') {
+      if (applied?.has(action)) report.updated.push(action.relPath);
+      else
+        report.warnings.push({ relPath: action.relPath, reason: 'diverged' });
+    } else if (action.kind === 'warn-orphan')
       report.warnings.push({ relPath: action.relPath, reason: 'orphan' });
-    else if (action.kind === 'delete') report.deleted.push(action.relPath);
+    else if (
+      action.kind === 'delete' &&
+      (applied === undefined || applied.has(action))
+    )
+      report.deleted.push(action.relPath);
   }
   return report;
 }

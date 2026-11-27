@@ -1,0 +1,138 @@
+[
+  {
+    "from": "/docs/winglet/json-schema/async-scanner/Dialect",
+    "to": "/docs/winglet/json-schema/keyword/Dialect"
+  },
+  {
+    "from": "/docs/winglet/json-schema/async-scanner/KeywordDescriptor",
+    "to": "/docs/winglet/json-schema/keyword/KeywordDescriptor"
+  },
+  {
+    "from": "/docs/winglet/json-schema/async-scanner/KeywordKind",
+    "to": "/docs/winglet/json-schema/keyword/KeywordKind"
+  },
+  {
+    "from": "/docs/winglet/json-schema/async-scanner/SchemaEntry",
+    "to": "/docs/winglet/json-schema/scanner/SchemaEntry"
+  },
+  {
+    "from": "/docs/winglet/json-schema/async-scanner/SchemaVisitor",
+    "to": "/docs/winglet/json-schema/scanner/SchemaVisitor"
+  },
+  {
+    "from": "/docs/winglet/json-schema/scanner/DEFAULT_KEYWORDS",
+    "to": "/docs/winglet/json-schema/keyword/DEFAULT_KEYWORDS"
+  },
+  {
+    "from": "/docs/winglet/json-schema/scanner/Dialect",
+    "to": "/docs/winglet/json-schema/keyword/Dialect"
+  },
+  {
+    "from": "/docs/winglet/json-schema/scanner/KeywordDescriptor",
+    "to": "/docs/winglet/json-schema/keyword/KeywordDescriptor"
+  },
+  {
+    "from": "/docs/winglet/json-schema/scanner/KeywordKind",
+    "to": "/docs/winglet/json-schema/keyword/KeywordKind"
+  },
+  {
+    "from": "/docs/winglet/json/path/convertJSONPathToPointer",
+    "to": "/docs/winglet/json/path-common/convertJSONPathToPointer"
+  },
+  {
+    "from": "/docs/winglet/json/path/getJSONPath",
+    "to": "/docs/winglet/json/path-common/getJSONPath"
+  },
+  {
+    "from": "/docs/winglet/json/pointer-escape/unescapeSegment",
+    "to": "/docs/winglet/json/pointer-escape/unescapePath"
+  },
+  {
+    "from": "/docs/winglet/json/pointer/AddPatch",
+    "to": "/docs/winglet/json/pointer-patch/AddPatch"
+  },
+  {
+    "from": "/docs/winglet/json/pointer/ApplyPatchOptions",
+    "to": "/docs/winglet/json/pointer-patch/ApplyPatchOptions"
+  },
+  {
+    "from": "/docs/winglet/json/pointer/CompareOptions",
+    "to": "/docs/winglet/json/pointer-patch/CompareOptions"
+  },
+  {
+    "from": "/docs/winglet/json/pointer/CopyPatch",
+    "to": "/docs/winglet/json/pointer-patch/CopyPatch"
+  },
+  {
+    "from": "/docs/winglet/json/pointer/MovePatch",
+    "to": "/docs/winglet/json/pointer-patch/MovePatch"
+  },
+  {
+    "from": "/docs/winglet/json/pointer/Operation",
+    "to": "/docs/winglet/json/pointer-patch/Operation"
+  },
+  {
+    "from": "/docs/winglet/json/pointer/Patch",
+    "to": "/docs/winglet/json/pointer-patch/Patch"
+  },
+  {
+    "from": "/docs/winglet/json/pointer/RemovePatch",
+    "to": "/docs/winglet/json/pointer-patch/RemovePatch"
+  },
+  {
+    "from": "/docs/winglet/json/pointer/ReplacePatch",
+    "to": "/docs/winglet/json/pointer-patch/ReplacePatch"
+  },
+  {
+    "from": "/docs/winglet/json/pointer/TestPatch",
+    "to": "/docs/winglet/json/pointer-patch/TestPatch"
+  },
+  {
+    "from": "/docs/winglet/json/pointer/applyPatch",
+    "to": "/docs/winglet/json/pointer-patch/applyPatch"
+  },
+  {
+    "from": "/docs/winglet/json/pointer/compare",
+    "to": "/docs/winglet/json/pointer-patch/compare"
+  },
+  {
+    "from": "/docs/winglet/json/pointer/compilePointer",
+    "to": "/docs/winglet/json/pointer-manipulator/compilePointer"
+  },
+  {
+    "from": "/docs/winglet/json/pointer/convertJSONPointerToPath",
+    "to": "/docs/winglet/json/pointer-common/convertJSONPointerToPath"
+  },
+  {
+    "from": "/docs/winglet/json/pointer/difference",
+    "to": "/docs/winglet/json/pointer-patch/difference"
+  },
+  {
+    "from": "/docs/winglet/json/pointer/escapePath",
+    "to": "/docs/winglet/json/pointer-escape/escapePath"
+  },
+  {
+    "from": "/docs/winglet/json/pointer/escapeSegment",
+    "to": "/docs/winglet/json/pointer-escape/escapeSegment"
+  },
+  {
+    "from": "/docs/winglet/json/pointer/getValue",
+    "to": "/docs/winglet/json/pointer-manipulator/getValue"
+  },
+  {
+    "from": "/docs/winglet/json/pointer/mergePatch",
+    "to": "/docs/winglet/json/pointer-patch/mergePatch"
+  },
+  {
+    "from": "/docs/winglet/json/pointer/setValue",
+    "to": "/docs/winglet/json/pointer-manipulator/setValue"
+  },
+  {
+    "from": "/docs/winglet/json/pointer/unescapePath",
+    "to": "/docs/winglet/json/pointer-escape/unescapePath"
+  },
+  {
+    "from": "/docs/winglet/json/pointer/unescapeSegment",
+    "to": "/docs/winglet/json/pointer-escape/unescapePath"
+  }
+]

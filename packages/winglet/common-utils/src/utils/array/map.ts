@@ -1,3 +1,5 @@
+import type { Fn } from '@aileron/declare';
+
 /**
  * Creates a new array by applying a transformation function to each element of the source array.
  *
@@ -187,7 +189,7 @@
  */
 export const map = <Type, Result = Type>(
   array: readonly Type[],
-  callback: (item: Type, index: number, array: readonly Type[]) => Result,
+  callback: Fn<[item: Type, index: number, array: readonly Type[]], Result>,
 ): Result[] => {
   const result = new Array<Result>(array.length);
   for (let i = 0, l = array.length; i < l; i++)

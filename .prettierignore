@@ -1,0 +1,10 @@
+# Recorded test baselines stay in the compact form their recorders write.
+# Tests read them with JSON.parse; formatting would add about 430,000 lines.
+packages/canard/schema-form/src/core/engine/settle/__tests__/fixtures/gate-table/*.json
+packages/canard/schema-form/src/core/engine/settle/__tests__/fixtures/childSelection/childSelectionHead.json
+packages/canard/schema-form/src/core/engine/__tests__/fixtures/ownedInlineHead.json
+packages/canard/schema-form/src/core/engine/blueprint/__tests__/fixtures/coldBindingHead.json
+
+# Plugin-managed rule blocks: formatting turns their markers into headings
+# and rewrites the glob patterns inside them.
+AGENTS.md

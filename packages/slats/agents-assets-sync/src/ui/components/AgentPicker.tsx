@@ -2,12 +2,14 @@ import { Box, Text, useInput } from 'ink';
 import type React from 'react';
 import { useState } from 'react';
 
+import type { Fn } from '@aileron/declare';
+
 import type { AgentType } from '../../core/index.js';
 import { colors } from '../theme/colors.js';
 import { icons } from '../theme/icons.js';
 
 interface AgentPickerProps {
-  readonly onSelect: (agents: readonly AgentType[]) => void;
+  readonly onSelect: Fn<[agents: readonly AgentType[]]>;
 }
 
 const ITEMS: ReadonlyArray<{ value: AgentType; hint: string }> = [

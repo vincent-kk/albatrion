@@ -13,6 +13,13 @@ Provides reliable symbol type detection using native typeof check,
 identifying ES6+ symbol primitives used for unique property keys
 and meta-programming scenarios.
 
+## Import
+
+```typescript
+import { isSymbol } from '@winglet/common-utils/filter';
+import { isSymbol } from '@winglet/common-utils';
+```
+
 ## Signature
 
 ```typescript
@@ -291,7 +298,7 @@ console.log(analysis);
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/common-utils": "0.12.3" }}
+  dependencies={{ "@winglet/common-utils": "0.15.0" }}
   code={`import { isSymbol } from '@winglet/common-utils';
 
 // True cases - symbol type

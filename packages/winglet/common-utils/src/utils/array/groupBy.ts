@@ -1,3 +1,5 @@
+import type { Fn } from '@aileron/declare';
+
 /**
  * Groups array elements by a computed key for efficient data organization.
  *
@@ -124,7 +126,7 @@
  */
 export const groupBy = <Type, Key extends PropertyKey>(
   array: readonly Type[],
-  getKey: (item: Type) => Key,
+  getKey: Fn<[item: Type], Key>,
 ): Record<Key, Type[]> => {
   // Prototype-free so a key like `constructor` or `__proto__` becomes an ordinary
   // entry instead of resolving to an inherited member

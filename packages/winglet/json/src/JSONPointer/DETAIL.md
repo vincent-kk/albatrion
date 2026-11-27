@@ -9,15 +9,15 @@
 ## API Contracts
 
 - `JSONPointer` 상수는 `Root`(빈 문자열), `Fragment`(`#`), `Separator`(슬래시)를 제공하며 값은 RFC 6901 §5–6과 일치한다. 이 값들은 하위 호환 대상이다.
-- 예약 멤버 접근 판별과 특수 경로는 `@winglet/common-utils`의 데이터 속성 프리미티브(`isReservedName` 판별자 포함)가 한 벌로 소유한다. 성능 임계의 최경량 순회 루프는 동일 판정의 인라인 분기를 가질 수 있으나, 예약 멤버 **접근**은 언제나 프리미티브를 경유하고 판정 동일성은 정합 스위트(RC-5)가 고정한다.
-- 세 공개 쓰기 API(`setValue`, `applyPatch`, `mergePatch`)는 동일한 예약 멤버 입력에 대해 서로 정합하는 관측 결과를 낸다 — 하나만 조용히 무시하거나 하나만 예외를 던지지 않는다.
+- `getValue`는 이름과 관계없이 `@winglet/common-utils`의 자기 속성 검사 한 번을 거친 뒤 값을 읽습니다. 패치 등 예약 이름을 구분해야 하는 연산은 같은 패키지의 공용 데이터 속성 프리미티브를 사용합니다. 예약 이름 판정의 동등성은 정합 스위트(RC-5)가 고정합니다.
+- 세 공개 쓰기 API(`setValue`, `applyPatch`, `mergePatch`)는 예약 멤버를 자기 데이터로 다루고 프로토타입을 보존합니다. `applyPatch`는 중간 컨테이너의 존재를 요구하고 `setValue`는 누락된 컨테이너를 생성하므로 같은 경로의 성공 여부가 다를 수 있습니다.
 
 ## Acceptance Criteria
 
 ### reserved-data — 예약 멤버 own 데이터 취급
 
 - 예약 멤버 키를 담은 입력이 세 쓰기 API 각각에서 own 데이터 속성으로 기록되고, 반환 문서의 프로토타입은 교체되지 않는다.
-- 세 API의 관측 결과(own 키 집합, 값, 프로토타입, 에러 유무)가 서로 정합한다.
+- 성공한 쓰기는 예약 멤버를 자기 데이터로 기록하고 프로토타입을 보존합니다. 중간 경로의 존재·생성 정책 차이는 각 API의 계약을 따릅니다.
 - 전역 `Object.prototype`이 오염되지 않는다.
 
 ### root-pointer — 루트 포인터 의미론
@@ -32,11 +32,7 @@
 - **Direct import**: `allowed`
 - **Reason**: RFC 6901 문법 상수는 이 fractal 전체가 공유하는 원자 단위다. 배럴 경유를 강제하면 상수 하나에 재수출 그래프 전체가 딸려온다 — 개별 파일 직접 import와 root peer 배치가 의도된 형태다.
 
-## History
-
-- 2026-08-18 — 예약 멤버 의미론을 "차단(silent skip / throw)"에서 RFC 정합 own 데이터 취급으로 전환. 판별·접근을 `@winglet/common-utils` 데이터 속성 프리미티브 한 벌로 수렴시키면서 패키지 내부 판별자 `isForbiddenKey`와 `isPrototypeModification`은 소비자가 사라져 제거했다. 근거: RFC 6901/6902/7396이 멤버 이름을 불투명 문자열로 규정하고, `JSON.parse`가 이미 own `__proto__` 데이터 속성을 만든다.
-- 2026-08-18 — `isForbiddenKey`를 manipulator 내부에서 이 fractal의 utils organ으로 승격(0.13.4). 이후 위 전환으로 같은 날 제거됨.
 
 ## Last Updated
 
-2026-08-18 — 예약 멤버 RFC 정합(own 데이터) 계약으로 전환, 세 API 정합 계약 명문화
+포인터 문법 또는 예약 멤버 접근 계약이 바뀌면 갱신합니다.

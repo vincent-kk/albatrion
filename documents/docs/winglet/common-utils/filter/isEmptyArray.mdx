@@ -13,6 +13,13 @@ Performs dual validation to ensure the value is both an array and has
 zero length, providing reliable empty array detection for array
 processing and validation scenarios.
 
+## Import
+
+```typescript
+import { isEmptyArray } from '@winglet/common-utils/filter';
+import { isEmptyArray } from '@winglet/common-utils';
+```
+
 ## Signature
 
 ```typescript
@@ -157,7 +164,7 @@ function handleApiResponse(response: ApiResponse) {
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/common-utils": "0.12.3" }}
+  dependencies={{ "@winglet/common-utils": "0.15.0" }}
   code={`import { isEmptyArray } from '@winglet/common-utils';
 
 // True cases - empty arrays

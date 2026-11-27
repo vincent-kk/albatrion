@@ -13,6 +13,13 @@ Divides a large array into manageable chunks, useful for pagination,
 batch processing, API rate limiting, and memory management. Handles
 edge cases gracefully and ensures all elements are included.
 
+## Import
+
+```typescript
+import { chunk } from '@winglet/common-utils/array';
+import { chunk } from '@winglet/common-utils';
+```
+
 ## Signature
 
 ```typescript
@@ -89,7 +96,7 @@ console.log(chunk(users, 2));
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/common-utils": "0.12.3" }}
+  dependencies={{ "@winglet/common-utils": "0.15.0" }}
   code={`import { chunk } from '@winglet/common-utils';
 
 const numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9];

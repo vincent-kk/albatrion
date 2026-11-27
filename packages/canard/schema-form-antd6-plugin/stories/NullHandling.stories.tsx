@@ -36,16 +36,20 @@ export const NumberInputWithNull = () => {
       nullableNumber: {
         type: 'number',
         nullable: true,
-        FormTypeInputProps: {
-          placeholder: 'null 값 허용 (빈 입력 시 null)',
+        presentation: {
+          FieldInputProps: {
+            placeholder: 'null 값 허용 (빈 입력 시 null)',
+          },
         },
       },
       numberWithDefault: {
         type: 'number',
         nullable: true,
         default: null,
-        FormTypeInputProps: {
-          placeholder: '기본값이 null인 숫자',
+        presentation: {
+          FieldInputProps: {
+            placeholder: '기본값이 null인 숫자',
+          },
         },
       },
     },
@@ -99,28 +103,32 @@ export const RadioGroupWithNull = () => {
       radioWithNull: {
         type: 'string',
         enum: [null, 'option1', 'option2', 'option3'],
-        formType: 'radio',
         nullable: true,
-        FormTypeInputProps: {
-          alias: {
-            null: '선택 안함',
-            option1: '옵션 1',
-            option2: '옵션 2',
-            option3: '옵션 3',
+        presentation: {
+          inputType: 'radio',
+          FieldInputProps: {
+            alias: {
+              null: '선택 안함',
+              option1: '옵션 1',
+              option2: '옵션 2',
+              option3: '옵션 3',
+            },
           },
         },
       },
       radioMixedTypes: {
         type: 'string',
         enum: [null, 'zero', 'one', 'text'],
-        formType: 'radio',
         nullable: true,
-        FormTypeInputProps: {
-          alias: {
-            null: 'null 값',
-            zero: '숫자 0',
-            one: '숫자 1',
-            text: '텍스트',
+        presentation: {
+          inputType: 'radio',
+          FieldInputProps: {
+            alias: {
+              null: 'null 값',
+              zero: '숫자 0',
+              one: '숫자 1',
+              text: '텍스트',
+            },
           },
         },
       },
@@ -178,16 +186,20 @@ export const StringCheckboxWithNull = () => {
           type: 'string',
           enum: [null, 'item1', 'item2', 'item3'],
           nullable: true,
-          FormTypeInputProps: {
-            alias: {
-              null: '없음',
-              item1: '항목 1',
-              item2: '항목 2',
-              item3: '항목 3',
+          presentation: {
+            FieldInputProps: {
+              alias: {
+                null: '없음',
+                item1: '항목 1',
+                item2: '항목 2',
+                item3: '항목 3',
+              },
             },
           },
         },
-        formType: 'checkbox',
+        presentation: {
+          inputType: 'checkbox',
+        },
       },
       checkboxMixed: {
         type: 'array',
@@ -195,17 +207,21 @@ export const StringCheckboxWithNull = () => {
           type: 'string',
           enum: [null, '', 'filled', 'num123'],
           nullable: true,
-          FormTypeInputProps: {
-            alias: {
-              null: 'null 값',
-              '': '빈 문자열',
-              filled: '채워진 값',
-              num123: '숫자 123',
+          presentation: {
+            FieldInputProps: {
+              alias: {
+                null: 'null 값',
+                '': '빈 문자열',
+                filled: '채워진 값',
+                num123: '숫자 123',
+              },
             },
           },
         },
-        formType: 'checkbox',
         default: [null],
+        presentation: {
+          inputType: 'checkbox',
+        },
       },
     },
   } satisfies JSONSchema;
@@ -258,15 +274,17 @@ export const StringEnumWithNull = () => {
       selectWithNull: {
         type: 'string',
         enum: [null, 'value1', 'value2', 'value3'],
-        formType: 'select',
         nullable: true,
-        FormTypeInputProps: {
-          placeholder: '값을 선택하세요',
-          alias: {
-            null: '선택 안함 (null)',
-            value1: '값 1',
-            value2: '값 2',
-            value3: '값 3',
+        presentation: {
+          inputType: 'select',
+          FieldInputProps: {
+            placeholder: '값을 선택하세요',
+            alias: {
+              null: '선택 안함 (null)',
+              value1: '값 1',
+              value2: '값 2',
+              value3: '값 3',
+            },
           },
         },
       },
@@ -276,18 +294,22 @@ export const StringEnumWithNull = () => {
           type: 'string',
           enum: [null, 'a', 'b', 'c'],
           nullable: true,
-          FormTypeInputProps: {
-            alias: {
-              null: 'null 포함',
-              a: 'A',
-              b: 'B',
-              c: 'C',
+          presentation: {
+            FieldInputProps: {
+              alias: {
+                null: 'null 포함',
+                a: 'A',
+                b: 'B',
+                c: 'C',
+              },
             },
           },
         },
-        formType: 'select',
-        FormTypeInputProps: {
-          placeholder: '여러 개 선택 (null 포함 가능)',
+        presentation: {
+          inputType: 'select',
+          FieldInputProps: {
+            placeholder: '여러 개 선택 (null 포함 가능)',
+          },
         },
       },
     },
@@ -341,36 +363,42 @@ export const StringSwitchWithNull = () => {
       switchNullOff: {
         type: 'string',
         enum: ['on', null],
-        formType: 'switch',
         nullable: true,
-        FormTypeInputProps: {
-          alias: {
-            on: '켜짐',
-            null: '꺼짐 (null)',
+        presentation: {
+          inputType: 'switch',
+          FieldInputProps: {
+            alias: {
+              on: '켜짐',
+              null: '꺼짐 (null)',
+            },
           },
         },
       },
       switchNullOn: {
         type: 'string',
         enum: [null, 'off'],
-        formType: 'switch',
         nullable: true,
         default: null,
-        FormTypeInputProps: {
-          alias: {
-            null: '켜짐 (null)',
-            off: '꺼짐',
+        presentation: {
+          inputType: 'switch',
+          FieldInputProps: {
+            alias: {
+              null: '켜짐 (null)',
+              off: '꺼짐',
+            },
           },
         },
       },
       switchBothNull: {
         type: 'string',
         enum: [null, null],
-        formType: 'switch',
         nullable: true,
-        FormTypeInputProps: {
-          alias: {
-            null: 'null 상태',
+        presentation: {
+          inputType: 'switch',
+          FieldInputProps: {
+            alias: {
+              null: 'null 상태',
+            },
           },
         },
       },
@@ -427,16 +455,18 @@ export const ComplexNullScenarios = () => {
       mixedEnum: {
         type: 'string',
         enum: ['', null, 'value', 'zero', 'false'],
-        formType: 'select',
         nullable: true,
-        FormTypeInputProps: {
-          placeholder: '다양한 값들',
-          alias: {
-            '': '빈 문자열',
-            null: 'null',
-            value: '일반 값',
-            zero: '숫자 0',
-            false: 'false 문자열',
+        presentation: {
+          inputType: 'select',
+          FieldInputProps: {
+            placeholder: '다양한 값들',
+            alias: {
+              '': '빈 문자열',
+              null: 'null',
+              value: '일반 값',
+              zero: '숫자 0',
+              false: 'false 문자열',
+            },
           },
         },
       },
@@ -444,14 +474,16 @@ export const ComplexNullScenarios = () => {
         type: 'string',
         enum: [null, 'yes', 'no', 'maybe'],
         default: null,
-        formType: 'radio',
         nullable: true,
-        FormTypeInputProps: {
-          alias: {
-            null: '미정 (기본값)',
-            yes: '예',
-            no: '아니오',
-            maybe: '아마도',
+        presentation: {
+          inputType: 'radio',
+          FieldInputProps: {
+            alias: {
+              null: '미정 (기본값)',
+              yes: '예',
+              no: '아니오',
+              maybe: '아마도',
+            },
           },
         },
       },
@@ -463,13 +495,15 @@ export const ComplexNullScenarios = () => {
           nullable: true,
         },
         default: [null, 'red'],
-        formType: 'checkbox',
-        FormTypeInputProps: {
-          alias: {
-            null: '무색 (null)',
-            red: '빨강',
-            green: '초록',
-            blue: '파랑',
+        presentation: {
+          inputType: 'checkbox',
+          FieldInputProps: {
+            alias: {
+              null: '무색 (null)',
+              red: '빨강',
+              green: '초록',
+              blue: '파랑',
+            },
           },
         },
       },

@@ -1,5 +1,7 @@
 import { type DependencyList, useLayoutEffect, useRef } from 'react';
 
+import type { Fn } from '@aileron/declare';
+
 /**
  * Executes a layout effect synchronously until a specified condition is met, then stops permanently.
  *
@@ -68,7 +70,7 @@ import { type DependencyList, useLayoutEffect, useRef } from 'react';
  * @param dependencies - Optional dependency array that triggers re-execution when changed. Omitting it re-runs the effect on every render until it returns `true`
  */
 export const useLayoutEffectUntil = (
-  effect: () => boolean,
+  effect: Fn<[], boolean>,
   dependencies?: DependencyList,
 ) => {
   const isCompleted = useRef(false);

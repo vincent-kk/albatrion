@@ -8,43 +8,33 @@ import WingletPlayground from '@site/src/components/WingletPlayground';
 
 # SchemaEntry
 
+## Import
+
+```typescript
+import type { SchemaEntry } from '@winglet/json-schema/scanner';
+import type { SchemaEntry } from '@winglet/json-schema/async-scanner';
+import type { SchemaEntry } from '@winglet/json-schema';
+```
+
 ## Signature
 
 ```typescript
 export type SchemaEntry<Schema extends UnknownSchema = UnknownSchema> = {
     /** The schema node being processed */
-    schema: Schema;
+    readonly schema: Schema | boolean;
+    /** Union-vocabulary position that is not a schema in the enclosing dialect. */
+    inert?: boolean;
+    /** Applicator name; custom vocabulary names are preserved without narrowing. */
+    keyword?: string;
+    /** Original map key or list index, independent of the applicator name. */
+    variant?: string | number;
     /** JSON pointer path of the current node */
     path: string;
     /** Data pointer path corresponding to the current node */
     dataPath: string;
     /** Traversal depth */
     depth: number;
-    /** Whether there is a reference */
-    hasReference?: boolean;
-    /**
-     * When `hasReference` is `true`, why the `$ref` was left in place instead of
-     * being inlined: `'cycle'` (already being resolved on the current path),
-     * `'unresolved'` (resolver returned nothing), or `'definition'` (the node
-     * lives under `$defs`/`definitions`, so it is intentionally not resolved).
-     */
-    referenceSkipped?: 'cycle' | 'unresolved' | 'definition';
-    /** Processed reference path */
-    referencePath?: string;
-    /** Whether reference is resolved */
-    referenceResolved?: boolean;
-} & ({
-    keyword: CompositionKeyword;
-    variant: number;
-} | {
-    keyword: ItemsKeyword;
-    variant?: number;
-} | {
-    keyword: DefinitionKeyword | PropertiesKeyword;
-    variant: string;
-} | {
-    keyword: ConditionalKeyword | AdditionalPropertiesKeyword;
-} | {
-    keyword?: never;
-})
+    /** Outcomes for each reference keyword and replacement-chain step handled at this position. */
+    references?: ReferenceOutcome[];
+}
 ```

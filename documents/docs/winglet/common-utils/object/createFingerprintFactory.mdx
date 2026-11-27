@@ -1,0 +1,34 @@
+---
+title: 'createFingerprintFactory'
+sidebar_label: 'createFingerprintFactory'
+---
+<!-- sync-winglet-docs:auto -->
+
+import WingletPlayground from '@site/src/components/WingletPlayground';
+
+# createFingerprintFactory
+
+Selects a key algorithm and owns optional immutable-result caching and opaque identities.
+
+## Import
+
+```typescript
+import { createFingerprintFactory } from '@winglet/common-utils/object';
+import { createFingerprintFactory } from '@winglet/common-utils';
+```
+
+## Signature
+
+```typescript
+function createFingerprintFactory(options?: FingerprintFactoryOptions): FingerprintGenerator
+```
+
+## Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `options` | `-` | Fixed mode/prefix and cache policy; defaults to safe, empty prefix and no cache. |
+
+## Returns
+
+A generator with per-call omit options; immutable input is a caller guarantee.

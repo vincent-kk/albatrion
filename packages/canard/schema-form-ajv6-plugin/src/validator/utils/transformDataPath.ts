@@ -1,37 +1,70 @@
-import type { JSONSchemaError } from '@canard/schema-form';
-import { convertJSONPathToPointer } from '@winglet/json/path-common';
+import type { ValidationIssue } from '@canard/schema-form';
+import { toJSONPointer } from './dataPath/toJSONPointer';
 import type { ErrorObject } from 'ajv';
 
-const JSON_POINTER_SEPARATOR = '/';
+import type { Dictionary } from '@aileron/declare';
 
-export const transformDataPath = (errors: ErrorObject[]): JSONSchemaError[] => {
-  const result = new Array<JSONSchemaError>(errors.length);
+import { isChildSchemaPath } from './isChildSchemaPath';
+import type { SchemaResource } from './schemaPath/collectSchemaResources';
+import { localizeSchemaPath } from './schemaPath/localizeSchemaPath';
+
+/** Normalize Ajv 6 paths and attach the key rejected by a constraint. */
+export const transformDataPath = (errors: ErrorObject[], root?: object, errorDataPath?: string, getResources?: () => SchemaResource[]): ValidationIssue[] => {
+  const result = new Array<ValidationIssue>(errors.length);
   for (let i = 0, l = errors.length; i < l; i++) {
     const ajvError = errors[i];
-    const dataPath = ajvError.dataPath || '';
-    let convertedDataPath = convertJSONPathToPointer(dataPath);
+    let convertedDataPath = toJSONPointer(ajvError.dataPath || '');
+    let rejectedKey: string | undefined;
     if (
-      ajvError.keyword === 'required' &&
+      ajvError.keyword === 'required' && errorDataPath !== 'property' &&
       ajvError.params &&
       'missingProperty' in ajvError.params
     ) {
       const missingProperty = ajvError.params.missingProperty;
-      if (convertedDataPath === JSON_POINTER_SEPARATOR) {
-        // Root level: "/" + "propertyName" = "/propertyName"
-        convertedDataPath = JSON_POINTER_SEPARATOR + missingProperty;
-      } else {
-        // Nested level: "/path" + "/" + "propertyName" = "/path/propertyName"
-        convertedDataPath =
-          convertedDataPath + JSON_POINTER_SEPARATOR + missingProperty;
+      if (typeof missingProperty === 'string')
+        convertedDataPath += `/${missingProperty.replace(/~/g, '~0').replace(/\//g, '~1')}`;
+    }
+    const path = ajvError.schemaPath;
+    const routed = ajvError.keyword === 'not' || ajvError.keyword === 'false schema';
+    const local = routed && getResources && !path.startsWith('#/')
+      ? localizeSchemaPath(path, getResources())
+      : undefined;
+    if (ajvError.keyword === 'false schema' && convertedDataPath && isChildSchemaPath(local?.path ?? path)) {
+      const lastSlash = convertedDataPath.lastIndexOf('/');
+      rejectedKey = convertedDataPath.slice(lastSlash + 1)
+        .replace(/~1/g, '/').replace(/~0/g, '~');
+      convertedDataPath = convertedDataPath.slice(0, lastSlash);
+    }
+    if (ajvError.keyword === 'additionalProperties' && 'additionalProperty' in ajvError.params)
+      rejectedKey = String(ajvError.params.additionalProperty);
+    if (ajvError.keyword === 'unevaluatedProperties' && 'unevaluatedProperty' in ajvError.params)
+      rejectedKey = String(ajvError.params.unevaluatedProperty);
+    if (ajvError.keyword === 'propertyNames' && 'propertyName' in ajvError.params)
+      rejectedKey = String(ajvError.params.propertyName);
+    if (typeof ajvError.propertyName === 'string')
+      rejectedKey = ajvError.propertyName;
+    if (ajvError.keyword === 'not' && (local || path.startsWith('#/'))) {
+      const segments = (local?.path ?? path).slice(2).split('/');
+      let target: unknown = local?.schema ?? root;
+      for (const segment of segments) {
+        const token = segment.includes('%') ? decodeURIComponent(segment) : segment;
+        const name = token.includes('~') ? token.replace(/~1/g, '/').replace(/~0/g, '~') : token;
+        target = typeof target === 'object' && target !== null
+          ? (target as Dictionary<unknown>)[name]
+          : undefined;
       }
+      if (typeof target === 'object' && target !== null && 'required' in target &&
+          Array.isArray(target.required) && target.required.length === 1 &&
+          typeof target.required[0] === 'string') rejectedKey = target.required[0];
     }
     result[i] = {
       dataPath: convertedDataPath,
       schemaPath: ajvError.schemaPath,
       keyword: ajvError.keyword,
       message: ajvError.message,
-      details: ajvError.params,
+      details: { ...ajvError.params },
       source: ajvError,
+      ...(rejectedKey === undefined ? {} : { rejectedKey }),
     };
   }
   return result;

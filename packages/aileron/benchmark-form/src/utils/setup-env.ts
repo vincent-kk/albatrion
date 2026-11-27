@@ -1,5 +1,7 @@
 import { JSDOM } from 'jsdom';
 
+import { scheduleTurn } from './setup-env/scheduleTurn';
+
 /**
  * Single shared JSDOM environment for all benchmarks.
  *
@@ -60,15 +62,10 @@ export function setupJsdom(): JSDOM {
 }
 
 /**
- * Drains `count` macrotask ticks (each flushes pending microtasks too).
- *
- * One tick is enough for React commit + effects + the schema-form
- * `EventCascadeManager` microtask cascade, so the DOM is rendered.
- *
- * ⚠️ The `<Form>` imperative handle (`getValue`/`findNode`) becomes
- * populated only on the SECOND tick — `rootNode` is set in an effect that
- * triggers a re-render, and the handle reads the re-rendered state. Code
- * that touches the ref handle MUST drain ≥2 ticks (use `drainUntilReady`).
+ * Drains runtime macrotask turns without a clamped timer; timer-delayed work
+ * requires the separate `settleUpdates` barrier. Runtime scheduling is ambient.
+ * @param count - Number of turns, with at least one turn always drained
+ * @returns Completion after immediate/message turns and their microtasks
  */
 export const drainTicks = (count = 1): Promise<void> =>
   new Promise<void>((resolve) => {
@@ -76,9 +73,9 @@ export const drainTicks = (count = 1): Promise<void> =>
     const tick = () => {
       remaining -= 1;
       if (remaining <= 0) resolve();
-      else setTimeout(tick, 0);
+      else scheduleTurn(tick);
     };
-    setTimeout(tick, 0);
+    scheduleTurn(tick);
   });
 
 /**

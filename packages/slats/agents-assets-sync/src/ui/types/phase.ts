@@ -1,5 +1,12 @@
+import type { Fn } from '@aileron/declare';
+
+import type {
+  AgentType,
+  InjectReport,
+  RunResult,
+  Scope,
+} from '../../core/index.js';
 import type { ConsumerPackage } from '../../types/index.js';
-import type { AgentType, InjectReport, Scope } from '../../core/index.js';
 import type {
   ApplyProgress,
   PlanStepState,
@@ -16,13 +23,13 @@ export type Phase =
   | {
       readonly kind: 'agent-select';
       readonly targets: readonly ConsumerPackage[];
-      readonly pending: (agents: readonly AgentType[]) => void;
+      readonly pending: Fn<[agents: readonly AgentType[]]>;
     }
   | {
       readonly kind: 'scope-select';
       readonly targets: readonly ConsumerPackage[];
       readonly agents: readonly AgentType[];
-      readonly pending: (scope: Scope) => void;
+      readonly pending: Fn<[scope: Scope]>;
     }
   | {
       readonly kind: 'planning';
@@ -41,7 +48,7 @@ export type Phase =
       readonly kind: 'force-confirm';
       readonly plans: readonly TargetPlan[];
       readonly warnings: readonly Warning[];
-      readonly pending: (ok: boolean) => void;
+      readonly pending: Fn<[ok: boolean]>;
       readonly scope: Scope;
     }
   | {
@@ -52,10 +59,15 @@ export type Phase =
     }
   | {
       readonly kind: 'summary';
+      readonly result?: RunResult;
       readonly reports: readonly InjectReport[];
       readonly plans: readonly TargetPlan[];
       readonly exitCode: 0 | 1 | 2;
       readonly scope: Scope;
       readonly dryRun: boolean;
     }
-  | { readonly kind: 'error'; readonly error: Error };
+  | {
+      readonly kind: 'error';
+      readonly error: Error;
+      readonly exitCode?: 1 | 2;
+    };

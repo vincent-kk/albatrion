@@ -1,4 +1,7 @@
 export {
+  ErrorBoundary,
+  type ErrorBoundaryReporter,
+  type UseErrorBoundaryReporter,
   withErrorBoundary,
   withErrorBoundaryForwardRef,
 } from './withErrorBoundary';

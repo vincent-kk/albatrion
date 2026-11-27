@@ -1,4 +1,8 @@
+import { escapeMdxProse } from './escapeMdxProse';
 import type { ParsedFunction, CategoryMeta } from './types';
+
+/** Marker line that identifies a generated page; a page without it is maintained by hand and never written or deleted. */
+export const AUTO_MARKER = '<!-- sync-winglet-docs:auto -->';
 
 /** Category position mapping for common-utils sub-paths. */
 const CATEGORY_POSITIONS: Record<string, number> = {
@@ -19,16 +23,22 @@ const CATEGORY_POSITIONS: Record<string, number> = {
 
 /**
  * Generate MDX content for a parsed function/symbol documentation page.
+ *
+ * A page whose name matches the last segment of its category directory,
+ * ignoring case, gets a `slug` so Docusaurus keeps its address at
+ * `<category>/<name>` even though it treats the page as the category index.
  */
 export function generateMdx(parsed: ParsedFunction): string {
   const lines: string[] = [];
+  const categoryDir = parsed.categoryPath.split('/').pop() ?? '';
 
   // Frontmatter
   lines.push('---');
   lines.push(`title: '${parsed.name}'`);
   lines.push(`sidebar_label: '${parsed.name}'`);
+  if (categoryDir.toLowerCase() === parsed.name.toLowerCase()) lines.push(`slug: ${parsed.name}`);
   lines.push('---');
-  lines.push('<!-- sync-winglet-docs:auto -->');
+  lines.push(AUTO_MARKER);
   lines.push('');
   lines.push("import WingletPlayground from '@site/src/components/WingletPlayground';");
   lines.push('');
@@ -37,7 +47,23 @@ export function generateMdx(parsed: ParsedFunction): string {
   lines.push(`# ${parsed.name}`);
   lines.push('');
   if (parsed.description) {
-    lines.push(escapeMdxContent(parsed.description));
+    lines.push(escapeMdxProse(parsed.description));
+    lines.push('');
+  }
+
+  lines.push('## Import');
+  lines.push('');
+  lines.push('```typescript');
+  for (const item of parsed.importPaths) {
+    lines.push(`import ${item.isTypeOnly ? 'type ' : ''}{ ${item.exportedName} } from '${item.moduleSpecifier}';`);
+  }
+  lines.push('```');
+  lines.push('');
+
+  if (parsed.externalSource) {
+    lines.push(
+      `Re-exported from \`${parsed.externalSource.moduleSpecifier}\` as \`${parsed.externalSource.originalName}\`.`,
+    );
     lines.push('');
   }
 
@@ -57,7 +83,7 @@ export function generateMdx(parsed: ParsedFunction): string {
     lines.push('|------|------|-------------|');
     for (const param of parsed.params) {
       const type = param.type ? escapeTableCell(param.type) : '-';
-      const desc = escapeTableCell(param.description);
+      const desc = escapeTableCell(escapeMdxProse(param.description));
       lines.push(`| \`${param.name}\` | \`${type}\` | ${desc} |`);
     }
     lines.push('');
@@ -68,7 +94,7 @@ export function generateMdx(parsed: ParsedFunction): string {
     lines.push('## Returns');
     lines.push('');
     const returnType = parsed.returns.type ? `\`${parsed.returns.type}\`` : '';
-    const returnDesc = parsed.returns.description || '';
+    const returnDesc = escapeMdxProse(parsed.returns.description || '');
     if (returnType && returnDesc) {
       lines.push(`${returnType} — ${returnDesc}`);
     } else if (returnType) {
@@ -85,7 +111,7 @@ export function generateMdx(parsed: ParsedFunction): string {
     lines.push('');
     for (const example of parsed.examples) {
       if (example.title) {
-        lines.push(`### ${example.title}`);
+        lines.push(`### ${escapeMdxProse(example.title)}`);
         lines.push('');
       }
       lines.push('```typescript');
@@ -112,7 +138,7 @@ export function generateMdx(parsed: ParsedFunction): string {
   if (parsed.remarks) {
     lines.push('## Notes');
     lines.push('');
-    lines.push(escapeMdxContent(parsed.remarks));
+    lines.push(escapeMdxProse(parsed.remarks));
     lines.push('');
   }
 
@@ -151,33 +177,6 @@ function escapeTableCell(text: string): string {
 /** Escape backtick template literals for JSX embedding. */
 function escapeTemplateLiteral(code: string): string {
   return code.replace(/`/g, '\\`').replace(/\$\{/g, '\\${');
-}
-
-/**
- * Escape content for safe MDX rendering.
- * MDX interprets bare `<` followed by alphanumeric as JSX tags.
- * Replaces `<` with `&lt;` outside of code blocks (``` fenced blocks).
- */
-function escapeMdxContent(text: string): string {
-  const lines = text.split('\n');
-  const result: string[] = [];
-  let inCodeBlock = false;
-
-  for (const line of lines) {
-    if (line.trim().startsWith('```')) {
-      inCodeBlock = !inCodeBlock;
-      result.push(line);
-      continue;
-    }
-    if (inCodeBlock) {
-      result.push(line);
-    } else {
-      // Escape < when followed by alphanumeric (would be parsed as JSX)
-      result.push(line.replace(/<(?=[\w\d])/g, '&lt;'));
-    }
-  }
-
-  return result.join('\n');
 }
 
 /** Capitalize the first letter of a string. */

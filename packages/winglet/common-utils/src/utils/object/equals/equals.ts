@@ -1,15 +1,4 @@
-import { OBJECT_TAG } from '@/common-utils/constant/typeTag';
-import { getTypeTag } from '@/common-utils/libs/getTypeTag';
-import { hasOwnProperty } from '@/common-utils/libs/hasOwnProperty';
-
-import { countRetainedKeys } from './utils/countRetainedKeys';
-import { equalsBuiltin } from './utils/equalsBuiltin';
-
-/**
- * Sentinel used to bypass internal-state tag checks for current-realm
- * literal-prototype pairs.
- */
-const OBJECT_PROTOTYPE = Object.prototype;
+import { equalsRecursive } from './utils/equalsRecursive';
 
 /**
  * Performs deep equality comparison between two values with optimized recursive traversal.
@@ -148,7 +137,9 @@ const OBJECT_PROTOTYPE = Object.prototype;
  * - All primitive types (string, number, boolean, null, undefined, symbol, bigint)
  * - Plain objects and arrays (deeply nested)
  * - Functions (reference equality only)
- * - Built-in objects like Date, RegExp (compared by reference)
+ * - Date, RegExp, Map and Set (compared by state)
+ * - ArrayBuffer, DataView and boxed primitives (compared by state, then by own enumerable properties)
+ * - Error (compared by `name` and `message`, then by own enumerable properties)
  *
  * **Function Selection Guide:**
  * ```typescript
@@ -167,21 +158,14 @@ const OBJECT_PROTOTYPE = Object.prototype;
  * - Maximum reliability over performance
  * ```
  *
- * **Error Cases and Stack Overflow:**
+ * **Cyclic Inputs:**
+ * A repeated comparison pair on the current path throws a RangeError.
+ * Use `stableEquals` for comparison and `clone` for copying when cycles are possible.
  * ```typescript
- * // ⚠️ DANGER: Circular references cause stack overflow
- * const circular1: any = { name: 'obj1' };
- * const circular2: any = { name: 'obj2' };
- * circular1.ref = circular2;
- * circular2.ref = circular1;
- *
- * // This will crash:
- * // equals(circular1, circular2); // RangeError: Maximum call stack size exceeded
- *
- * // Safe alternatives:
- * // 1. Use stableEquals() instead
- * // 2. Remove circular references before comparison
- * // 3. Implement circular reference detection
+ * const circular: { name: string; self?: unknown } = { name: 'node' };
+ * circular.self = circular;
+ * const copy = clone(circular);
+ * stableEquals(circular, copy); // true
  * ```
  *
  * **TypeScript Usage Patterns:**
@@ -222,18 +206,19 @@ const OBJECT_PROTOTYPE = Object.prototype;
  * ```
  *
  * **Limitations:**
- * - **Does not handle circular references** (causes stack overflow)
+ * - Repeated active comparison pairs throw a RangeError
  * - Functions are compared by reference only, not by implementation
- * - Built-in objects (Date, RegExp, etc.) use reference equality
+ * - Set members and Map keys that are objects match by reference only
+ * - Typed arrays are compared by index value, so `0` and `-0` are equal
  * - Does not compare non-enumerable properties
  * - Symbol properties are not compared
  * - **Performance degrades** with very deep nesting (>50 levels)
  *
  * **Production Considerations:**
- * - **Memory**: Monitor stack usage with deeply nested objects
+ * - **Memory**: Nesting below 256 levels is compared recursively; deeper levels continue on an explicit cursor stack, so depth is not bound by the call stack
  * - **Performance**: Consider memoization for frequently compared objects
  * - **Error Handling**: Wrap in try-catch for user-provided data
- * - **Security**: Validate object depth to prevent stack overflow attacks
+ * - **Security**: Reject cyclic untrusted input before comparing it
  * - **Testing**: Verify behavior with your specific data structures
  *
  * **Browser/Runtime Compatibility:**
@@ -263,82 +248,20 @@ export const equals = <Left, Right>(
   right: Right,
   omit?: Set<PropertyKey> | readonly PropertyKey[],
 ): boolean => {
+  const leftValue: unknown = left;
+  const rightValue: unknown = right;
+  if (
+    leftValue === rightValue ||
+    (leftValue !== leftValue && rightValue !== rightValue)
+  )
+    return true;
+  if (
+    leftValue === null ||
+    rightValue === null ||
+    typeof leftValue !== 'object' ||
+    typeof rightValue !== 'object'
+  )
+    return false;
   const omits = omit ? (omit instanceof Set ? omit : new Set(omit)) : null;
   return equalsRecursive(left, right, omits);
-};
-
-/**
- * Recursively compares the deep equality of two values.
- *
- * @param left - First value to compare
- * @param right - Second value to compare
- * @param omits - Set of property keys to exclude from comparison
- * @returns true if the two values are equal, false otherwise
- */
-const equalsRecursive = (
-  left: unknown,
-  right: unknown,
-  omits: Set<PropertyKey> | null,
-): boolean => {
-  if (left === right || (left !== left && right !== right)) return true;
-
-  if (
-    left === null ||
-    right === null ||
-    typeof left !== 'object' ||
-    typeof right !== 'object'
-  )
-    return false;
-
-  const leftIsArray = Array.isArray(left);
-  const rightIsArray = Array.isArray(right);
-
-  if (leftIsArray !== rightIsArray) return false;
-
-  if (leftIsArray && rightIsArray) {
-    const length = left.length;
-    if (length !== right.length) return false;
-    for (let i = 0; i < length; i++)
-      if (!equalsRecursive(left[i], right[i], omits)) return false;
-    return true;
-  }
-
-  if (
-    Object.getPrototypeOf(left) !== OBJECT_PROTOTYPE ||
-    Object.getPrototypeOf(right) !== OBJECT_PROTOTYPE
-  ) {
-    // Built-ins keep their state in internal slots that own keys cannot see, so comparing
-    // keys would call any two of them equal. Class instances carry OBJECT_TAG and stay
-    // on the structural path below.
-    const tag = getTypeTag(left);
-    if (tag !== getTypeTag(right)) return false;
-    if (tag !== OBJECT_TAG) {
-      const byState = equalsBuiltin(left, right, tag, (leftValue, rightValue) =>
-        equalsRecursive(leftValue, rightValue, omits),
-      );
-      if (byState !== undefined) return byState;
-    }
-  }
-
-  const keys = Object.keys(left);
-  const rightKeys = Object.keys(right);
-  const length = keys.length;
-
-  if (omits === null) {
-    if (length !== rightKeys.length) return false;
-  } else if (
-    countRetainedKeys(keys, omits) !== countRetainedKeys(rightKeys, omits)
-  )
-    return false;
-
-  for (let i = 0, k = keys[0]; i < length; i++, k = keys[i]) {
-    if (omits?.has(k)) continue;
-    if (
-      !hasOwnProperty(right, k) ||
-      !equalsRecursive((left as any)[k], (right as any)[k], omits)
-    )
-      return false;
-  }
-
-  return true;
 };

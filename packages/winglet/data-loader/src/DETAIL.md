@@ -4,20 +4,35 @@
 
 - `new DataLoader(batchLoader, options?)`는 `batchLoader`가 함수가 아니면 생성 시점에 `DataLoaderError`를 던진다.
 - `load(key)`는 `key`가 nil(`null`/`undefined`)이면 `DataLoaderError`를 던지고, `0`처럼 falsy이지만 nil이 아닌 키는 정상 처리한다. 같은 스케줄러 사이클 안의 여러 `load` 호출은 하나의 배치로 묶여 `batchLoader`를 1회만 호출한다.
+- `batchScheduler`는 새 배치에 첫 요청(키 또는 캐시 적중)과 그 캐시 기록이 들어간 뒤에 호출된다. 그래서 `(fn) => fn()` 같은 동기 스케줄러도 매 `load`를 그 요청 하나짜리 배치로 즉시 보낸다. 빈 배치를 먼저 스케줄하면 동기 스케줄러가 그 배치를 비어 있는 채로 끝내 버려, 뒤에 들어온 키가 영원히 처리되지 않는다. `cacheKeyFn`이나 커스텀 캐시가 예외를 던져 첫 요청이 들어가지 못한 새 배치는 현재 배치로 등록하지 않는다.
+- 키별 load의 동기 예외도 loadMany에서 해당 위치의 오류 결과로 수집합니다. 다른 키는 끝까지 처리하며 keys 인자 자체의 형식 오류는 계속 동기적으로 던집니다.
 - `loadMany(keys)`는 `keys`가 array-like가 아니면 `DataLoaderError`를 던지고, 그렇지 않으면 각 키를 `load`로 위임한 뒤 실패한 키는 값 대신 `Error`로 채워 반환한다.
 - 캐시는 기본적으로 `Map`이며, 같은 키의 중복 `load`는 캐시된 Promise를 재사용해 `batchLoader`를 다시 호출하지 않는다. `cache: false`로 캐시를 끌 수 있고, 커스텀 캐시는 `get`/`set`/`delete`/`clear`를 모두 구현해야 한다.
+- `load`, `prime`, `clear`는 `cacheKeyFn`이 돌려준 캐시 키를 참·거짓으로 거르지 않고 그대로 쓴다. `0`이나 `''` 같은 falsy 캐시 키도 다른 키와 똑같이 읽고 쓰며, 그렇지 않으면 `prime`한 값을 `load`가 무시하고 중복 요청도 합쳐지지 않는다.
 - `clear(key)`/`clearAll()`은 캐시만 무효화한다 — 이후 `load`가 `batchLoader`를 다시 호출하게 만든다.
+- realm이 다른 네이티브 Error도 배치 결과와 직접 prime하는 값에서 같은 키별 실패로 처리합니다. 그 오류 객체 자체로 reject하며 다른 키의 성공에는 영향을 주지 않습니다.
 - `prime(key, value)`는 해당 키가 아직 캐시에 없을 때만 값(또는 `Promise`, `Error`)을 채운다 — 기존 캐시를 덮어쓰지 않는다.
-- `maxBatchSize`는 한 배치가 가질 수 있는 최대 키 개수를 제한하며, 초과분은 다음 배치로 넘어가 `batchLoader`가 여러 번 호출된다. 1 미만이거나 숫자가 아니면 `DataLoaderError`를 던진다.
+- `maxBatchSize`는 한 배치가 가질 수 있는 최대 키 개수를 제한하며, 초과분은 다음 배치로 넘어가 `batchLoader`가 여러 번 호출된다. 기본값과 같은 `Infinity`는 제한 없음을 뜻하고, 그 외에는 양의 정수만 허용합니다. NaN·소수·1 미만 값이나 숫자가 아니면 `DataLoaderError`를 던집니다.
 - `batchLoader`가 동기적으로 예외를 던지거나, `Promise`가 아닌 값을 반환하거나, 배열이 아닌 값으로 resolve되거나, 키 개수와 다른 길이의 배열로 resolve되면, 그 배치에 걸린 모든 키가 `DataLoaderError`로 reject되고 해당 키들의 캐시 항목도 제거된다.
 
+커스텀 batchScheduler는 로더를 receiver로 전달하지 않는 일반 함수 호출로 실행합니다. bare 브라우저 전역 스케줄러를 전달해도 Web IDL receiver 검사를 통과해야 합니다.
+
+스케줄러가 동기적으로 던지면 실패한 배치를 닫고 현재 배치에서 제거하며, 캐시와 대기 요청을 정리한 뒤 같은 예외를 전달합니다. 실패한 예약의 콜백이 뒤늦게 실행되어도 배치 함수를 호출하지 않으며, 같은 키와 다른 키의 다음 요청은 새 배치로 처리합니다. 이미 실행한 origin의 늦은 성공·실패도 새 배치의 캐시나 완료된 Promise를 바꾸지 않습니다. origin에 넘긴 ReadonlyArray는 유지하고 실패한 배치의 배열 참조만 새 빈 배열로 바꿉니다.
+
+커스텀 캐시의 set이 예외를 던지면 그 load가 추가한 키와 resolver만 배치에서 제거하고 해당 캐시 키를 삭제합니다. 이미 열린 배치의 다른 요청은 그대로 처리되며 실패한 요청의 Promise가 뒤늦게 거부되지 않습니다. 첫 요청 실패와 열린 배치 중 실패는 같은 복구 의미를 갖습니다.
+
 ## API Contracts
+
+workspace의 source 조건은 개발 빌드의 입력입니다. 배포 파일에는 src가 없으므로 publishConfig.exports는 source 조건을 제외한 동일한 런타임·선언 경계를 기록합니다. 공개 진입점과 types·import·require 대상의 일치를 유지하여 개발 입력이 배포 해석을 가로채지 않게 합니다.
 
 - `load(key: Key): Promise<Value>` — nil 키에서 `DataLoaderError`.
 - `loadMany(keys: ReadonlyArray<Key>): Promise<Array<Value | Error>>` — array-like가 아닌 인자에서 `DataLoaderError`.
 - `clear(key: Key): this`, `clearAll(): this`, `prime(key, value): this` — 모두 체이닝을 위해 인스턴스 자신을 반환한다.
 - `batchScheduler`는 기본값 `scheduleNextTick`이며 함수가 아니면 `DataLoaderError`. `cacheKeyFn`은 기본값이 identity 함수이며 함수가 아니면 `DataLoaderError`.
+- `DataLoaderOptions`의 배칭 옵션은 두 형태 중 하나입니다. 배칭을 켠 `{ disableBatch?: false; maxBatchSize?: number }`와 배칭을 끈 `{ disableBatch: true; maxBatchSize?: never }`입니다. `disableBatch: true`와 `maxBatchSize`를 함께 쓰면 타입 오류입니다. 두 값은 서로 모순되므로, 타입이 받아들이면 호출자가 정한 한도가 아무 신호 없이 버려집니다. 타입 검사를 거치지 않은 JavaScript 호출에서는 `disableBatch: true`가 우선하고, `maxBatchSize`는 읽지도 검증하지도 않습니다.
 - 패키지의 유일한 export는 `DataLoader` 클래스와 `DataLoaderOptions` 타입이다.
+
+배치 실행의 함수형 표기는 콜백 인자·반환값과 실패 전달을 그대로 표현합니다. 함수형 별칭을 쓴다는 이유로 동기 예외와 Promise 거부의 처리 경계를 합치지 않습니다.
 
 ## Acceptance Criteria
 
@@ -25,6 +40,8 @@
 
 - 서로 다른 깊이의 중첩된 마이크로태스크 체인에서 호출된 여러 `load`도 스케줄러가 실행되기 전까지는 한 배치로 모여 `batchLoader`가 1회만 호출된다.
 - `maxBatchSize`를 넘는 수의 동시 `load` 호출은 여러 번의 `batchLoader` 호출로 나뉜다.
+- `(fn) => fn()` 스케줄러에서 `load`와 `loadMany`는 키마다 `batchLoader`를 1회 호출해 끝나고, 같은 키의 반복은 캐시로 처리된다. `batchLoader`가 동기적으로 던져도 그 키의 캐시 항목은 제거된다.
+- `cacheKeyFn`이 던진 `load` 뒤에도 이후의 `load`는 정상적으로 배치되어 끝난다.
 
 ### cache-dedup-invalidation — 캐시 재사용·무효화 계약
 
@@ -37,7 +54,7 @@
 - `batchLoader`가 함수가 아니면 생성자가 즉시 던진다.
 - `load(undefined)`/`load(null)`은 던지고 `load(0)`은 던지지 않는다.
 - `loadMany`에 배열이 아닌 인자를 주면 던진다.
-- `get`/`set`/`delete`/`clear`를 전부 구현하지 않은 커스텀 캐시, 1 미만이거나 숫자가 아닌 `maxBatchSize`, 함수가 아닌 `cacheKeyFn`·`batchScheduler`는 모두 생성 시점에 던진다.
+- `get`/`set`/`delete`/`clear`를 전부 구현하지 않은 커스텀 캐시, Infinity도 양의 정수도 아닌 `maxBatchSize`, 함수가 아닌 `cacheKeyFn`·`batchScheduler`는 모두 생성 시점에 던진다.
 
 ### batch-loader-contract-errors — batchLoader 응답 계약 위반 처리
 
@@ -59,4 +76,4 @@
 
 ## Last Updated
 
-2026-08-18 — 최초 계약 작성. #329 문서화 작업으로 신설.
+패키지 공개 경계 또는 이 문서가 소유한 동작 계약이 바뀔 때 갱신합니다.

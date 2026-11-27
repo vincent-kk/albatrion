@@ -7,9 +7,9 @@ import {
   useModalManager,
   useUserDefinedContext,
 } from '@/promise-modal/providers';
-import type { ModalLayerProps } from '@/promise-modal/types';
+import type { ModalLayerProps } from '@/promise-modal/types/modal';
 
-import { active, background, visible } from './style';
+import { active, background, visible } from './styles/style';
 
 export const BackgroundFrame = ({
   modalId,
@@ -39,8 +39,13 @@ export const BackgroundFrame = ({
     <div
       className={cxLite(
         background,
-        modal.closeOnBackdropClick && modal.visible && active,
-        (modal.manualDestroy ? modal.alive : modal.visible) && visible,
+        modal.visible && (modal.closeOnBackdropClick || modal.dimmed) && active,
+        (modal.visible ||
+          (modal.manualDestroy &&
+            modal.settled &&
+            modal.isVisibleAtSettlement !== false &&
+            modal.alive)) &&
+          visible,
       )}
       onClick={handleClose}
     >
@@ -48,6 +53,9 @@ export const BackgroundFrame = ({
         <Background
           id={modal.id}
           type={modal.type}
+          subtype={modal.subtype}
+          group={modal.group}
+          settled={modal.settled}
           alive={modal.alive}
           visible={modal.visible}
           initiator={modal.initiator}

@@ -1,33 +1,12 @@
-import type { JSONSchema, ValidateFunction } from '@canard/schema-form';
-import type Ajv from 'ajv';
+import type { Ajv } from 'ajv';
 
-import { transformErrors } from './utils/transformErrors';
+import { createValidationCompiler } from './createValidationCompiler';
 
 /**
- * Creates a validator factory function for AJV8.
- *
- * This factory function creates validators that transform AJV8 errors to match
- * the schema-form library's error format. Since AJV8 already uses JSONPointer
- * format for dataPaths, only basic error transformation is needed.
- *
- * @param ajv - The AJV8 instance to use for validation
- * @returns A factory function that creates validators for given JSON schemas
+ * Creates an asynchronous validator for an isolated schema root.
+ * @param ajv - The active AJV instance whose options and extensions define validation.
+ * @returns A compiler that preserves the authored schema and normalizes failures.
+ * @throws ValidatorBindRefusedError if the instance can modify the input.
  */
-export const createValidatorFactory =
-  (ajv: Ajv) =>
-  (jsonSchema: JSONSchema): ValidateFunction => {
-    const validate = ajv.compile({
-      ...jsonSchema,
-      $async: true,
-    });
-    return async (data) => {
-      try {
-        await validate(data);
-        return null;
-      } catch (thrown: any) {
-        if (Array.isArray(thrown?.errors))
-          return transformErrors(thrown.errors);
-        throw thrown;
-      }
-    };
-  };
+export const createValidatorFactory = (ajv: Ajv) =>
+  createValidationCompiler(ajv, new WeakMap());

@@ -38,7 +38,7 @@ const loader = new DataLoader(batchLoad, { maxBatchSize: 100 });
 // → batch 2: batchLoad(keys[100..149])
 ```
 
-`maxBatchSize` must be a number of at least 1; otherwise the constructor throws with code `DATA_LOADER.INVALID_MAX_BATCH_SIZE`. The default is `Infinity`.
+`maxBatchSize` must be a positive integer or `Infinity`; any other value, such as `0`, `2.5` or `NaN`, makes the constructor throw with code `DATA_LOADER.INVALID_MAX_BATCH_SIZE`. The default is `Infinity`. It cannot be combined with `disableBatch: true`, as described below.
 
 ### Disabling Batching
 
@@ -50,7 +50,16 @@ const singleLoader = new DataLoader(batchLoad, { disableBatch: true });
 // Note: still uses the scheduler; each batch simply holds one key
 ```
 
-`disableBatch: true` and `maxBatchSize` are mutually exclusive in the type — pick one.
+`maxBatchSize` beside `disableBatch: true` is a type error (TS2322 on `maxBatchSize`), because the two contradict each other. So is `maxBatchSize` beside a `disableBatch` typed as `boolean`, which may be `true`. Choose the shape per branch:
+
+```typescript
+const loader = new DataLoader(
+  batchLoad,
+  singleKeyBackend ? { disableBatch: true } : { maxBatchSize: 100 },
+);
+```
+
+`disableBatch: false` is the same as omitting it. Fix the options, never the type error: when the type check is bypassed (`as any`, or plain JavaScript), `disableBatch: true` wins and `maxBatchSize` is neither read nor validated, so the limit is silently ignored.
 
 ### Custom Schedulers
 
@@ -62,8 +71,8 @@ const timedLoader = new DataLoader(batchLoad, {
   batchScheduler: (fn) => setTimeout(fn, 10),
 });
 
-// Immediate — dispatches within the current synchronous block, so only the
-// loads issued before this one are batched. Useful in tests; defeats batching.
+// Immediate — every load() dispatches its own one-key batch before it returns,
+// while repeated keys still resolve from the cache. Useful in tests; defeats batching.
 const syncLoader = new DataLoader(batchLoad, {
   batchScheduler: (fn) => fn(),
 });
@@ -167,8 +176,12 @@ const uncached1 = noCacheLoader.load('key');
 const uncached2 = noCacheLoader.load('key'); // both added to batch
 ```
 
+## Per-Key Errors Stay Cached
+
+An `Error` returned in a result-array slot is cached like a successful value. A later `load(key)` rejects with that error without fetching again. Clear a transient failure with `loader.clear(key)` before retrying, or disable caching with `cache: false`. Per-key isolation is suitable for durable missing-record errors; transient fetch failures need this explicit retry policy.
+
 ## Batch Failure Clears the Cache
 
 A dispatch fails when the loader throws, returns something without a `then`, returns a non-array, or returns an array of the wrong length. DataLoader then resolves the batch's pending cache-hit callbacks, and walks the batch keys in order — for each one **calling `clear(key)` and then rejecting that key's promise** with the error.
 
-The per-key order matters: the cache entry is gone before the rejection is delivered. Since rejection handlers run as microtasks, the whole loop finishes first, so a `.catch()` that immediately retries always sees a clean cache. A transient network failure cannot "stick" a rejected promise in the cache — the next `load()` of that key goes through a fresh batch.
+The per-key order matters: the cache entry is gone before the rejection is delivered. Since rejection handlers run as microtasks, the whole loop finishes first, so a `.catch()` that immediately retries always sees a clean cache. A batch-wide transient failure is cleared, so the next `load()` of that key goes through a fresh batch.

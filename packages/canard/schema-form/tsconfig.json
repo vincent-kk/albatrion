@@ -5,7 +5,8 @@
     "paths": {
       "@/schema-form": ["./src"],
       "@/schema-form/*": ["./src/*"],
-      "@aileron/*": ["../../aileron/common/*"]
+      "@aileron/*": ["../../aileron/common/*"],
+      "@canard/schema-form-ajv8-plugin": ["./stories/features/components/types/ajv8-plugin.d.ts"]
     }
   },
   "include": [

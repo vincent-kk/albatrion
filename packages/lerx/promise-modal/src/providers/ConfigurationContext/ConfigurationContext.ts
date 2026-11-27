@@ -1,25 +1,10 @@
-import { type CSSProperties, type ComponentType, createContext } from 'react';
+import { createContext } from 'react';
 
-import type {
-  BackgroundComponent,
-  FooterComponentProps,
-  ForegroundComponent,
-  ModalOptions,
-  WrapperComponentProps,
-} from '@/promise-modal/types';
+import { getModalManagerState } from '@/promise-modal/app';
+import type { ConfigurationContextProps } from '@/promise-modal/types/context';
 
-export interface ConfigurationContextProps {
-  ForegroundComponent: ForegroundComponent;
-  BackgroundComponent?: BackgroundComponent;
-  TitleComponent: ComponentType<WrapperComponentProps>;
-  SubtitleComponent: ComponentType<WrapperComponentProps>;
-  ContentComponent: ComponentType<WrapperComponentProps>;
-  FooterComponent: ComponentType<FooterComponentProps>;
-  options: Required<
-    Omit<ModalOptions, 'backdrop'> & { backdrop: CSSProperties }
-  >;
-}
-
-export const ConfigurationContext = createContext<ConfigurationContextProps>(
-  {} as ConfigurationContextProps,
-);
+/** Context identity follows the existing version-compatible runtime registry. */
+const state = getModalManagerState();
+/** Lazily initialized so a compatible older registry can adopt the identity. */
+export const ConfigurationContext = ((state.contexts ??= {}).configuration ??=
+  createContext<ConfigurationContextProps | undefined>(undefined));

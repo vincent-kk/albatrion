@@ -13,6 +13,13 @@ Provides reliable Map detection using instanceof check with generic
 type support for type-safe Map validation and processing. Works with
 any Map instance regardless of key-value types.
 
+## Import
+
+```typescript
+import { isMap } from '@winglet/common-utils/filter';
+import { isMap } from '@winglet/common-utils';
+```
+
 ## Signature
 
 ```typescript
@@ -209,7 +216,7 @@ function validateAppSettings(settings: AppSettings) {
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/common-utils": "0.12.3" }}
+  dependencies={{ "@winglet/common-utils": "0.15.0" }}
   code={`import { isMap } from '@winglet/common-utils';
 
 // True cases - Map instances

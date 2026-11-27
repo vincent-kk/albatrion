@@ -10,7 +10,7 @@ registerPlugin(plugin);
 export default function MuiQuickDemo() {
   return (
     <InputShowcase
-      name="FormTypeInputString"
+      name="FieldInputString"
       trigger='type: "string"'
       schema={{ type: 'string', title: 'Text Input' }}
     />

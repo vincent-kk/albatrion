@@ -1,4 +1,7 @@
-import type { FingerprintOptions } from '../type';
+import { isPlainObject } from '@/common-utils/utils/filter/isPlainObject';
+
+import { readForeignFingerprint } from './readForeignFingerprint';
+import type { FingerprintOptions } from '../types/type';
 import { isOmitted } from './isOmitted';
 
 /** Creates a direct segment writer whose opaque references live within this closure. */
@@ -47,14 +50,14 @@ export function createSafeWriter(defaultSort = true) {
       return 'Date(' + Date.prototype.getTime.call(value) + ')';
     if (prototype === RegExp.prototype) return String(value);
     const array = Array.isArray(value);
-    if (!array && prototype !== null && prototype !== Object.prototype)
-      return identity(value);
+    if (!array && prototype !== null && prototype !== Object.prototype && !isPlainObject(value))
+      return readForeignFingerprint(value) ?? identity(value);
     seen.set(value, '#' + seen.size);
     let result: string;
     if (array) {
       const segments: string[] = [];
       for (let i = 0; i < value.length; i++) {
-        const item = omit && isOmitted(String(i), omit) ? undefined : value[i];
+        const item = omit && isOmitted('' + i, omit) ? undefined : value[i];
         segments.push(
           item === undefined ? 'undefined' : walk(item, seen, omit, sort),
         );

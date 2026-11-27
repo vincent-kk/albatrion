@@ -1,6 +1,9 @@
 import type { ValidatorPlugin } from '@canard/schema-form';
-import { plugin } from '@canard/schema-form-ajv6-plugin';
+import { createValidator, plugin } from '@canard/schema-form-ajv6-plugin';
+import Ajv from 'ajv';
 import { describe, expect, it } from 'vitest';
+
+import manifest from '../../package.json';
 
 /**
  * Exercises the built `dist/` output rather than `src/`.
@@ -20,6 +23,13 @@ type CompilableSchema = Parameters<ValidatorPlugin['compile']>[0];
 const stringSchema: CompilableSchema = { type: 'string' };
 
 describe('@canard/schema-form-ajv6-plugin 빌드 산출물', () => {
+  it('published entry point 의 createValidator 객체가 검증한다', async () => {
+    const validator = createValidator(new Ajv({ format: false }));
+
+    await expect(validator.compile(stringSchema)('x')).resolves.toBeNull();
+    expect(validator.compileGuard).toBeTypeOf('function');
+  });
+
   it('published entry point 로 유효한 데이터를 검증한다', async () => {
     const validate = plugin.validator.compile(stringSchema);
 
@@ -33,5 +43,13 @@ describe('@canard/schema-form-ajv6-plugin 빌드 산출물', () => {
 
     expect(errors).toBeInstanceOf(Array);
     expect(errors).not.toHaveLength(0);
+  });
+});
+
+
+it('publishes the entry with separate ESM and CommonJS declarations', () => {
+  expect(manifest.publishConfig.exports['.']).toEqual({
+    import: { types: './dist/index.d.ts', default: './dist/index.mjs' },
+    require: { types: './dist/index.d.cts', default: './dist/index.cjs' },
   });
 });

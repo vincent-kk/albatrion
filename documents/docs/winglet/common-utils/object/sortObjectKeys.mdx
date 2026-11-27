@@ -14,10 +14,17 @@ followed by any remaining properties in their original order. Supports flexible 
 filtering options and maintains type safety while providing flexible property organization
 for consistent object structures and serialization.
 
+## Import
+
+```typescript
+import { sortObjectKeys } from '@winglet/common-utils/object';
+import { sortObjectKeys } from '@winglet/common-utils';
+```
+
 ## Signature
 
 ```typescript
-const sortObjectKeys: <Dict extends Dictionary>(object: Dict | Nullish, keys: string[], options?: {
+const sortObjectKeys: <Dict extends Dictionary>(object: Dict | Nullish, keys: readonly string[], options?: {
     ignoreUndefinedKey?: boolean;
     ignoreUndefinedValue?: boolean;
 }) => Dict
@@ -241,7 +248,7 @@ console.log(JSON.stringify(prepared, null, 2));
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/common-utils": "0.12.3" }}
+  dependencies={{ "@winglet/common-utils": "0.15.0" }}
   code={`import { sortObjectKeys } from '@winglet/common-utils';
 
 // Reorder object properties

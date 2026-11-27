@@ -44,15 +44,15 @@
 - root marker 가 없고 여러 조상이 anchor 를 가질 때, `project` scope 를 해석하면 가장 깊은 (가장 가까운) 조상이 루트가 된다.
 - 중간 레벨이 anchor 를 갖지 않아도 탐색은 멈추지 않고 계속 올라간다.
 - anchor 가 디렉터리인 경우에도 인식된다.
-- Verified by `__tests__/scope.test.ts`.
+- 검증: `__tests__/scope.test.ts`.
 
 ### AC-SCOPE-RESOLVE — 해석 결과와 autoLocated
 
 - `cwd` 위의 조상이 선택되면 `autoLocated` 는 `true` 이고 `projectRoot` 는 그 조상이다.
 - anchor 를 가진 조상이 하나도 없으면 `projectRoot` 는 `cwd` 이고 `autoLocated` 는 `false` 다.
 - `user` scope 는 홈 디렉터리를 답하며 `autoLocated` 는 결코 `true` 가 되지 않는다.
-- Verified by `__tests__/scope.test.ts`.
+- 검증: `__tests__/scope.test.ts`.
 
 ## Last Updated
 
-2026-09-20 — 루트 판정을 2단으로 바꿨다. pnpm workspace 멤버에 도구가 만든 `.claude` 가 있으면 "가장 가까운 anchor" 규칙이 멤버를 프로젝트 루트로 삼았기 때문이다. `PROJECT_ROOT_MARKERS` 를 추가하고 `findNearestAnchorAncestor` · `hasAnchor` 를 `findProjectRoot` · `findMarkerRoot` · `findNearestOwner` 로 대체했다. marker 단계에는 홈 디렉터리 천장을 둔다. `PROJECT_ANCHORS` 의 값은 그대로다.
+프로젝트 마커·홈 경계 또는 루트 탐색 기준이 바뀌면 갱신합니다.

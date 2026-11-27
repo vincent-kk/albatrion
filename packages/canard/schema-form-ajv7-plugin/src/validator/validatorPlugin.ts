@@ -1,14 +1,16 @@
 import type { ValidatorPlugin } from '@canard/schema-form';
-import Ajv, { type Options } from 'ajv';
+import AjvModule, { type Options } from 'ajv';
 
-import { createValidatorFactory } from './createValidatorFactory';
+import type { AjvInstance as Ajv } from './types/AjvInstance';
+
+import { createValidator } from './createValidator';
 import { resolveAjvConstructor } from './utils/resolveAjvConstructor';
 
 /**
  * ajv@7's `module.exports` is an ESM-interop namespace, not the class, so the
  * constructor has to be unwrapped rather than used straight off the import.
  */
-const AjvConstructor = resolveAjvConstructor(Ajv);
+const AjvConstructor = resolveAjvConstructor(AjvModule);
 
 /**
  * Default AJV7 settings optimized for schema-form validation.
@@ -21,9 +23,26 @@ const defaultSettings: Options = {
   allErrors: true,
   strict: false,
   validateFormats: false,
+  multipleOfPrecision: 9,
 };
 
-let ajvInstance: Ajv | null = null;
+/** The consumer binding is process-wide, as required by ValidatorPlugin.bind. */
+let validator: ReturnType<typeof createValidator> | undefined;
+/** Process-wide optimization selection; existing predicates retain their behavior. */
+let directGuardCompile = true;
+
+/** Plugin-specific configuration extends the core contract without changing it. */
+type ConfigurableValidatorPlugin = ValidatorPlugin & {
+  /**
+   * Select direct compilation of self-contained guards (default true).
+   * @param options - False uses root pointers for later compiles; omitted fields
+   * keep their value. Existing predicates and bound Ajv settings are unchanged.
+   * @returns Nothing; updates this entry point's process-wide selection.
+   */
+  configure(options: { directGuardCompile?: boolean }): void;
+};
+const makeValidator = (instance = new AjvConstructor(defaultSettings)) =>
+  createValidator(instance, undefined, () => directGuardCompile);
 
 /**
  * AJV7 validator plugin for schema-form.
@@ -34,21 +53,26 @@ let ajvInstance: Ajv | null = null;
  *
  * @example
  * ```typescript
- * import { ajvValidatorPlugin } from '@canard/schema-form-ajv7-plugin';
+ * import { registerPlugin } from '@canard/schema-form';
+ * import { plugin } from '@canard/schema-form-ajv7-plugin';
+ * import Ajv from 'ajv';
  *
- * // Use with custom AJV instance
- * const customAjv = new Ajv({ allErrors: false });
- * ajvValidatorPlugin.bind(customAjv);
- *
- * // Compile a validator
- * const validator = ajvValidatorPlugin.compile(schema);
- * const errors = await validator(data);
+ * // Use a custom AJV instance: bind it before registering
+ * plugin.validator.bind(new Ajv({ allErrors: false }));
+ * registerPlugin(plugin);
  * ```
  */
-export const ajvValidatorPlugin: ValidatorPlugin = {
-  bind: (instance: Ajv) => (ajvInstance = instance),
-  compile: (jsonSchema) => {
-    if (!ajvInstance) ajvInstance = new AjvConstructor(defaultSettings);
-    return createValidatorFactory(ajvInstance)(jsonSchema);
+export const ajvValidatorPlugin: ConfigurableValidatorPlugin &
+  Required<Pick<ValidatorPlugin, 'bind' | 'compileGuard' | 'release'>> = {
+  /** Set direct compilation for later guards (default true); omitted options stay unchanged. */
+  configure: (options) => {
+    directGuardCompile = options.directGuardCompile ?? directGuardCompile;
   },
-};
+  bind: (instance: Ajv) => {
+    validator = makeValidator(instance);
+  },
+  compile: (schema) => (validator ??= makeValidator()).compile(schema),
+  compileGuard: (root, pointer) => (validator ??= makeValidator()).compileGuard(root, pointer),
+  release: (root) => validator?.release(root),
+  dialect: 'http://json-schema.org/draft-07/schema#',
+} satisfies ConfigurableValidatorPlugin;

@@ -1,0 +1,75 @@
+import type { BlueprintChildEntry } from '../../../blueprint';
+import type { FieldNodeRecord } from '../../../record';
+import type { SettlementContext } from '../../types/settlement';
+import { getChildDistribution } from '../input/getChildDistribution';
+import { hasDistributedChildInput } from '../input/hasDistributedChildInput';
+import { markWrite } from '../input/markWrite';
+import { acceptsRetainedWrite } from '../input/utils/acceptsRetainedWrite';
+import { replayMovedSource } from '../slots/replayMovedSource';
+
+/**
+ * Prefer caller input while structural replay preserves an entering candidate's source.
+ * @param host - Live parent that may have received a current write
+ * @param child - Occurrence newly entering the shape
+ * @param entry - Child name in the parent's declaration
+ * @param context - Current distribution and per-kind latent sources; in a batch only a
+ * child inside the replace paths reads the host's distribution
+ * @param isRestored - Whether channels have already been restored from a slot
+ * @returns Nothing; the child is ready for shape calculation
+ */
+export const enterFieldNode = <Self extends FieldNodeRecord<Self>>(
+  host: Self,
+  child: Self,
+  entry: BlueprintChildEntry,
+  context: SettlementContext<Self>,
+  isRestored = false,
+): void => {
+  const { name } = entry;
+  const distribution = getChildDistribution(host, entry, context, child.path);
+  const write =
+    distribution &&
+    hasDistributedChildInput(
+      distribution.input,
+      name,
+      host.behavior.type === 'array',
+    );
+  if (distribution?.shouldPreserveLatent) {
+    if (!isRestored)
+      replayMovedSource(
+        child,
+        write ? Reflect.get(distribution.input, name) : undefined,
+        context,
+      );
+  } else if (write || distribution?.isWhole) {
+    const value = write ? Reflect.get(distribution.input, name) : undefined;
+    const writeOrigin =
+      write || distribution.writeOrigin === 'revived'
+        ? distribution.writeOrigin
+        : undefined;
+    if (distribution.isAutomatic) {
+      if (!acceptsRetainedWrite(child, context, distribution.writeOrder))
+        return;
+      context.isAutomatic = true;
+      if (writeOrigin === undefined) {
+        context.writtenInputs.set(child, value);
+        context.filledNodes.add(child);
+      }
+    }
+    markWrite(
+      child,
+      value,
+      context,
+      undefined,
+      undefined,
+      writeOrigin,
+      distribution.writeOrder,
+    );
+    if (distribution.isAutomatic) context.isAutomatic = false;
+  } else if (isRestored) return;
+  else if (child.behavior.strategy === 'terminal')
+    markWrite(child, undefined, context);
+  else {
+    context.dirtyPaths.add(child.path);
+    context.shapeDirtyPaths.add(child.path);
+  }
+};

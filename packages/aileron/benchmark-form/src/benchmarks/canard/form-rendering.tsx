@@ -17,7 +17,7 @@ setupJsdom();
  *    suite entries if needed (avoid muddling per-schema cost into one hz).
  *  - Cleanup uses `unmount()` + element removal so memory does not leak
  *    across iterations and JIT does not get a warmer cache mid-suite.
- *  - `drainTicks()` (setTimeout(0)) is the only async wait — no 16ms /
+ *  - `drainTicks()` (immediate/message turns) is the only async wait — no 16ms /
  *    100ms wall-clock injection.
  */
 export async function runFormRenderingV2(SchemaFormModule: {

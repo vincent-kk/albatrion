@@ -13,10 +13,17 @@ Iterates through each element of the source array and includes only those elemen
 for which the callback function returns a truthy value. The callback receives
 the current element, its index, and the entire array as arguments.
 
+## Import
+
+```typescript
+import { filter } from '@winglet/common-utils/array';
+import { filter } from '@winglet/common-utils';
+```
+
 ## Signature
 
 ```typescript
-const filter: <Type>(array: Type[], callback: (item: Type, index: number, array: Type[]) => boolean) => Type[]
+const filter: <Type>(array: readonly Type[], callback: Fn<[item: Type, index: number, array: readonly Type[]], boolean>) => Type[]
 ```
 
 ## Parameters
@@ -144,7 +151,7 @@ console.log(jsEngineers); // [{ name: 'John', ... }]
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/common-utils": "0.12.3" }}
+  dependencies={{ "@winglet/common-utils": "0.15.0" }}
   code={`import { filter } from '@winglet/common-utils';
 
 const numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];

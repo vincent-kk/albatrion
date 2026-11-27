@@ -14,6 +14,13 @@ Perfect for creating timeout conditions in Promise.race scenarios, implementing
 deadline-based operations, and building timeout utilities. Leverages the delay
 function internally to ensure consistent timing and abort signal support.
 
+## Import
+
+```typescript
+import { timeout } from '@winglet/common-utils/promise';
+import { timeout } from '@winglet/common-utils';
+```
+
 ## Signature
 
 ```typescript
@@ -279,7 +286,7 @@ describe('Timeout behavior', () => {
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/common-utils": "0.12.3" }}
+  dependencies={{ "@winglet/common-utils": "0.15.0" }}
   code={`import { timeout } from '@winglet/common-utils';
 
 try {

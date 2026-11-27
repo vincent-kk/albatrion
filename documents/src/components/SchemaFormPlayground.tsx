@@ -42,7 +42,6 @@ export default function App() {
     <div style={{ padding: 24 }}>
       <Form
         jsonSchema={schema}
-        showError
         onSubmit={(value) => {
           alert(JSON.stringify(value, null, 2));
         }}

@@ -12,6 +12,13 @@ Determines whether a given JSON schema represents a non-nullable object type.
 Validates that the schema's `type` property is set to `'object'` (not an array of types),
 indicating it describes non-nullable object values.
 
+## Import
+
+```typescript
+import { isNonNullableObjectSchema } from '@winglet/json-schema/filter';
+import { isNonNullableObjectSchema } from '@winglet/json-schema';
+```
+
 ## Signature
 
 ```typescript
@@ -41,7 +48,7 @@ isNonNullableObjectSchema({ type: 'array' }); // false
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/json-schema": "0.15.1" }}
+  dependencies={{ "@winglet/json-schema": "0.16.1" }}
   code={`isNonNullableObjectSchema({ type: 'object', properties: { name: { type: 'string' } } }); // true
 isNonNullableObjectSchema({ type: ['object', 'null'] }); // false
 isNonNullableObjectSchema({ type: 'array' }); // false`}

@@ -1,0 +1,34 @@
+---
+title: 'resolveReference'
+sidebar_label: 'resolveReference'
+---
+<!-- sync-winglet-docs:auto -->
+
+import WingletPlayground from '@site/src/components/WingletPlayground';
+
+# resolveReference
+
+Resolve a document in one public scan using the built-in indexed provider.
+
+## Import
+
+```typescript
+import { resolveReference } from '@winglet/json-schema';
+```
+
+## Signature
+
+```typescript
+function resolveReference(schema: UnknownSchema | boolean, options?: ReferenceResolverOptions): UnknownSchema | boolean | undefined
+```
+
+## Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `schema` | `-` | Original JSON schema or boolean root. |
+| `options` | `-` | Explicit source, dialect and vocabulary configuration. |
+
+## Returns
+
+Processed schema without modifying the original; unsafe or cyclic references may remain.

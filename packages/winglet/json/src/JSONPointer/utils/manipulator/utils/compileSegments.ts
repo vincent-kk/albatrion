@@ -3,7 +3,9 @@ import { isArray, isString } from '@winglet/common-utils/filter';
 import { JSONPointer } from '@/json/JSONPointer/enum';
 import { unescapePath } from '@/json/JSONPointer/utils/escape/unescapePath';
 
+import { decodePointerFragment } from '../../decodePointerFragment';
 import { JSONPointerError } from './error';
+import { splitDecodedPointer } from './splitDecodedPointer';
 
 export const compilePointer = (pointer: string | (string | number)[]) => {
   if (isString(pointer)) return handleStringPointer(pointer);
@@ -17,14 +19,35 @@ export const compilePointer = (pointer: string | (string | number)[]) => {
 
 const handleStringPointer = (pointer: string) => {
   if (pointer.length === 0) return [];
-  const parts = pointer.split(JSONPointer.Separator);
+  let decoded = pointer;
+  if (pointer.charCodeAt(0) === 35) {
+    try {
+      decoded = decodePointerFragment(pointer);
+    } catch {
+      throw new JSONPointerError(
+        'INVALID_POINTER_TYPE',
+        'JSON pointer fragment contains an invalid percent escape.',
+        { pointer },
+      );
+    }
+  }
+  const parts =
+    decoded === pointer
+      ? pointer.split(JSONPointer.Separator)
+      : splitDecodedPointer(decoded);
+  pointer = decoded;
   if (parts[0] !== '' && parts[0] !== JSONPointer.Fragment)
     throw new JSONPointerError(
       'INVALID_POINTER_TYPE',
       `JSON pointer must start with ${JSONPointer.Fragment} or ${JSONPointer.Separator}.`,
       { pointer },
     );
-  return handleArrayPointer(parts);
+  if (pointer.indexOf('~') === -1) return parts;
+  const compiled = new Array<string>(parts.length);
+  compiled[0] = parts[0];
+  for (let index = 1; index < parts.length; index++)
+    compiled[index] = unescapePath(parts[index]);
+  return compiled;
 };
 
 const handleArrayPointer = (segments: (string | number)[]) => {

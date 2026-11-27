@@ -1,6 +1,6 @@
 ---
 name: release-note-generator
-description: "Git 변경 데이터를 바탕으로 명확하고 사용자 친화적인 릴리즈 노트를 작성하는 전문가. Breaking/Feature/Improvement/BugFix 분류, 마이그레이션 가이드 포함."
+description: "Expert at writing clear, user-friendly release notes from Git change data. Includes Breaking/Feature/Improvement/BugFix classification and migration guides."
 ---
 
 # Release Note Generator Skill
@@ -306,73 +306,73 @@ Refer to `knowledge/` files for detailed guidelines and templates.
 
 ---
 
-## 에러 처리
+## Error Handling
 
 ```yaml
 error_handling:
   severity_high:
     conditions:
-      - Git 태그가 하나도 없음
-      - 지정된 태그가 존재하지 않음
-      - Git repository가 아님
-      - 필수 패키지 버전 정보 없음 (package.json 누락)
-      - 변경사항 추출 실패 (git log 에러)
+      - There are no Git tags
+      - The specified tag does not exist
+      - Not a Git repository
+      - Required package version information is missing (package.json missing)
+      - Change extraction failed (git log error)
     action: |
-      ❌ 치명적 오류 - 릴리스 노트 생성 중단
-      → Git 태그 확인: git tag --list
-      → Git repository 확인: git status
-      → package.json 존재 확인: ls packages/*/package.json
-      → 재실행: 태그 및 repository 확인 후 재시도
+      ❌ Fatal error - stop generating the release note
+      → Check Git tags: git tag --list
+      → Check the Git repository: git status
+      → Check that package.json exists: ls packages/*/package.json
+      → Run again: retry after confirming the tag and the repository
     examples:
-      - condition: "Git 태그 없음"
-        message: "❌ 오류: Git 태그가 없습니다 (git tag 출력 비어있음)"
-        recovery: "첫 태그 생성: git tag v0.1.0 && git push --tags"
-      - condition: "지정 태그 없음"
-        message: "❌ 오류: 태그 albatrion-251108을 찾을 수 없습니다"
-        recovery: "태그 목록 확인: git tag --list 'albatrion-*'"
+      - condition: "No Git tags"
+        message: "❌ Error: there are no Git tags (git tag output is empty)"
+        recovery: "Create the first tag: git tag v0.1.0 && git push --tags"
+      - condition: "Specified tag missing"
+        message: "❌ Error: tag albatrion-251108 was not found"
+        recovery: "Check the tag list: git tag --list 'albatrion-*'"
 
   severity_medium:
     conditions:
-      - 일부 패키지의 버전 비교 실패
-      - 커밋 메시지 파싱 실패 (일부)
-      - Breaking change 감지 실패
-      - 변경사항 분류 모호
-      - 태그 간 변경사항 없음
+      - Version comparison failed for some packages
+      - Commit message parsing failed (some of them)
+      - Breaking change detection failed
+      - Change classification is ambiguous
+      - No changes between tags
     action: |
-      ⚠️  경고 - 부분 릴리스 노트 생성
-      1. 실패한 패키지 정보를 "unknown" 표시
-      2. 파싱 실패 커밋을 "기타 변경사항"으로 분류
-      3. Breaking change 수동 검토 요청
-      4. 릴리스 노트에 경고 추가:
-         > ⚠️  WARNING: 일부 정보 불완전
+      ⚠️  Warning - generate a partial release note
+      1. Mark failed package information as "unknown"
+      2. Classify commits that failed to parse as "Other changes"
+      3. Ask for a manual review of breaking changes
+      4. Add a warning to the release note:
+         > ⚠️  WARNING: some information is incomplete
          > → {missing_information}
     fallback_values:
       package_version: "unknown"
-      change_category: "기타 변경사항"
+      change_category: "Other changes"
       breaking_change_detected: false
     examples:
-      - condition: "버전 비교 실패"
-        message: "⚠️  경고: @canard/schema-form 버전 비교 실패"
-        fallback: "버전을 'unknown'으로 표시 → 수동 검토 요청"
-      - condition: "커밋 메시지 파싱 실패"
-        message: "⚠️  경고: 5개 커밋 메시지 파싱 실패"
-        fallback: "'기타 변경사항' 섹션에 포함 → 원본 메시지 표시"
+      - condition: "Version comparison failed"
+        message: "⚠️  Warning: version comparison failed for @canard/schema-form"
+        fallback: "Show the version as 'unknown' → ask for a manual review"
+      - condition: "Commit message parsing failed"
+        message: "⚠️  Warning: failed to parse 5 commit messages"
+        fallback: "Include them in the 'Other changes' section → show the original message"
 
   severity_low:
     conditions:
-      - 선택적 메타데이터 누락 (author, PR link)
-      - 템플릿 섹션 일부 비어있음
-      - 마크다운 포맷팅 경고
-      - 이모지 렌더링 문제
+      - Optional metadata is missing (author, PR link)
+      - Some template sections are empty
+      - Markdown formatting warning
+      - Emoji rendering problem
     action: |
-      ℹ️  정보: 선택적 항목 생략 - 핵심 릴리스 노트 생성
-      → 메타데이터: 누락 시 생략
-      → 빈 섹션: 자동 제거
-      → 포맷팅: 자동 보정
-      → 이모지: 텍스트 대체
+      ℹ️  Info: omit optional items - generate the core release note
+      → Metadata: omit it when missing
+      → Empty sections: remove them automatically
+      → Formatting: correct it automatically
+      → Emoji: substitute text
     examples:
-      - condition: "메타데이터 누락"
-        auto_handling: "Author, PR link 누락 → 섹션 생략 (핵심 정보만 표시)"
-      - condition: "빈 섹션"
-        auto_handling: "Breaking Changes 없음 → 섹션 자동 제거"
+      - condition: "Metadata missing"
+        auto_handling: "Author or PR link missing → omit the section (show core information only)"
+      - condition: "Empty section"
+        auto_handling: "No Breaking Changes → remove the section automatically"
 ```

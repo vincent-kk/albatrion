@@ -1,0 +1,121 @@
+import { createRef } from 'react';
+
+import { cleanup, render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import { afterEach, expect, it } from 'vitest';
+
+import {
+  type FieldInputDefinition,
+  Form,
+  type FormHandle,
+  type JSONSchema,
+} from '@canard/schema-form';
+
+import { FieldInputStringDefinition } from '../FieldInputString';
+import { FieldInputTextareaDefinition } from '../FieldInputTextarea';
+import { FieldInputUriDefinition } from '../FieldInputUri';
+
+afterEach(cleanup);
+
+type EmptyCase = readonly [
+  name: string,
+  definition: FieldInputDefinition,
+  jsonSchema: JSONSchema,
+  typedValue: string,
+];
+
+it.each([
+  [
+    'String (non-nullable)',
+    FieldInputStringDefinition,
+    { type: 'string' },
+    'abc',
+  ],
+  [
+    'String (nullable)',
+    FieldInputStringDefinition,
+    { type: ['string', 'null'] },
+    'abc',
+  ],
+  [
+    'Textarea (non-nullable)',
+    FieldInputTextareaDefinition,
+    { type: 'string', format: 'textarea' },
+    'abc',
+  ],
+  [
+    'Textarea (nullable)',
+    FieldInputTextareaDefinition,
+    { type: ['string', 'null'], format: 'textarea' },
+    'abc',
+  ],
+  [
+    'Uri (non-nullable)',
+    FieldInputUriDefinition,
+    { type: 'string', format: 'uri' },
+    'http://abc',
+  ],
+  [
+    'Uri (nullable)',
+    FieldInputUriDefinition,
+    { type: ['string', 'null'], format: 'uri' },
+    'http://abc',
+  ],
+] as EmptyCase[])(
+  '%s publishes undefined when typed text is cleared',
+  async (_, definition, fieldSchema, typedValue) => {
+    const ref = createRef<FormHandle>();
+    render(
+      <Form
+        ref={ref}
+        fieldInputDefinitions={[definition]}
+        jsonSchema={{
+          type: 'object',
+          properties: {
+            field: { ...fieldSchema, options: { omitEmpty: false } },
+          },
+        }}
+      />,
+    );
+
+    const input = screen.getByRole('textbox');
+    await userEvent.type(input, 'abc');
+    expect(ref.current!.getValue()?.field).toBe(typedValue);
+
+    await userEvent.clear(input);
+    expect(ref.current!.getValue()?.field).toBeUndefined();
+  },
+);
+
+it.each([
+  ['Uri (non-nullable)', { type: 'string', format: 'uri' } as JSONSchema],
+  ['Uri (nullable)', { type: ['string', 'null'], format: 'uri' } as JSONSchema],
+])(
+  '%s keeps chosen protocol in local state and publishes undefined on protocol-only change',
+  async (_, fieldSchema) => {
+    const ref = createRef<FormHandle>();
+    render(
+      <Form
+        ref={ref}
+        fieldInputDefinitions={[FieldInputUriDefinition]}
+        jsonSchema={{
+          type: 'object',
+          properties: {
+            field: fieldSchema,
+          },
+        }}
+      />,
+    );
+
+    const selectButton = screen.getByRole('combobox');
+    await userEvent.click(selectButton);
+    const httpsOption = await screen.findByRole('option', { name: 'https://' });
+    await userEvent.click(httpsOption);
+
+    expect(ref.current!.getValue()?.field).toBeUndefined();
+
+    const input = screen.getByRole('textbox');
+    await userEvent.type(input, 'example.com');
+    expect(ref.current!.getValue()?.field).toBe('https://example.com');
+  },
+);

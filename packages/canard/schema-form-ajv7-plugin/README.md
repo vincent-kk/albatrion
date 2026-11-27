@@ -16,7 +16,7 @@
 
 ## Notice
 
-⚠️ This plugin uses AJV 7.x which is compatible with older JSON Schema specifications (Draft-07 and earlier).
+⚠️ This plugin uses AJV 7.x. The default instance validates Draft-07; bind an AJV 2019 instance for Draft 2019-09.
 
 📌 If you need support for newer JSON Schema features (Draft 2019-09, Draft 2020-12), consider using `@canard/schema-form-ajv8-plugin` instead.
 
@@ -31,21 +31,21 @@ yarn add @canard/schema-form @canard/schema-form-ajv7-plugin
 ```
 
 ```tsx
-import { SchemaForm, registerPlugin } from '@canard/schema-form';
-import { ajvValidatorPlugin } from '@canard/schema-form-ajv7-plugin';
+import { registerPlugin } from '@canard/schema-form';
+import { plugin } from '@canard/schema-form-ajv7-plugin';
 // Or register with custom AJV instance
 import Ajv from 'ajv';
 
-// Register the validator plugin globally
-registerPlugin(ajvValidatorPlugin);
+// Option 1: register the validator plugin globally
+registerPlugin(plugin);
 
-// When using a custom AJV instance
+// Option 2: when using a custom AJV instance (use instead of Option 1)
 const customAjv = new Ajv({
   allErrors: true,
   strict: false,
 });
-ajvValidatorPlugin.bind(customAjv);
-registerPlugin(ajvValidatorPlugin);
+plugin.validator.bind(customAjv);
+registerPlugin(plugin);
 ```
 
 ---
@@ -54,19 +54,87 @@ registerPlugin(ajvValidatorPlugin);
 
 ### **Plugin Interface**
 
-The plugin implements the `ValidatorPlugin` interface providing two main methods:
+The plugin implements `ValidatorPlugin` with validation, synchronous guards, and root release:
 
 #### **`bind(instance: Ajv.Ajv)`**
 
 - **Purpose**: Allows you to provide a custom AJV instance with your preferred configuration
 - **Usage**: Optional - if not called, a default AJV instance will be created automatically
 - **Benefits**: Full control over AJV settings, custom keywords, formats, and validation rules
+- **Refusal**: An instance with `coerceTypes`, `useDefaults`, or `removeAdditional` enabled is rejected immediately. The previous binding stays active. Callers discriminate the refusal by `group` (`'UNHANDLED_ERROR'`) and `code` (`'UNHANDLED_ERROR.VALIDATOR_BIND_REFUSED'`, the value of `FormErrorCode.ValidatorBindRefused`); core's `isUnhandledError` does not recognize it. The next validator or guard compile also rejects if one of those options is enabled after binding.
+- **Binding order**: Call `bind` once before the first compile; re-binding after a root is registered is not supported, and in this plugin binding starts a new registry and does not carry roots registered before it.
+
+#### **`configure(options: { directGuardCompile?: boolean }): void`**
+
+Self-contained guards compile their original copy subschema directly by default.
+Set `directGuardCompile: false` to use the registered root-pointer path for later
+compiles; existing predicates are unchanged and omitted options keep their value.
+Reference and identifier keys anywhere inside a guard always require the root path;
+a root declaring its own `$schema` or a guard containing `$schema` also uses the root pointer.
+A compile error that only appears when another part of the root is compiled, such as an
+unresolved `$ref`, makes full validation report `VALIDATOR_COMPILE_FAILED`. It also fails
+every guard compiled at a root pointer, which is a limitation of that path; a self-contained
+guard compiled directly still evaluates, because a guard compile failure belongs to its own
+gate only.
+Guards compile without AJV's root meta-schema validation (`validateSchema: false`); AJV's root
+meta-schema check runs only in the whole-schema compile. Custom keyword meta-schema checks, strict
+options and code-generation checks still apply when a guard compiles. A root meta-schema violation
+outside the condition, such as `multipleOf: 0` in an unrelated field, fails no guard on either
+path; with the default schema validation, full validation reports `VALIDATOR_COMPILE_FAILED`,
+while an instance bound with `validateSchema: false` or `'log'` compiles as that option says.
+A meta-only violation inside the condition schema itself, such as `minLength: 1.5`, does not fail
+the guard; the guard evaluates as the code AJV generates for it.
+The guard instance retains the bound dialect, formats and keywords with
+`allErrors: false` and `validateSchema: false`. `release(root)` also removes its directly compiled guards.
 
 #### **`compile(jsonSchema)`**
 
 - **Purpose**: Creates a validator function from the provided JSON Schema
 - **Returns**: A validator factory function that can validate data against the schema
 - **Features**: Automatic error transformation, detailed validation messages, performance optimization
+- **Asynchronous rules**: The plugin enables asynchronous validation on its own root copy when needed, including named roots. Declare `$async: true` on any separately registered async reference schema.
+
+#### **`compileGuard(root, pointer)` and `release(root)`**
+
+- `compileGuard` returns a synchronous boolean guard for a pointer in the engine-owned copy root. It accepts that copy whether or not `compile` has run. A self-contained guard compiles its subschema without registering the root; only guards that need the root location, such as guards with `$ref` into root definitions, register the root on the guard instance. Whole validation compiles a detached root on a private AJV instance with the current application registrations. To make a schema address available to the application or to another root, register it on the application instance. Both kinds of guard work before whole-schema compilation.
+- `compileGuard` throws a native `GuardPointerNotSchemaError` when the pointer does not locate a schema (an object or boolean): a missing location, or a value such as `/type` or `/required`. Callers discriminate it by `group` (`'UNHANDLED_ERROR'`) and `code` (`'GUARD_POINTER_NOT_SCHEMA'`); `details` carries the root's `$id` (or `''`) and the pointer.
+- Pass the same engine-owned copy object to `compile`, every `compileGuard`, and `release`; whole-schema validation can be compiled later.
+- `release` accepts that copy whether or not `compile` has run and releases the plugin’s retained resources for that root. Releasing an unregistered root is a no-op. A second live root with the same `$id` remains independent.
+- A guard compiles synchronously, so an asynchronous format that `$data` selects at run time is not detected when the guard compiles.
+- An AJV instance and the validators the plugin builds from it are used within one JavaScript realm; sharing one AJV instance across worker threads is not supported.
+
+**Guard dynamic scope.** A guard that needs its root location prefills AJV's dynamic-anchor table and only then compiles `{ $ref: <root>#<pointer> }` on the guard instance, because AJV decides at compile time whether a dynamic reference reads the table. The chain resources are the root and every ancestor on the pointer path that opens a resource with its own `$id`, outermost first. Each anchor name binds to its declaration in the outermost chain resource that declares it, wherever it sits in that resource: a string `$dynamicAnchor` anywhere, and `$recursiveAnchor: true` only at a resource root (name `''`). The scan descends only through subschema keywords (`properties`, `items`, `allOf`, `$defs` and the like), never into data keywords such as `const`, `enum`, `default` or `examples`, never into a nested resource, and never into the guard's own subtree. Other assertions of the root never affect the guard. The table and the checks below run only on an instance with AJV's dynamic vocabulary (`opts.dynamicRef`, set by Ajv2019 and Ajv2020) and only for a root that has a `$dynamicAnchor`, `$dynamicRef`, `$recursiveAnchor` or `$recursiveRef` key anywhere, decided once when the root is registered; on a draft-07 instance these keywords are unknown and ignored, by whole validation and the guard alike.
+
+Inside the `if`, a `$dynamicRef: '#name'` or `$recursiveRef: '#'` that is used inline, not behind `$ref` or under `$defs`, must be bound either by a chain resource or by a schema object that is an ancestor of the reference inside the `if` (for example the root of the `allOf` element that contains it), because AJV runs an object's dynamic keywords before its subschemas. Otherwise `compileGuard` throws, and so does a selected declaration with `$async: true`; the gate then fails at compile time.
+
+The guard's verdict matches the `if` verdict that AJV's whole validation reaches on the same host value when every dynamic anchor the guard uses directly or indirectly has the same first binding on every relevant entry, the function obtained from the chain reproduces that binding in the same validation context, and the selected function is synchronous. Conditions that use only static `$ref`, `if`/`then`/`else` under `properties`, and `$defs` reuse are unaffected by this condition.
+
+Outside that condition the guard returns the verdict computed from the chain, or fails at compile time. These cases are unsupported:
+
+- VALIDATE-047 case (iv): one schema location reached from several dynamic scopes through `$dynamicRef` or `$recursiveRef`. There is one guard per location; it answers for the lexical entry, or fails at compile time when the scopes are resources outside the chain.
+- The first binding comes from outside the chain: whole validation passes through a resource with its own `$id` outside the chain that registers the anchor first, or enters a nested resource by its URI and skips a resource with `$id` on the pointer path.
+- An inline reference whose name neither a chain resource nor an ancestor of the reference declares, including a declaration on a sibling or a descendant of the reference or under `$defs` inside the `if`.
+- L12: `$recursiveAnchor: true` is honoured only at a resource root (the root schema or an on-path `$id` resource); a `$recursiveRef: '#'` whose only anchor is elsewhere is rejected at compile time with a message naming the fix, although AJV's whole validation would bind the subschema. An ancestor of the reference inside the `if` still binds it under the rule above. L16: on 2019-09, when a non-root `$recursiveAnchor: true` outside the `if` coexists with such an ancestor declaration inside the `if`, whole validation and the guard can differ; this is an observation, not a supported case.
+- A `$dynamicRef` or `$recursiveRef` whose fragment is a JSON Pointer (`#/…`): AJV reads the pointer as an anchor name that no declaration can bind, so `compileGuard` rejects it with a message that says so.
+- The current resource declares the name with a static `$anchor` while an outer chain resource declares it with `$dynamicAnchor`. The specification treats the reference as static; AJV and the guard use the dynamic table.
+- Subschemas of user-defined keywords, and declarations inside the `if` that run only through `$ref` into its `$defs`, are not recognised.
+
+Where AJV's whole validation departs from the specification, the guard follows the specification in these cases:
+
+- An inline anchor inside a nested resource holds a relative reference that resolves differently against the root base URI and against the resource base URI. Whole validation resolves it against the root base URI; the guard resolves it against the resource base URI.
+- An anchor registered at run time by a resource outside the chain (entered through `$ref`, `allOf`, or a property checked earlier; L8′) leaks into the `if` in whole validation; the guard does not see it. Declarations of siblings inside a chain resource but outside the guard are collected.
+- A declaration elsewhere in a chain resource that whole validation has not run yet: AJV falls back to the enclosing function, while the guard uses the declaration.
+- A resource without `$id` that whole validation skips.
+
+The guard follows AJV, not the specification, in these cases:
+
+- Bookending: AJV does not check that the initial target of `$dynamicRef` is a `$dynamicAnchor` fragment; it branches on the root's anchor flags and the passed table.
+- When the root's flag for an anchor name is not set at compile time, AJV compiles `$dynamicRef` or `$recursiveRef` as a call to the enclosing compiled function (`it.validateName`) without consulting the anchor table (`dynamicRef.js:32-38`); the guard keeps that behaviour.
+- A `$dynamicRef` that is not a `#` fragment fails to compile in both.
+- An anchor name that collides with an `Object.prototype` member, such as `toString`, can fail during native evaluation of whole validation or a lexical declaration. A root-pointer guard supplies declared chain-resource anchors as own entries in its dynamic-anchor table.
+- `$data` references and custom keywords that read root or parent data see only the host value in a guard. This is a separate limit of the host-value guard interface and is unrelated to dynamic scope.
+
+Strict options on a bound instance, such as `strictTypes` and `strictRequired`, may make some `if` guards fail to compile. The affected condition applies neither `then` nor `else` and reports one `GUARD_FAILED` record through `onError`; a later write that re-evaluates the condition throws `GUARD_FAILED`, and a production build throws it at mount as well. The plugin does not override the consumer's options, and strict mode is not the plugin default (VALIDATE-003, VALIDATE-005, VALIDATE-033, ERROR-041).
 
 ### **Default Configuration**
 
@@ -77,6 +145,7 @@ const defaultSettings: Ajv.Options = {
   allErrors: true, // Collect all validation errors, not just the first one
   strict: false, // Disable strict mode for better compatibility with existing schemas
   validateFormats: false, // Disable format validation for better performance
+  multipleOfPrecision: 9,
 };
 ```
 
@@ -89,7 +158,96 @@ The `createValidatorFactory` function provides:
 - **Detailed Error Messages**: Rich error information for better user experience
 - **Type Safety**: Full TypeScript support with proper type inference
 
+`createValidatorFactory` throws `ValidatorBindRefusedError` when the AJV instance is configured to coerce values, apply defaults, or remove additional properties. Compiling a new validator also refuses those options if enabled after factory creation. An explicit key selects an application registration and compiles it privately using the current application configuration. A custom constructor must leave the private compiler free of bootstrap schemas. Register application schemas with `addSchema` after constructing the application instance.
+
+`createValidator(ajv)` returns a per-instance `{ compile, compileGuard }` object for a Form's `validatorFactory`: create it once outside render (`const validator = createValidator(customAjv);` then `<Form validatorFactory={validator} />`), because a new object makes the Form rebuild its tree; several validators may share one AJV instance, which must not modify values (`coerceTypes`, `useDefaults`, `removeAdditional` off).
+
 ---
+
+## Custom AJV instance and custom keywords
+
+Give a Form your own AJV instance with `createValidator(ajv)`. Create the instance and the validator once at module scope, because a new validator object makes the Form rebuild its tree.
+
+```tsx
+import { Form, type JSONSchema } from '@canard/schema-form';
+import { createValidator } from '@canard/schema-form-ajv7-plugin';
+import Ajv from 'ajv';
+
+const ajv = new Ajv({ strict: false });
+ajv.addKeyword({
+  keyword: 'isEven',
+  schemaType: 'boolean',
+  validate: (schema: boolean, data: unknown) =>
+    typeof data === 'number' && (data % 2 === 0) === schema,
+});
+const validator = createValidator(ajv);
+
+const schema = {
+  type: 'object',
+  properties: { n: { type: 'number' } },
+  if: { type: 'object', properties: { n: { isEven: true } }, required: ['n'] },
+  then: { properties: { evenField: { type: 'string' } } },
+  else: { properties: { oddField: { type: 'string' } } },
+} satisfies JSONSchema;
+
+export const EvenOddForm = () => (
+  <Form jsonSchema={schema} defaultValue={{ n: 2 }} validatorFactory={validator} />
+);
+```
+
+To use the instance for every Form instead, bind it to the plugin and register the plugin:
+
+```ts
+import { registerPlugin } from '@canard/schema-form';
+import { plugin } from '@canard/schema-form-ajv7-plugin';
+
+plugin.validator.bind(ajv);
+registerPlugin(plugin);
+```
+
+The plugin validates and evaluates `if` conditions on private copies of the instance. Keywords and formats you add to the instance before the next compile apply to both, including a format added after `createValidator(ajv)` but before the Form mounts. In the form above, `evenField` exists while `n` is 2, and `oddField` replaces it when `n` becomes 3.
+
+### Choosing a `oneOf` or `anyOf` branch
+
+A branch is chosen in one of three ways:
+
+1. `controls.active` on the branch.
+2. `controls.discriminator` on the object, with `const` or `enum` tags in each branch.
+3. An `if` on the branch with `else: false`. The validator decides the `if`, so a custom keyword can choose the branch:
+
+```ts
+const schema = {
+  type: 'object',
+  properties: { n: { type: 'number' } },
+  oneOf: [
+    {
+      if: { type: 'object', properties: { n: { isEven: true } }, required: ['n'] },
+      then: { properties: { evenField: { type: 'string' } } },
+      else: false,
+    },
+    {
+      if: { type: 'object', properties: { n: { isEven: false } }, required: ['n'] },
+      then: { properties: { oddField: { type: 'string' } } },
+      else: false,
+    },
+  ],
+} satisfies JSONSchema;
+```
+
+A branch with none of the three is always part of the form. A keyword written directly in such a branch takes part in validation but does not choose the branch: when each branch only carries `n: { isEven: … }` beside its own field, both `evenField` and `oddField` stay in the form. See [composition and conditional gates](https://vincent-kk.github.io/albatrion/docs/canard/schema-form/schema-reference#composition) for `controls.active` and the discriminator.
+
+### Limits
+
+- A condition AJV cannot compile fails its guard, for example on an instance in strict mode, which AJV 7 enables by default, that lacks a keyword the condition uses. Neither `then` nor `else` applies, `onError` receives one `GUARD_FAILED` record (`FormErrorCode.GuardFailed`), and every later write that evaluates the condition again keeps its value but throws that error. A production build also raises the error, uncaught, when the Form mounts. Add every keyword before the Form compiles, or use `strict: false`, under which AJV ignores unknown keywords.
+- Guards are synchronous: a condition that uses an asynchronous keyword (`async: true`) fails to compile (`async keyword in sync schema`).
+- A guard receives only the value of the object that holds the `if`; a keyword that reads parent or root data, and `$data`, see only that value.
+- The plugin refuses an instance with `coerceTypes`, `useDefaults` or `removeAdditional` enabled. It does not refuse a keyword declared with `modifying: true`; keeping such a keyword from changing the form's values is your responsibility.
+
+---
+
+## Decimal multiples
+
+The plugin's default validation uses AJV's `multipleOfPrecision: 9`. It accepts decimal multiples such as `19.99` for `multipleOf: 0.01` and rejects `19.995` for the same divisor. The `1e-9` tolerance on the quotient can accept extremely close nonmultiples. Exact decimal multiples are supported for finite values with `Math.abs(value / multipleOf) <= 1e6` and a finite divisor of at least `2.2250738585072014e-308`. The default validator rejects a zero divisor when it compiles the schema. A synchronous numeric guard with `multipleOf: 0` returns `false`. A supplied AJV instance retains its own precision and schema-validation options.
 
 ## Compatibility
 
@@ -111,9 +269,9 @@ Please use a transpiler like Babel to transform the code for your target environ
 
 **JSON Schema Support:**
 
-- Draft-06
-- Draft-07
-- Draft 2019-09 (partial support)
+- Draft-07 with the default instance.
+- Draft 2019-09 with a bound AJV 2019 instance.
+- Draft-06 requires registering its meta-schema on a compatible bound instance. Draft-04 is not supplied.
 
 ---
 
@@ -122,18 +280,12 @@ Please use a transpiler like Babel to transform the code for your target environ
 ### From Manual AJV Usage
 
 ```typescript
-// Before (manual AJV)
 // After (with plugin)
-import { SchemaForm, registerPlugin } from '@canard/schema-form';
-import { ajvValidatorPlugin } from '@canard/schema-form-ajv7-plugin';
-import Ajv from 'ajv';
+import { registerPlugin } from '@canard/schema-form';
+import { plugin } from '@canard/schema-form-ajv7-plugin';
 
-const ajv = new Ajv();
-const validate = ajv.compile(schema);
-const isValid = validate(data);
-
-registerPlugin(ajvValidatorPlugin);
-// Validation is now handled automatically by SchemaForm
+registerPlugin(plugin);
+// <Form> now validates through the registered plugin
 ```
 
 ### To AJV 8.x
@@ -147,7 +299,7 @@ yarn add @canard/schema-form-ajv8-plugin
 
 ```typescript
 // Update import
-import { ajvValidatorPlugin } from '@canard/schema-form-ajv8-plugin';
+import { plugin } from '@canard/schema-form-ajv8-plugin';
 ```
 
 ---
@@ -161,3 +313,23 @@ This repository is licensed under the MIT License. Please refer to the [`LICENSE
 ## Contact
 
 For inquiries or suggestions related to the project, please create an issue on the [GitHub repository](https://github.com/vincent-kk/albatrion).
+
+### Enabling a declared Draft-06 schema
+
+The default instance does not register the Draft-06 meta-schema. Bind a compatible instance before compiling the schema:
+
+```typescript
+import Ajv from 'ajv';
+import draft06 from 'ajv/dist/refs/json-schema-draft-06.json';
+import { createValidator } from '@canard/schema-form-ajv7-plugin';
+
+const ajv = new Ajv({ allErrors: true, strict: false, validateFormats: false });
+ajv.addMetaSchema(draft06);
+const validator = createValidator(ajv);
+const validate = validator.compile({
+  $schema: 'http://json-schema.org/draft-06/schema#',
+  type: 'number',
+  exclusiveMaximum: 5,
+});
+await validate(5); // Reports exclusiveMaximum.
+```

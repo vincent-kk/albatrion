@@ -1,2 +1,2 @@
 export { equals } from './equals';
-export { stableEquals } from './stableEquals';
+export { stableEquals } from './utils/stableEquals';

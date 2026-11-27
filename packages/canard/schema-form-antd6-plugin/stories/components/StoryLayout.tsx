@@ -10,7 +10,7 @@ const StoryLayout = ({
 }: PropsWithChildren<{
   jsonSchema: JSONSchema;
   value?: any;
-  errors?: any[];
+  errors?: readonly any[];
 }>) => {
   return (
     <div

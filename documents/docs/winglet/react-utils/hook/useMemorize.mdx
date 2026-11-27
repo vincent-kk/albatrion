@@ -21,6 +21,13 @@ This hook provides two distinct behaviors based on input type:
 - Enables complex computations to run only when necessary
 - Maintains referential stability for React.memo optimizations
 
+## Import
+
+```typescript
+import { useMemorize } from '@winglet/react-utils/hook';
+import { useMemorize } from '@winglet/react-utils';
+```
+
 ## Signature
 
 ```typescript
@@ -77,7 +84,7 @@ const result = useMemorize(() => {
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/react-utils": "0.12.2" }}
+  dependencies={{ "@winglet/react-utils": "0.14.1" }}
   code={`// Direct value memoization with dependencies
 const config = useMemorize({ theme, locale, apiUrl }, [theme, locale, apiUrl]);
 // Only creates new object when theme, locale, or apiUrl changes

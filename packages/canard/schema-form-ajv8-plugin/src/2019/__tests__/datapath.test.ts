@@ -31,7 +31,7 @@ describe('ajvValidatorPlugin (2019) - Draft 2019-09 전용 스펙 검증', () =>
       expect(result).toHaveLength(1);
       expect(result![0]).toMatchObject({
         keyword: 'unevaluatedProperties',
-        dataPath: '/',
+        dataPath: '',
       });
     });
 
@@ -87,7 +87,7 @@ describe('ajvValidatorPlugin (2019) - Draft 2019-09 전용 스펙 검증', () =>
       expect(result).toHaveLength(1);
       expect(result![0]).toMatchObject({
         keyword: 'unevaluatedItems',
-        dataPath: '/',
+        dataPath: '',
       });
     });
   });
@@ -127,7 +127,7 @@ describe('ajvValidatorPlugin (2019) - Draft 2019-09 전용 스펙 검증', () =>
       expect(result).toHaveLength(1);
       expect(result![0]).toMatchObject({
         keyword: 'dependentRequired',
-        dataPath: '/',
+        dataPath: '',
       });
     });
   });
@@ -574,7 +574,7 @@ describe('ajvValidatorPlugin (2019) - dataPath 정확성 검증', () => {
       expect(result).toHaveLength(1);
       expect(result![0]).toMatchObject({
         keyword: 'additionalProperties',
-        dataPath: '/', // additionalProperties 에러는 루트 레벨
+        dataPath: '', // additionalProperties 에러는 루트 레벨
       });
     });
 

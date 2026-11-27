@@ -3,7 +3,7 @@ import { hasOwnProperty } from '@winglet/common-utils/lib';
 
 import type { Dictionary } from '@aileron/declare';
 
-// 상수 분리
+
 const JSON_PATH_ROOT = '$';
 const DOT = '.';
 const BRACKET_OPEN = '[';
@@ -67,7 +67,7 @@ const getJSONPathSegments = (
 
     if (isObject(currentNode)) {
       if (isArray(currentNode)) {
-        // 배열의 경우 인덱스를 [index] 형식으로 처리
+
         for (let i = 0, l = currentNode.length; i < l; i++) {
           const value = currentNode[i];
           const segment = `${BRACKET_OPEN}${i}${BRACKET_CLOSE}`;
@@ -80,7 +80,7 @@ const getJSONPathSegments = (
           }
         }
       } else {
-        // 객체의 경우 키에 따라 .key 또는 ['key'] 형식으로 처리
+
         for (const key in currentNode) {
           if (!hasOwnProperty(currentNode, key)) continue;
 

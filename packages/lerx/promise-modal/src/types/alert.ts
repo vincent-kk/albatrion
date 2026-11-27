@@ -11,7 +11,7 @@ export type AlertFooterRender<Context extends Dictionary = object> = Fn<
 
 export type AlertContentProps<Context extends Dictionary = object> = Pick<
   ContentComponentProps<Context>,
-  'onConfirm'
+  'onConfirm' | 'context'
 >;
 
 export interface AlertModal<B = any, Context extends Dictionary = object>

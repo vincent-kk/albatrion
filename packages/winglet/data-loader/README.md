@@ -125,7 +125,14 @@ const userLoaderNoCache = new DataLoader(userBatchLoader, {
 const userLoader = new DataLoader(userBatchLoader, {
   maxBatchSize: 50, // Process maximum 50 items per batch
 });
+
+// Batching off: the batch loader receives one key per call
+const singleUserLoader = new DataLoader(userBatchLoader, {
+  disableBatch: true,
+});
 ```
+
+`maxBatchSize` together with `disableBatch: true` is a type error, because the two contradict each other: pick one of the two shapes above. A JavaScript caller that passes both still gets one key per call: `disableBatch: true` wins, and `maxBatchSize` is neither read nor validated.
 
 ### Custom Cache Key Function
 
@@ -226,7 +233,7 @@ userLoader.prime('invalidUser', new Error('User not found'));
 ### DataLoaderOptions
 
 ```typescript
-interface DataLoaderOptions<Key, Value, CacheKey = Key> {
+type DataLoaderOptions<Key, Value, CacheKey = Key> = {
   /** Name of the loader (for debugging) */
   name?: string;
 
@@ -238,10 +245,20 @@ interface DataLoaderOptions<Key, Value, CacheKey = Key> {
 
   /** Function that converts loader keys to cache keys */
   cacheKeyFn?: (key: Key) => CacheKey;
-
-  /** Maximum batch size to process at once */
-  maxBatchSize?: number;
-}
+} & (
+  | {
+      /** Batching on (default); false means the same as omitting it */
+      disableBatch?: false;
+      /** Maximum keys per batch: a positive integer, or Infinity (default). Any other value makes the constructor throw INVALID_MAX_BATCH_SIZE. */
+      maxBatchSize?: number;
+    }
+  | {
+      /** Batching off: the batch loader receives one key per call (same as maxBatchSize: 1) */
+      disableBatch: true;
+      /** A type error beside disableBatch: true */
+      maxBatchSize?: never;
+    }
+);
 ```
 
 ### BatchLoader Function
@@ -340,13 +357,8 @@ const resolvers = {
 
 ```typescript
 const userLoader = new DataLoader(async (userIds: ReadonlyArray<string>) => {
-  try {
-    const users = await fetchUsersWithRetry(userIds);
-    return users;
-  } catch (error) {
-    // If entire batch fails, return same error for each key
-    return userIds.map(() => error);
-  }
+  // A batch-wide rejection is removed from the cache, allowing the next load to retry.
+  return fetchUsersWithRetry(userIds);
 });
 
 // When only specific users fail
@@ -368,6 +380,8 @@ const userLoaderPartialFailure = new DataLoader(
   },
 );
 ```
+
+Batch-wide rejections are cleared automatically. Per-key `Error` results remain cached until `clear(key)` (or `clearAll()`); call `userLoaderPartialFailure.clear(key)` before retrying a failed key.
 
 ---
 

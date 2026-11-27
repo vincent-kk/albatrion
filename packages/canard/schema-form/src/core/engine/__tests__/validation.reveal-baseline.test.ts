@@ -1,0 +1,191 @@
+import { afterEach, expect, it, vi } from 'vitest';
+
+import { createValidationFrameClock } from '@/schema-form/__tests__/helpers/createValidationFrameClock';
+
+import { captureFieldNodeChange } from '../record';
+import { disposeFieldNodeTree } from '../settle';
+import { FieldNodeState, ValidationMode } from '../types/state';
+import {
+  dispatchClearSubtreeState,
+  dispatchMount,
+  dispatchSetState,
+  dispatchSetSubtreeState,
+  dispatchSetValue,
+  dispatchValidate,
+} from '../write';
+import { createDispatchTree } from './fixtures/createDispatchTree';
+
+afterEach(() => {
+  vi.useRealTimers();
+  vi.unstubAllGlobals();
+});
+const fixture = () => {
+  const clock = createValidationFrameClock();
+  const tree = createDispatchTree(
+    {
+      type: 'object',
+      properties: { a: { type: 'string' }, b: { type: 'string' } },
+    },
+    undefined,
+    { compile: () => () => [], compileGuard: () => () => true },
+  );
+  dispatchMount(tree.root, { a: '', b: '' }, undefined, {
+    deferValidation: true,
+  });
+  tree.runtime.validationMode = ValidationMode.OnChange;
+  return {
+    ...tree,
+    clock,
+    a: tree.root.children![0],
+    b: tree.root.children![1],
+  };
+};
+it('IR-6 H records each standalone write and drops its entries by captured generation', async () => {
+  const { a, runtime, clock } = fixture();
+  const before = a.__state__;
+  dispatchSetState(a, { [FieldNodeState.Touched]: true });
+  expect(a.__revealBaseline__).toMatchObject({
+    entries: [{ state: before, isPresent: true }],
+  });
+  expect(runtime.revealBaselineNodes?.has(a)).toBe(true);
+  dispatchSetState(a, { [FieldNodeState.ErrorVisibility]: true });
+  expect(a.__revealBaseline__?.entries[0].state).toBe(before);
+  clock.frame();
+  await clock.task();
+  expect(a.__revealBaseline__).toMatchObject({
+    entries: [{ state: { [FieldNodeState.Touched]: true } }],
+  });
+  clock.frame();
+  await clock.task();
+  expect(a.__revealBaseline__).toBeUndefined();
+  expect(runtime.revealBaselineNodes?.size).toBe(0);
+});
+it('IR-6 Y2 ignores identical touched patches and never clears touched on a repeat blur', async () => {
+  const { a, runtime, clock } = fixture();
+  dispatchSetState(a, { [FieldNodeState.Touched]: true });
+  clock.frame();
+  await clock.task();
+  const state = a.__state__;
+  const generation = runtime.revealBaselineGeneration;
+  dispatchSetState(a, { [FieldNodeState.Touched]: true });
+  expect(a.__state__).toBe(state);
+  expect(a.__state__[FieldNodeState.Touched]).toBe(true);
+  expect(a.__revealBaseline__).toBeUndefined();
+  expect(runtime.revealBaselineGeneration).toBe(generation);
+});
+it.each([ValidationMode.None, ValidationMode.OnRequest])(
+  'IR-6 Y2 mode %s records no reveal baseline',
+  (mode) => {
+    const { a, runtime } = fixture();
+    runtime.validationMode = mode;
+    dispatchSetState(a, { [FieldNodeState.ErrorVisibility]: true });
+    expect(a.__revealBaseline__).toBeUndefined();
+    expect(runtime.revealDropTask).toBeUndefined();
+  },
+);
+it('IR-6 H a later record survives only its own generation cutoff', async () => {
+  const { a, b, clock } = fixture();
+  dispatchSetState(a, { [FieldNodeState.Touched]: true });
+  clock.frame();
+  dispatchSetState(b, { [FieldNodeState.Touched]: true });
+  await clock.task();
+  expect(a.__revealBaseline__).toBeUndefined();
+  expect(b.__revealBaseline__).toBeDefined();
+  clock.frame();
+  await clock.task();
+  expect(a.__revealBaseline__).toBeUndefined();
+  expect(b.__revealBaseline__).toBeUndefined();
+});
+it('IR-6 Y2 clearing subtree state captures the prior flags before its direct empty write', async () => {
+  const { root, a, clock } = fixture();
+  dispatchSetSubtreeState(root, { [FieldNodeState.ErrorVisibility]: true });
+  clock.frame();
+  await clock.task();
+  const state = a.__state__;
+  dispatchClearSubtreeState(root);
+  expect(a.__revealBaseline__?.entries[0].state).toBe(state);
+  expect(a.__state__).toEqual({});
+});
+it('IR-6 Y2 capture records enabled before a controls change without scheduling in record', () => {
+  const { a, runtime } = fixture();
+  a.isVisible = captureFieldNodeChange(a, 'isVisible', false);
+  expect(a.__revealBaseline__?.entries[0].isPresent).toBe(true);
+  expect(runtime.isRevealDropOwed).toBe(true);
+  expect(runtime.revealDropTask).toBeUndefined();
+});
+it('IR-6 Y2 settle drops baselines before notifying its holding listeners', async () => {
+  const { root, a, runtime, clock } = fixture();
+  dispatchSetState(a, { [FieldNodeState.ErrorVisibility]: true });
+  dispatchSetValue(a, 'new');
+  const checked = vi.fn(() => {
+    expect(a.__revealBaseline__).toBeUndefined();
+    expect(runtime.revealBaselineNodes?.size).toBe(0);
+    expect(runtime.revealDropTask).toBeUndefined();
+  });
+  (runtime.revealReleaseListeners ??= new Set()).add(checked);
+  clock.frame();
+  await clock.task();
+  expect(checked).toHaveBeenCalledTimes(1);
+  expect(root.isDisposed).toBe(false);
+});
+it('IR-6 Y2 disposal drops standalone baselines and invalidates an already queued drop', async () => {
+  const { root, a, runtime, clock } = fixture();
+  dispatchSetState(a, { [FieldNodeState.ErrorVisibility]: true });
+  expect(a.__revealBaseline__).toBeDefined();
+  disposeFieldNodeTree(root);
+  expect(a.__revealBaseline__).toBeUndefined();
+  expect(runtime.revealDropTask).toBeUndefined();
+  expect(runtime.isRevealDropOwed).toBeFalsy();
+  clock.frame();
+  await clock.task();
+  expect(a.__revealBaseline__).toBeUndefined();
+});
+
+it('IR-6 Y2 a pending drop clears its scheduling flag and a later standalone record schedules again', async () => {
+  const clock = createValidationFrameClock();
+  let finish!: () => void;
+  const { root, runtime } = createDispatchTree({ type: 'string' }, undefined, {
+    compileGuard: () => () => true,
+    compile: () => () =>
+      new Promise<readonly []>((resolve) => {
+        finish = () => resolve([]);
+      }),
+  });
+  dispatchMount(root, 'old', undefined, { deferValidation: true });
+  runtime.validationMode = ValidationMode.OnChange;
+  dispatchSetState(root, { [FieldNodeState.Touched]: true });
+  dispatchSetValue(root, 'new');
+  clock.frame();
+  await clock.task();
+  clock.frame();
+  await clock.task();
+  expect(runtime.isValidationPending).toBe(true);
+  expect(runtime.revealDropTask).toBeUndefined();
+  expect(runtime.isRevealDropOwed).toBeFalsy();
+  finish();
+  await clock.task();
+  dispatchSetState(root, { [FieldNodeState.ErrorVisibility]: true });
+  expect(root.__revealBaseline__).toBeDefined();
+  expect(runtime.revealDropTask).toBeDefined();
+  clock.frame();
+  await clock.task();
+  expect(root.__revealBaseline__).toBeUndefined();
+});
+
+it('IR-6 Y2 validation becoming unavailable drops standalone baselines without a pending transition', async () => {
+  createValidationFrameClock();
+  const { root, runtime } = createDispatchTree({ type: 'string' }, undefined, {
+    compileGuard: () => () => true,
+    compile: () => {
+      throw new Error('compile');
+    },
+  });
+  dispatchMount(root, 'old', undefined, { deferValidation: true });
+  runtime.validationMode = ValidationMode.OnChange;
+  dispatchSetState(root, { [FieldNodeState.ErrorVisibility]: true });
+  expect(root.__revealBaseline__).toBeDefined();
+  await expect(dispatchValidate(root)).rejects.toBeDefined();
+  expect(runtime.isValidationUnavailable).toBe(true);
+  expect(root.__revealBaseline__).toBeUndefined();
+  expect(runtime.revealDropTask).toBeUndefined();
+});

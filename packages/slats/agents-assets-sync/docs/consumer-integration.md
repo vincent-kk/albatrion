@@ -22,7 +22,7 @@ How to make a package ship Claude Code assets through the `inject-agents-setting
 }
 ```
 
-- `@slats/agents-assets-sync` MUST be in `devDependencies`. The engine is a CLI-only tool; declaring it in `dependencies` would pull `commander`, `@inquirer/prompts`, and their transitive trees into every end-user's production install even though the consumer's runtime never imports the engine.
+- `@slats/agents-assets-sync` MUST be in `devDependencies`. The engine is a CLI-only tool; declaring it in `dependencies` would pull `commander`, `ink`, `react`, and their transitive trees into every end-user's production install even though the consumer's runtime never imports the engine.
 - Do **not** add any `bin` field. Bin names collide across consumers under `node_modules/.bin/` and the engine is the sole CLI surface.
 - Do **not** expose `./bin/*` or `./docs/*` in `exports`. Exposing them would let bundlers pull CLI code or the docs tree into app bundles.
 - Do **not** create a `bin/` or `scripts/` directory in the consumer. The engine's `agents-build-hashes` bin (resolved via `node_modules/.bin/` from `devDependencies` at workspace install time) handles build-time hashing.
@@ -41,7 +41,9 @@ docs/agents/
 └── commands/...
 ```
 
-The build step (`yarn build:hashes` → `agents-build-hashes`) hashes every file under `docs/agents/` relative to the asset root and writes `dist/agents-hashes.json`. On inject, the CLI copies `skills`/`rules`/`commands` into the matching subtree under `.claude/`.
+The build step (`yarn build:hashes` → `agents-build-hashes`) hashes every file under `docs/agents/` relative to the asset root and writes `dist/agents-hashes.json`. On inject, each selected agent receives the assets at its own locations: `claude` copies `skills`/`rules`/`commands` under `.claude/`; `codex` and `agents` copy skills under `.agents/skills` (`~/.codex/skills` or `~/.agents/skills` at user scope), merge rules into `AGENTS.md` as marker blocks, and do not support commands.
+
+Rule files (`rules/**`) are validated before anything in their unit is written, for every agent. Close every fenced code block and HTML comment; keep fences at the top level with at most three spaces of indentation, never inside a list item or blockquote and never indented with a tab or four or more spaces; and in a rule that `codex` or `agents` merges into `AGENTS.md`, keep managed markers (`<!-- AGENTS-ASSETS-SYNC:START:… -->`) inside a closed fence or comment. The installer refuses a rule that breaks this, names its file and line, leaves that package's unit unchanged and exits 1, even with `--dry-run`. The README's “Markdown boundaries for rules” section lists every construct the scanner refuses.
 
 ## 3. Isolation guardrails (optional but recommended)
 
@@ -75,7 +77,7 @@ The engine is not shipped as a runtime dependency of any consumer, so end users 
 
 ### Scope resolution (project)
 
-For `--scope=project`, the target `.claude` directory is resolved by walking up from `process.cwd()` and reusing the first existing `.claude` directory found. Only if no ancestor owns a `.claude` does the CLI fall back to `process.cwd()/.claude`. The CLI logs `(auto-located)` when this happens.
+For `--scope=project`, the nearest root marker (`.git`, a supported lockfile or `pnpm-workspace.yaml`) wins over any nearer agent anchor. Only when no root marker exists does the nearest `.claude`, `AGENTS.md`, `.agents` or `.codex` anchor select the root; otherwise cwd is used. Markers at or above the home directory are ignored. The CLI logs `(auto-located)` when the selected root is above cwd.
 
 ```
 workspace/

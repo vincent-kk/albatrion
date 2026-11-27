@@ -14,6 +14,13 @@ it describes null values according to JSON Schema specification. Null schemas
 are used to explicitly allow null values in validation, often combined with
 other types in union schemas or nullable fields.
 
+## Import
+
+```typescript
+import { isNullSchema } from '@winglet/json-schema/filter';
+import { isNullSchema } from '@winglet/json-schema';
+```
+
 ## Signature
 
 ```typescript
@@ -101,7 +108,7 @@ Object.entries(formFieldSchemas).forEach(([fieldName, schema]) => {
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/json-schema": "0.15.1" }}
+  dependencies={{ "@winglet/json-schema": "0.16.1" }}
   code={`import { isNullSchema } from '@winglet/json-schema';
 
 const nullSchema = {

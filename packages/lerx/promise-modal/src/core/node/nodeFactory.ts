@@ -1,4 +1,4 @@
-import type { ManagedModal } from '@/promise-modal/types';
+import type { ManagedModal } from '@/promise-modal/types/modal';
 
 import { AlertNode, ConfirmNode, PromptNode } from './ModalNode';
 

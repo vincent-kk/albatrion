@@ -8,7 +8,7 @@ Each entry is a claim that looks right, is wrong, and often type-checks anyway. 
 
 **`trackableHandler.loading`** → the property is **`.pending`**. There is no `.loading`, and because the real properties are non-enumerable, a typo here reads as `undefined` rather than failing.
 
-**`withTimeout(fetchPromise, 5000)`** → `withTimeout` takes a **thunk**: `withTimeout(() => fetchPromise, 5000)`. It calls `fn()` inside `Promise.race`, so passing an already-created promise means the argument is invoked as a function — a `TypeError`. Note also that the losing timeout timer is not cancelled, so in Node the process stays alive for the remainder of `ms`.
+**`withTimeout(fetchPromise, 5000)`** → `withTimeout` takes a **thunk**: `withTimeout(() => fetchPromise, 5000)`. It calls `fn()` inside `Promise.race`, so passing an already-created promise means the argument is invoked as a function — a `TypeError`. When the race settles, the pending timeout timer is cleared, so it does not keep a Node process alive.
 
 **`convertMsFromDuration('1h30m')`** → returns **`0`**. The parser accepts exactly one integer and one unit (`/^\s*(\d+)\s*(ms|s|m|h)\s*$/`). Compound durations, decimals (`'1.5s'`), uppercase units (`'5S'`), and spelled-out units (`'5 sec'`) all yield `0` rather than throwing.
 
@@ -48,7 +48,7 @@ Each entry is a claim that looks right, is wrong, and often type-checks anyway. 
 
 **`trackableHandler.execute()` / `.clear()` / the `onError` option** → none exist. `.execute()` and `.clear()` are the `debounce`/`throttle` surface; confusing the two families is the usual source. A trackable handler exposes only `.pending`, `.state`, and `.subscribe`, and errors from `origin` simply propagate to the caller.
 
-**`TYPE_TAGS` / `TIME_UNITS`** → neither symbol exists. `@winglet/common-utils/constant` exports the tags individually (`ARRAY_TAG`, `DATE_TAG`, `MAP_TAG`, …), the time constants individually (`MILLISECOND`, `SECOND`, `MINUTE`, `HOUR`, `DAY`), the SI and binary unit constants (`KILO`…`EXA`, `KILO_2`…`EXA_2`), and no-op function constants (`VOID_FUNCTION`, `IDENTITY_FUNCTION`, …). There is no aggregate object to index into.
+**`TYPE_TAGS` / `TIME_UNITS`** → neither symbol exists. `@winglet/common-utils/constant` exports the tags individually (`ARRAY_TAG`, `DATE_TAG`, `MAP_TAG`, …), the time constants individually (`MILLISECOND`, `SECOND`, `MINUTE`, `HOUR`, `DAY`), the SI and binary unit constants (`KILO`…`EXA`, `KILO_2`…`EXA_2`), shared frozen empty values (`EMPTY_ARRAY`, `EMPTY_OBJECT`), and no-op function constants (`VOID_FUNCTION`, `IDENTITY_FUNCTION`, …). There is no aggregate object to index into.
 
 **`polynomialHash` silently caps output at 7 characters** → the output is always exactly `length` characters, default `7`, zero-padded on the left. Requesting more than 7 is legal and returns a longer string; what caps at roughly 7 base-36 characters is the **entropy**, since the hash is a 32-bit value. Requesting fewer truncates, and discards entropy.
 

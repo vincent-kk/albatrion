@@ -1,4 +1,4 @@
-import { type PropsWithChildren, useMemo } from 'react';
+import { type PropsWithChildren, type ReactElement, useMemo } from 'react';
 
 import type { Dictionary } from '@aileron/declare';
 
@@ -12,7 +12,7 @@ interface UserDefinedContextProviderProps {
 export const UserDefinedContextProvider = ({
   context,
   children,
-}: PropsWithChildren<UserDefinedContextProviderProps>) => {
+}: PropsWithChildren<UserDefinedContextProviderProps>): ReactElement => {
   const contextValue = useMemo(() => ({ context: context || {} }), [context]);
   return (
     <UserDefinedContext.Provider value={contextValue}>

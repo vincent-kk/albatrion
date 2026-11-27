@@ -14,6 +14,13 @@ environments. Automatically uses the appropriate cancellation method (native `cl
 Node.js, MessageChannelScheduler's `clearImmediate` in browsers) based on the scheduling
 mechanism. Safe to call multiple times with the same ID or with invalid IDs.
 
+## Import
+
+```typescript
+import { cancelMacrotask } from '@winglet/common-utils/scheduler';
+import { cancelMacrotask } from '@winglet/common-utils';
+```
+
 ## Signature
 
 ```typescript
@@ -134,7 +141,7 @@ class OptimizedBatchProcessor {
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/common-utils": "0.12.3" }}
+  dependencies={{ "@winglet/common-utils": "0.15.0" }}
   code={`import { scheduleMacrotask, cancelMacrotask } from '@winglet/common-utils';
 
 // Schedule a task

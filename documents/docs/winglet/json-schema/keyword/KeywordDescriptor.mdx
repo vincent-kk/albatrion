@@ -1,0 +1,31 @@
+---
+title: 'KeywordDescriptor'
+sidebar_label: 'KeywordDescriptor'
+---
+<!-- sync-winglet-docs:auto -->
+
+import WingletPlayground from '@site/src/components/WingletPlayground';
+
+# KeywordDescriptor
+
+A single entry in the traversal vocabulary: which keyword to descend into and how.
+
+## Import
+
+```typescript
+import type { KeywordDescriptor } from '@winglet/json-schema/keyword';
+import type { KeywordDescriptor } from '@winglet/json-schema/scanner';
+import type { KeywordDescriptor } from '@winglet/json-schema/async-scanner';
+import type { KeywordDescriptor } from '@winglet/json-schema';
+```
+
+## Signature
+
+```typescript
+interface KeywordDescriptor {
+    keyword: string;
+    kind: KeywordKind;
+    /** Accepted schema-position dialects; omission accepts every supported dialect. */
+    dialects?: readonly Dialect[];
+}
+```

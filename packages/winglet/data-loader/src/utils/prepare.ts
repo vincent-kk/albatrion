@@ -32,14 +32,20 @@ export const prepareBatchScheduler = (
   return batchScheduler;
 };
 
+/**
+ * Validates the constructor batch limit after honoring disableBatch.
+ * @param options - Optional positive integral limit or the unlimited Infinity sentinel
+ * @returns One when batching is disabled, otherwise the validated limit
+ * @throws DataLoaderError when an active limit is neither Infinity nor a positive integer
+ */
 export const prepareMaxBatchSize = (options?: {
   maxBatchSize?: number;
   disableBatch?: boolean;
 }): number => {
   if (options?.disableBatch === true) return 1;
   const maxBatchSize = options?.maxBatchSize;
-  if (maxBatchSize === undefined) return Infinity;
-  if (typeof maxBatchSize !== 'number' || maxBatchSize < 1)
+  if (maxBatchSize === undefined || maxBatchSize === Infinity) return Infinity;
+  if (!Number.isInteger(maxBatchSize) || maxBatchSize < 1)
     throw new DataLoaderError(
       'INVALID_MAX_BATCH_SIZE',
       `DataLoaderOptions > maxBatchSize must be a positive integer : ${maxBatchSize}`,

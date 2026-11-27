@@ -1,0 +1,235 @@
+import type { ObservationDifference } from './types';
+
+/** Value the comparison records for an observation that one of the two trees lacks. */
+const MISSING = ['missing'];
+
+/** Type error the live tree keeps for the unconverted '2' of the union scene. */
+const unionTypeError = {
+  dataPath: '/source/data',
+  schemaPath: '#/properties/source/allOf/0/properties/data/type',
+  keyword: 'type',
+  message: 'must be number',
+  details: { type: 'number' },
+  source: {
+    instancePath: '/source/data',
+    schemaPath: '#/properties/source/allOf/0/properties/data/type',
+    keyword: 'type',
+    params: { type: 'number' },
+    message: 'must be number',
+  },
+};
+
+/**
+ * Node-tree differences of the union scene with their live (`updated`) and reloaded (`fresh`)
+ * values, which the core runner asserts exactly; the render runner compares only their paths.
+ */
+const unionNodeDifferences: readonly ObservationDifference[] = [
+  { path: '/automaticErrors/length', updated: 1, fresh: 0 },
+  { path: '/automaticErrors/0', updated: unionTypeError, fresh: MISSING },
+  { path: '/output/source/data', updated: '2', fresh: 2 },
+  { path: '/output/observer/gate', updated: { leaf: 'G' }, fresh: MISSING },
+  { path: '/shape/length', updated: 9, fresh: 8 },
+  {
+    path: '/shape/7',
+    updated: '/observer/gate/leaf',
+    fresh: '/observer/watcher',
+  },
+  { path: '/shape/8', updated: '/observer/watcher', fresh: MISSING },
+  { path: '/nodes//value/source/data', updated: '2', fresh: 2 },
+  {
+    path: '/nodes//value/observer/gate',
+    updated: { leaf: 'G' },
+    fresh: MISSING,
+  },
+  { path: '/nodes//outputValue/source/data', updated: '2', fresh: 2 },
+  {
+    path: '/nodes//outputValue/observer/gate',
+    updated: { leaf: 'G' },
+    fresh: MISSING,
+  },
+  { path: '/nodes//misfits/length', updated: 1, fresh: 0 },
+  { path: '/nodes//misfits/0', updated: '/source/data', fresh: MISSING },
+  { path: '/nodes/~1source/value/data', updated: '2', fresh: 2 },
+  { path: '/nodes/~1source/outputValue/data', updated: '2', fresh: 2 },
+  { path: '/nodes/~1source/misfits/length', updated: 1, fresh: 0 },
+  {
+    path: '/nodes/~1source/misfits/0',
+    updated: '/source/data',
+    fresh: MISSING,
+  },
+  { path: '/nodes/~1source~1data/source', updated: '2', fresh: 2 },
+  { path: '/nodes/~1source~1data/value', updated: '2', fresh: 2 },
+  { path: '/nodes/~1source~1data/outputValue', updated: '2', fresh: 2 },
+  { path: '/nodes/~1source~1data/isMisfit', updated: true, fresh: false },
+  { path: '/nodes/~1source~1data/misfits/length', updated: 1, fresh: 0 },
+  {
+    path: '/nodes/~1source~1data/misfits/0',
+    updated: '/source/data',
+    fresh: MISSING,
+  },
+  { path: '/nodes/~1source~1data/errors/length', updated: 1, fresh: 0 },
+  {
+    path: '/nodes/~1source~1data/errors/0',
+    updated: unionTypeError,
+    fresh: MISSING,
+  },
+  {
+    path: '/nodes/~1observer/value/gate',
+    updated: { leaf: 'G' },
+    fresh: MISSING,
+  },
+  {
+    path: '/nodes/~1observer/outputValue/gate',
+    updated: { leaf: 'G' },
+    fresh: MISSING,
+  },
+  { path: '/nodes/~1observer~1state/isVisible', updated: true, fresh: false },
+  { path: '/nodes/~1observer~1state/isPresent', updated: true, fresh: false },
+  { path: '/nodes/~1observer~1state/isReadOnly', updated: true, fresh: false },
+  { path: '/nodes/~1observer~1state/isDisabled', updated: true, fresh: false },
+  { path: '/nodes/~1observer~1gate/children/length', updated: 1, fresh: 0 },
+  {
+    path: '/nodes/~1observer~1gate/children/0',
+    updated: '/observer/gate/leaf',
+    fresh: MISSING,
+  },
+  { path: '/nodes/~1observer~1gate/value/leaf', updated: 'G', fresh: MISSING },
+  {
+    path: '/nodes/~1observer~1gate/outputValue',
+    updated: { leaf: 'G' },
+    fresh: undefined,
+  },
+  {
+    path: '/nodes/~1observer~1gate~1leaf',
+    updated: {
+      name: 'leaf',
+      type: 'string',
+      strategy: 'terminal',
+      schemaType: 'string',
+      parent: '/observer/gate',
+      children: null,
+      source: 'G',
+      extras: undefined,
+      value: 'G',
+      outputValue: 'G',
+      isActive: true,
+      isVisible: true,
+      isPresent: true,
+      isReadOnly: false,
+      isDisabled: false,
+      isRequired: false,
+      isNullable: false,
+      watchValues: [],
+      isMisfit: false,
+      misfits: [],
+      jsonSchema: { default: 'G', type: 'string' },
+      state: {},
+      errors: [],
+      arrayLength: null,
+    },
+    fresh: MISSING,
+  },
+  { path: '/nodes/~1observer~1watcher/watchValues/0', updated: '2', fresh: 2 },
+  { path: '/globalErrors/length', updated: 1, fresh: 0 },
+  { path: '/globalErrors/0', updated: unionTypeError, fresh: MISSING },
+];
+
+/**
+ * Observation paths that differ between the live tree and a fresh load of its output at prefix 1
+ * of two overlay scenes, in comparison order; no other prefix differs. `node` holds the node-tree
+ * channels both runners compare, `screen` the FormHandle and DOM channels the render runner
+ * compares after them; the union scene also carries `nodeDifferences`, its node paths with values.
+ * Copied from the runners' mismatch output; the reasons are the rows of the VALUE-031 round-trip
+ * table in `src/core/engine/settle/DETAIL.md`.
+ */
+export const overlayDifferencePaths = {
+  /** omitTrailingEmpty: the live array keeps its trailing item node, a fresh load has one item. */
+  'gap-overlay-trailing': {
+    node: [
+      '/shape/length',
+      '/shape/5',
+      '/shape/6',
+      '/shape/7',
+      '/shape/8',
+      '/shape/9',
+      '/nodes/~1source~1data/children/length',
+      '/nodes/~1source~1data/children/1',
+      '/nodes/~1source~1data/value/length',
+      '/nodes/~1source~1data/value/1',
+      '/nodes/~1source~1data~11',
+    ],
+    screen: [
+      '/dom/3/0/3/0/3/0/3/0/3/0/3/2/3/0/3/1/3/0/3/2/3/0/3/0/3/length',
+      '/dom/3/0/3/0/3/0/3/0/3/0/3/2/3/0/3/1/3/0/3/2/3/0/3/0/3/1/0',
+      '/dom/3/0/3/0/3/0/3/0/3/0/3/2/3/0/3/1/3/0/3/2/3/0/3/0/3/1/1/length',
+      '/dom/3/0/3/0/3/0/3/0/3/0/3/2/3/0/3/1/3/0/3/2/3/0/3/0/3/1/1/0/1',
+      '/dom/3/0/3/0/3/0/3/0/3/0/3/2/3/0/3/1/3/0/3/2/3/0/3/0/3/1/1/1',
+      '/dom/3/0/3/0/3/0/3/0/3/0/3/2/3/0/3/1/3/0/3/2/3/0/3/0/3/1/1/2',
+      '/dom/3/0/3/0/3/0/3/0/3/0/3/2/3/0/3/1/3/0/3/2/3/0/3/0/3/1/3/length',
+      '/dom/3/0/3/0/3/0/3/0/3/0/3/2/3/0/3/1/3/0/3/2/3/0/3/0/3/1/3/0/length',
+      '/dom/3/0/3/0/3/0/3/0/3/0/3/2/3/0/3/1/3/0/3/2/3/0/3/0/3/1/3/0/0',
+      '/dom/3/0/3/0/3/0/3/0/3/0/3/2/3/0/3/1/3/0/3/2/3/0/3/0/3/1/3/0/1',
+      '/dom/3/0/3/0/3/0/3/0/3/0/3/2/3/0/3/1/3/0/3/2/3/0/3/0/3/1/3/0/2',
+      '/dom/3/0/3/0/3/0/3/0/3/0/3/2/3/0/3/1/3/0/3/2/3/0/3/0/3/1/3/0/3',
+      '/dom/3/0/3/0/3/0/3/0/3/0/3/2/3/0/3/1/3/0/3/2/3/0/3/0/3/1/3/1',
+      '/dom/3/0/3/0/3/0/3/0/3/0/3/2/3/0/3/1/3/0/3/2/3/0/3/0/3/2',
+    ],
+  },
+  /** A gate narrows the union: the live tree keeps '2' with a type error, a fresh load reads 2. */
+  'gap-overlay-type': {
+    node: unionNodeDifferences.map(({ path }) => path),
+    nodeDifferences: unionNodeDifferences,
+    screen: [
+      '/handle/value/source/data',
+      '/handle/value/observer/gate',
+      '/handle/errors/length',
+      '/handle/errors/0',
+      '/dom/3/0/3/0/3/0/3/0/3/0/3/2/3/0/3/1/3/0/3/length',
+      '/dom/3/0/3/0/3/0/3/0/3/0/3/2/3/0/3/1/3/0/3/1/3/0/1/length',
+      '/dom/3/0/3/0/3/0/3/0/3/0/3/2/3/0/3/1/3/0/3/1/3/0/1/0/0',
+      '/dom/3/0/3/0/3/0/3/0/3/0/3/2/3/0/3/1/3/0/3/1/3/0/1/0/1',
+      '/dom/3/0/3/0/3/0/3/0/3/0/3/2/3/0/3/1/3/0/3/1/3/0/1/1/0',
+      '/dom/3/0/3/0/3/0/3/0/3/0/3/2/3/0/3/1/3/0/3/1/3/0/1/1/1',
+      '/dom/3/0/3/0/3/0/3/0/3/0/3/2/3/0/3/1/3/0/3/1/3/0/1/2/0',
+      '/dom/3/0/3/0/3/0/3/0/3/0/3/2/3/0/3/1/3/0/3/1/3/0/1/2/1',
+      '/dom/3/0/3/0/3/0/3/0/3/0/3/2/3/0/3/1/3/0/3/1/3/0/1/3',
+      '/dom/3/0/3/0/3/0/3/0/3/0/3/2/3/0/3/1/3/0/3/3',
+      '/dom/3/0/3/0/3/0/3/1/3/0/3/2/3/0/3/length',
+      '/dom/3/0/3/0/3/0/3/1/3/0/3/2/3/0/3/0/1/0/1',
+      '/dom/3/0/3/0/3/0/3/1/3/0/3/2/3/0/3/0/3/0/0',
+      '/dom/3/0/3/0/3/0/3/1/3/0/3/2/3/0/3/0/3/0/3/0/0',
+      '/dom/3/0/3/0/3/0/3/1/3/0/3/2/3/0/3/0/3/0/3/0/1/length',
+      '/dom/3/0/3/0/3/0/3/1/3/0/3/2/3/0/3/0/3/0/3/0/1/0/0',
+      '/dom/3/0/3/0/3/0/3/1/3/0/3/2/3/0/3/0/3/0/3/0/1/0/1',
+      '/dom/3/0/3/0/3/0/3/1/3/0/3/2/3/0/3/0/3/0/3/0/1/1',
+      '/dom/3/0/3/0/3/0/3/1/3/0/3/2/3/0/3/0/3/0/3/0/1/2',
+      '/dom/3/0/3/0/3/0/3/1/3/0/3/2/3/0/3/0/3/0/3/0/3/0/1',
+      '/dom/3/0/3/0/3/0/3/1/3/0/3/2/3/0/3/0/3/0/3/1/1/length',
+      '/dom/3/0/3/0/3/0/3/1/3/0/3/2/3/0/3/0/3/0/3/1/1/0',
+      '/dom/3/0/3/0/3/0/3/1/3/0/3/2/3/0/3/0/3/0/3/1/1/1',
+      '/dom/3/0/3/0/3/0/3/1/3/0/3/2/3/0/3/0/3/0/3/1/3/length',
+      '/dom/3/0/3/0/3/0/3/1/3/0/3/2/3/0/3/0/3/0/3/1/3/0',
+      '/dom/3/0/3/0/3/0/3/1/3/0/3/2/3/0/3/0/3/0/3/2/0',
+      '/dom/3/0/3/0/3/0/3/1/3/0/3/2/3/0/3/0/3/0/3/2/3/length',
+      '/dom/3/0/3/0/3/0/3/1/3/0/3/2/3/0/3/0/3/0/3/2/3/0',
+      '/dom/3/0/3/0/3/0/3/1/3/0/3/2/3/0/3/1/1/0/1',
+      '/dom/3/0/3/0/3/0/3/1/3/0/3/2/3/0/3/1/3/0/0',
+      '/dom/3/0/3/0/3/0/3/1/3/0/3/2/3/0/3/1/3/0/3/0/0',
+      '/dom/3/0/3/0/3/0/3/1/3/0/3/2/3/0/3/1/3/0/3/0/1/length',
+      '/dom/3/0/3/0/3/0/3/1/3/0/3/2/3/0/3/1/3/0/3/0/1/0/0',
+      '/dom/3/0/3/0/3/0/3/1/3/0/3/2/3/0/3/1/3/0/3/0/1/0/1',
+      '/dom/3/0/3/0/3/0/3/1/3/0/3/2/3/0/3/1/3/0/3/0/1/1',
+      '/dom/3/0/3/0/3/0/3/1/3/0/3/2/3/0/3/1/3/0/3/0/1/2',
+      '/dom/3/0/3/0/3/0/3/1/3/0/3/2/3/0/3/1/3/0/3/0/3/0/1',
+      '/dom/3/0/3/0/3/0/3/1/3/0/3/2/3/0/3/1/3/0/3/1/1/length',
+      '/dom/3/0/3/0/3/0/3/1/3/0/3/2/3/0/3/1/3/0/3/1/1/0',
+      '/dom/3/0/3/0/3/0/3/1/3/0/3/2/3/0/3/1/3/0/3/1/1/1',
+      '/dom/3/0/3/0/3/0/3/1/3/0/3/2/3/0/3/1/3/0/3/1/3/length',
+      '/dom/3/0/3/0/3/0/3/1/3/0/3/2/3/0/3/1/3/0/3/1/3/0',
+      '/dom/3/0/3/0/3/0/3/1/3/0/3/2/3/0/3/1/3/0/3/2/0',
+      '/dom/3/0/3/0/3/0/3/1/3/0/3/2/3/0/3/1/3/0/3/2/3/length',
+      '/dom/3/0/3/0/3/0/3/1/3/0/3/2/3/0/3/1/3/0/3/2/3/0',
+      '/dom/3/0/3/0/3/0/3/1/3/0/3/2/3/0/3/2',
+    ],
+  },
+} as const;

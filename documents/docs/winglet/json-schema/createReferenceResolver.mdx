@@ -1,0 +1,34 @@
+---
+title: 'createReferenceResolver'
+sidebar_label: 'createReferenceResolver'
+---
+<!-- sync-winglet-docs:auto -->
+
+import WingletPlayground from '@site/src/components/WingletPlayground';
+
+# createReferenceResolver
+
+Construct an indexed synchronous resolver with host-specific immutable templates.
+
+## Import
+
+```typescript
+import { createReferenceResolver } from '@winglet/json-schema';
+```
+
+## Signature
+
+```typescript
+function createReferenceResolver(root: SchemaValue, options?: ReferenceResolverOptions): ReferenceResolver
+```
+
+## Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `root` | `-` | Original document; identifiers and address ambiguity are checked eagerly. |
+| `options` | `-` | Explicit retrieval base, dialect aliases, documents and vocabulary. |
+
+## Returns
+
+A context protocol that performs no implicit I/O.

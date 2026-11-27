@@ -31,13 +31,13 @@ function visualFor(action: Action): Visual {
       return {
         icon: icons.warning,
         color: colors.warn,
-        note: 'diverged',
+        note: 'local differs from source (user edit or version change)',
       };
     case 'warn-orphan':
       return {
         icon: icons.question,
         color: colors.warn,
-        note: 'orphan',
+        note: 'present locally, absent in source',
       };
     case 'delete':
       return {

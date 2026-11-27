@@ -1,0 +1,34 @@
+---
+title: 'createReferenceResolverAsync'
+sidebar_label: 'createReferenceResolverAsync'
+---
+<!-- sync-winglet-docs:auto -->
+
+import WingletPlayground from '@site/src/components/WingletPlayground';
+
+# createReferenceResolverAsync
+
+Construct an asynchronous resolver that only loads through the caller's function.
+
+## Import
+
+```typescript
+import { createReferenceResolverAsync } from '@winglet/json-schema';
+```
+
+## Signature
+
+```typescript
+function createReferenceResolverAsync(root: SchemaValue, options?: ReferenceResolverAsyncOptions): ReferenceResolverAsync
+```
+
+## Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `root` | `-` | Original document, indexed immediately. |
+| `options` | `-` | Explicit sources and optional asynchronous loader. |
+
+## Returns
+
+A resolver coalescing both pending and completed requests by absolute document URI.

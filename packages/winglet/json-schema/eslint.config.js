@@ -1,4 +1,4 @@
-// 다른 패키지의 eslint.config.js
+
 import path from 'path';
 import { fileURLToPath } from 'url';
 

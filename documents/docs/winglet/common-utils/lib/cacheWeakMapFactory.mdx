@@ -14,6 +14,13 @@ where object references serve as keys. Offers automatic garbage collection benef
 as entries are automatically removed when key objects are no longer referenced elsewhere,
 preventing memory leaks in long-running applications.
 
+## Import
+
+```typescript
+import { cacheWeakMapFactory } from '@winglet/common-utils/lib';
+import { cacheWeakMapFactory } from '@winglet/common-utils';
+```
+
 ## Signature
 
 ```typescript
@@ -227,7 +234,7 @@ function getComputedValues(model: DataModel): ComputedValues {
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/common-utils": "0.12.3" }}
+  dependencies={{ "@winglet/common-utils": "0.15.0" }}
   code={`import { cacheWeakMapFactory } from '@winglet/common-utils';
 
 interface ComponentConfig {

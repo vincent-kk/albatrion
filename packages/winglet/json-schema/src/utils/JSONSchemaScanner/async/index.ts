@@ -3,5 +3,9 @@ export type {
   JSONScannerOptionsAsync,
   SchemaVisitor,
   SchemaEntry,
-} from '../type';
-export type { KeywordDescriptor, KeywordKind } from '../type';
+} from '../utils/type';
+export {
+  Dialect,
+  type KeywordDescriptor,
+  type KeywordKind,
+} from '../../../keyword';

@@ -24,7 +24,6 @@
 ### Package Management
 - `run:all`: yarn workspaces foreach --all --topological-dev run
 - `changeset`: changeset
-- `changeset:publish`: yarn run:all && changeset publish
 - `changeset:version`: changeset version
 
 ## Directory Structure
@@ -64,9 +63,9 @@ albatrion/
 3. Shortcut commands available in root package.json (e.g., `yarn schemaForm`)
 
 ### Version Management
-1. Use changesets for version management
+1. Record releases as the change records section of `DOCUMENTATION.md` describes
 2. Create changesets with `yarn changeset`
-3. Publish with `yarn changeset:publish`
+3. Publish with the manual publish workflow (`scripts/PUBLISHING.md`)
 
 ### Quality Assurance
 1. Lint: Use workspace-specific lint commands

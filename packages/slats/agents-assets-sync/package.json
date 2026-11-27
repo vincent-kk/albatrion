@@ -37,6 +37,18 @@
     },
     "./package.json": "./package.json"
   },
+  "publishConfig": {
+    "exports": {
+      ".": {
+        "types": "./dist/index.d.ts",
+        "import": "./dist/index.mjs"
+      },
+      "./buildHashes": {
+        "import": "./scripts/buildHashes.mjs"
+      },
+      "./package.json": "./package.json"
+    }
+  },
   "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
   "bin": {

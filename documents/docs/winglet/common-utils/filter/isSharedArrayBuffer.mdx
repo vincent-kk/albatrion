@@ -14,6 +14,13 @@ identifying shared memory buffer objects used for multi-threaded JavaScript
 applications in both browsers (Web Workers) and Node.js (worker_threads).
 Returns false in environments where SharedArrayBuffer is not available.
 
+## Import
+
+```typescript
+import { isSharedArrayBuffer } from '@winglet/common-utils/filter';
+import { isSharedArrayBuffer } from '@winglet/common-utils';
+```
+
 ## Signature
 
 ```typescript
@@ -329,7 +336,7 @@ if (isMainThread) {
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/common-utils": "0.12.3" }}
+  dependencies={{ "@winglet/common-utils": "0.15.0" }}
   code={`import { isSharedArrayBuffer } from '@winglet/common-utils';
 
 // True cases - SharedArrayBuffer instances (if supported)

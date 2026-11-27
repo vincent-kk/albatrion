@@ -1,0 +1,31 @@
+---
+title: 'ReferenceStep'
+sidebar_label: 'ReferenceStep'
+---
+<!-- sync-winglet-docs:auto -->
+
+import WingletPlayground from '@site/src/components/WingletPlayground';
+
+# ReferenceStep
+
+A resolver supplies a host-valid target or a supported preservation reason.
+
+## Import
+
+```typescript
+import type { ReferenceStep } from '@winglet/json-schema';
+```
+
+## Signature
+
+```typescript
+export type ReferenceStep = {
+    status: 'resolved';
+    uri: string;
+    target: UnknownSchema | boolean;
+} | {
+    status: 'skipped';
+    uri?: string;
+    reason: Exclude<ReferenceSkipReason, 'definition' | 'cycle'>;
+}
+```

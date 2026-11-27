@@ -1,0 +1,34 @@
+---
+title: 'ReferenceOutcome'
+sidebar_label: 'ReferenceOutcome'
+---
+<!-- sync-winglet-docs:auto -->
+
+import WingletPlayground from '@site/src/components/WingletPlayground';
+
+# ReferenceOutcome
+
+Observable result for an original reference or one replacement-chain step.
+
+## Import
+
+```typescript
+import type { ReferenceOutcome } from '@winglet/json-schema';
+```
+
+## Signature
+
+```typescript
+interface ReferenceOutcome {
+    /** Reference keyword in the effective dialect. */
+    keyword: ReferenceKeyword;
+    /** Written value before canonicalization. */
+    reference: string;
+    /** Canonical target location when the provider knows it. */
+    uri?: string;
+    /** Whether a target was inlined at this step. */
+    resolved: boolean;
+    /** Why a reference remains instead of being inlined. */
+    skipped?: ReferenceSkipReason;
+}
+```

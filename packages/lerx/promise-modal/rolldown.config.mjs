@@ -11,8 +11,8 @@ const mainEntry = packageJSON.exports['.'];
 export default async () => {
   clearDir('dist');
 
-  return [
-    // ESM 단일 번들
+  const bundles = [
+
     await bundleBuildOptions({
       entry: mainEntry.source,
       format: 'esm',
@@ -20,7 +20,7 @@ export default async () => {
       sourcemap: false,
       minify: false,
     }),
-    // CJS 단일 번들
+
     await bundleBuildOptions({
       entry: mainEntry.source,
       format: 'cjs',
@@ -29,4 +29,9 @@ export default async () => {
       minify: false,
     }),
   ];
+
+  return bundles.map((bundle) => ({
+    ...bundle,
+    output: { ...bundle.output, banner: "'use client';" },
+  }));
 };

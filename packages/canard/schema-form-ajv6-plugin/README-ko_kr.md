@@ -16,7 +16,7 @@
 
 ## 안내사항
 
-⚠️ 이 플러그인은 AJV 6.x를 사용하며, 구버전 JSON Schema 명세(Draft-07 이하)와 호환됩니다.
+⚠️ 이 플러그인은 AJV 6.x를 사용합니다. 기본 인스턴스는 Draft-07을 검증하며, 이전 방언을 선언한 스키마는 아래의 추가 설정이 필요합니다.
 
 📌 최신 JSON Schema 기능(Draft 2019-09, Draft 2020-12)이 필요한 경우 `@canard/schema-form-ajv8-plugin` 사용을 고려해주세요.
 
@@ -31,22 +31,22 @@ yarn add @canard/schema-form @canard/schema-form-ajv6-plugin
 ```
 
 ```tsx
-import { SchemaForm, registerPlugin } from '@canard/schema-form';
-import { ajvValidatorPlugin } from '@canard/schema-form-ajv6-plugin';
+import { registerPlugin } from '@canard/schema-form';
+import { plugin } from '@canard/schema-form-ajv6-plugin';
 // 또는 커스텀 AJV 인스턴스와 함께 등록
 import Ajv from 'ajv';
 
-// validator 플러그인을 전역으로 등록
-registerPlugin(ajvValidatorPlugin);
+// 방법 1: validator 플러그인을 전역으로 등록
+registerPlugin(plugin);
 
-// 커스텀 AJV 인스턴스를 사용하는 경우
+// 방법 2: 커스텀 AJV 인스턴스를 사용하는 경우 (방법 1 대신 사용)
 const customAjv = new Ajv({
   allErrors: true,
   nullable: true,
   verbose: true,
 });
-ajvValidatorPlugin.bind(customAjv);
-registerPlugin(ajvValidatorPlugin);
+plugin.validator.bind(customAjv);
+registerPlugin(plugin);
 ```
 
 ---
@@ -62,12 +62,46 @@ registerPlugin(ajvValidatorPlugin);
 - **목적**: 선호하는 설정으로 구성된 커스텀 AJV 인스턴스를 제공할 수 있습니다
 - **사용법**: 선택적 - 호출하지 않으면 기본 AJV 인스턴스가 자동으로 생성됩니다
 - **장점**: AJV 설정, 커스텀 키워드, 포맷, 검증 규칙에 대한 완전한 제어 가능
+- **제약**: `coerceTypes`, `useDefaults`, `removeAdditional` 중 하나라도 활성화된 인스턴스는 현재 바인딩을 교체하기 전에 즉시 거부됩니다. 던져지는 네이티브 `ValidatorBindRefusedError`는 활성화된 옵션을 `details.options`에 담습니다. 값을 수정하는 커스텀 키워드는 계속 사용하는 쪽의 책임입니다. 바인딩 뒤에 이 옵션을 활성화하면 다음 검증기 또는 가드 컴파일도 거부됩니다.
+- **바인딩 순서**: `bind`는 첫 컴파일 전에 한 번 부릅니다. 루트가 등록된 뒤 다시 바인딩하는 것은 지원하지 않으며, 이 플러그인에서는 바인딩이 등록소를 새로 만들고 그 전에 등록된 루트를 넘기지 않습니다.
+
+호출하는 쪽은 `group`(`'UNHANDLED_ERROR'`)과 `code`(`'UNHANDLED_ERROR.VALIDATOR_BIND_REFUSED'`, 즉 `FormErrorCode.ValidatorBindRefused`의 값)로 이 거부를 구분합니다. core의 `isUnhandledError`는 이를 인식하지 않습니다.
+
+#### **`configure(options: { directGuardCompile?: boolean }): void`**
+
+자체 완결적인 가드는 기본적으로 원본 복사본 부분 스키마를 직접 컴파일합니다.
+이후 컴파일에서 등록된 루트 포인터 경로를 사용하려면 `directGuardCompile: false`로 설정합니다.
+이미 만들어진 판정 함수는 바뀌지 않으며, 생략한 옵션은 기존 값을 유지합니다.
+가드 내부 어디에서든 참조 키와 식별자 키가 있으면 항상 루트 경로가 필요합니다.
+자체 `$schema`를 선언한 루트나 `$schema`를 포함한 가드도 루트 포인터를 사용합니다.
+루트의 다른 부분을 컴파일할 때에만 나타나는 컴파일 오류(예: 해석되지 않는 `$ref`)는 전체 검증이 `VALIDATOR_COMPILE_FAILED`를 보고하게 만듭니다.
+또한 루트 포인터에서 컴파일되는 모든 가드도 실패시키는데, 이는 해당 경로의 한계입니다.
+직접 컴파일되는 자체 완결적인 가드는 가드 컴파일 실패가 그 가드 자신의 게이트에만 속하므로 계속 평가됩니다.
+가드는 AJV의 루트 메타 스키마 검증 없이(`validateSchema: false`) 컴파일되며, AJV의 루트 메타 스키마 검사는 전체 스키마 컴파일에서만 실행됩니다.
+사용자 정의 키워드의 메타 스키마 검사, 엄격 옵션, 코드 생성 검사는 가드를 컴파일할 때에도 그대로 적용됩니다.
+조건 바깥의 루트 메타 스키마 위반(예: 관련 없는 필드의 `multipleOf: 0`)은 어느 경로에서도 가드를 실패시키지 않습니다.
+기본 스키마 검증에서는 전체 검증이 `VALIDATOR_COMPILE_FAILED`를 보고하지만, `validateSchema: false`나 `'log'`로 바인딩한 인스턴스는 해당 옵션대로 컴파일됩니다.
+조건 스키마 자체 안의 메타 위반(예: `minLength: 1.5`)은 가드를 실패시키지 않으며, 가드는 AJV가 생성한 코드대로 평가됩니다.
+가드 인스턴스는 바인딩된 방언, 포맷, 키워드를 유지하되 `allErrors: false`와 `validateSchema: false`를 사용합니다. `release(root)`는 직접 컴파일된 가드도 함께 제거합니다.
+
+AJV6은 기본적으로 `$id`를 사용하며, `schemaId: 'id'` 또는 `'auto'`는 draft-04 `id`도 문맥에 따라 식별자로 취급합니다.
 
 #### **`compile(jsonSchema)`**
 
 - **목적**: 제공된 JSON Schema로부터 validator 함수를 생성합니다
 - **반환값**: 스키마에 대해 데이터를 검증할 수 있는 validator factory 함수
 - **기능**: 자동 오류 변환, 상세한 검증 메시지, 성능 최적화
+
+#### **`compileGuard(root, pointer)`와 `release(root)`**
+
+- `compileGuard`는 엔진이 소유한 복사본 루트의 JSON Pointer에서 동기 불리언 가드를 컴파일합니다. `compile` 호출 여부와 관계없이 복사본을 받습니다. 자체 완결적인 가드는 루트를 등록하지 않고 그 부분 스키마를 컴파일하며, 루트 정의를 `$ref`로 참조하는 가드처럼 루트 위치가 필요한 가드만 가드용 인스턴스에 루트를 등록하고, `compile`은 원본과 분리한 사본을 플러그인 소유의 검증 컴파일러에서 컴파일합니다. 새 컴파일에는 현재 애플리케이션 등록을 사용합니다. 애플리케이션에서 조회하거나 다른 루트에서 참조할 주소는 애플리케이션 인스턴스에 등록합니다. 전체 검증은 사적 루트 사본에 비동기 모드를 사용합니다. 비동기 검증이 필요한 별도 등록 자원은 `$async: true`를 선언합니다. 두 가드 모두 전체 스키마 컴파일 전에 사용할 수 있습니다. 가드는 AJV의 루트 메타 스키마 검사 없이(`validateSchema: false`) 컴파일되며 AJV의 루트 메타 스키마 검사는 전체 검증 컴파일에서만 돕니다. 그래서 조건과 무관한 곳의 루트 메타 스키마 위반은 어느 가드도 실패시키지 않고, 기본 검사 설정에서는 전체 검증이 `VALIDATOR_COMPILE_FAILED`로 보고합니다(`validateSchema: false`나 `'log'`로 바인딩한 인스턴스는 그 옵션대로 동작합니다). 사용자 정의 키워드의 메타 검사·엄격 옵션·코드 생성 검사는 가드 컴파일에도 남습니다.
+- `compile`, 모든 `compileGuard`, `release`에는 동일한 복사본 객체를 전달합니다. 전체 스키마 검증은 가드 컴파일 이후에 컴파일해도 됩니다.
+- `release`도 `compile` 호출 여부와 관계없이 같은 복사본을 받아 플러그인이 보유한 해당 루트 자원을 해제합니다. 등록되지 않은 루트를 해제하면 아무 작업도 하지 않습니다.
+- 가드는 비동기 포맷과 비동기 키워드를 지원하지 않습니다.
+- 가드는 동기로 컴파일되므로, `$data`가 실행 시점에 선택하는 비동기 포맷은 가드를 컴파일할 때 감지되지 않습니다.
+- AJV 인스턴스와 플러그인이 그 인스턴스로 만든 검증기는 하나의 JavaScript 실행 영역 안에서 사용하며, 하나의 AJV 인스턴스를 워커 스레드 사이에서 공유하는 것은 지원하지 않습니다.
+
+바인딩한 인스턴스의 엄격 옵션(예: `strictKeywords`)은 일부 `if` 가드의 컴파일을 실패시킬 수 있습니다. 해당 조건은 `then`과 `else` 어느 쪽도 적용하지 않고 `onError`로 `GUARD_FAILED` 기록 하나를 보고합니다. 이후 그 조건을 다시 평가하는 쓰기는 `GUARD_FAILED`를 던지며, 프로덕션 빌드에서는 마운트 시에도 던집니다. 플러그인은 소비자의 옵션을 덮어쓰지 않으며, 엄격 모드는 플러그인 기본값이 아닙니다(VALIDATE-003, VALIDATE-005, VALIDATE-033, ERROR-041).
 
 ### **기본 설정**
 
@@ -79,6 +113,7 @@ const defaultSettings: Ajv.Options = {
   nullable: true, // nullable keyword 활성화 (= `type:[{type}, 'null']`)
   verbose: true, // 오류에 스키마 및 데이터 정보 포함
   format: false, // 포맷 검증 비활성화 (필요시 활성화 가능)
+  multipleOfPrecision: 9,
 };
 ```
 
@@ -87,11 +122,102 @@ const defaultSettings: Ajv.Options = {
 `createValidatorFactory` 함수는 다음을 제공합니다:
 
 - **오류 표준화**: AJV 오류를 일관된 형식으로 변환
-- **성능 최적화**: 재사용을 위한 컴파일된 validator 캐시
+- **성능 최적화**: 루트와 인스턴스의 옵션·포맷·키워드·등록 스키마가 바뀌지 않는 동안 같은 루트 객체의 컴파일된 검증 함수를 재사용
 - **상세한 오류 메시지**: 더 나은 사용자 경험을 위한 풍부한 오류 정보
 - **타입 안전성**: 적절한 타입 추론과 함께 완전한 TypeScript 지원
 
+`createValidatorFactory`는 AJV 인스턴스에 값 변환, 기본값 삽입 또는 추가 속성 제거 옵션이 켜져 있으면 `ValidatorBindRefusedError`를 던집니다. 팩터리 생성 뒤에 옵션을 켜면 다음 검증기 컴파일에서 거부합니다. 명시 키는 앱 등록을 선택하며 현재 앱 설정으로 사적으로 컴파일합니다. 사용자 지정 생성자는 사적 컴파일러에 부트스트랩 스키마를 등록하지 않아야 합니다. 앱 인스턴스를 생성한 뒤 `addSchema`로 앱 스키마를 등록하십시오.
+
+`createValidator(ajv)`는 Form의 `validatorFactory`에 넘길 인스턴스별 `{ compile, compileGuard }` 객체를 돌려줍니다. 새 객체는 Form이 트리를 다시 만들게 하므로 렌더 밖에서 한 번만 만드십시오(`const validator = createValidator(customAjv);` 뒤 `<Form validatorFactory={validator} />`). 여러 객체가 AJV 인스턴스 하나를 함께 써도 되며, 인스턴스는 값을 바꾸지 않아야 합니다(`coerceTypes`, `useDefaults`, `removeAdditional` 꺼짐).
+
+`compileGuard`는 포인터가 스키마(객체나 불리언)를 가리키지 않으면, 곧 없는 위치이거나 `/type`·`/required`처럼 스키마가 아닌 값이면 네이티브 `GuardPointerNotSchemaError`를 던집니다. 호출자는 `group`(`'UNHANDLED_ERROR'`)과 `code`(`'GUARD_POINTER_NOT_SCHEMA'`)로 구분하며, `details`에는 루트의 `$id`(없으면 `''`)와 포인터가 담깁니다.
+
 ---
+
+## 커스텀 AJV 인스턴스와 사용자 정의 키워드
+
+`createValidator(ajv)`로 사용자 AJV 인스턴스를 Form에 전달합니다. 새 검증기 객체는 Form이 트리를 다시 만들게 하므로 인스턴스와 검증기는 모듈 범위에서 한 번만 만드십시오.
+
+```tsx
+import { Form, type JSONSchema } from '@canard/schema-form';
+import { createValidator } from '@canard/schema-form-ajv6-plugin';
+import Ajv from 'ajv';
+
+const ajv = new Ajv();
+ajv.addKeyword('isEven', {
+  validate: (schema: boolean, data: unknown) =>
+    typeof data === 'number' && (data % 2 === 0) === schema,
+});
+const validator = createValidator(ajv);
+
+const schema = {
+  type: 'object',
+  properties: { n: { type: 'number' } },
+  if: { type: 'object', properties: { n: { isEven: true } }, required: ['n'] },
+  then: { properties: { evenField: { type: 'string' } } },
+  else: { properties: { oddField: { type: 'string' } } },
+} satisfies JSONSchema;
+
+export const EvenOddForm = () => (
+  <Form jsonSchema={schema} defaultValue={{ n: 2 }} validatorFactory={validator} />
+);
+```
+
+모든 Form에서 이 인스턴스를 쓰려면 대신 플러그인에 바인딩하고 플러그인을 등록하십시오.
+
+```ts
+import { registerPlugin } from '@canard/schema-form';
+import { plugin } from '@canard/schema-form-ajv6-plugin';
+
+plugin.validator.bind(ajv);
+registerPlugin(plugin);
+```
+
+플러그인은 인스턴스의 사적 사본으로 검증하고 `if` 조건을 평가합니다. 다음 컴파일 전에 인스턴스에 추가한 키워드와 포맷은 양쪽에 모두 적용되며, `createValidator(ajv)` 뒤 Form이 마운트되기 전에 추가한 포맷도 마찬가지입니다. 위 폼에서는 `n`이 2인 동안 `evenField`가 있고, `n`이 3이 되면 `oddField`가 그 자리를 대신합니다.
+
+### `oneOf`·`anyOf` 분기 선택
+
+분기는 다음 세 방법 중 하나로 선택됩니다.
+
+1. 분기에 둔 `controls.active`
+2. 객체에 둔 `controls.discriminator`와 각 분기의 `const`·`enum` 태그
+3. 분기에 둔 `if`와 `else: false`. `if`는 검증기가 판정하므로 사용자 정의 키워드로 분기를 선택할 수 있습니다.
+
+```ts
+const schema = {
+  type: 'object',
+  properties: { n: { type: 'number' } },
+  oneOf: [
+    {
+      if: { type: 'object', properties: { n: { isEven: true } }, required: ['n'] },
+      then: { properties: { evenField: { type: 'string' } } },
+      else: false,
+    },
+    {
+      if: { type: 'object', properties: { n: { isEven: false } }, required: ['n'] },
+      then: { properties: { oddField: { type: 'string' } } },
+      else: false,
+    },
+  ],
+} satisfies JSONSchema;
+```
+
+세 방법 중 어느 것도 없는 분기는 항상 폼에 포함됩니다. 그런 분기에 직접 쓴 키워드는 검증에는 참여하지만 분기를 선택하지 않습니다. 각 분기가 자기 필드 옆에 `n: { isEven: … }`만 두면 `evenField`와 `oddField`가 모두 폼에 남습니다. `controls.active`와 discriminator는 [조합과 조건 게이트](https://vincent-kk.github.io/albatrion/ko/docs/canard/schema-form/schema-reference#composition)를 참고하십시오.
+
+### 한계
+
+- AJV가 컴파일할 수 없는 조건은 그 가드를 실패시킵니다. `strictKeywords: true`인 인스턴스에 조건이 쓰는 키워드가 없는 경우가 그 예입니다. 이때 `then`과 `else` 어느 쪽도 적용되지 않고 `onError`는 `GUARD_FAILED` 기록(`FormErrorCode.GuardFailed`) 하나를 받으며, 이후 조건을 다시 평가하는 쓰기는 값을 반영하되 그 오류를 던집니다. 프로덕션 빌드에서는 Form이 마운트될 때에도 이 오류가 잡히지 않은 오류로 발생합니다. Form이 컴파일하기 전에 모든 키워드를 추가하십시오. `strictKeywords`가 없으면 AJV 6은 알 수 없는 키워드를 무시합니다.
+- 가드는 동기적입니다. 비동기 키워드(`async: true`)를 쓰는 조건은 컴파일에 실패합니다(`async keyword in sync schema`).
+- 가드는 `if`를 가진 객체의 값만 받습니다. 부모나 루트 데이터를 읽는 키워드와 `$data`도 그 값만 봅니다.
+- 플러그인은 `coerceTypes`, `useDefaults`, `removeAdditional`이 켜진 인스턴스를 거부합니다. `modifying: true`로 선언한 키워드는 거부하지 않으므로, 그런 키워드가 폼의 값을 바꾸지 않게 하는 것은 소비자의 책임입니다.
+
+---
+
+## 소수 배수
+
+플러그인의 기본 검증은 AJV의 `multipleOfPrecision: 9`를 사용합니다. `multipleOf: 0.01`에서 `19.99`는 허용하고 `19.995`는 거부합니다. 몫에 `1e-9` 허용 오차를 적용하므로 배수에 매우 가까운 값도 통과할 수 있습니다. 유한한 값과 `2.2250738585072014e-308` 이상의 유한한 제수로 `Math.abs(value / multipleOf) <= 1e6`인 범위에서 정확한 십진 배수를 지원합니다. 기본 검증기는 스키마 컴파일에서 제수 0을 거부합니다. 앱이 제공한 AJV 인스턴스는 자체 정밀도 및 스키마 검증 설정을 유지합니다.
+
+AJV 6.12.6의 동기 가드는 유효하지 않은 `multipleOf: 0` 조건에서 숫자를 허용할 수 있습니다. 가드는 메타 스키마 검사 없이 컴파일하며 이 버전의 정밀도 검사는 제수가 0일 때 `NaN`을 비교합니다. 전체 스키마의 기본 컴파일은 제수 0을 거부합니다.
 
 ## 호환성
 
@@ -113,9 +239,9 @@ Babel 등의 트랜스파일러를 사용하여 타겟 환경에 맞게 변환�
 
 **JSON Schema 지원:**
 
-- Draft-04
-- Draft-06
-- Draft-07
+- 기본 인스턴스: Draft-07.
+- Draft-06: bind한 인스턴스에 해당 메타 스키마를 등록해야 합니다.
+- Draft-04: 기본 설정에 없으며, bind한 AJV 6 인스턴스에 메타 스키마와 적절한 `schemaId` 설정이 필요합니다.
 
 ---
 
@@ -124,18 +250,12 @@ Babel 등의 트랜스파일러를 사용하여 타겟 환경에 맞게 변환�
 ### 수동 AJV 사용에서 마이그레이션
 
 ```typescript
-// 이전 (수동 AJV)
 // 이후 (플러그인 사용)
-import { SchemaForm, registerPlugin } from '@canard/schema-form';
-import { ajvValidatorPlugin } from '@canard/schema-form-ajv6-plugin';
-import Ajv from 'ajv';
+import { registerPlugin } from '@canard/schema-form';
+import { plugin } from '@canard/schema-form-ajv6-plugin';
 
-const ajv = new Ajv();
-const validate = ajv.compile(schema);
-const isValid = validate(data);
-
-registerPlugin(ajvValidatorPlugin);
-// 이제 검증은 SchemaForm에 의해 자동으로 처리됩니다
+registerPlugin(plugin);
+// 이제 <Form>은 등록된 플러그인으로 검증합니다
 ```
 
 ### AJV 8.x로 업그레이드
@@ -149,7 +269,7 @@ yarn add @canard/schema-form-ajv8-plugin
 
 ```typescript
 // import 업데이트
-import { ajvValidatorPlugin } from '@canard/schema-form-ajv8-plugin';
+import { plugin } from '@canard/schema-form-ajv8-plugin';
 ```
 
 ---
@@ -163,3 +283,23 @@ import { ajvValidatorPlugin } from '@canard/schema-form-ajv8-plugin';
 ## 연락처
 
 프로젝트와 관련된 문의나 제안은 [GitHub 저장소](https://github.com/vincent-kk/albatrion)에 이슈를 생성해 주세요.
+
+### 명시적인 Draft-06 스키마 활성화
+
+기본 인스턴스에는 Draft-06 메타 스키마가 없습니다. 스키마를 컴파일하기 전에 호환되는 인스턴스에 등록합니다.
+
+```typescript
+import Ajv from 'ajv';
+import draft06 from 'ajv/lib/refs/json-schema-draft-06.json';
+import { createValidator } from '@canard/schema-form-ajv6-plugin';
+
+const ajv = new Ajv({ allErrors: true, nullable: true, format: false });
+ajv.addMetaSchema(draft06);
+const validator = createValidator(ajv);
+const validate = validator.compile({
+  $schema: 'http://json-schema.org/draft-06/schema#',
+  type: 'number',
+  exclusiveMaximum: 5,
+});
+await validate(5); // Reports exclusiveMaximum.
+```

@@ -13,6 +13,13 @@ Validates regex pattern strings by attempting to construct a RegExp object,
 providing safe pattern validation without throwing exceptions. Useful for
 user input validation and dynamic regex compilation scenarios.
 
+## Import
+
+```typescript
+import { isValidRegexPattern } from '@winglet/common-utils/filter';
+import { isValidRegexPattern } from '@winglet/common-utils';
+```
+
 ## Signature
 
 ```typescript
@@ -326,7 +333,7 @@ console.log(testResult);
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/common-utils": "0.12.3" }}
+  dependencies={{ "@winglet/common-utils": "0.15.0" }}
   code={`import { isValidRegexPattern } from '@winglet/common-utils';
 
 // True cases - valid patterns

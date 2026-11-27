@@ -1,35 +1,30 @@
-# schema-form/src/errors
+# errors
 
 ## Purpose
 
-schema-form 도메인 에러 클래스 모음. 모든 에러는 `@winglet/common-utils/error` 의 `BaseError` 를 상속하여 일관된 에러 구조를 제공한다.
+폼 오류·경고·입력 판정의 분류와 공개 코드, 도메인 오류 객체·관찰 기록의 데이터 계약을 소유합니다. 전달과 복구는 사건을 실행한 모듈에 남깁니다.
 
 ## Conventions
 
-- 각 에러 클래스는 `(code: string, message: string, details: ErrorDetails)` 생성자 패턴
-- 각 에러 클래스와 함께 `is*Error(error): error is XxxError` 타입 가드 함수 제공
-- `this.name` 을 클래스명으로 명시적 설정 (`this.name = 'JSONSchemaError'` 등)
-- `details` 에 디버깅에 필요한 컨텍스트 정보 포함 (jsonSchema, path, plugin 등)
+- 코드 문자열은 소비자가 비교하는 공개 약속이므로 내부 구성과 독립적으로 보존합니다.
+- 오류와 경고는 사건 뒤에도 폼의 계약이 지켜지는지를 기준으로 가릅니다.
+- 도메인 오류는 공통 BaseError 구조를 사용하여 객체와 기록의 코드 해석이 어긋나지 않게 합니다.
 
 ## Boundaries
 
 ### Always do
 
-- 새 에러 클래스 추가 시 `BaseError` 상속 및 `is*Error` 타입 가드 함께 제공
-- `index.ts` 에 `export *` 로 새 에러 포함
-- `details` 객체에 에러 재현에 필요한 충분한 컨텍스트 포함
+- 입력 판정과 폼·검증기의 실행 실패를 분리합니다.
+- 전달 기록의 origin을 발생 연산으로 해석하고, 상세와 위치의 의미를 보존합니다.
+- 새 진단의 level·상세·호환성 판단을 DETAIL의 분류 기준으로 확인합니다.
 
 ### Ask first
 
-- 기존 에러 클래스의 `code` 문자열 변경 (외부에서 에러 코드를 문자열로 비교하는 코드에 영향)
-- `BaseError` 상속 구조 이외의 에러 클래스 도입
+- 기존 코드 문자열을 변경·삭제하거나 공개 기록·reason의 의미를 바꿀 때.
+- 공통 오류 상속 구조를 따르지 않는 도메인 오류를 도입할 때.
 
 ### Never do
 
-- 에러 클래스에 비즈니스 로직 추가 (순수 에러 데이터 컨테이너여야 함)
-- `details` 에 민감한 사용자 데이터 포함
-- `Error` 를 직접 상속하여 새 에러 생성 (`BaseError` 를 반드시 거쳐야 함)
-
-## Dependencies
-
-- `@winglet/common-utils/error` — `BaseError`, `ErrorDetails`
+- 클래스·상수·형에 보고 사슬, 중복 억제, 검증 재시도나 폼 복구를 구현하지 않습니다.
+- 입력 검증 결과를 폼 장애 기록으로 바꾸지 않습니다.
+- 오류 상세가 자동으로 마스킹된다고 가정하지 않습니다.

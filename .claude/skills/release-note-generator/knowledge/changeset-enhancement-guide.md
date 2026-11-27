@@ -149,6 +149,8 @@ npm install @package/name@X.X.X
 
 ## Project-Specific Conventions
 
+How a changeset is written, and which pull requests need one, is set in the change records section of `DOCUMENTATION.md`; this guide turns changesets into release notes.
+
 ### Package Naming
 
 Always use **actual package names** from `package.json`:
@@ -158,18 +160,11 @@ Always use **actual package names** from `package.json`:
 cat packages/path/package.json | jq -r '.name'
 ```
 
-Common packages in this project:
-- `@albatrion/aileron`
-- `@albatrion/canard/schema-form`
-- `@albatrion/canard/schema-form-*-plugin`
-- `@albatrion/lerx/promise-modal`
-- `@albatrion/winglet/*`
-
 ### Version Decision
 
 - **Major (X.0.0)**: Contains Breaking Changes (`major` bump)
 - **Minor (0.X.0)**: New feature additions (`minor` bump)
-- **Patch (0.0.X)**: Bug fixes, internal improvements (`patch` bump)
+- **Patch (0.0.X)**: Bug fixes and improvements a consumer can observe without an API change, such as performance (`patch` bump)
 
 ### File Naming
 
@@ -206,7 +201,7 @@ When multiple changesets affect the same package:
 Mark with 🆕 emoji:
 
 ```markdown
-- `@albatrion/new-package@1.0.0` 🆕 - Initial release with [key features]
+- `@scope/new-package@1.0.0` 🆕 - Initial release with [key features]
 ```
 
 ### Pattern 3: Plugin Updates
@@ -217,11 +212,13 @@ Group plugin updates together:
 ## 📦 Package Releases
 
 **Schema Form Plugins**:
-- `@canard/schema-form-react-plugin@1.2.0` - Enhanced validation
-- `@canard/schema-form-vue-plugin@1.2.0` - Enhanced validation
+- `@canard/schema-form-antd5-plugin@1.2.0` - Enhanced validation
+- `@canard/schema-form-mui-plugin@1.2.0` - Enhanced validation
 ```
 
 ## Integration with Workflows
+
+These workflows apply only to releases that use changesets; the change records section of `DOCUMENTATION.md` says which releases do. A release without changesets builds its notes from git change data.
 
 ### Workflow 1: Pre-Release Enhancement
 
@@ -248,7 +245,7 @@ Group plugin updates together:
 
 ### No Changesets Found
 
-If `.changeset/` is empty or contains only config:
+If `.changeset/` is empty or contains only config, and the release uses changesets under `DOCUMENTATION.md`:
 
 ```markdown
 # No Changes to Release
@@ -256,7 +253,7 @@ If `.changeset/` is empty or contains only config:
 No changesets found. Create changesets using:
 
 ```bash
-npx changeset
+yarn changeset
 ```
 ```
 

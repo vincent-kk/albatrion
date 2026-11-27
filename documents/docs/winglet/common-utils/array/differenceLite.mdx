@@ -9,14 +9,21 @@ import WingletPlayground from '@site/src/components/WingletPlayground';
 # differenceLite
 
 Returns elements from the source array that are not present in the exclude array.
-Lightweight version of the `difference` function optimized for small arrays (< 100 elements).
-Uses indexOf for exclusion checking instead of Set, providing better performance
-for small arrays while maintaining O(n*m) complexity.
+Small-array alternative to `difference` with different equality semantics:
+this function uses `indexOf` and strict equality, while `difference` uses a
+Set and SameValueZero equality. It maintains O(n*m) complexity.
+
+## Import
+
+```typescript
+import { differenceLite } from '@winglet/common-utils/array';
+import { differenceLite } from '@winglet/common-utils';
+```
 
 ## Signature
 
 ```typescript
-const differenceLite: <Type>(source: Type[], exclude: Type[]) => Type[]
+const differenceLite: <Type>(source: readonly Type[], exclude: readonly Type[]) => Type[]
 ```
 
 ## Parameters
@@ -78,6 +85,9 @@ console.log(differenceLite([1, 2, 3], [4, 5, 6])); // [1, 2, 3]
 
 // All elements excluded
 console.log(differenceLite([1, 2, 3], [1, 2, 3, 4, 5])); // []
+
+// NaN is not equal to itself under indexOf's strict-equality lookup
+console.log(differenceLite([NaN], [NaN])); // [NaN]
 ```
 
 ### String arrays with case sensitivity
@@ -93,7 +103,7 @@ console.log(differenceLite(words, exclude));
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/common-utils": "0.12.3" }}
+  dependencies={{ "@winglet/common-utils": "0.15.0" }}
   code={`import { differenceLite } from '@winglet/common-utils';
 
 const fruits = ['apple', 'banana', 'orange', 'grape'];
@@ -105,7 +115,8 @@ console.log(differenceLite(fruits, toRemove));
 
 ## Notes
 
-**Performance Optimization:** This is a lightweight alternative to the standard `difference` function.
+**Performance Optimization:** This is a small-array alternative to `difference`
+with intentionally different equality semantics.
 - For arrays with < 100 elements: Uses indexOf (O(n*m)) which is faster due to lower overhead
 - For arrays with >= 100 elements: Consider using `difference` which uses Set (O(n+m))
 - Optimized loop structure with cached element reference reduces array access overhead

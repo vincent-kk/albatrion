@@ -1,6 +1,9 @@
 import {
   type ChangeEvent,
   type ComponentType,
+  type MemoExoticComponent,
+  type ReactElement,
+  type MouseEvent,
   Fragment,
   memo,
   useMemo,
@@ -11,10 +14,12 @@ import { isFunction } from '@winglet/common-utils/filter';
 
 import type { Fn } from '@aileron/declare';
 
-import { useHandle } from '../../hooks/useHandle';
+import { useCommittedReference } from '../../hooks/utils/useCommittedReference';
+import { openFilePicker } from './utils/openFilePicker';
 
 interface BaseProps {
-  onClick?: Fn<[e?: MouseEvent]>;
+  /** React handlers and wrappers forwarding their native click are accepted. */
+  onClick?(event?: MouseEvent | globalThis.MouseEvent): void;
 }
 
 interface UploaderProps {
@@ -109,24 +114,40 @@ interface UploaderProps {
  */
 export const withUploader = <Props extends BaseProps>(
   Component: ComponentType<Props>,
-) =>
+): MemoExoticComponent<(props: Omit<Props, 'onChange' | 'acceptFormat'> & {
+  acceptFormat?: string[];
+  onChange?: (file: File) => void;
+}) => ReactElement> =>
   memo(
-    ({ onClick, onChange, acceptFormat, ...props }: Props & UploaderProps) => {
+    ({ onClick, onChange, acceptFormat, ...props }: Omit<Props, keyof UploaderProps> & UploaderProps & BaseProps) => {
       const inputRef = useRef<HTMLInputElement>(null);
       const accept = useMemo(() => acceptFormat?.join(','), [acceptFormat]);
 
-      const handleFileChange = useHandle(
-        ({ target }: ChangeEvent<HTMLInputElement>) => {
-          const file = target?.files?.[0];
-          if (file) onChange?.(file);
-          target.value = '';
-        },
+      const callbacks = { onClick, onChange };
+      const callbacksRef = useRef(callbacks);
+      const previous = callbacksRef.current;
+      useCommittedReference(
+        callbacksRef,
+        previous.onClick === onClick && previous.onChange === onChange
+          ? previous
+          : callbacks,
       );
-
-      const handleClick = useHandle((e: MouseEvent) => {
-        if (isFunction(onClick)) onClick(e);
-        inputRef.current?.click();
-      });
+      const { handleFileChange, handleClick } = useMemo(
+        () => ({
+          handleFileChange: ({ target }: ChangeEvent<HTMLInputElement>) => {
+            const file = target?.files?.[0];
+            if (file) callbacksRef.current.onChange?.(file);
+            target.value = '';
+          },
+          handleClick: (e?: MouseEvent | globalThis.MouseEvent) => {
+            const onClick = callbacksRef.current.onClick;
+            if (isFunction(onClick)) onClick(e);
+            const input = inputRef.current;
+            if (input) openFilePicker(input);
+          },
+        }),
+        [callbacksRef],
+      );
 
       return (
         <Fragment>

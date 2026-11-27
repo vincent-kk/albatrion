@@ -1,0 +1,1 @@
+export { createReferenceResolverAsync } from './createReferenceResolverAsync';

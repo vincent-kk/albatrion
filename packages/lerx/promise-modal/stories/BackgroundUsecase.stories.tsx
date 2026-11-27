@@ -23,11 +23,10 @@ export const NormalUsecase = () => {
   const handleAlert = () => {
     alert({
       title: 'Hello, world!',
-      content: 'This modal should be remained because manualDestroy is true',
+      content: 'Custom background receives application data',
       background: {
         data: 'alert',
       },
-      manualDestroy: true,
     }).then((result) => {
       console.log(result);
     });
@@ -113,7 +112,7 @@ export const MultiModalUsecase = () => {
   };
 
   useEffect(() => {
-    setTimeout(() => {
+    const timer = setTimeout(() => {
       for (let i = 0; i < 10; i++) {
         alert({
           title: 'Hello, world!',
@@ -135,6 +134,7 @@ export const MultiModalUsecase = () => {
         setValue(value ?? '');
       });
     }, 250);
+    return () => clearTimeout(timer);
   }, []);
 
   return (

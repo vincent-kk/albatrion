@@ -1,12 +1,12 @@
 import type { ComponentType, ReactNode } from 'react';
 
+import type { FooterOptions } from '@/promise-modal/types/base';
 import type {
   ConfirmContentProps,
   ConfirmFooterRender,
   ConfirmModal,
-  FooterOptions,
-  ManagedEntity,
-} from '@/promise-modal/types';
+} from '@/promise-modal/types/confirm';
+import type { ManagedEntity } from '@/promise-modal/types/modal';
 
 import { AbstractNode } from './AbstractNode';
 
@@ -33,13 +33,18 @@ export class ConfirmNode<B = any> extends AbstractNode<boolean, B> {
     duration,
     manualDestroy,
     closeOnBackdropClick,
+    closeOnEscape,
+    trapFocus,
+    lockScroll,
     handleResolve,
+    handleReject,
     ForegroundComponent,
     BackgroundComponent,
   }: ConfirmNodeProps<B>) {
     super({
       id,
       group,
+      subtype,
       initiator,
       title,
       subtitle,
@@ -48,7 +53,11 @@ export class ConfirmNode<B = any> extends AbstractNode<boolean, B> {
       duration,
       manualDestroy,
       closeOnBackdropClick,
+      closeOnEscape,
+      trapFocus,
+      lockScroll,
       handleResolve,
+      handleReject,
       ForegroundComponent,
       BackgroundComponent,
     });
