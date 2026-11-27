@@ -191,6 +191,71 @@ describe('a null written to a non-nullable leaf item position', () => {
     );
   });
 
+  it("gives an item created by push() without a default its first value delivery when derived or a sibling's injectTo gives it a value in the settlement that creates it", () => {
+    const derivedSchema = {
+      type: 'object',
+      properties: {
+        list: {
+          type: 'array',
+          items: { type: 'string', controls: { derived: '"v"' } },
+        },
+      },
+    };
+    const injectedSchema = {
+      type: 'object',
+      properties: {
+        source: {
+          type: 'string',
+          controls: {
+            injectTo: (value: unknown) => ({ '../list/2': value }),
+          },
+        },
+        list: bareSchema.properties.list,
+      },
+    };
+    const creations = [
+      [
+        'push() derived as "v"',
+        derivedSchema,
+        (tree: Tree) => tree.arrayAt('/list').push(),
+        'v',
+      ],
+      [
+        "push() written by a sibling's injectTo in the same batch",
+        injectedSchema,
+        (tree: Tree) =>
+          tree.root.batch(() => {
+            tree.arrayAt('/list').push();
+            tree.at('/source').setValue('w');
+          }),
+        'w',
+      ],
+    ] as const;
+    const observe = ([creation, form, create]: (typeof creations)[number]) => {
+      const tree = mountPublicTree(form, { list: ['x', 'y'] });
+      create(tree);
+      const item = tree.at('/list/2');
+      return {
+        creation,
+        source: item.source,
+        value: item.value,
+        revisions: {
+          updateValue: item.revision(FieldNodeEventType.UpdateValue),
+          requestRefresh: item.revision(FieldNodeEventType.RequestRefresh),
+          all: item.revision(),
+        },
+      };
+    };
+    expect(creations.map(observe)).toEqual(
+      creations.map(([creation, , , value]) => ({
+        creation,
+        source: value,
+        value,
+        revisions: { updateValue: 1, requestRefresh: 1, all: 2 },
+      })),
+    );
+  });
+
   it.each([
     [
       'the item resets its subtree',
