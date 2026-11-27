@@ -18,7 +18,7 @@
 
 ### virtual-edges — 간선 사본은 그룹 바퀴의 입력입니다
 
-가상 행은 청사진의 가상 노드가 가진 constituent 간선 사본을 자식 선언으로 돌려줍니다. 정착은 사본의 gate를 그룹의 gate로 세어 constituent의 gate가 있는 그룹을 gate 호스트로 다루고, 그 바퀴의 고정 출발점이 투영을 gate 없는 선언을 가진 constituent로 다시 세운 뒤 자식 계산을 시작합니다. 빈 목록으로 바꾸면 그룹은 gate 없는 호스트가 되어 이전 투영을 그대로 둔 채 자식을 계산하므로, 같은 정착에서 떠나는 constituent를 그룹을 거쳐 계산하고 그 주소에 들어온 쓰기를 잃습니다. 사본은 부모가 소유한 선언이므로 출발점은 빌린 constituent를 바꾸지 않습니다([settle SETTLE-044](../../settle/DETAIL.md#settle-044--고정-출발점과-이력-없는-형상)).
+가상 행은 청사진의 가상 노드가 가진 constituent 간선 사본을 자식 선언으로 돌려줍니다. 정착은 사본의 gate를 그룹의 gate로 세므로, gate가 있는 constituent를 묶은 그룹은 gate 호스트가 되어 자식 계산 전에 고정 출발점에서 투영을 다시 세웁니다. 빈 목록으로 바꾸면 그룹은 gate 없는 호스트가 되어 이전 투영을 그대로 둔 채 자식을 계산하므로, 같은 정착에서 떠나는 constituent를 그룹을 거쳐 계산하고 그 주소에 들어온 쓰기를 잃습니다. 사본은 그룹이 만들 자식의 목록이 아니며, 출발점이 담는 노드는 [settle SETTLE-044](../../settle/DETAIL.md#settle-044--고정-출발점과-이력-없는-형상)가 정합니다.
 
 ## Last Updated
 
