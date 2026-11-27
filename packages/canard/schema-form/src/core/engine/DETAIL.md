@@ -38,7 +38,7 @@ setState·state는 그룹 자신의 상호작용을, setSubtreeState·clearSubtr
 
 virtual entry의 controls.active·visible·readOnly·disabled 및 일반 제어 선언은 일반 gate·상태 규칙을 따릅니다. controls.default·derived·injectTo가 가상 그룹에 쓰면 튜플을 setValue의 칸 분류와 같이 constituent 주소로 분배하고 그룹 주소에는 source·slot을 만들지 않습니다. 분류는 그 쓰기 시점의 constituent 상태를 따릅니다. 활성 칸은 교체하며 undefined로 비우고, 비활성·부재 칸의 non-undefined는 그 constituent 칸에 보유하며 undefined는 무시합니다. 그룹 자체가 비활성이어도 그룹 노드 없이 같은 constituent 주소로 분배합니다. 그러므로 정의된 칸의 결과는 같은 값을 constituent 주소에 직접 쓴 결과와 같습니다. 여러 쓰기를 묶은 배치 안에서도 각 constituent 주소를 배치 밖과 같이 통째 교체하며, 호출자 쓰기와 겹칠 때의 교체 범위는 [WRITE-079](settle/DETAIL.md#write-079--교체-범위는-명시한-쓰기에서-정합니다)를 따릅니다. 다른 필드의 식·watch·injectTo가 가상 경로를 읽으면 출력 트리에 그 키가 없어 undefined입니다. 반응형 규칙이 그룹 밖을 명시적으로 바꾸는 경우는 저장 격리의 예외입니다.
 
-constituent의 존재와 유효 스키마는 부모 호스트의 선택이 정하며 그룹은 constituent를 다시 고르지 않습니다. 그러므로 constituent를 좁히는 조건(조각의 controls.active, if/then)은 그룹이 없을 때와 같이 적용되고, 그룹 자신의 gate가 바뀌어도 constituent의 유효 스키마는 그대로입니다. 정착의 근거는 [SETTLE-044](settle/DETAIL.md#settle-044--고정-출발점과-이력-없는-형상)에 둡니다.
+constituent를 좁히는 조건(조각의 controls.active, if/then)은 그룹이 없을 때와 같이 적용되고, 그룹 자신의 gate가 바뀌어도 constituent의 유효 스키마는 그대로입니다. 정착의 근거는 [SETTLE-044](settle/DETAIL.md#settle-044--고정-출발점과-이력-없는-형상)에 둡니다.
 
 fields는 직계 실제 프로퍼티 이름만 허용합니다. 중복은 VIRTUAL_FIELDS_NOT_VALID, 다른 가상 그룹을 이름으로 참조하는 중첩 그룹은 VIRTUAL_FIELDS_NOT_IN_PROPERTIES로 생성 단계에 거부합니다. 빈 fields는 빈 튜플·빈 자식·빈 저장 범위로 허용합니다. 두 그룹이 constituent를 공유하면 마지막 실제 주소 쓰기가 이기며 reset도 겹친 실제 주소에만 적용하고 배달 순서는 일반 문서 순서입니다. 배열 item 안의 그룹은 item 신원·이동 주소·로드 스냅숏 정렬을 따르며 remove·clear 뒤 옛 그룹 쓰기는 무동작입니다. 부모 JSON 입력에 가상 이름을 넣으면 선언된 가상 키이므로 extras나 constituent 쓰기로 해석하지 않고 무시합니다.
 
