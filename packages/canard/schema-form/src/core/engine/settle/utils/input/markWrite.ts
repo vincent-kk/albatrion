@@ -94,9 +94,9 @@ export const markWrite = <Self extends FieldNodeRecord<Self>>(
   const known = changedValue !== UNINTERPRETED;
   const value = known ? changedValue : node.behavior.interpret(input, spec);
   if (node.behavior.strategy !== 'branch') {
-    // A caller write that reads as undefined onto an existing item leaf that reads as undefined changes nothing,
-    // except that a null becomes the source of a position still without one.
-    // A node that entered in this settlement is a new lifetime.
+    // A caller or automatic write that reads as undefined onto an item leaf that existed before this settlement
+    // and reads as undefined changes nothing, except that a null becomes the source of a position still without
+    // one; a node that entered in this settlement is a new lifetime, so its first value is a change.
     if (
       !context.enteredNodes.has(node) &&
       (value === null || value === undefined) &&

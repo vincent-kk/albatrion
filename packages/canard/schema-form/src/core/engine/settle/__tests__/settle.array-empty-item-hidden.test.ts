@@ -73,12 +73,13 @@ const COMPACTING: BlueprintSchema = {
 };
 
 /**
- * Read the sources of the live items of `/list`.
- * @param tree - Mounted tree with a live `/list` array
+ * Read the sources of the live items of an array.
+ * @param tree - Mounted tree holding a live array at `path`
+ * @param path - Array path
  * @returns Each live item's source in index order
  */
-const readSources = (tree: Tree) =>
-  tree.at('/list').children?.map((item: FieldNode) => item.source);
+const readSources = (tree: Tree, path = '/list') =>
+  tree.at(path).children?.map((item: FieldNode) => item.source);
 
 // filid:contract settle-array-empty-item-hidden
 describe('hidden array item positions and settlements without the fill', () => {
@@ -177,39 +178,74 @@ describe('hidden array item positions and settlements without the fill', () => {
     },
   );
 
-  it('shows a position emptied before its array or enclosing object hid as the default after undefined arrived through the visible parent, under either write option', () => {
-    const options: readonly SetValueOption[] = [
-      SetValueOption.Overwrite,
-      SetValueOption.Merge,
-    ];
-    for (const level of ['array', 'branch'] as const) {
-      for (const option of options) {
-        const isBranch = level === 'branch';
-        const itemPath = isBranch ? '/branch/list/0' : '/list/0';
-        const tree = mountPublicTree(
-          gatedList(level),
-          isBranch
-            ? { flag: true, branch: { list: ['x'] } }
-            : { flag: true, list: ['x'] },
-        );
-        tree.at(itemPath).setValue(null);
-        tree.at('/flag').setValue(false);
-        tree.root.setValue(
-          isBranch
-            ? { flag: false, branch: { list: [undefined] } }
-            : { flag: false, list: [undefined] },
-          option,
-        );
-        tree.at('/flag').setValue(true);
-        const item = tree.at(itemPath);
-        expect({
-          level,
-          option,
-          value: item.value,
-          source: item.source,
-        }).toEqual({ level, option, value: 'D', source: 'D' });
-      }
-    }
+  it('shows a position emptied before its array or enclosing object hid as the default after undefined arrived for it through the visible parent under either write option, and keeps or replaces it with the array as a Merge gives the enclosing object a plain object or undefined', () => {
+    const { Merge, Overwrite } = SetValueOption;
+    const writes = [
+      [
+        'array',
+        Overwrite,
+        { flag: false, list: [undefined] },
+        { list: ['D'] },
+        ['D'],
+      ],
+      [
+        'array',
+        Merge,
+        { flag: false, list: [undefined] },
+        { list: ['D'] },
+        ['D'],
+      ],
+      [
+        'branch',
+        Overwrite,
+        { flag: false, branch: { list: [undefined] } },
+        { branch: { list: ['D'] } },
+        ['D'],
+      ],
+      [
+        'branch',
+        Merge,
+        { flag: false, branch: { list: [undefined] } },
+        { branch: { list: ['D'] } },
+        ['D'],
+      ],
+      [
+        'branch',
+        Merge,
+        { flag: false, branch: {} },
+        { branch: { list: [null] } },
+        [null],
+      ],
+      ['branch', Merge, { flag: false, branch: undefined }, {}, []],
+    ] as const;
+    const observe = ([level, option, write]: (typeof writes)[number]) => {
+      const isBranch = level === 'branch';
+      const listPath = isBranch ? '/branch/list' : '/list';
+      const tree = mountPublicTree(
+        gatedList(level),
+        isBranch
+          ? { flag: true, branch: { list: ['x'] } }
+          : { flag: true, list: ['x'] },
+      );
+      tree.at(`${listPath}/0`).setValue(null);
+      tree.at('/flag').setValue(false);
+      tree.root.setValue(write, option);
+      tree.at('/flag').setValue(true);
+      return {
+        write,
+        option,
+        output: tree.root.outputValue,
+        sources: readSources(tree, listPath),
+      };
+    };
+    expect(writes.map(observe)).toEqual(
+      writes.map(([, option, write, shown, sources]) => ({
+        write,
+        option,
+        output: { flag: true, ...shown },
+        sources,
+      })),
+    );
   });
 
   it('discards an emptied item that leaves with unsetOnInactive, so its re-entry takes the default', () => {

@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
 import type { TestFieldNode } from '@/schema-form/core/__tests__/fixtures/testFieldNode';
+import { FieldNodeEventType } from '@/schema-form/core/engine/record';
 import { dispatchResetForm } from '@/schema-form/core/engine/write';
 
 import { WriteOption } from '../../types/value';
@@ -19,6 +20,18 @@ const schema = {
     list: { type: 'array', items: { type: 'string', default: 'D' } },
   },
 };
+
+/** An object whose `list` holds string items without a default. */
+const bareSchema = {
+  type: 'object',
+  properties: { list: { type: 'array', items: { type: 'string' } } },
+};
+
+/** Events an array delivers for one caller write that changes its items. */
+const ARRAY_WRITE_EVENT =
+  FieldNodeEventType.UpdateValue |
+  FieldNodeEventType.UpdateChildren |
+  FieldNodeEventType.RequestRefresh;
 
 // filid:contract settle-array-empty-item-null-writes
 describe('a null written to a non-nullable leaf item position', () => {
@@ -67,6 +80,116 @@ describe('a null written to a non-nullable leaf item position', () => {
       expect(tree.root.runtime.misfitRecords).toEqual([]);
     },
   );
+
+  it("gives an item created with null its first value delivery, as an item created by push('x') or by loading null gets, unlike a position created without a value or default", () => {
+    const given = {
+      source: null,
+      value: undefined,
+      revisions: { updateValue: 1, requestRefresh: 1, all: 2 },
+      listEvents: [ARRAY_WRITE_EVENT],
+    };
+    const ungiven = {
+      ...given,
+      revisions: { updateValue: 0, requestRefresh: 0, all: 0 },
+    };
+    const creations = [
+      [
+        'push(null)',
+        schema,
+        (tree: Tree) => tree.arrayAt('/list').push(null),
+        '/list/2',
+        given,
+      ],
+      [
+        'insert(1, null)',
+        schema,
+        (tree: Tree) => tree.arrayAt('/list').insert(1, null),
+        '/list/1',
+        given,
+      ],
+      [
+        'a longer array with a null entry',
+        schema,
+        (tree: Tree) => tree.at('/list').setValue(['x', 'y', null]),
+        '/list/2',
+        given,
+      ],
+      [
+        "push('x')",
+        schema,
+        (tree: Tree) => tree.arrayAt('/list').push('x'),
+        '/list/2',
+        { ...given, source: 'x', value: 'x' },
+      ],
+      [
+        'push() filled by the default',
+        schema,
+        (tree: Tree) => tree.arrayAt('/list').push(),
+        '/list/2',
+        { ...given, source: 'D', value: 'D' },
+      ],
+      [
+        'push() without a default',
+        bareSchema,
+        (tree: Tree) => tree.arrayAt('/list').push(),
+        '/list/2',
+        ungiven,
+      ],
+      [
+        'a longer array with an undefined entry and no default',
+        bareSchema,
+        (tree: Tree) => tree.at('/list').setValue(['x', 'y', undefined]),
+        '/list/2',
+        ungiven,
+      ],
+      [
+        'a form reset that loads null',
+        schema,
+        (tree: Tree) => {
+          const record: TestFieldNode = tree.root;
+          dispatchResetForm(
+            record,
+            { list: ['x', 'y', null] },
+            WriteOption.Overwrite,
+          );
+        },
+        '/list/2',
+        {
+          ...given,
+          listEvents: [ARRAY_WRITE_EVENT | FieldNodeEventType.UpdateState],
+        },
+      ],
+    ] as const;
+    const observe = ([
+      creation,
+      form,
+      create,
+      path,
+    ]: (typeof creations)[number]) => {
+      const tree = mountPublicTree(form, { list: ['x', 'y'] });
+      const listEvents: number[] = [];
+      tree.at('/list').subscribe((event) => listEvents.push(event.type));
+      create(tree);
+      const item = tree.at(path);
+      return {
+        creation,
+        source: item.source,
+        value: item.value,
+        revisions: {
+          updateValue: item.revision(FieldNodeEventType.UpdateValue),
+          requestRefresh: item.revision(FieldNodeEventType.RequestRefresh),
+          all: item.revision(),
+        },
+        listEvents,
+      };
+    };
+    expect(creations.map(observe)).toEqual(
+      creations.map(([creation, , , , expected]) => ({
+        creation,
+        ...expected,
+      })),
+    );
+  });
 
   it.each([
     [
