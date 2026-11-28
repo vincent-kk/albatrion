@@ -71,6 +71,30 @@ const twoEqualDecisions = {
   },
 };
 
+/**
+ * `/c` takes the same `minLength` from `d` or from `e`. Clearing `d` while writing `''` to `e`
+ * leaves `''` omitted under `/e`'s start schema, so the first pass composes `/c` without
+ * `minLength`; once the rule on `k` keeps `/e`'s empty value, a later round satisfies `e` and
+ * `/c` returns to equal content under the other decision and another reference.
+ */
+const laterRoundReturn = {
+  type: 'object',
+  properties: {
+    c: { type: 'string' },
+    d: { type: 'string' },
+    e: { type: 'string' },
+    k: { type: 'string' },
+  },
+  allOf: [
+    { if: { required: ['d'] }, then: { properties: { c: { minLength: 1 } } } },
+    { if: { required: ['e'] }, then: { properties: { c: { minLength: 1 } } } },
+    {
+      if: { required: ['k'] },
+      then: { properties: { e: { options: { omitEmpty: false } } } },
+    },
+  ],
+};
+
 describe('a schema event only when the content differs', () => {
   it('an item recomposed for its own decision into an equal schema gets no schema event', () => {
     const root = mount(twoEqualDecisions, {
@@ -107,6 +131,22 @@ describe('a schema event only when the content differs', () => {
       '/list/0': 0,
       '/list/0/v': 0,
     });
+  });
+
+  it('a reset child that a later round returns to equal content under another decision gets no schema event', () => {
+    const root = mount(laterRoundReturn, { c: 'y', d: 'v', k: 'x' });
+    const before = read(root, '/c');
+    const events = watchSchemaEvents(root, ['/c']);
+    root.batch(() => {
+      root.find('/d')?.setValue(undefined);
+      root.find('/e')?.setValue('');
+    });
+    const fresh = mount(laterRoundReturn, structuredClone(root.value));
+    expect(read(root, '/c')).toBe(before);
+    expect(read(root, '/c')).toBe(read(fresh, '/c'));
+    expect(read(root, '/e')).toBe(read(fresh, '/e'));
+    expect(root.value).toEqual(fresh.value);
+    expect(Object.fromEntries(events)).toEqual({ '/c': 0 });
   });
 
   it('a decision that changes the content still delivers one schema event', () => {
