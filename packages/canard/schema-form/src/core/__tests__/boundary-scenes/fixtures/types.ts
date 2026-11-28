@@ -10,7 +10,7 @@ export type SceneMode = 'sequential' | 'batch' | 'fresh';
 
 /**
  * Readings of one run, keyed by probe token. A reading taken at a `note` step is keyed `<label>: <token>`.
- * Path probes of an absent node read {@link ABSENT}.
+ * The node probes (`value`, `types`, `source`, `errors`, `schema.<keyword>`) read {@link ABSENT} when no node is at the path.
  */
 export type Observation = Readonly<Record<string, unknown>>;
 
@@ -19,7 +19,7 @@ export type ModeObservations = Readonly<
   Partial<Record<SceneMode, Observation>>
 >;
 
-/** Reading of a path probe whose node does not exist. */
+/** Reading of a node probe whose path has no node, and of `detached <name>` whose held reference has no node. */
 export const ABSENT = '(absent)';
 
 /**
