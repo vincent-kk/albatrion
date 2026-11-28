@@ -83,7 +83,6 @@ const LEDGER = {
     'batched-writes/regrown-list-aligns-the-load-snapshot',
     'batched-writes/merge-replaces-an-array-of-objects',
     'batched-writes/merge-reads-a-non-enumerable-declared-key',
-    'batched-writes/throwing-getter-in-a-solitary-write',
     'support-limits/error-names-the-loop-participants',
     'support-limits/self-reader-through-a-derived-copy',
     'support-limits/conditions-that-negate-each-other',
