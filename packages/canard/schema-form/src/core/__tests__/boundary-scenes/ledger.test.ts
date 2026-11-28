@@ -70,6 +70,7 @@ const LEDGER = {
     'item-gates/nested-item-takes-own-branch',
     'item-gates/item-level-if-on-the-item-itself',
     'item-gates/outer-item-declares-at-depth-two',
+    'item-gates/active-fragment-declares-at-depth-two',
     'batched-writes/untouched-union-keeps-its-value',
     'batched-writes/context-change-after-marks',
     'batched-writes/untouched-omit-empty-item',

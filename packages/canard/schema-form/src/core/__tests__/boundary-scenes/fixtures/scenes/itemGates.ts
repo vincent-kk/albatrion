@@ -37,6 +37,18 @@ const childDeclaration = recursiveItems({
   },
 });
 
+/** A `strict` item declares a 3-character minimum on the values of its child items through an active fragment. */
+const childFragmentDeclaration = recursiveItems({
+  allOf: [
+    {
+      controls: { active: "./kind === 'strict'" },
+      properties: {
+        children: { items: { properties: { value: { minLength: 3 } } } },
+      },
+    },
+  ],
+});
+
 /** Error schema path of the `x` branch, relative to the item definition. */
 const BRANCH_X = '#/oneOf/0/properties/value/minLength';
 /** Error schema path of the `y` branch, relative to the item definition. */
@@ -181,6 +193,49 @@ export const itemGateScenes: readonly BoundaryScene[] = [
       fresh: {
         'schema.minLength /0/children/0/children/0/value': undefined,
         'schema.minLength /1/children/0/children/0/value': undefined,
+      },
+    },
+  },
+  {
+    id: 'item-gates/active-fragment-declares-at-depth-two',
+    origin:
+      'gate binding model scene B2, second form: an item gives its children a declaration through an active fragment',
+    schema: childFragmentDeclaration,
+    load: strictAndLoose,
+    steps: [
+      { note: 'mount' },
+      { set: '/1/kind', value: 'strict' },
+      { note: 'outer' },
+      { set: '/1/children/0/kind', value: 'loose' },
+    ],
+    probes: [
+      'schema.minLength /0/children/0/children/0/value',
+      'schema.minLength /1/children/0/children/0/value',
+    ],
+    modes: ['sequential', 'fresh'],
+    state: 'known',
+    expected: {
+      'mount: schema.minLength /0/children/0/children/0/value': undefined,
+      'mount: schema.minLength /1/children/0/children/0/value': 3,
+      'outer: schema.minLength /0/children/0/children/0/value': undefined,
+      'outer: schema.minLength /1/children/0/children/0/value': 3,
+      'schema.minLength /0/children/0/children/0/value': undefined,
+      'schema.minLength /1/children/0/children/0/value': undefined,
+    },
+    difference:
+      'the declaration an item gives to its children also reaches its grandchildren: the child of a loose item takes minLength 3 from the strict item two levels up',
+    known: {
+      sequential: {
+        'mount: schema.minLength /0/children/0/children/0/value': 3,
+        'mount: schema.minLength /1/children/0/children/0/value': undefined,
+        'outer: schema.minLength /0/children/0/children/0/value': 3,
+        'outer: schema.minLength /1/children/0/children/0/value': 3,
+        'schema.minLength /0/children/0/children/0/value': 3,
+        'schema.minLength /1/children/0/children/0/value': 3,
+      },
+      fresh: {
+        'schema.minLength /0/children/0/children/0/value': 3,
+        'schema.minLength /1/children/0/children/0/value': 3,
       },
     },
   },
