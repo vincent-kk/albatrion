@@ -248,7 +248,7 @@ controls의 `@.prop`과 선택적 체이닝은 실시간 폼 `context`를 읽습
 
 ## 이벤트와 훅 {#events-hooks}
 
-이벤트는 최외곽 공개 쓰기가 끝날 때 노드별 bit를 병합하여 동기 전달하며 다음 마이크로태스크까지 기다리지 않습니다. `FieldNodeEventType`은 Initialized, UpdatePath, UpdateValue, UpdateState, UpdateGlobalState, UpdateError, UpdateGlobalError, UpdateChildren, UpdateControlledProperties, Focused, Blurred, RequestFocus, RequestSelect, RequestRefresh, RequestRemount, UpdateJsonSchema, UpdateDiagnostics입니다. 각각 초기화, 경로·값·상호작용·오류·자식·controls, 입력 동작, 스키마 참조, 루트 진단을 나타냅니다.
+이벤트는 최외곽 공개 쓰기가 끝날 때 노드별 bit를 병합하여 동기 전달하며 다음 마이크로태스크까지 기다리지 않습니다. `FieldNodeEventType`은 Initialized, UpdatePath, UpdateValue, UpdateState, UpdateGlobalState, UpdateError, UpdateGlobalError, UpdateChildren, UpdateControlledProperties, Focused, Blurred, RequestFocus, RequestSelect, RequestRefresh, RequestRemount, UpdateJsonSchema, UpdateDiagnostics입니다. 각각 초기화, 경로·값·상호작용·오류·자식·controls, 입력 동작, 스키마 변경, 루트 진단을 나타냅니다. `node.jsonSchema`는 내용이 같은 새 객체를 UpdateJsonSchema 이벤트 없이 돌려줄 수 있으므로, 이 값으로 캐시할 때는 객체 동일성이 아니라 스키마 내용을 비교하십시오.
 
 `node.request`에는 `FieldNodeRequestType.Focus`, `Select`, `Refresh`, `Remount` 중 하나를 전달하십시오. 한 번의 호출은 한 동작이며 비트 마스크를 결합하지 않습니다. `subscribe`는 정리, `revision(mask?)`는 전달 revision을 반환합니다.
 
