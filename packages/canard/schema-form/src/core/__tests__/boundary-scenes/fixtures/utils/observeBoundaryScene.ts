@@ -15,7 +15,7 @@ const PATH_PROBES = ['value', 'types', 'source', 'inactive', 'find'];
 /**
  * Run a scene in every mode it lists and read its probes.
  * @param scene - The scene; `fresh` loads the sources the `sequential` run ends with and reads only path probes
- * @returns The readings of each listed mode; rejects when a batch scene asks for validation inside the batch
+ * @returns The readings of each listed mode; rejects when a batch scene runs no step inside the batch or asks for validation inside it
  */
 export const observeBoundaryScene = async (
   scene: BoundarySceneBase,

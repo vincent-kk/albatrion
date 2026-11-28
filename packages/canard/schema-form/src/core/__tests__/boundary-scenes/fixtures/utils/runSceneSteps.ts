@@ -9,7 +9,7 @@ import { type SceneRun, startSceneRun } from './startSceneRun';
  * inside one `batch`, reading the probes at each `note` step and at the end. A step that throws is recorded and the run goes on.
  * @param scene - The scene to run
  * @param isBatch - Whether the steps from the first write up to a `close` step run inside one `batch`
- * @returns The run and its readings; rejects when a batched scene has a `validate` step, which a batch cannot await
+ * @returns The run and its readings; in batch mode, rejects when no step runs inside the batch or a `validate` step falls inside it, which a batch cannot await
  */
 export const runSceneSteps = async (
   scene: BoundarySceneBase,
@@ -35,6 +35,8 @@ export const runSceneSteps = async (
     isBatch && firstWrite >= 0 && firstWrite < batchEnd
       ? firstWrite
       : batchEnd;
+  if (isBatch && batched === batchEnd)
+    throw new Error(`${scene.id} runs no step inside the batch`);
   for (let index = 0; index < batched; index++)
     await take(scene.steps[index], index);
   if (batched < batchEnd) {
