@@ -168,16 +168,27 @@ export const routeMatrixClassification: Readonly<
     'ajv8-2020': [A, A, A, A],
     'ajv8-2020-separate': [A, A, A, A],
   },
-  // Kept: no branch information in the issue; the value's reference reports only its own location.
+  // Kept when compiled separately: no location information in the issue; the reference reports only `#/pattern`.
   'recursive branch value through $ref': {
-    ajv6: [A, A, K, A],
+    ajv6: [A, A, A, A],
     'ajv6-separate': [A, A, K, A],
-    ajv7: [A, A, K, A],
+    ajv7: [A, A, A, A],
     'ajv7-separate': [A, A, K, A],
-    ajv8: [A, A, K, A],
+    ajv8: [A, A, A, A],
     'ajv8-separate': [A, A, K, A],
-    'ajv8-2020': [A, A, K, A],
+    'ajv8-2020': [A, A, A, A],
     'ajv8-2020-separate': [A, A, K, A],
+  },
+  // Kept: both branches reach the definition at the same location, the selected one included, so its copy from the unselected branch is not told apart.
+  'one definition in a selected and an unselected branch': {
+    ajv6: [K, A, K, A],
+    'ajv6-separate': [K, A, K, A],
+    ajv7: [K, A, K, A],
+    'ajv7-separate': [K, A, K, A],
+    ajv8: [K, A, K, A],
+    'ajv8-separate': [K, A, K, A],
+    'ajv8-2020': [K, A, K, A],
+    'ajv8-2020-separate': [K, A, K, A],
   },
   'recursive required additionalProperties and not': {
     ajv6: [A, A, A, A],

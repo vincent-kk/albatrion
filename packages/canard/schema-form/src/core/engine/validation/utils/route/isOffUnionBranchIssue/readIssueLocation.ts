@@ -25,10 +25,20 @@ export interface UnionSegment {
   readonly location: string;
 }
 
+/** One `$defs/<name>` or `definitions/<name>` position visible in an issue's schema location. */
+export interface DefinitionPosition {
+  /** Canonical location as written from `#` up to and including the definition name. */
+  readonly location: string;
+  /** Instance-moving keywords written after the position. */
+  readonly moves: number;
+}
+
 /** What routing reads from an issue's schema location. */
 export interface IssueLocation {
   /** Union segments innermost first; empty when none is visible. */
   readonly unions: readonly UnionSegment[];
+  /** Definition positions innermost first; empty when none is visible. */
+  readonly definitions: readonly DefinitionPosition[];
   /** The failing keyword, the location's last segment. */
   readonly keyword: string;
   /** Whether the keyword before the failing keyword moves the instance, as `properties/<key>` before `false schema` does. */
@@ -36,8 +46,8 @@ export interface IssueLocation {
 }
 
 /**
- * Read an issue's schema location: its union segments innermost first and its failing
- * keyword. A validator restarts the location at a reference but never drops a move written
+ * Read an issue's schema location: its union segments and definition positions innermost
+ * first, and its failing keyword. A validator restarts the location at a reference but never drops a move written
  * after a visible segment, so `moves` places the host correctly wherever the location restarted.
  * @param schemaPath - Absolute schema location ending in the failing keyword, such as `#/oneOf/1/properties/a/minLength`.
  * @returns The parsed location, or null when it is not absolute or does not parse.
@@ -52,10 +62,19 @@ export const readIssueLocation = (
   const steps = parseSchemaLocation(segments, segments.length - 1);
   if (!steps) return null;
   const unions: UnionSegment[] = [];
+  const definitions: DefinitionPosition[] = [];
   let moves = 0;
   for (let index = steps.length - 1; index >= 0; index--) {
     const step = steps[index];
     if (step.kind === 'move') moves++;
+    else if (step.kind === 'jump' && step.argument !== undefined)
+      definitions.push({
+        location: joinPointerWithPrefixOf(
+          schemaPath,
+          segments.slice(0, step.end),
+        ),
+        moves,
+      });
     else if (step.kind === 'union' && step.argument !== undefined) {
       const run = readComparedRun(steps, index);
       unions.push({
@@ -73,6 +92,7 @@ export const readIssueLocation = (
   }
   return {
     unions,
+    definitions,
     keyword,
     isAfterMove: steps[steps.length - 1]?.kind === 'move',
   };

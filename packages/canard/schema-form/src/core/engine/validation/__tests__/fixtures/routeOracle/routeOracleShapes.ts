@@ -348,6 +348,35 @@ export const routeOracleShapes: readonly RouteOracleShape[] = [
     value: (s) => ({ u: item('x', s, { next: [item('y', s)] }) }),
   },
   {
+    name: 'one definition in a selected and an unselected branch',
+    schema: () => ({
+      type: 'object',
+      properties: {
+        u: {
+          type: 'object',
+          controls: { discriminator: 'kind' },
+          properties: { kind: { type: 'string' }, value: { type: 'string' } },
+          oneOf: [
+            {
+              properties: {
+                kind: { const: 'x' },
+                value: { $ref: '#/$defs/rule' },
+              },
+            },
+            {
+              properties: {
+                kind: { const: 'y' },
+                value: { $ref: '#/$defs/rule' },
+              },
+            },
+          ],
+        },
+      },
+      $defs: { rule: { type: 'string', minLength: 3 } },
+    }),
+    value: (s) => ({ u: item('x', s) }),
+  },
+  {
     name: 'recursive required additionalProperties and not',
     schema: () => ({
       type: 'array',
