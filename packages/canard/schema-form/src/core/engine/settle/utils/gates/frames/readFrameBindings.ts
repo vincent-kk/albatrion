@@ -1,6 +1,6 @@
 import type { BlueprintGate } from '../../../../blueprint';
 import type { FieldNodeRecord } from '../../../../record';
-import { isOwnActiveGate } from '../isOwnActiveGate';
+import { isChildFrameGate } from '../isChildFrameGate';
 import { readAdmittingEntry } from './readAdmittingEntry';
 
 /** A live host frame; its current path is an address, the object is its lifetime. */
@@ -55,8 +55,7 @@ export const readFrameBindings = <Self extends FieldNodeRecord<Self>>(
           );
         (bindings ??= new Map()).set(
           gate,
-          isOwnActiveGate(carried.schemaPath, applied.schemaPath) ||
-            carried.hostPath === applied.path
+          isChildFrameGate(carried, applied)
             ? node
             : readOwnerFrame(parent, carried),
         );
