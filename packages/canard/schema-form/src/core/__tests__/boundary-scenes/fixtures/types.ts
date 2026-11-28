@@ -10,7 +10,7 @@ export type SceneMode = 'sequential' | 'batch' | 'fresh';
 
 /**
  * Readings of one run, keyed by probe token. A reading taken at a `note` step is keyed `<label>: <token>`.
- * The node probes (`value`, `types`, `source`, `errors`, `schema.<keyword>`) read {@link ABSENT} when no node is at the path.
+ * The node probes (`value`, `output`, `types`, `source`, `errors`, `schema.<keyword>`) read {@link ABSENT} when no node is at the path.
  */
 export type Observation = Readonly<Record<string, unknown>>;
 
@@ -40,6 +40,8 @@ export type SceneStep =
   | { input: string; value: unknown }
   /** `push` on an array node. */
   | { push: string; value: unknown }
+  /** `remove` on an array node at `index`, which may be out of range. */
+  | { remove: string; index: number }
   /** `resetSubtree` on the node. */
   | { reset: string }
   /** A form reload with a new load snapshot. */
@@ -58,7 +60,7 @@ export type SceneStep =
 /**
  * Shared fields of a boundary scene: what is run and what is read.
  * Probe tokens (`<path>` is a JSON Pointer, `<name>` a held reference):
- * `value <path>`, `types <path>` (effective type list), `source <path>`, `schema.<keyword> <path>`,
+ * `value <path>`, `output <path>` (the node's `outputValue`), `types <path>` (effective type list), `source <path>`, `schema.<keyword> <path>`,
  * `inactive <path>` (retained inactive values at the path), `find <path>` (whether `find` returns a node),
  * `errors <path>` (schema paths of the node's validation errors), `refresh <path>` (whether the node received a
  * Refresh since the load or the last `note`), `detached <name>`,

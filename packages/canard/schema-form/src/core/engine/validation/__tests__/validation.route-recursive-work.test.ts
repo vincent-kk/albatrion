@@ -1,5 +1,9 @@
 import { expect, it, vi } from 'vitest';
 
+import {
+  dispatchPush,
+  dispatchSetValue,
+} from '@/schema-form/core/engine/write';
 import * as pointer from '@/schema-form/helpers/jsonPointer';
 
 import { readFieldNodeErrors } from '../utils/read/readFieldNodeErrors';
@@ -43,8 +47,7 @@ it.each(['outer-first', 'inner-first'] as const)(
     });
     const nodes = [];
     const pending = [root];
-    while (pending.length) {
-      const node = pending.pop()!;
+    for (let node = pending.pop(); node; node = pending.pop()) {
       nodes.push(node);
       pending.push(...(node.children ?? []));
     }
@@ -67,7 +70,7 @@ it.each(['outer-first', 'inner-first'] as const)(
       expect(paths).toHaveBeenCalledTimes(fields.length);
       expect(reads.mock.calls.length).toBeLessThanOrEqual(nodes.length);
       for (const field of fields) {
-        const kind = field.__parent__!.__childrenByName__!.kind.__value__;
+        const kind = field.__parent__?.__childrenByName__?.kind?.__value__;
         const branch = kind === 'x' ? 0 : 1;
         expect(
           readFieldNodeErrors(field).map((issue) => issue.schemaPath),
@@ -80,6 +83,64 @@ it.each(['outer-first', 'inner-first'] as const)(
     } finally {
       reads.mockRestore();
       paths.mockRestore();
+    }
+  },
+);
+
+it.each(['outer-first', 'inner-first'] as const)(
+  'routes each live declaration to its own branch after kind writes and a push with %s errors',
+  (order) => {
+    let value: unknown;
+    for (let i = 4; i >= 0; i--)
+      value = {
+        kind: i % 2 ? 'y' : 'x',
+        value: 'a',
+        children: value ? [value] : [],
+      };
+    const root = createRoutingTree({
+      jsonSchema: schema,
+      defaultValue: [value],
+    });
+    const find = (path: string) => {
+      let node: typeof root | undefined = root;
+      for (const name of path.split('/').slice(1))
+        node = node?.__childrenByName__?.[name];
+      if (!node) throw new Error(`absent ${path}`);
+      return node;
+    };
+    dispatchSetValue(find('/0/children/0/kind'), 'x');
+    dispatchSetValue(find('/0/children/0/children/0/kind'), 'y');
+    dispatchPush(find('/0/children/0/children'), {
+      kind: 'y',
+      value: 'a',
+      children: [],
+    });
+    const nodes = [];
+    const pending = [root];
+    while (pending.length) {
+      const node = pending.pop()!;
+      nodes.push(node);
+      pending.push(...(node.children ?? []));
+    }
+    const fields = nodes.filter((node) => node.name === 'value');
+    const issues = fields.flatMap((node) =>
+      [0, 1].map((branch) => ({
+        dataPath: node.path,
+        schemaPath: `#/$defs/item/oneOf/${branch}/properties/value/minLength`,
+      })),
+    );
+    issues.sort((a, b) =>
+      order === 'outer-first'
+        ? a.dataPath.length - b.dataPath.length
+        : b.dataPath.length - a.dataPath.length,
+    );
+    routeValidationIssues([root], issues);
+    for (const field of fields) {
+      const kind = field.__parent__!.__childrenByName__!.kind.__value__;
+      const branch = kind === 'x' ? 0 : 1;
+      expect(
+        readFieldNodeErrors(field).map((issue) => issue.schemaPath),
+      ).toEqual([`#/$defs/item/oneOf/${branch}/properties/value/minLength`]);
     }
   },
 );

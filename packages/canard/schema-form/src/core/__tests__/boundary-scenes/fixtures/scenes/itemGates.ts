@@ -49,10 +49,24 @@ const childFragmentDeclaration = recursiveItems({
   ],
 });
 
-/** Error schema path of the `x` branch, relative to the item definition. */
-const BRANCH_X = '#/oneOf/0/properties/value/minLength';
-/** Error schema path of the `y` branch, relative to the item definition. */
-const BRANCH_Y = '#/oneOf/1/properties/value/minLength';
+/** One `x` item over two `x` children. */
+const ownBranchLoad = [
+  {
+    kind: 'x',
+    value: 'a',
+    children: [
+      { kind: 'x', value: 'a', children: [] },
+      { kind: 'x', value: 'a', children: [] },
+    ],
+  },
+];
+
+/** Both children turn `y`, then a third `y` child is pushed. */
+const ownBranchSteps = [
+  { set: '/0/children/0/kind', value: 'y' },
+  { set: '/0/children/1/kind', value: 'y' },
+  { push: '/0/children', value: { kind: 'y', value: 'a', children: [] } },
+] as const;
 
 /** A strict item over a loose child, and a loose item over a strict child, each with one grandchild. */
 const strictAndLoose = [
@@ -87,43 +101,19 @@ export const itemGateScenes: readonly BoundaryScene[] = [
     origin:
       'settlement evaluation E5a and design section 12: nested items take the branch of the outer item',
     schema: ownBranch,
-    load: [
-      {
-        kind: 'x',
-        value: 'a',
-        children: [
-          { kind: 'x', value: 'a', children: [] },
-          { kind: 'x', value: 'a', children: [] },
-        ],
-      },
-    ],
-    validates: true,
-    steps: [
-      { set: '/0/children/0/kind', value: 'y' },
-      { set: '/0/children/1/kind', value: 'y' },
-      { push: '/0/children', value: { kind: 'y', value: 'a', children: [] } },
-      { validate: true },
-    ],
+    load: ownBranchLoad,
+    steps: ownBranchSteps,
     probes: [
-      'errors /0/value',
-      'errors /0/children/0/value',
-      'errors /0/children/2/value',
+      'schema.minLength /0/value',
+      'schema.minLength /0/children/0/value',
+      'schema.minLength /0/children/2/value',
     ],
-    modes: ['sequential'],
-    state: 'known',
+    modes: ['sequential', 'fresh'],
+    state: 'expected',
     expected: {
-      'errors /0/value': [BRANCH_X],
-      'errors /0/children/0/value': [BRANCH_Y],
-      'errors /0/children/2/value': [BRANCH_Y],
-    },
-    difference:
-      "every item of the recursive list, the outer item included, reports the minLength errors of both oneOf branches instead of only its own kind's branch",
-    known: {
-      sequential: {
-        'errors /0/value': [BRANCH_X, BRANCH_Y],
-        'errors /0/children/0/value': [BRANCH_X, BRANCH_Y],
-        'errors /0/children/2/value': [BRANCH_X, BRANCH_Y],
-      },
+      'schema.minLength /0/value': 3,
+      'schema.minLength /0/children/0/value': 5,
+      'schema.minLength /0/children/2/value': 5,
     },
   },
   {
@@ -170,7 +160,7 @@ export const itemGateScenes: readonly BoundaryScene[] = [
       'schema.minLength /1/children/0/children/0/value',
     ],
     modes: ['sequential', 'fresh'],
-    state: 'known',
+    state: 'expected',
     expected: {
       'mount: schema.minLength /0/children/0/children/0/value': undefined,
       'mount: schema.minLength /1/children/0/children/0/value': 3,
@@ -178,22 +168,6 @@ export const itemGateScenes: readonly BoundaryScene[] = [
       'outer: schema.minLength /1/children/0/children/0/value': 3,
       'schema.minLength /0/children/0/children/0/value': undefined,
       'schema.minLength /1/children/0/children/0/value': undefined,
-    },
-    difference:
-      'at mount the strict /1/children/0 gives its child no minLength, and after /1/children/0 turns loose its child keeps minLength 3',
-    known: {
-      sequential: {
-        'mount: schema.minLength /0/children/0/children/0/value': undefined,
-        'mount: schema.minLength /1/children/0/children/0/value': undefined,
-        'outer: schema.minLength /0/children/0/children/0/value': undefined,
-        'outer: schema.minLength /1/children/0/children/0/value': 3,
-        'schema.minLength /0/children/0/children/0/value': undefined,
-        'schema.minLength /1/children/0/children/0/value': 3,
-      },
-      fresh: {
-        'schema.minLength /0/children/0/children/0/value': undefined,
-        'schema.minLength /1/children/0/children/0/value': undefined,
-      },
     },
   },
   {
@@ -213,7 +187,7 @@ export const itemGateScenes: readonly BoundaryScene[] = [
       'schema.minLength /1/children/0/children/0/value',
     ],
     modes: ['sequential', 'fresh'],
-    state: 'known',
+    state: 'expected',
     expected: {
       'mount: schema.minLength /0/children/0/children/0/value': undefined,
       'mount: schema.minLength /1/children/0/children/0/value': 3,
@@ -221,22 +195,6 @@ export const itemGateScenes: readonly BoundaryScene[] = [
       'outer: schema.minLength /1/children/0/children/0/value': 3,
       'schema.minLength /0/children/0/children/0/value': undefined,
       'schema.minLength /1/children/0/children/0/value': undefined,
-    },
-    difference:
-      'the depth-two declaration follows the outermost item instead of the parent item: the child of the loose /0/children/0 takes minLength 3 from the strict /0, and the child of /1/children/0 has it only while /1 is strict, whatever /1/children/0 is',
-    known: {
-      sequential: {
-        'mount: schema.minLength /0/children/0/children/0/value': 3,
-        'mount: schema.minLength /1/children/0/children/0/value': undefined,
-        'outer: schema.minLength /0/children/0/children/0/value': 3,
-        'outer: schema.minLength /1/children/0/children/0/value': 3,
-        'schema.minLength /0/children/0/children/0/value': 3,
-        'schema.minLength /1/children/0/children/0/value': 3,
-      },
-      fresh: {
-        'schema.minLength /0/children/0/children/0/value': 3,
-        'schema.minLength /1/children/0/children/0/value': 3,
-      },
     },
   },
   {
@@ -266,7 +224,7 @@ export const itemGateScenes: readonly BoundaryScene[] = [
     ],
     probes: ['schema.minProperties /list/0', 'schema.minProperties /list/1'],
     modes: ['sequential'],
-    state: 'known',
+    state: 'expected',
     expected: {
       'mount: schema.minProperties /list/0': 2,
       'mount: schema.minProperties /list/1': undefined,
@@ -274,18 +232,6 @@ export const itemGateScenes: readonly BoundaryScene[] = [
       'second: schema.minProperties /list/1': 2,
       'schema.minProperties /list/0': undefined,
       'schema.minProperties /list/1': 2,
-    },
-    difference:
-      'the then of an item-level if is not composed into the item schema',
-    known: {
-      sequential: {
-        'mount: schema.minProperties /list/0': undefined,
-        'mount: schema.minProperties /list/1': undefined,
-        'second: schema.minProperties /list/0': undefined,
-        'second: schema.minProperties /list/1': undefined,
-        'schema.minProperties /list/0': undefined,
-        'schema.minProperties /list/1': undefined,
-      },
     },
   },
 ];

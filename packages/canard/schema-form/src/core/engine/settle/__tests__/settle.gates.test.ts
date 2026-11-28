@@ -264,9 +264,10 @@ describe('settle gate calculation', () => {
       FieldNodeWriteKind.CallerReplace,
       WriteOption.Overwrite,
     );
+    const child = root.__childrenByName__?.p?.__childrenByName__?.child;
+    if (!child) throw new Error('Missing /p/child');
     expect(
-      getGateRegistry(root.runtime).locate(root.__childrenByName__!.p, gate)
-        .evaluationHostPath,
+      getGateRegistry(root.runtime).locate(child, gate).evaluationHostPath,
     ).toBe('');
     expect(root.__outputValue__).toEqual({ flag: true, p: { child: 'yes' } });
   });
@@ -326,8 +327,11 @@ describe('settle gate calculation', () => {
     const nested = root.__childrenByName__!.next;
     expect(first.node).toBe(nested.blueprintNode);
     expect(
-      getGateRegistry(root.runtime).locate(root, first.declarations[0].gates[0])
-        .evaluationHostPath,
+      getGateRegistry(root.runtime).locate(
+        root,
+        first.declarations[0].gates[0],
+        'next',
+      ).evaluationHostPath,
     ).toBe('');
     const secondGate =
       nested.blueprintNode.childEntries[1].declarations[0].gates[0];
