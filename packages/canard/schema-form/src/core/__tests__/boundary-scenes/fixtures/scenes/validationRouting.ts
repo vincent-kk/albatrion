@@ -60,10 +60,10 @@ export const validationRoutingScenes: readonly BoundaryScene[] = [
       'errors /0/children/2/value': [BRANCH_Y],
     },
     difference:
-      "every item of the recursive list, the outer item included, reports the minLength errors of both oneOf branches instead of only its own kind's branch",
+      "every nested item of the recursive list reports the minLength errors of both oneOf branches instead of only its own kind's branch",
     known: {
       sequential: {
-        'errors /0/value': [BRANCH_X, BRANCH_Y],
+        'errors /0/value': [BRANCH_X],
         'errors /0/children/0/value': [BRANCH_X, BRANCH_Y],
         'errors /0/children/2/value': [BRANCH_X, BRANCH_Y],
       },

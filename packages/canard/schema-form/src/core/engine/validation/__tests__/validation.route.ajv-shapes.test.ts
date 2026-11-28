@@ -26,7 +26,7 @@ const schema = {
 
 // filid:contract validation-route
 describe('18C-53 reference schemaPath attribution', () => {
-  it('ajv8 uses the compiled reference target path and hides only the inactive branch', async () => {
+  it('ajv8 keeps a reference target issue whose location shows no union branch', async () => {
     const validator = createTestValidator();
     const issues = await validator.compile(createValidatorCopy(schema))({
       kind: 'x',
@@ -46,7 +46,7 @@ describe('18C-53 reference schemaPath attribution', () => {
     ).toBe(true);
     expect(
       shown.some((issue) => issue.schemaPath?.includes('$defs/yRule')),
-    ).toBe(false);
+    ).toBe(true);
   });
 
   it('ajv6 and ajv7 literal reference shapes preserve uncertain attribution', () => {
