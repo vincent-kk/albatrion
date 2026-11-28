@@ -20,7 +20,7 @@ Semantics the signatures hide:
 
 - `getErrors()` reads the current list without validating; use [validation UX](validation-ux.md) to choose when to request a verdict and handle None or a missing validator.
 - Use `SetValueOption.Merge` for a partial object update; the default `Overwrite` is full replacement and drops unspecified sibling values.
-- The form assumes standard JSON values, in (`defaultValue`, which `reset` loads again, and `setValue`) and out (`getValue`, `onChange`, `onSubmit`); the exception is `undefined`, which marks an absent value and clears a field when written. A getter in an input is not rejected, but the form may read a property more than once: a property whose value depends on when or how often it is read, or that throws, is not supported.
+- The form assumes standard JSON values, in (`defaultValue`, which `reset` loads again, and `setValue`) and out (`getValue`, `onChange`, `onSubmit`); the exception is `undefined`, which marks an absent value. A getter in an input is not rejected, but the form may read a property more than once: a property whose value depends on when or how often it is read, or that throws, is not supported.
 - `getAttachedFilesMap()` returns a `Map<string, File[]>` keyed by the input's **canonical node path** (`node.path`) — query operators are not used as attachment addresses.
 - `findNode(path)` returns the first match, including for a wildcard; `findNodes(path)` returns all matches.
 - `focus(path)` reaches the exact input through nested virtualization gates; `select(path)` retains the node command behavior. Live-option changes, pending-focus cancellation, duplicate positions and unreachable layouts follow [arrays and scale](./arrays-and-scale.md#render-level-virtualization-built-in).
