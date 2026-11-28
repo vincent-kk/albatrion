@@ -55,8 +55,10 @@ const EXPRESSION_READS: readonly GateRead[] = [
  * Generate the form and steps of one seed. The gate and the position are the first two draws, so
  * the stratification class is known before the rest. A form is cyclic when its condition reads the
  * presence of the field its branch changes in a way presence can see: `omitEmpty: false` keeps an
- * empty value in the output, `nullable` admits a `null` the base type refuses. Every other form
- * reads only fields its branch leaves alone and is one-direction.
+ * empty value in the output, `nullable` admits a `null` the base type refuses. A `field-active`
+ * gate on `s` (the `host-keyword` target) whose condition reads `s` or its presence reads the
+ * field it turns on and off, so it is cyclic too. Every other form reads only fields its branch
+ * leaves alone and is one-direction.
  * @param seed - Any positive integer
  * @returns The generated case
  */
@@ -86,9 +88,12 @@ export const generateOracleCase = (seed: number): OracleCase => {
     declaration,
     read,
     isCyclic:
-      read === 'presence' &&
-      (gate === 'if-required' || gate === 'one-of-active') &&
-      (declaration === 'omit-empty' || declaration === 'nullable'),
+      (read === 'presence' &&
+        (gate === 'if-required' || gate === 'one-of-active') &&
+        (declaration === 'omit-empty' || declaration === 'nullable')) ||
+      (gate === 'field-active' &&
+        declaration === 'host-keyword' &&
+        (read === 'sibling' || read === 'presence')),
     schema: placed.schema,
     load: placed.load,
     steps,
