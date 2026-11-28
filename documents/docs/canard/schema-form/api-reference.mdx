@@ -248,7 +248,7 @@ Canonical node, inactive-value, and error paths use those percent literal forms.
 
 ## Events and hooks {#events-hooks}
 
-Events deliver synchronously when the outermost public write ends, merging bits per node; they do not wait for the next microtask. `FieldNodeEventType` includes Initialized, UpdatePath, UpdateValue, UpdateState, UpdateGlobalState, UpdateError, UpdateGlobalError, UpdateChildren, UpdateControlledProperties, Focused, Blurred, RequestFocus, RequestSelect, RequestRefresh, RequestRemount, UpdateJsonSchema, and UpdateDiagnostics. These represent initialization, paths/values/interaction/errors/children/controls, input actions, schema references, and root diagnostics respectively.
+Events deliver synchronously when the outermost public write ends, merging bits per node; they do not wait for the next microtask. `FieldNodeEventType` includes Initialized, UpdatePath, UpdateValue, UpdateState, UpdateGlobalState, UpdateError, UpdateGlobalError, UpdateChildren, UpdateControlledProperties, Focused, Blurred, RequestFocus, RequestSelect, RequestRefresh, RequestRemount, UpdateJsonSchema, and UpdateDiagnostics. These represent initialization, paths/values/interaction/errors/children/controls, input actions, schema changes, and root diagnostics respectively. `node.jsonSchema` can return a new object with the same content without an UpdateJsonSchema event, so compare schema content, not object identity, when you cache by it.
 
 `node.request` accepts one of `FieldNodeRequestType.Focus`, `Select`, `Refresh`, or `Remount` per call; do not combine these as a bit mask. `subscribe` returns cleanup and `revision(mask?)` reads the delivery revision.
 
