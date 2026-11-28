@@ -30,7 +30,7 @@ export const unionReadingScenes: readonly BoundaryScene[] = [
       status: 'stable',
     },
     difference:
-      'the gate reads the converted number instead of the source, so the union is not narrowed',
+      'the load stores the converted number (WRITE-098), so the gate reads a number and the union is not narrowed',
     known: {
       sequential: {
         'load: value /u': 2,

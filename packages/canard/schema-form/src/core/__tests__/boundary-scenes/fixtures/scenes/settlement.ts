@@ -398,23 +398,13 @@ export const settlementScenes: readonly BoundaryScene[] = [
     steps: [{ set: '/u0', value: '1e3' }],
     probes: ['value /u0', 'types /u0', 'value /o0', 'value /g1', 'status'],
     modes: ['sequential', 'fresh'],
-    state: 'open',
-    reason:
-      'design N1 does not say which owner a stale presence decision recomputes; the prototype looped where this branch settles',
-    pinned: {
-      sequential: {
-        'value /u0': 1000,
-        'types /u0': ['integer'],
-        'value /o0': ABSENT,
-        'value /g1': true,
-        status: 'stable',
-      },
-      fresh: {
-        'value /u0': 1000,
-        'types /u0': ['integer'],
-        'value /o0': ABSENT,
-        'value /g1': true,
-      },
+    state: 'expected',
+    expected: {
+      'value /u0': 1000,
+      'types /u0': ['integer'],
+      'value /o0': ABSENT,
+      'value /g1': true,
+      status: 'stable',
     },
   },
 ];

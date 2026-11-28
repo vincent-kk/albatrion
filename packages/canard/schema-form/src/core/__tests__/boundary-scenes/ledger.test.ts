@@ -44,6 +44,7 @@ const LEDGER = {
     'batched-writes/null-host-released-by-a-union-child',
     'batched-writes/find-sees-the-last-commit',
     'support-limits/field-flips-its-own-presence',
+    'settlement/presence-gate-reads-union-before-typing',
   ],
   known: [
     'settlement/gate-reads-before-default-fill',
@@ -83,12 +84,10 @@ const LEDGER = {
     'support-limits/self-reader-through-a-derived-copy',
     'support-limits/conditions-that-negate-each-other',
     'support-limits/even-ring-of-typing-gates',
-  ],
-  open: [
-    'settlement/presence-gate-reads-union-before-typing',
     'fills/default-chosen-by-its-own-value',
     'derived-order/rule-dropped-by-a-later-pass',
   ],
+  open: [],
 };
 
 /** The file stem of an area's scene list and runner: the area id in camelCase. */

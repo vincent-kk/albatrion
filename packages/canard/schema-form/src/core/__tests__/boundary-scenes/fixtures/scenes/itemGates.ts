@@ -120,7 +120,12 @@ export const itemGateScenes: readonly BoundaryScene[] = [
       'settlement evaluation E6 (if form, depth one): an outer instance declares on its child items',
     schema: childDeclaration,
     load: strictAndLoose,
-    steps: [{ note: 'mount' }, { set: '/1/kind', value: 'strict' }],
+    steps: [
+      { note: 'mount' },
+      { set: '/1/kind', value: 'strict' },
+      { note: 'outer' },
+      { set: '/1/children/0/kind', value: 'loose' },
+    ],
     probes: [
       'schema.minLength /0/children/0/value',
       'schema.minLength /1/children/0/value',
@@ -130,6 +135,8 @@ export const itemGateScenes: readonly BoundaryScene[] = [
     expected: {
       'mount: schema.minLength /0/children/0/value': 3,
       'mount: schema.minLength /1/children/0/value': undefined,
+      'outer: schema.minLength /0/children/0/value': 3,
+      'outer: schema.minLength /1/children/0/value': 3,
       'schema.minLength /0/children/0/value': 3,
       'schema.minLength /1/children/0/value': 3,
     },
@@ -140,7 +147,12 @@ export const itemGateScenes: readonly BoundaryScene[] = [
       'settlement evaluation E6 (if form, depth two): the declaration of a depth-one item on its children',
     schema: childDeclaration,
     load: strictAndLoose,
-    steps: [{ note: 'mount' }, { set: '/1/kind', value: 'strict' }],
+    steps: [
+      { note: 'mount' },
+      { set: '/1/kind', value: 'strict' },
+      { note: 'outer' },
+      { set: '/1/children/0/kind', value: 'loose' },
+    ],
     probes: [
       'schema.minLength /0/children/0/children/0/value',
       'schema.minLength /1/children/0/children/0/value',
@@ -150,21 +162,25 @@ export const itemGateScenes: readonly BoundaryScene[] = [
     expected: {
       'mount: schema.minLength /0/children/0/children/0/value': undefined,
       'mount: schema.minLength /1/children/0/children/0/value': 3,
+      'outer: schema.minLength /0/children/0/children/0/value': undefined,
+      'outer: schema.minLength /1/children/0/children/0/value': 3,
       'schema.minLength /0/children/0/children/0/value': undefined,
-      'schema.minLength /1/children/0/children/0/value': 3,
+      'schema.minLength /1/children/0/children/0/value': undefined,
     },
     difference:
-      'at mount the depth-two declaration is decided by the outermost item /1 instead of /1/children/0, so the child of the strict /1/children/0 gets no minLength',
+      'at mount the strict /1/children/0 gives its child no minLength, and after /1/children/0 turns loose its child keeps minLength 3',
     known: {
       sequential: {
         'mount: schema.minLength /0/children/0/children/0/value': undefined,
         'mount: schema.minLength /1/children/0/children/0/value': undefined,
+        'outer: schema.minLength /0/children/0/children/0/value': undefined,
+        'outer: schema.minLength /1/children/0/children/0/value': 3,
         'schema.minLength /0/children/0/children/0/value': undefined,
         'schema.minLength /1/children/0/children/0/value': 3,
       },
       fresh: {
         'schema.minLength /0/children/0/children/0/value': undefined,
-        'schema.minLength /1/children/0/children/0/value': 3,
+        'schema.minLength /1/children/0/children/0/value': undefined,
       },
     },
   },
@@ -187,18 +203,31 @@ export const itemGateScenes: readonly BoundaryScene[] = [
       },
     },
     load: { list: [{ k: 'n' }, { k: 's' }] },
-    steps: [],
+    steps: [
+      { note: 'mount' },
+      { set: '/list/1/k', value: 'n' },
+      { note: 'second' },
+      { set: '/list/0/k', value: 's' },
+    ],
     probes: ['schema.minProperties /list/0', 'schema.minProperties /list/1'],
     modes: ['sequential'],
     state: 'known',
     expected: {
-      'schema.minProperties /list/0': 2,
-      'schema.minProperties /list/1': undefined,
+      'mount: schema.minProperties /list/0': 2,
+      'mount: schema.minProperties /list/1': undefined,
+      'second: schema.minProperties /list/0': 2,
+      'second: schema.minProperties /list/1': 2,
+      'schema.minProperties /list/0': undefined,
+      'schema.minProperties /list/1': 2,
     },
     difference:
       'the then of an item-level if is not composed into the item schema',
     known: {
       sequential: {
+        'mount: schema.minProperties /list/0': undefined,
+        'mount: schema.minProperties /list/1': undefined,
+        'second: schema.minProperties /list/0': undefined,
+        'second: schema.minProperties /list/1': undefined,
         'schema.minProperties /list/0': undefined,
         'schema.minProperties /list/1': undefined,
       },

@@ -151,10 +151,11 @@ export const derivedOrderScenes: readonly BoundaryScene[] = [
     steps: [{ set: '/x', value: 10 }],
     probes: ['value /d', 'value /t'],
     modes: ['sequential', 'fresh'],
-    state: 'open',
-    reason:
-      'design section 5 keeps the stale write as a class of difference while the round-four prototype drops it',
-    pinned: {
+    state: 'known',
+    expected: { 'value /d': 11, 'value /t': 10 },
+    difference:
+      'the rule of t runs in the same wave as d, under the fragment the stale d keeps, and writes 100; the next pass drops the fragment and t keeps the provisional write',
+    known: {
       sequential: { 'value /d': 11, 'value /t': 100 },
       fresh: { 'value /d': 11, 'value /t': 100 },
     },

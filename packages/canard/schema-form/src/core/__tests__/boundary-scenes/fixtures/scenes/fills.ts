@@ -120,10 +120,11 @@ export const fillScenes: readonly BoundaryScene[] = [
     steps: [],
     probes: ['value /f', 'thrown', 'status'],
     modes: ['sequential'],
-    state: 'open',
-    reason:
-      'design N7 has no fixed point for a default that deselects itself; whether it is a budget error is undecided',
-    pinned: {
+    state: 'known',
+    expected: { 'value /f': 'B', thrown: [], status: 'stable' },
+    difference:
+      'f is filled in the same round as g, under the selection the still-empty g makes, and takes TRANSIENT; the ordered fill fills g first, then fills f once with B and does not re-read it',
+    known: {
       sequential: { 'value /f': 'TRANSIENT', thrown: [], status: 'stable' },
     },
   },
