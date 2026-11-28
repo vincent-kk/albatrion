@@ -1,20 +1,20 @@
 import type { Nullable } from '@aileron/declare';
 
-import { JSONPointer as $ } from '@/schema-form/helpers/jsonPointer';
-
 import type { SchemaFragment } from '../../../blueprint';
 import type { FieldNodeRecord } from '../../../record';
 import type { ValidationIssue } from '../../types/issue';
+import { countEvaluatedSegments } from './isOffUnionBranchIssue/countEvaluatedSegments';
 import {
-  type UnionSegment,
-  readUnionSegments,
-} from './isOffUnionBranchIssue/readUnionSegments';
+  type IssueLocation,
+  readIssueLocation,
+} from './isOffUnionBranchIssue/readIssueLocation';
 import { resolveUnionBranch } from './isOffUnionBranchIssue/resolveUnionBranch';
 
 /**
  * Decide whether an issue exists only because of a union branch the form did not select.
  * Each union segment visible in the issue's schema location is resolved at its host: the
- * occurrence that many instance-moving keywords above the issue's instance path. The issue
+ * occurrence that many instance-moving keywords above the instance path the failing keyword
+ * was evaluated on. The issue
  * is off-branch when some segment resolves to an uncommitted branch whose union has a
  * committed sibling at that host. An issue that cannot be attributed is kept.
  * @param issue - Normalized issue with an absolute `dataPath`; its schema location may restart at a reference.
@@ -29,18 +29,18 @@ export const isOffUnionBranchIssue = <Self extends FieldNodeRecord<Self>>(
   node: Self,
   fragments: readonly SchemaFragment[],
   isActive: (fragment: SchemaFragment, host: Self) => boolean,
-  locations?: Map<string, Nullable<readonly UnionSegment[]>>,
+  locations?: Map<string, Nullable<IssueLocation>>,
 ): boolean => {
   const schemaPath = issue.schemaPath;
   if (!schemaPath) return false;
-  let segments = locations?.get(schemaPath);
-  if (segments === undefined) {
-    segments = readUnionSegments(schemaPath);
-    locations?.set(schemaPath, segments);
+  let location = locations?.get(schemaPath);
+  if (location === undefined) {
+    location = readIssueLocation(schemaPath);
+    locations?.set(schemaPath, location);
   }
-  if (!segments?.length) return false;
-  const depth = countSegments(issue.dataPath);
-  for (const segment of segments) {
+  if (!location?.unions.length) return false;
+  const depth = countEvaluatedSegments(issue, location);
+  for (const segment of location.unions) {
     const hostDepth = depth - segment.moves;
     if (hostDepth < 0 || hostDepth > node.depth) continue;
     let host: Nullable<Self> = node;
@@ -53,16 +53,4 @@ export const isOffUnionBranchIssue = <Self extends FieldNodeRecord<Self>>(
       if (isActive(sibling, host)) return true;
   }
   return false;
-};
-
-/**
- * Count the segments of an absolute form pointer without parsing it; names escape `/`.
- * @param path - Absolute instance path, the empty string for the root.
- * @returns The number of segments.
- */
-const countSegments = (path: string): number => {
-  let count = 0;
-  for (let index = 0; index < path.length; index++)
-    if (path[index] === $.Separator) count++;
-  return count;
 };

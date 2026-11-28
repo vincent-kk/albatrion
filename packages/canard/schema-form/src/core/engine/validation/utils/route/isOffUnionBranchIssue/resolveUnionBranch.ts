@@ -11,7 +11,7 @@ import {
 import type { BlueprintNode, SchemaFragment } from '../../../../blueprint';
 import { type SchemaStep, parseSchemaLocation } from './parseSchemaLocation';
 import { readComparedRun } from './readComparedRun';
-import type { UnionSegment } from './readUnionSegments';
+import type { UnionSegment } from './readIssueLocation';
 
 /** The branch fragment one union segment resolves to at its host, with the other branches of the same union. */
 export interface UnionBranch {

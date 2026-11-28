@@ -7,7 +7,7 @@ import type { ValidationIssue } from '../../types/issue';
 import { createUnionBranchActivity } from './createUnionBranchActivity';
 import { createValidationScope } from './createValidationScope';
 import { isOffUnionBranchIssue } from './isOffUnionBranchIssue';
-import type { UnionSegment } from './isOffUnionBranchIssue/readUnionSegments';
+import type { IssueLocation } from './isOffUnionBranchIssue/readIssueLocation';
 import { updateFieldNodeGlobalErrors } from './updateFieldNodeGlobalErrors';
 
 /** Annotates the lazily created `validationErrors`; an argument-less `new Map()` would be `Map<any, any>`. */
@@ -41,7 +41,7 @@ export const routeValidationIssues = <Self extends FieldNodeRecord<Self>>(
   const next = new Map<unknown, readonly unknown[]>(before);
   const isActive = createUnionBranchActivity(root);
   const nodesByPath = new Map<string, Self | null>();
-  const locations = new Map<string, readonly UnionSegment[] | null>();
+  const locations = new Map<string, IssueLocation | null>();
   const fragments = runtime.blueprint.fragments;
   const inScope = createValidationScope(scopes);
   for (const node of before.keys())

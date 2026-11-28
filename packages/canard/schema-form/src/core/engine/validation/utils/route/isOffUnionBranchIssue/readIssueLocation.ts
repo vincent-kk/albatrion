@@ -23,19 +23,30 @@ export interface UnionSegment {
   readonly location: string;
 }
 
+/** What routing reads from an issue's schema location. */
+export interface IssueLocation {
+  /** Union segments innermost first; empty when none is visible. */
+  readonly unions: readonly UnionSegment[];
+  /** The failing keyword, the location's last segment. */
+  readonly keyword: string;
+  /** Whether the keyword before the failing keyword moves the instance, as `properties/<key>` before `false schema` does. */
+  readonly isAfterMove: boolean;
+}
+
 /**
- * Read every union segment of an issue's schema location, innermost first. A validator
- * restarts the location at a reference but never drops a move written after a visible
- * segment, so `moves` places the host correctly wherever the location restarted.
+ * Read an issue's schema location: its union segments innermost first and its failing
+ * keyword. A validator restarts the location at a reference but never drops a move written
+ * after a visible segment, so `moves` places the host correctly wherever the location restarted.
  * @param schemaPath - Absolute schema location ending in the failing keyword, such as `#/oneOf/1/properties/a/minLength`.
- * @returns Union segments innermost first, empty when none is visible, or null when the location is not absolute or does not parse.
+ * @returns The parsed location, or null when it is not absolute or does not parse.
  */
-export const readUnionSegments = (
+export const readIssueLocation = (
   schemaPath: string,
-): Nullable<readonly UnionSegment[]> => {
+): Nullable<IssueLocation> => {
   if (!isAbsolutePointer(schemaPath)) return null;
   const segments = parsePointerSegments(schemaPath);
-  if (!segments.length) return null;
+  const keyword = segments[segments.length - 1];
+  if (typeof keyword !== 'string') return null;
   const steps = parseSchemaLocation(segments, segments.length - 1);
   if (!steps) return null;
   const unions: UnionSegment[] = [];
@@ -55,5 +66,9 @@ export const readUnionSegments = (
         ),
       });
   }
-  return unions;
+  return {
+    unions,
+    keyword,
+    isAfterMove: steps[steps.length - 1]?.kind === 'move',
+  };
 };

@@ -2,7 +2,11 @@ import type { Dictionary } from '@aileron/declare';
 
 /** A normalized validation result; dataPath is a JSON Pointer without a fragment marker. */
 export interface ValidationIssue<SourceError = unknown> {
-  /** Location of the rejected value, with an empty string for the root. */
+  /**
+   * Location of the rejected value, with an empty string for the root. A validator plugin
+   * reports a missing `required` property at that property's path, so the field that needs
+   * a value shows the issue; other keywords report the instance they were evaluated on.
+   */
   dataPath: string;
   /** Validator keyword that rejected the input. */
   keyword?: string;
@@ -15,7 +19,11 @@ export interface ValidationIssue<SourceError = unknown> {
    * `dataPath` decide the branch; an issue it cannot attribute stays visible.
    */
   schemaPath?: string;
-  /** Rejected property key whose owning node receives the issue. */
+  /**
+   * Rejected property key whose owning node receives the issue. When a `false schema` under
+   * a property rejects that property, the plugins report `dataPath` at its parent and the
+   * property here.
+   */
   rejectedKey?: string;
   /** Keyword-specific parameters without a prescribed shape. */
   details?: Dictionary<unknown>;
