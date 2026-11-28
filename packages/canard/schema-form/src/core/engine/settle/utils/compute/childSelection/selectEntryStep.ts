@@ -8,18 +8,16 @@ import { appendSegment } from '@/schema-form/helpers/jsonPointer';
 
 import { FormErrorCode, SchemaFormError } from '../../../../../../errors';
 import type { BlueprintChildEntry } from '../../../../blueprint';
-import { mergeEffectiveSchema } from '../../../../blueprint';
 import type { FieldNodeRecord } from '../../../../record';
 import { captureFieldNodeChange } from '../../../../record';
 import { getBlueprintNodeIdentity } from '../../../../utils/nodeIdentity/getBlueprintNodeIdentity';
 import type { SettlementContext } from '../../../types/settlement';
-import { captureProjectionBaseline } from '../../dependencies/captureProjectionBaseline';
 import { supplementSplitOwner } from '../../dependencies/supplementSplitOwner';
 import { recordSettlementFailure } from '../../errors/recordSettlementFailure';
 import { evaluateGate } from '../../gates/evaluateGate';
 import { flushPendingGateReads } from '../../gates/flushPendingGateReads';
 import { getGateRegistry } from '../../gates/getGateRegistry';
-import { isOwnActiveGate } from '../../gates/isOwnActiveGate';
+import { isChildFrameGate } from '../../gates/isChildFrameGate';
 import { readGateSelectionGroup } from '../../gates/readGateSelectionGroup';
 import { getChildDistribution } from '../../input/getChildDistribution';
 import { hasDistributedChildInput } from '../../input/hasDistributedChildInput';
@@ -31,8 +29,8 @@ import { applyDepartingSource } from '../../source/applyDepartingSource';
 import { createChildNode } from '../createChildNode';
 import { enterFieldNode } from '../enterFieldNode';
 import { hasRecursiveExpansion } from '../hasRecursiveExpansion';
+import { composeEntrySchema } from './composeEntrySchema';
 import type { DirectChildSelection } from './getDirectChildSelectionPlan';
-import { readAdmittedEdgeSchema } from './readAdmittedEdgeSchema';
 import { staticIds } from './staticIds';
 import type { PreparedDiscriminatorEntry } from './utils/prepareDiscriminatorEntrySelection';
 import type { PreparedStaticHost } from './utils/prepareStaticHost';
@@ -110,11 +108,7 @@ export const selectEntryStep = <Self extends FieldNodeRecord<Self>>(
     shouldFlushReads,
   } = frame;
   if (shouldFlushReads && context.pendingOutputs?.size)
-    flushPendingGateReads(
-      entry.node,
-      appendSegment(node.path, entry.name),
-      context,
-    );
+    flushPendingGateReads(node, entry, context);
   let threw = false;
   let declarations: BlueprintChildEntry['declarations'];
   let activeIds: Optional<readonly number[]>;
@@ -161,23 +155,16 @@ export const selectEntryStep = <Self extends FieldNodeRecord<Self>>(
         gateIndex++
       ) {
         const gate = declaration.gates[gateIndex];
+        const edgeName = isChildFrameGate(gate, declaration)
+          ? entry.name
+          : undefined;
         const previousDecision = step?.isGeneral
           ? context.gateWheelFrame?.predicateResults?.get(
-              getGateRegistry(node.runtime).locate(node, gate),
+              getGateRegistry(node.runtime).locate(node, gate, edgeName),
             )
           : undefined;
         if (
-          !(
-            previousDecision ??
-            evaluateGate(
-              gate,
-              context,
-              node,
-              isOwnActiveGate(gate.schemaPath, declaration.schemaPath)
-                ? entry.name
-                : undefined,
-            )
-          )
+          !(previousDecision ?? evaluateGate(gate, context, node, edgeName))
         ) {
           admitted = false;
           break;
@@ -349,59 +336,18 @@ export const selectEntryStep = <Self extends FieldNodeRecord<Self>>(
   const ids = activeIds ?? staticIds(entry, node.blueprintNode);
   if ((!priorChild && !currentChild) || (pending && child === pending))
     supplementSplitOwner(child, context);
-  if (context.selectedDeclarationIds.get(child) !== ids)
-    context.selectedDeclarationIds.set(child, ids);
-  const isAtomic = node.runtime.blueprint?.isAtomic;
-  const admittedEdge = fullyAdmitted
-    ? readAdmittedEdgeSchema(
-        entry,
-        child.blueprintNode,
-        isAtomic,
-        node.blueprintNode,
-      )
-    : undefined;
-  const effectiveSchema =
-    discriminator?.schema ??
-    admittedEdge?.schema ??
-    mergeEffectiveSchema(
-      child.blueprintNode,
-      context.hasGates ? ids : NO_ACTIVE_IDS,
-      { mode: 'runtime', isAtomic },
-    );
-  if (child.__schema__ !== effectiveSchema) {
-    captureProjectionBaseline(
-      node,
-      child,
-      !!(priorChild || currentChild),
-      context,
-    );
-    if (!context.originalSchemas.has(child.path))
-      context.originalSchemas.set(child.path, child.__schema__);
-    child.__schema__ = captureFieldNodeChange(
-      child,
-      '__schema__',
-      effectiveSchema,
-    );
-    context.dirtyPaths.add(child.path);
-    if (child.behavior.strategy === 'branch')
-      context.shapeDirtyPaths.add(child.path);
-    context.changedNodes.add(child);
-    frame.hasChanged = true;
-    entryChanged = true;
-  }
-  if (
-    admittedEdge ? admittedEdge.hasConflict : effectiveSchema.hasTypeConflict
-  ) {
-    recordSettlementFailure(
-      context,
-      new SchemaFormError(
-        FormErrorCode.SharedNodeConflict,
-        `Active declarations conflict at ${child.path}`,
-        { path: child.path },
-      ),
-      'sharedConflict',
-    );
-  }
+  const change = composeEntrySchema(
+    node,
+    child,
+    entry,
+    ids,
+    fullyAdmitted,
+    discriminator?.schema,
+    !!(priorChild || currentChild),
+    context,
+  );
+  if (change.isRoundChange) frame.hasChanged = true;
+  if (change.isRecorded) entryChanged = true;
   child.isActive = captureFieldNodeChange(child, 'isActive', true);
   child.isDetached = false;
   if (next[entry.name] !== child) {

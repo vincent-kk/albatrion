@@ -79,8 +79,10 @@ export const applyArraySlots = <Self extends FieldNodeRecord<Self>>(
         ? removedItem.__value__
         : (sourceSlots ??= readSourceSlots(host, context))[removedIndex];
   const registry = getGateRegistry(host.runtime);
-  if (context.hasGates)
+  if (context.hasGates) {
     for (const item of host.children ?? []) registry.remove(item);
+    registry.releaseSlotEdges(host, plan.slots.length, oldCount);
+  }
   const nextItems: Dictionary<Self> = Object.create(null);
   const nextSource: unknown[] = [];
   const nextSnapshot: unknown[] = [];

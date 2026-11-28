@@ -15,6 +15,7 @@ import { verifyWriteEpoch } from '../input/utils/verifyWriteEpoch';
 import { DirtyPathSet } from '../scratch/DirtyPathSet';
 import { getAliasedDependencyIndex } from './getAliasedDependencyIndex';
 import { getDependencyIndex } from './getDependencyIndex';
+import { scheduleDependencyOwner } from './scheduleDependencyOwner';
 
 /** Annotates the lazily created `splitHitEpochs`; an argument-less `new Map()` would be `Map<any, any>`. */
 type SplitHitEpochs = Map<SplitBucket, number>;
@@ -62,6 +63,16 @@ export const registerRecalculation = <Self extends FieldNodeRecord<Self>>(
     });
     shadow.isRegistering = true;
   }
+  let changedAncestors: Optional<Set<string>>;
+  if (context.hasGates) {
+    changedAncestors = new Set<string>();
+    for (const changed of context.changedSource)
+      for (let prefix = changed; prefix; ) {
+        prefix = resolvePointer(prefix, $.Parent);
+        if (changedAncestors.has(prefix)) break;
+        changedAncestors.add(prefix);
+      }
+  }
   const split =
     !context.isShadowRegistration &&
     context.hasGates &&
@@ -87,9 +98,8 @@ export const registerRecalculation = <Self extends FieldNodeRecord<Self>>(
             const marks: SplitMarks = (context.splitMarks ??= new Map());
             marks.set(path, epoch);
           }
-          context.shapeDirtyPaths.add(
-            kind === 'host' ? path : resolvePointer(path, $.Parent),
-          );
+          if (kind === 'host') context.shapeDirtyPaths.add(path);
+          else scheduleDependencyOwner(path, context, changedAncestors);
         },
       });
   } else {
@@ -100,7 +110,7 @@ export const registerRecalculation = <Self extends FieldNodeRecord<Self>>(
       )) {
         context.dirtyPaths.add(declarationPath);
         context.dependencyOwnerPaths.add(declarationPath);
-        context.shapeDirtyPaths.add(resolvePointer(declarationPath, $.Parent));
+        scheduleDependencyOwner(declarationPath, context, changedAncestors);
       }
   }
   const aliases = blueprint.capabilities.hasAliasedDependencies
@@ -111,7 +121,7 @@ export const registerRecalculation = <Self extends FieldNodeRecord<Self>>(
       for (const owner of aliases.affectedOwners(changed)) {
         context.dirtyPaths.add(owner);
         context.dependencyOwnerPaths.add(owner);
-        context.shapeDirtyPaths.add(resolvePointer(owner, $.Parent));
+        scheduleDependencyOwner(owner, context, changedAncestors);
       }
   const expanded = new Set<string>();
   for (const path of context.dirtyPaths) {
@@ -122,14 +132,7 @@ export const registerRecalculation = <Self extends FieldNodeRecord<Self>>(
       context.dirtyPaths.add(ancestor);
     }
   }
-  if (context.hasGates) {
-    const changedAncestors = new Set<string>();
-    for (const changed of context.changedSource)
-      for (let prefix = changed; prefix; ) {
-        prefix = resolvePointer(prefix, $.Parent);
-        if (changedAncestors.has(prefix)) break;
-        changedAncestors.add(prefix);
-      }
+  if (changedAncestors) {
     const registry = getGateRegistry(context.root.runtime);
     for (const path of context.dirtyPaths) {
       if (registry.mayChangeAt(path, context.changedSource, changedAncestors))
@@ -141,8 +144,17 @@ export const registerRecalculation = <Self extends FieldNodeRecord<Self>>(
           context.changedSource,
           changedAncestors,
         )
-      )
-        context.shapeDirtyPaths.add(resolvePointer(path, $.Parent));
+      ) {
+        if (
+          registry.mayChangeOwnSchemaOnlyAt(
+            path,
+            context.changedSource,
+            changedAncestors,
+          )
+        )
+          (context.ownSchemaPaths ??= new Set()).add(path);
+        else context.shapeDirtyPaths.add(resolvePointer(path, $.Parent));
+      }
     }
   }
 

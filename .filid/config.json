@@ -92,6 +92,16 @@
         "**/packages/canard/schema-form/src/__tests__/e2e/features-validation-state-timing.test.tsx",
         "**/packages/canard/schema-form/src/components/FieldProxy/components/FieldInputBridge/__tests__/refreshBoundary.test.tsx",
         "**/packages/canard/schema-form/src/components/FieldProxy/components/FieldInputBridge/__tests__/refreshGeneration.test.tsx",
+        "**/packages/canard/schema-form/src/core/__tests__/boundary-scenes/batchedWrites.test.ts",
+        "**/packages/canard/schema-form/src/core/__tests__/boundary-scenes/childConsistency.test.ts",
+        "**/packages/canard/schema-form/src/core/__tests__/boundary-scenes/derivedOrder.test.ts",
+        "**/packages/canard/schema-form/src/core/__tests__/boundary-scenes/eventRules.test.ts",
+        "**/packages/canard/schema-form/src/core/__tests__/boundary-scenes/fills.test.ts",
+        "**/packages/canard/schema-form/src/core/__tests__/boundary-scenes/itemGates.test.ts",
+        "**/packages/canard/schema-form/src/core/__tests__/boundary-scenes/refresh.test.ts",
+        "**/packages/canard/schema-form/src/core/__tests__/boundary-scenes/settlement.test.ts",
+        "**/packages/canard/schema-form/src/core/__tests__/boundary-scenes/supportLimits.test.ts",
+        "**/packages/canard/schema-form/src/core/__tests__/boundary-scenes/unionReading.test.ts",
         "**/packages/canard/schema-form/src/core/engine/settle/__tests__/settle.gate-wheel-differential.test.ts"
       ]
     },

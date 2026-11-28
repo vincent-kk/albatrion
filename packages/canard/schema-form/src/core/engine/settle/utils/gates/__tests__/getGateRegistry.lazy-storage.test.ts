@@ -51,7 +51,7 @@ it('registers 500 gate-free edges without allocating memo or edge Maps', () => {
   expect(allocations).toBe(0);
 });
 
-it('binds an indirect gate after empty registration and removes its invalidation', () => {
+it('refuses a condition its owner does not reference and releases a referenced one with its owner', () => {
   const { root: parent } = createTestTree(schema);
   const entry = parent.blueprintNode.childEntries.find(
     (entry) => entry.name === 'container',
@@ -63,11 +63,22 @@ it('binds an indirect gate after empty registration and removes its invalidation
   const registry = getGateRegistry(root.runtime);
   registry.register(root);
   expect(registry.occurrenceCount(root.path)).toBe(0);
-  const occurrence = registry.locate(root, gate);
-  expect(occurrence.gate).toBe(gate);
+  // A consumer binds only conditions its declarations reference (model-astra.md A).
+  expect(() => registry.locate(root, gate)).toThrow('Missing gate transport');
+  const valueEntry = parent.blueprintNode.childEntries.find(
+    (entry) => entry.name === 'value',
+  );
+  if (!valueEntry) throw new Error('Missing value entry');
+  const value = parent.runtime.nodeFactory(valueEntry, parent, parent.runtime);
+  registry.register(value);
+  const valueGate = value.blueprintNode.declarations.flatMap(
+    (declaration) => declaration.gates,
+  )[0];
+  const occurrence = registry.locate(value, valueGate);
+  expect(occurrence.hostPath).toBe('');
   expect(occurrence.predicate).toBeDefined();
-  expect(registry.locate(root, gate)).toBe(occurrence);
-  expect(registry.occurrenceCount(root.path)).toBe(1);
+  expect(registry.locate(value, valueGate)).toBe(occurrence);
+  expect(registry.occurrenceCount(value.path)).toBe(1);
   expect(
     registry.mayChangeAt(
       occurrence.evaluationHostPath,
@@ -75,9 +86,8 @@ it('binds an indirect gate after empty registration and removes its invalidation
       new Set(['']),
     ),
   ).toBe(true);
-  registry.remove(root);
-  expect(registry.occurrenceCount(root.path)).toBe(0);
-  expect(registry.hasRegisteredPathKind(root.path, 'object')).toBeUndefined();
+  registry.remove(value);
+  expect(registry.occurrenceCount(value.path)).toBe(0);
   expect(
     registry.mayChangeAt(
       occurrence.evaluationHostPath,
@@ -85,7 +95,6 @@ it('binds an indirect gate after empty registration and removes its invalidation
       new Set(['']),
     ),
   ).toBe(false);
-  expect(registry.locate(root, gate)).not.toBe(occurrence);
 });
 
 it('allocates only two registration Maps across the 502-node conditional fixture', () => {

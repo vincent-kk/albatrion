@@ -18,7 +18,20 @@ conditionalField: {
 | `/abs/path` | Absolute from the form root                                                                                  |
 | `@.field`   | External data from the `context` prop                                                                        |
 
-Text inside a string literal is never a path: `../unit === "km /h"` compares with the text `km /h`, and `"a @ b"` stays text. Inside a template literal only the `${…}` placeholders are code, so `` `${../first} ${../last}` `` reads both fields. Comments (`// …`, `/* … */`) and regular expression literals are not code either, so `/km\/h/.test(../speed)` reads only `../speed`. A slash after a value is division: `(../price) / 100`. A regular expression literal that also reads as an absolute path is read as the path, as it always was: `/a/g` is the path `/a/g`, and `/foo/.test(../name)` reads the path `/foo/.test` and fails when evaluated. Write such patterns as `new RegExp('foo').test(../name)`. Prefer block comments: a line comment (`// …`) at the end of a boolean control such as `active` fails to compile, and one at the start of a `derived` expression makes it return `undefined`.
+Only whitespace and a parenthesis always end a path; most other characters written directly after it are read as part of it. `../count>5` reads a property named `count>5`, `../items.length` one named `items.length` and `../list[0]` one named `list[0]`, so each yields `undefined` without an error. Put a space after the path (`../count > 5`), or parenthesize it before a property access, an index or a call. An array item is also a path of its own: `../items/1`.
+
+```ts
+count: { type: 'number', controls: { derived: '(../items)?.length ?? 0' } },
+first: { type: 'string', controls: { derived: '(../items)[0]' } },
+second: { type: 'string', controls: { derived: '../items/1' } },
+limit: { type: 'number', controls: { derived: '(../limits)[(../tier)]' } },
+highest: { type: 'number', controls: { derived: 'Math.max(../a , ../b)' } },
+half: { type: 'number', controls: { derived: '(../a) / 2' } },
+```
+
+A comma written directly after a path is read as part of it: `Math.max(../a, ../b)` reads `../a,` as the path and the schema fails to compile, while `Math.max(../a,../b)` reads the single path `../a,../b` and yields `NaN` without an error. A slash written directly after a closing parenthesis and before a name or a number starts an absolute path: `(../a)/2` reads `/2` as a path and the schema fails to compile. Leave a space on both sides of a comma or a division slash (`Math.max(../a , ../b)`, `(../a) / 2`), or parenthesize both operands (`Math.max((../a), (../b))`).
+
+Text inside a string literal is never a path: `../unit === "km /h"` compares with the text `km /h`, and `"a @ b"` stays text. Inside a template literal only the `${…}` placeholders are code, so `` `${../first} ${../last}` `` reads both fields. Comments (`// …`, `/* … */`) and regular expression literals are not code either, so `/km\/h/.test(../speed)` reads only `../speed`. A regular expression literal that also reads as an absolute path is read as the path: `/a/g` is the path `/a/g`, and `/foo/.test(../name)` reads the path `/foo/.test` and fails when evaluated. Write such patterns as `new RegExp('foo').test(../name)`. Prefer block comments: a line comment (`// …`) at the end of a boolean control such as `active` fails to compile, and one at the start of a `derived` expression makes it return `undefined`.
 
 Wildcards (`*`) are NOT valid in expressions. The most common expression bug is `/toggle` where `../toggle` was intended — see `troubleshooting.md`.
 
@@ -40,7 +53,7 @@ Choosing wrong causes silent data loss (`active` where `visible` was intended) o
 
 ## watch and derived
 
-- `watch` declares extra dependencies as an array of paths: `controls: { watch: ['../items'] }`. Their values reach the input as `watchValues` and join the dependency set of the node's `derived` expression. A path followed by a property access must be parenthesized: `(../items)?.length > 0`. Empty arrays with omitEmpty emit undefined, so optional chaining is required. If a throwing expression degrades the form, correct the expression and perform a form-level reset or load to recover; ordinary writes do not clear degraded status. `watchValues` compares each watched value with `Object.is`, so mutating a watched array or object in place is not detected; write a new reference.
+- `watch` declares extra dependencies as an array of paths: `controls: { watch: ['../items'] }`. Their values reach the input as `watchValues` and join the dependency set of the node's `derived` expression. Parenthesize a path before a property access, as [Path References Inside Expressions](#path-references-inside-expressions) explains: `(../items)?.length > 0`. Empty arrays with omitEmpty emit undefined, so optional chaining is required. If a throwing expression degrades the form, correct the expression and perform a form-level reset or load to recover; ordinary writes do not clear degraded status. `watchValues` compares each watched value with `Object.is`, so mutating a watched array or object in place is not detected; write a new reference.
 - `derived` computes the field's value from its dependencies and recomputes whenever one of them changes, **replacing any value written to it**; a value written directly stays until the next dependency change. For one-time propagation that stays editable, use `injectTo` instead (`inject-to.md`).
 - Keep expressions to boolean/arithmetic/comparison. For list reductions, watch the source and compute inside the component:
 

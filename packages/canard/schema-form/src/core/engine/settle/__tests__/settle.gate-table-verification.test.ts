@@ -163,9 +163,10 @@ describe('table invariants reject actual positional violations', () => {
       const { root: outsider } = createTestTree({ type: 'string' });
       const flush = flushing.flushPendingGateReads;
       vi.spyOn(flushing, 'flushPendingGateReads').mockImplementation(
-        (node, path, context) => {
-          flush(node, path, context);
-          if (path === '/concierge') context.changedNodes.add(outsider);
+        (node, entry, context) => {
+          flush(node, entry, context);
+          if (node.path === '' && entry.name === 'concierge')
+            context.changedNodes.add(outsider);
         },
       );
       const before = gateSelectionTable.violations;

@@ -18,6 +18,7 @@ import { getGateRegistry } from './getGateRegistry';
 import { readGateHostView } from './readGateHostView';
 import { readProjectedValue } from './readProjectedValue';
 import { recordGateInput } from './recordGateInput';
+import { scheduleDecisionConsumers } from './scheduleDecisionConsumers';
 import type { GateOccurrence } from './type';
 
 /** Annotates the lazily created `relocatedReads`; an argument-less `new Map()` would be `Map<any, any>`. */
@@ -254,6 +255,15 @@ export const evaluateGate = <Self extends FieldNodeRecord<Self>>(
 ): boolean => {
   const version = context.gateExceptionVersion;
   const value = evaluateGateValue(gate, context, owner, edgeName, reference);
+  if (!reference)
+    scheduleDecisionConsumers(
+      getGateRegistry(owner.runtime).recordDecision(
+        getGateRegistry(owner.runtime).locate(owner, gate, edgeName),
+        owner.path,
+        value,
+      ),
+      context,
+    );
   const frame = context.gateWheelFrame;
   if (
     !reference &&

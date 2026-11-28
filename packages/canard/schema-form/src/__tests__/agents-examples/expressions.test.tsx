@@ -1,16 +1,21 @@
 import { cloneElement, createRef } from 'react';
 
 import { act, cleanup, render } from '@testing-library/react';
-import { afterEach, expect, it } from 'vitest';
+import { afterEach, expect, it, vi } from 'vitest';
 
 import {
   type FieldInputProps,
   Form,
+  FormErrorCode,
   type FormHandle,
+  FormWarningCode,
   type JSONSchema,
 } from '@/schema-form';
 
-afterEach(cleanup);
+afterEach(() => {
+  cleanup();
+  vi.unstubAllGlobals();
+});
 
 /** The documented fragment sits verbatim inside a schema; Prettier must not reindent it. */
 // prettier-ignore
@@ -156,3 +161,174 @@ it('keeps only the active oneOf branch values', () => {
   act(() => ref.current!.setValue({ type: 'B', fieldA: 'a', fieldB: 5 }));
   expect(ref.current!.getValue()).toEqual({ type: 'B', fieldB: 5 });
 });
+
+/** The documented fragment sits verbatim inside a schema; Prettier must not reindent it. */
+// prettier-ignore
+const pathEndSchema = {
+  type: 'object',
+  properties: {
+    items: { type: 'array', items: { type: 'string' } },
+    limits: { type: 'object', properties: { basic: { type: 'number' }, pro: { type: 'number' } } },
+    tier: { type: 'string' },
+    a: { type: 'number' },
+    b: { type: 'number' },
+count: { type: 'number', controls: { derived: '(../items)?.length ?? 0' } },
+first: { type: 'string', controls: { derived: '(../items)[0]' } },
+second: { type: 'string', controls: { derived: '../items/1' } },
+limit: { type: 'number', controls: { derived: '(../limits)[(../tier)]' } },
+highest: { type: 'number', controls: { derived: 'Math.max(../a , ../b)' } },
+half: { type: 'number', controls: { derived: '(../a) / 2' } },
+  },
+} satisfies JSONSchema;
+
+const pathEndDefaultValue = {
+  items: ['x', 'y'],
+  limits: { basic: 3, pro: 9 },
+  tier: 'basic',
+  a: 9,
+  b: 4,
+};
+
+it('parenthesized and spaced paths are indexed, passed to a call and divided', () => {
+  const ref = createRef<FormHandle>();
+  render(
+    <Form
+      ref={ref}
+      jsonSchema={pathEndSchema}
+      defaultValue={pathEndDefaultValue}
+    />,
+  );
+  expect(ref.current!.getValue()).toMatchObject({
+    count: 2,
+    first: 'x',
+    second: 'y',
+    limit: 3,
+    highest: 9,
+    half: 4.5,
+  });
+  act(() => ref.current!.findNode('/tier')!.setValue('pro'));
+  expect(ref.current!.getValue()).toMatchObject({ limit: 9 });
+  act(() => ref.current!.findNode('/limits/pro')!.setValue(12));
+  expect(ref.current!.getValue()).toMatchObject({ limit: 12 });
+  act(() => ref.current!.findNode('/items/0')!.setValue('z'));
+  expect(ref.current!.getValue()).toMatchObject({ first: 'z' });
+});
+
+it.each([
+  '../a>5',
+  '../a+1',
+  '../a===9',
+  '../a??0',
+  '../items.length',
+  '../items?.length',
+  '../items[0]',
+  '../limits[../tier]',
+])(
+  '%s reads a property of that literal name and yields undefined',
+  (expression) => {
+    const onError = vi.fn();
+    const ref = createRef<FormHandle>();
+    render(
+      <Form
+        ref={ref}
+        jsonSchema={{
+          type: 'object',
+          properties: {
+            items: { type: 'array', items: { type: 'string' } },
+            limits: {
+              type: 'object',
+              properties: {
+                basic: { type: 'number' },
+                pro: { type: 'number' },
+              },
+            },
+            tier: { type: 'string' },
+            a: { type: 'number' },
+            b: { type: 'number' },
+            out: {
+              type: 'string',
+              controls: { derived: 'String( ' + expression + ' )' },
+            },
+          },
+        }}
+        defaultValue={pathEndDefaultValue}
+        onError={onError}
+      />,
+    );
+    expect(ref.current!.findNode('/out')!.value).toBe('undefined');
+    expect(onError.mock.calls.map(([record]) => record.code)).toEqual([
+      FormWarningCode.ValidatorMissing,
+    ]);
+  },
+);
+
+it('a bracket or an operator written against a path belongs to the property name', () => {
+  const ref = createRef<FormHandle>();
+  render(
+    <Form
+      ref={ref}
+      jsonSchema={{
+        type: 'object',
+        properties: {
+          'list[0]': { type: 'number' },
+          'a>5': { type: 'number' },
+          x: { type: 'number', controls: { derived: '../list[0]' } },
+          y: { type: 'number', controls: { derived: '../a>5' } },
+        },
+      }}
+      defaultValue={{ 'list[0]': 7, 'a>5': 8 }}
+    />,
+  );
+  expect(ref.current!.getValue()).toMatchObject({ x: 7, y: 8 });
+});
+
+it('a comma written directly between two paths joins them into one path', () => {
+  const onError = vi.fn();
+  const ref = createRef<FormHandle>();
+  render(
+    <Form
+      ref={ref}
+      jsonSchema={{
+        type: 'object',
+        properties: {
+          a: { type: 'number' },
+          b: { type: 'number' },
+          out: {
+            type: 'string',
+            controls: { derived: 'String( Math.max(../a,../b) )' },
+          },
+        },
+      }}
+      defaultValue={{ a: 9, b: 4 }}
+      onError={onError}
+    />,
+  );
+  expect(ref.current!.findNode('/out')!.value).toBe('NaN');
+  expect(onError.mock.calls.map(([record]) => record.code)).toEqual([
+    FormWarningCode.ValidatorMissing,
+  ]);
+});
+
+it.each(['Math.max(../a, ../b)', '[../a, ../b].length', '(../a)/2'])(
+  '%s fails to compile',
+  (expression) => {
+    const onError = vi.fn();
+    vi.stubGlobal('reportError', vi.fn());
+    render(
+      <Form
+        jsonSchema={{
+          type: 'object',
+          properties: {
+            a: { type: 'number' },
+            b: { type: 'number' },
+            out: { type: 'number', controls: { derived: expression } },
+          },
+        }}
+        onError={onError}
+      />,
+    );
+    expect(onError).toHaveBeenCalledWith(
+      expect.objectContaining({ code: FormErrorCode.CreateDynamicFunction }),
+    );
+  },
+);

@@ -24,6 +24,9 @@ it('P1 retains BudgetExceeded when a changed wheel consumes the complete cap', (
   const previousMode = engineModes.gateWheel;
   engineModes.setMode('gateWheel', 'skip');
   const cap = vi.spyOn(budget, 'getHostWheelBudgetCap').mockReturnValue(1);
+  // A host plan reads its cap once; one decision per (condition, host) keeps the
+  // load's plan across the write, so the write prepares a fresh plan under cap 1.
+  root.__wheelPlan__ = undefined;
   try {
     expect(() =>
       writeFieldNode(

@@ -4,6 +4,21 @@ import { createPreparedChildrenByName } from '../utils/compute/childSelection/ut
 import { flushPendingGateReads } from '../utils/gates/flushPendingGateReads';
 import { createGateReadFixture } from './fixtures/createGateReadFixture';
 
+/**
+ * Read the `child` entry that every case's root declares.
+ * @param root - Fixture root whose blueprint declares a `child` property
+ * @returns The `child` entry; throws when the fixture schema lacks it
+ */
+const readChildEntry = (
+  root: ReturnType<typeof createGateReadFixture>['root'],
+) => {
+  const entry = root.blueprintNode.childEntries.find(
+    (entry) => entry.name === 'child',
+  );
+  if (!entry) throw new Error('Missing child entry');
+  return entry;
+};
+
 // filid:contract settle-pending-children-read
 describe('pending gate __childrenByName__ reads', () => {
   it.each(['dictionary', 'prepared-view'])(
@@ -24,9 +39,9 @@ describe('pending gate __childrenByName__ reads', () => {
       );
       let descriptors = 0;
       try {
-        const template = root.__childrenByName__!.child.blueprintNode;
+        const entry = readChildEntry(root);
         context.pendingOutputs = new Set([root]);
-        flushPendingGateReads(template, '/child', context);
+        flushPendingGateReads(root, entry, context);
         expect(context.pendingOutputs.has(root)).toBe(true);
         const baseline = root.__childrenByName__!;
         const target =
@@ -44,7 +59,7 @@ describe('pending gate __childrenByName__ reads', () => {
             return Reflect.getOwnPropertyDescriptor(target, name);
           },
         });
-        flushPendingGateReads(template, '/child', context);
+        flushPendingGateReads(root, entry, context);
         expect(context.pendingOutputs.has(root)).toBe(true);
         expect(descriptors).toBe(0);
       } finally {
@@ -70,12 +85,10 @@ describe('pending gate __childrenByName__ reads', () => {
         {},
       );
       try {
-        const template = root.blueprintNode.childEntries.find(
-          (entry) => entry.name === 'child',
-        )!.node;
+        const entry = readChildEntry(root);
         expect(root.__childrenByName__![name].__outputValue__).toBeUndefined();
         context.pendingOutputs = new Set([root]);
-        flushPendingGateReads(template, '/child', context);
+        flushPendingGateReads(root, entry, context);
         expect(context.pendingOutputs.has(root)).toBe(true);
       } finally {
         release();
@@ -98,10 +111,10 @@ describe('pending gate __childrenByName__ reads', () => {
       { source: 'yes', child: 'kept' },
     );
     try {
-      const template = root.__childrenByName__!.child.blueprintNode;
+      const entry = readChildEntry(root);
       delete root.__childrenByName__!['source'];
       context.pendingOutputs = new Set([root]);
-      flushPendingGateReads(template, '/child', context);
+      flushPendingGateReads(root, entry, context);
       expect(context.pendingOutputs.has(root)).toBe(false);
     } finally {
       release();
@@ -123,14 +136,14 @@ describe('pending gate __childrenByName__ reads', () => {
       { source: 'yes', child: 'kept' },
     );
     try {
-      const template = root.__childrenByName__!.child.blueprintNode;
+      const entry = readChildEntry(root);
       const ordinary = { ...root.__childrenByName__ };
       const instance = ordinary['source'];
       delete ordinary['source'];
       Object.setPrototypeOf(ordinary, { source: instance });
       root.__childrenByName__ = ordinary;
       context.pendingOutputs = new Set([root]);
-      flushPendingGateReads(template, '/child', context);
+      flushPendingGateReads(root, entry, context);
       expect(context.pendingOutputs.has(root)).toBe(false);
     } finally {
       release();

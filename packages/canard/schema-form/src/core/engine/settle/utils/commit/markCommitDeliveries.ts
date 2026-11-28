@@ -26,6 +26,7 @@ import {
 import type { FieldNodeRecord } from '../../../record';
 import { FieldNodeWriteKind } from '../../../types/value';
 import type { SettlementContext } from '../../types/settlement';
+import { isSameEffectiveSchema } from '../compute/isSameEffectiveSchema';
 import { readFieldNodeWatchValues } from '../controls/readFieldNodeWatchValues';
 import { commitGlobalState } from './commitGlobalState';
 import { createWatchDeliveryIndex } from './utils/createWatchDeliveryIndex';
@@ -344,7 +345,14 @@ export const markCommitDeliveries = <Self extends FieldNodeRecord<Self>>(
           mark(node, FieldNodeEventType.UpdateControlledProperties);
         if (
           changes & FieldNodeEventType.UpdateJsonSchema &&
-          node.__deliveryPreviousSchema__ !== node.__schema__
+          node.__deliveryPreviousSchema__ !== node.__schema__ &&
+          !(
+            node.__deliveryPreviousSchema__ !== undefined &&
+            isSameEffectiveSchema(
+              node.__deliveryPreviousSchema__,
+              node.__schema__,
+            )
+          )
         ) {
           if (silent) mark(node, FieldNodeEventType.UpdateJsonSchema);
           else {
