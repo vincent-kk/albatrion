@@ -40,6 +40,7 @@ const DECLARATIONS: readonly GateDeclaration[] = [
   'nullable',
   'extra-property',
   'own-gate',
+  'host-keyword',
 ];
 
 /** Reads an expression gate draws from; `if-required` reads presence, `if-const` and `discriminator` a sibling. */
