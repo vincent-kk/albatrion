@@ -14,12 +14,15 @@ import type { SceneRun } from './startSceneRun';
 /**
  * Apply one write step through the public node surface and the binding entry points.
  * @param run - The run whose form receives the step; `append` records what its updater received
- * @param step - Any step except `note` and `validate`, which the caller handles
+ * @param step - Any step except `note`, `validate` and `close`, which the caller handles
  * @returns Nothing; throws what the operation throws, or when the step's path or held reference has no node
  */
 export const applySceneStep = (
   run: SceneRun,
-  step: Exclude<SceneStep, { note: string } | { validate: true }>,
+  step: Exclude<
+    SceneStep,
+    { note: string } | { validate: true } | { close: true }
+  >,
 ): void => {
   if ('reload' in step) return reloadFieldNodeForm(run.root, step.reload);
   if ('context' in step) return setContext(run.root, step.context);

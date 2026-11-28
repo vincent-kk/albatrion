@@ -250,6 +250,29 @@ export const batchedWriteScenes: readonly BoundaryScene[] = [
     },
   },
   {
+    id: 'batched-writes/regrown-list-aligns-the-load-snapshot',
+    origin:
+      'batch design open point 6 (base defect): a batch aligns the load snapshot to the net item count, not to each write',
+    schema: listOfStrings({ type: 'string' }),
+    load: { list: ['a', 'b'] },
+    steps: [
+      { set: '/list', value: ['p'] },
+      { set: '/list', value: ['p', 'q', 'r'] },
+      { close: true },
+      { reset: '/list' },
+    ],
+    probes: ['value /list'],
+    modes: ['sequential', 'batch'],
+    state: 'known',
+    expected: { 'value /list': ['a', null, null] },
+    difference:
+      'the batch aligns the load snapshot to the net item count, so the reset after it brings b back',
+    known: {
+      sequential: { 'value /list': ['a', null, null] },
+      batch: { 'value /list': ['a', 'b', null] },
+    },
+  },
+  {
     id: 'batched-writes/merge-replaces-an-array-of-objects',
     origin:
       'batch difference D8 (probe P7) and batch design T6: Merge replaces an array whole in both routes',

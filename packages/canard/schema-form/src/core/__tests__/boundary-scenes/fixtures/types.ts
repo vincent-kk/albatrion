@@ -3,7 +3,7 @@ import type { AuthoredSchema } from '../../../engine';
 /**
  * How one scene runs its steps.
  * - `sequential`: every step is a separate public call.
- * - `batch`: the steps after the leading `note` steps run inside one `root.batch`.
+ * - `batch`: the steps from the first step that is not a `note` up to a `close` step, or to the end, run inside one `root.batch`; the steps after `close` run one after the other.
  * - `fresh`: a new form loads the sources the sequential run ends with; only path probes are read.
  */
 export type SceneMode = 'sequential' | 'batch' | 'fresh';
@@ -51,6 +51,8 @@ export type SceneStep =
   | { setHeld: string; value: unknown }
   /** Run the form validation and wait for it (needs `BoundarySceneBase.validates`). */
   | { validate: true }
+  /** In `batch` mode, close the batch here so the later steps run after it; ignored in the other modes. */
+  | { close: true }
   /** Read every probe now, keyed `<label>: <token>`; the `refresh` probes then start over. */
   | { note: string };
 
