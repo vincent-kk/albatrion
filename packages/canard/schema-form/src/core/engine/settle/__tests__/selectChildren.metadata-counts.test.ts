@@ -88,10 +88,10 @@ describe('mount-prepared child selection metadata runtime visits', () => {
       }
       const flush = publication.flushPendingGateReads;
       vi.spyOn(publication, 'flushPendingGateReads').mockImplementation(
-        (template, path, context) => {
-          const branch = /payload_(\d+)_/.exec(path);
+        (owner, entry, context) => {
+          const branch = /payload_(\d+)_/.exec(`${owner.path}/${entry.name}`);
           if (branch) flushVisits[Number(branch[1])]++;
-          return flush(template, path, context);
+          return flush(owner, entry, context);
         },
       );
       const previousMode = engineModes.gateWheel;

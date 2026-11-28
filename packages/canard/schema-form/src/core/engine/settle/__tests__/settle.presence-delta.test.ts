@@ -2,6 +2,7 @@ import { afterEach, expect, it, vi } from 'vitest';
 
 import type { PlainNode } from '../../__tests__/fixtures/createPlainNode';
 import { createTestTree } from '../../__tests__/fixtures/createTestTree';
+import { FieldNodeEventType } from '../../record';
 import { FieldNodeWriteKind, WriteOption } from '../../types/value';
 import { getHostDerived } from '../../utils/cache/derivedRecords';
 import { loadFieldNodeAtMount } from '../loadFieldNodeAtMount';
@@ -214,7 +215,9 @@ it('matches full presence traversal after the prepared witness is deleted', () =
     properties: { kind: { type: 'boolean', default: false } },
     oneOf: [false, true].map((kind) => ({
       controls: { active: `./kind === ${kind}` },
-      properties: { x: { type: 'string' } },
+      properties: {
+        x: kind ? { type: 'string', minLength: 1 } : { type: 'string' },
+      },
     })),
   });
   loadFieldNodeAtMount(root, {}, WriteOption.Overwrite);
@@ -234,6 +237,55 @@ it('matches full presence traversal after the prepared witness is deleted', () =
   );
   expect(counts.calls).toBeGreaterThan(0);
   expect(getHostDerived(root).preparedStaticHost).toBeDefined();
+});
+
+it('switches between branches declaring the same child without collecting presence or a schema event', () => {
+  const schema = {
+    type: 'object',
+    properties: { kind: { type: 'boolean', default: false } },
+    oneOf: [false, true].map((kind) => ({
+      controls: { active: `./kind === ${kind}` },
+      properties: { x: { type: 'string' } },
+    })),
+  };
+  const { root } = createTestTree(schema);
+  loadFieldNodeAtMount(root, {}, WriteOption.Overwrite);
+  writeFieldNode(
+    root.__childrenByName__!.kind,
+    true,
+    FieldNodeWriteKind.Input,
+    WriteOption.Overwrite,
+  );
+  delete getHostDerived(root).preparedStaticHost;
+  const x = root.__childrenByName__!.x;
+  const schemaEvents =
+    x.__revisionLedger__[FieldNodeEventType.UpdateJsonSchema];
+  const counts = observePresenceChangeNames();
+  writeFieldNode(
+    root.__childrenByName__!.kind,
+    false,
+    FieldNodeWriteKind.Input,
+    WriteOption.Overwrite,
+  );
+  expect(counts.calls).toBe(0);
+  expect(root.__childrenByName__!.x).toBe(x);
+  expect(x.__revisionLedger__[FieldNodeEventType.UpdateJsonSchema]).toBe(
+    schemaEvents,
+  );
+  const fresh = createTestTree(schema).root;
+  loadFieldNodeAtMount(
+    fresh,
+    structuredClone(root.__value__),
+    WriteOption.Overwrite,
+  );
+  expect(root.__value__).toEqual(fresh.__value__);
+  expect(root.__outputValue__).toEqual(fresh.__outputValue__);
+  expect(Object.keys(root.__childrenByName__!)).toEqual(
+    Object.keys(fresh.__childrenByName__!),
+  );
+  expect(x.__schema__.schema).toEqual(
+    fresh.__childrenByName__!.x.__schema__.schema,
+  );
 });
 
 it('reaches every full-scan fallback with a previously prepared host', () => {

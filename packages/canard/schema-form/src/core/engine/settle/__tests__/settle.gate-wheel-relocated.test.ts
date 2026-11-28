@@ -201,11 +201,13 @@ it.each([false, true])(
       decisions.length = 0;
       expect(run('skip')).toEqual(expected);
       console.log('relocated-attempt', newHost, JSON.stringify(decisions));
+      // A child that consumes the decision its parent's edge already allocated adds
+      // no gate to the wheel; a newly gated host allocates one. Both retain the next wheel.
       expect(decisions).toContainEqual({
         host: '',
         round: 0,
         allowed: false,
-        added: true,
+        added: newHost,
         dirty: ['/p'],
       });
       expect(run('shadow')).toEqual(expected);

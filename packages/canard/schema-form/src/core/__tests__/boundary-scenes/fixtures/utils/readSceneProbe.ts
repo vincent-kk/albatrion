@@ -38,6 +38,7 @@ export const readSceneProbe = (run: SceneRun, token: string): unknown => {
 /** Probe kinds that read one node, keyed by kind. */
 const NODE_READERS: Record<string, (node: FieldNode) => unknown> = {
   value: (node) => node.value,
+  output: (node) => node.outputValue,
   source: (node) => node.source,
   types: (node) => [readKeyword(node, 'type')].flat(),
   errors: (node) => node.errors.map((issue) => issue.schemaPath).sort(),

@@ -10,7 +10,7 @@ import { runSceneSteps } from './runSceneSteps';
 import { startSceneRun } from './startSceneRun';
 
 /** Probe kinds a fresh load can answer: they read the form, not what the steps delivered. */
-const PATH_PROBES = ['value', 'types', 'source', 'inactive', 'find'];
+const PATH_PROBES = ['value', 'output', 'types', 'source', 'inactive', 'find'];
 
 /**
  * Run a scene in every mode it lists and read its probes.

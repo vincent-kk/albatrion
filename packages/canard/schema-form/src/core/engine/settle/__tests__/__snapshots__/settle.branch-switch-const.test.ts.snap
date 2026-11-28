@@ -3,8 +3,6 @@
 exports[`branch-switch constant-factor regression records > finds the identical pending exit when its gate throws in a later wheel 1`] = `
 {
   "exits": [
-    false,
-    false,
     true,
     true,
   ],
@@ -31,7 +29,6 @@ exports[`branch-switch constant-factor regression records > preserves HEAD gate 
     "cap": 2,
     "gates": [
       "0:#/items/properties/g/controls/active",
-      "1:#/items/properties/g/controls/active",
     ],
     "host": "/0",
   },
@@ -39,7 +36,6 @@ exports[`branch-switch constant-factor regression records > preserves HEAD gate 
     "cap": 2,
     "gates": [
       "0:#/items/properties/g/controls/active",
-      "1:#/items/properties/g/controls/active",
     ],
     "host": "/0",
   },
@@ -71,7 +67,6 @@ exports[`branch-switch constant-factor regression records > preserves HEAD gate 
     "cap": 2,
     "gates": [
       "0:#/items/properties/g/controls/active",
-      "1:#/items/properties/g/controls/active",
     ],
     "host": "/0",
   },
@@ -79,7 +74,6 @@ exports[`branch-switch constant-factor regression records > preserves HEAD gate 
     "cap": 2,
     "gates": [
       "0:#/items/properties/g/controls/active",
-      "1:#/items/properties/g/controls/active",
     ],
     "host": "/0",
   },
@@ -153,7 +147,6 @@ exports[`branch-switch constant-factor regression records > preserves HEAD gate 
     "gates": [
       "1:#/oneOf/0/controls/active",
       "0:#/properties/p/properties/child/controls/active",
-      "2:#/properties/p/properties/child/controls/active",
     ],
     "host": "",
   },
@@ -162,37 +155,6 @@ exports[`branch-switch constant-factor regression records > preserves HEAD gate 
     "gates": [
       "1:#/oneOf/0/controls/active",
       "0:#/properties/p/properties/child/controls/active",
-      "2:#/properties/p/properties/child/controls/active",
-    ],
-    "host": "",
-  },
-  {
-    "cap": 2,
-    "gates": [
-      "0:#/properties/p/properties/child/controls/active",
-    ],
-    "host": "/p",
-  },
-  {
-    "cap": 2,
-    "gates": [
-      "0:#/properties/p/properties/child/controls/active",
-    ],
-    "host": "/p",
-  },
-  {
-    "cap": 2,
-    "gates": [
-      "0:#/properties/p/properties/child/controls/active",
-    ],
-    "host": "/p",
-  },
-  {
-    "cap": 3,
-    "gates": [
-      "1:#/oneOf/0/controls/active",
-      "0:#/properties/p/properties/child/controls/active",
-      "2:#/properties/p/properties/child/controls/active",
     ],
     "host": "",
   },
@@ -222,7 +184,35 @@ exports[`branch-switch constant-factor regression records > preserves HEAD gate 
     "gates": [
       "1:#/oneOf/0/controls/active",
       "0:#/properties/p/properties/child/controls/active",
-      "2:#/properties/p/properties/child/controls/active",
+    ],
+    "host": "",
+  },
+  {
+    "cap": 2,
+    "gates": [
+      "0:#/properties/p/properties/child/controls/active",
+    ],
+    "host": "/p",
+  },
+  {
+    "cap": 2,
+    "gates": [
+      "0:#/properties/p/properties/child/controls/active",
+    ],
+    "host": "/p",
+  },
+  {
+    "cap": 2,
+    "gates": [
+      "0:#/properties/p/properties/child/controls/active",
+    ],
+    "host": "/p",
+  },
+  {
+    "cap": 3,
+    "gates": [
+      "1:#/oneOf/0/controls/active",
+      "0:#/properties/p/properties/child/controls/active",
     ],
     "host": "",
   },
@@ -231,7 +221,6 @@ exports[`branch-switch constant-factor regression records > preserves HEAD gate 
     "gates": [
       "1:#/oneOf/0/controls/active",
       "0:#/properties/p/properties/child/controls/active",
-      "2:#/properties/p/properties/child/controls/active",
     ],
     "host": "",
   },
@@ -254,7 +243,6 @@ exports[`branch-switch constant-factor regression records > preserves HEAD gate 
     "gates": [
       "1:#/oneOf/0/controls/active",
       "0:#/properties/p/properties/child/controls/active",
-      "2:#/properties/p/properties/child/controls/active",
     ],
     "host": "",
   },
@@ -277,7 +265,6 @@ exports[`branch-switch constant-factor regression records > preserves HEAD gate 
     "gates": [
       "1:#/oneOf/0/controls/active",
       "0:#/properties/p/properties/child/controls/active",
-      "2:#/properties/p/properties/child/controls/active",
     ],
     "host": "",
   },
@@ -286,7 +273,6 @@ exports[`branch-switch constant-factor regression records > preserves HEAD gate 
     "gates": [
       "1:#/oneOf/0/controls/active",
       "0:#/properties/p/properties/child/controls/active",
-      "2:#/properties/p/properties/child/controls/active",
     ],
     "host": "",
   },

@@ -11,6 +11,7 @@ import { refreshScenes } from './fixtures/scenes/refresh';
 import { settlementScenes } from './fixtures/scenes/settlement';
 import { supportLimitScenes } from './fixtures/scenes/supportLimits';
 import { unionReadingScenes } from './fixtures/scenes/unionReading';
+import { validationRoutingScenes } from './fixtures/scenes/validationRouting';
 import type { BoundaryScene } from './fixtures/types';
 
 /** Every area, keyed by the id prefix its scenes carry; each list has a runner of its own. */
@@ -25,6 +26,7 @@ const AREAS: Readonly<Record<string, readonly BoundaryScene[]>> = {
   'item-gates': itemGateScenes,
   'batched-writes': batchedWriteScenes,
   'support-limits': supportLimitScenes,
+  'validation-routing': validationRoutingScenes,
 };
 
 /**
@@ -46,6 +48,11 @@ const LEDGER = {
     'support-limits/field-flips-its-own-presence',
     'settlement/presence-gate-reads-union-before-typing',
     'batched-writes/null-host-kept-by-an-inactive-candidate-merge',
+    'child-consistency/if-turned-off-two-levels-up',
+    'item-gates/nested-item-takes-own-branch',
+    'item-gates/item-level-if-on-the-item-itself',
+    'item-gates/outer-item-declares-at-depth-two',
+    'item-gates/active-fragment-declares-at-depth-two',
   ],
   known: [
     'settlement/gate-reads-before-default-fill',
@@ -66,11 +73,6 @@ const LEDGER = {
     'event-rules/inject-from-a-revived-node',
     'refresh/typed-value-cleared-by-unset-rule',
     'refresh/narrowed-union-input-keeps-typed-text',
-    'child-consistency/if-turned-off-two-levels-up',
-    'item-gates/nested-item-takes-own-branch',
-    'item-gates/item-level-if-on-the-item-itself',
-    'item-gates/outer-item-declares-at-depth-two',
-    'item-gates/active-fragment-declares-at-depth-two',
     'batched-writes/untouched-union-keeps-its-value',
     'batched-writes/context-change-after-marks',
     'batched-writes/untouched-omit-empty-item',
@@ -83,12 +85,15 @@ const LEDGER = {
     'batched-writes/regrown-list-aligns-the-load-snapshot',
     'batched-writes/merge-replaces-an-array-of-objects',
     'batched-writes/merge-reads-a-non-enumerable-declared-key',
+    'batched-writes/out-of-range-remove-in-a-batch',
     'support-limits/error-names-the-loop-participants',
     'support-limits/self-reader-through-a-derived-copy',
     'support-limits/conditions-that-negate-each-other',
     'support-limits/even-ring-of-typing-gates',
     'fills/default-chosen-by-its-own-value',
     'derived-order/rule-dropped-by-a-later-pass',
+    'validation-routing/recursive-item-branch-errors',
+    'child-consistency/omit-empty-two-levels-below-gate',
   ],
   open: [],
 };

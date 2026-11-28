@@ -78,12 +78,12 @@ describe('gate path resolution runtime visits', () => {
       });
       const flush = publication.flushPendingGateReads;
       vi.spyOn(publication, 'flushPendingGateReads').mockImplementation(
-        (template, path, context) => {
+        (owner, entry, context) => {
           const previous = currentBranch;
-          const branch = /payload_(\d+)_/.exec(path);
+          const branch = /payload_(\d+)_/.exec(`${owner.path}/${entry.name}`);
           currentBranch = branch ? Number(branch[1]) : -1;
           try {
-            return flush(template, path, context);
+            return flush(owner, entry, context);
           } finally {
             currentBranch = previous;
           }

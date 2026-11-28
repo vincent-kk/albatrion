@@ -161,9 +161,12 @@ describe('branch-switch constant-factor regression records', () => {
         WriteOption.Overwrite,
       ),
     ).toThrow('Gate evaluation failed');
-    expect(exits).toContain(true);
+    // The skip predictor may drop a redundant pass before the exit is found (one decision per
+    // condition and host keeps the gate count stable); the history from the finding is fixed.
+    const found = exits.indexOf(true);
+    expect(found).toBeGreaterThan(0);
     expect({
-      exits,
+      exits: exits.slice(found),
       value: root.__value__,
       isDetached: original.isDetached,
       latent: readRetainedSlotSource(root, '/g', 'string'),

@@ -449,6 +449,28 @@ export const batchedWriteScenes: readonly BoundaryScene[] = [
     },
   },
   {
+    id: 'batched-writes/out-of-range-remove-in-a-batch',
+    origin:
+      'gate-binding oracle (ten seeds recorded as known): an out-of-range remove inside a batch writes null into the remaining item',
+    schema: {
+      type: 'object',
+      properties: { arr: { type: 'array', items: { type: 'string' } } },
+    },
+    load: { arr: [''] },
+    steps: [{ remove: '/arr', index: 1 }],
+    probes: ['output /arr/0'],
+    modes: ['sequential', 'batch', 'fresh'],
+    state: 'known',
+    expected: { 'output /arr/0': undefined },
+    difference:
+      'the batch leaves the untouched item /arr/0 with the output value null instead of undefined',
+    known: {
+      sequential: { 'output /arr/0': undefined },
+      batch: { 'output /arr/0': null },
+      fresh: { 'output /arr/0': undefined },
+    },
+  },
+  {
     id: 'batched-writes/find-sees-the-last-commit',
     origin:
       'batch difference D11 (probe P10) and batch design B4: find inside a batch sees the last commit',

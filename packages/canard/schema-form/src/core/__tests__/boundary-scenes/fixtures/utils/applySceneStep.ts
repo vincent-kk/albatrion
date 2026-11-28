@@ -44,6 +44,12 @@ export const applySceneStep = (
     node.push(step.value);
     return;
   }
+  if ('remove' in step) {
+    const node = findNode(run, step.remove);
+    if (!isArrayNode(node)) throw new Error(`no array at ${step.remove}`);
+    node.remove(step.index);
+    return;
+  }
   findNode(run, step.set).setValue(
     createSceneInput(step),
     step.merge ? SetValueOption.Merge : SetValueOption.Overwrite,
