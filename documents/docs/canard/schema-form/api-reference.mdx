@@ -72,7 +72,7 @@ Focus/select/refresh/remount with no matching node do nothing. Before mount, `fi
 
 ## Write options and subtree walks {#write-options}
 
-Use `SetValueOption.Overwrite` (default) or `Merge`, with an optional `DisableAutomaticWrites` or `EnableAutomaticWrites` override. Do not combine Overwrite and Merge or conflicting automatic-write flags. [Value rules](./schema-reference#value-states) explain object/array consequences. The form assumes standard JSON values for its input and output. A getter in an input is not rejected, but the engine may read a property more than once, so a property whose value depends on when or how often it is read, or that throws, is not supported.
+Use `SetValueOption.Overwrite` (default) or `Merge`, with an optional `DisableAutomaticWrites` or `EnableAutomaticWrites` override. Do not combine Overwrite and Merge or conflicting automatic-write flags. [Value rules](./schema-reference#value-states) explain object/array consequences. The form assumes standard JSON values for its input and output; the exception is `undefined`, which marks an absent value and clears a field when written. A getter in an input is not rejected, but the form may read a property more than once, so a property whose value depends on when or how often it is read, or that throws, is not supported.
 
 `node.batch(fn)` groups synchronous writes. `visitSubtree(visitor)` visits self, then descendants in preorder/sibling order; returning false skips that node's descendants. The visitor receives a required FieldNode. A live walk visits current shape; a detached walk visits the frozen subtree. A node reachable twice is visited once, and new nodes created during the walk may be missed.
 
