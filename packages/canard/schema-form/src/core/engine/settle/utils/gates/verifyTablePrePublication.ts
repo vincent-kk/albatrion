@@ -23,7 +23,7 @@ export const verifyTablePrePublication = <Self extends FieldNodeRecord<Self>>(
 ): void => {
   const path = appendSegment(node.path, entry.name);
   const changed = [...context.changedNodes];
-  flushPendingGateReads(entry.node, path, context);
+  flushPendingGateReads(node, entry, context);
   const afterChanged = [...context.changedNodes];
   let matches = changed.length === afterChanged.length;
   for (let index = 0; matches && index < changed.length; index++)

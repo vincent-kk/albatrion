@@ -12,9 +12,8 @@ import type { FieldNodeRecord } from '../../../record';
 import { PathStoreIndex } from '../../../utils/pathIndex/utils/PathStoreIndex';
 import { resolveDependencyPath } from '../../../utils/paths/resolveDependencyPath';
 import type { SettlementContext } from '../../types/settlement';
-import { bindGateHostPath } from '../gates/bindGateHostPath';
+import { bindGateFrame } from '../gates/frames/bindGateFrame';
 import { getGateExpression } from '../gates/getGateExpression';
-import { isOwnActiveGate } from '../gates/isOwnActiveGate';
 
 /** Identity and topology needed by occurrence indexing, independent of surface classes. */
 interface Occurrence {
@@ -136,7 +135,10 @@ class AliasedDependencyIndex {
   }
 
   /** Visit only newly admitted or moved subtrees, sharing overlap evidence within a phase. */
-  private registerSubtree(node: Occurrence, seen: Set<Occurrence>): void {
+  private registerSubtree<Self extends FieldNodeRecord<Self>>(
+    node: Self,
+    seen: Set<Occurrence>,
+  ): void {
     if (seen.has(node) || node.isDetached || node.isDisposed) return;
     seen.add(node);
     this.register(node);
@@ -145,7 +147,7 @@ class AliasedDependencyIndex {
   }
 
   /** Rebind one occurrence only when its address or child shape changes. */
-  private register(node: Occurrence): void {
+  private register<Self extends FieldNodeRecord<Self>>(node: Self): void {
     if (node.isDetached || node.isDisposed) return;
     const previous = this.byNode.get(node);
     if (
@@ -198,7 +200,10 @@ class AliasedDependencyIndex {
           const expression = getGateExpression(this.blueprint, gate.schemaPath);
           if (expression)
             for (const dependency of expression.dependencies)
-              watch(this.bindHost(node, gate.hostPath), dependency);
+              watch(
+                bindGateFrame(node, gate, declaration).hostPath,
+                dependency,
+              );
         }
         for (const rule of this.rules.byDeclaration.get(declaration.id) ?? []) {
           if (rule.kind !== 'derived') continue;
@@ -230,18 +235,12 @@ class AliasedDependencyIndex {
             continue;
           const expression = getGateExpression(this.blueprint, gate.schemaPath);
           if (!expression) continue;
-          const childHost = isOwnActiveGate(
-            gate.schemaPath,
-            declaration.schemaPath,
-          )
-            ? appendSegment(node.path, entry.name)
-            : undefined;
-          const host = bindGateHostPath(
+          const host = bindGateFrame(
+            node,
             gate,
-            node.blueprintNode.path,
-            node.path,
-            childHost,
-          );
+            declaration,
+            entry.name,
+          ).hostPath;
           for (const dependency of expression.dependencies)
             watch(host, dependency, appendSegment(node.path, entry.name));
         }
