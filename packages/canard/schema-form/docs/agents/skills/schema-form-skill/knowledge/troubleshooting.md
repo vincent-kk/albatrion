@@ -36,9 +36,9 @@ fieldInputMap: {
 
 **`controls.active` / `controls.visible` not reacting** — the most common cause is path syntax: `/toggle` is an absolute path from the root; a sibling is `../toggle`.
 
-**Expression over a collection, an index or a comparison never true** — a path runs until whitespace or a parenthesis, so `../items.length`, `../list[0]` and `../count>5` each read a property of that literal name: write `(../items)?.length`, `(../list)[0]`, `../count > 5` (see "Path References Inside Expressions" in `expressions.md`). Empty arrays with omitEmpty emit undefined, so optional chaining is required. If a throwing expression degrades the form, correct the expression and perform a form-level reset or load to recover; ordinary writes do not clear degraded status.
+**Expression over a collection, an index or a comparison never true** — `../items.length`, `../list[0]` and `../count>5` each read a property of that literal name: write `(../items)?.length`, `(../list)[0]`, `../count > 5` (see "Path References Inside Expressions" in `expressions.md`). Empty arrays with omitEmpty emit undefined, so optional chaining is required. If a throwing expression degrades the form, correct the expression and perform a form-level reset or load to recover; ordinary writes do not clear degraded status.
 
-**Schema fails to compile around a function call or a division** — a comma or a slash written against a path is read as part of a path: write `Math.max(../a , ../b)` and `(../a) / 2`.
+**Schema fails to compile around a function call or a division** — `Math.max(../a, ../b)` reads `../a,` as a path and `(../a)/2` reads `/2` as one: write `Math.max(../a , ../b)` and `(../a) / 2` (see "Path References Inside Expressions" in `expressions.md`).
 
 **`derived` yields `NaN`/garbage on partial input** — guard operands: `'(../price ?? 0) * (../quantity ?? 1)'`.
 
