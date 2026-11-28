@@ -1,4 +1,4 @@
-import { describe, expect, it, vi } from 'vitest';
+import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
 
 import { createTestValidator } from '@/schema-form/core/__tests__/fixtures/createTestValidator';
 import { createDispatchTree } from '@/schema-form/core/engine/__tests__/fixtures/createDispatchTree';
@@ -11,7 +11,28 @@ import {
   dispatchSetValue,
 } from '@/schema-form/core/engine/write';
 
+import { engineModes } from '../../utils/cache/engineModes';
 import { getGateRegistry } from '../utils/gates/getGateRegistry';
+
+/** Counts are measured under the shipped modes; the verify project's shadow wheel and verify table add visits. */
+const previousModes = {
+  gateSelection: engineModes.gateSelection,
+  gateWheel: engineModes.gateWheel,
+  isDeriveShadowEnabled: engineModes.isDeriveShadowEnabled,
+};
+beforeAll(() => {
+  engineModes.setMode('isDeriveShadowEnabled', false);
+  engineModes.setMode('gateWheel', 'skip');
+  engineModes.setMode('gateSelection', 'table');
+});
+afterAll(() => {
+  engineModes.setMode('gateSelection', previousModes.gateSelection);
+  engineModes.setMode('gateWheel', previousModes.gateWheel);
+  engineModes.setMode(
+    'isDeriveShadowEnabled',
+    previousModes.isDeriveShadowEnabled,
+  );
+});
 
 /*
  * Counts of gate predicate executions, schema records and node computations per operation.
