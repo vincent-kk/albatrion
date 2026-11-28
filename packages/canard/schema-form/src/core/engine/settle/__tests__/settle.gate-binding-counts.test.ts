@@ -1,5 +1,4 @@
-import { existsSync, writeFileSync } from 'node:fs';
-import { afterAll, describe, expect, it, vi } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 
 import { createTestValidator } from '@/schema-form/core/__tests__/fixtures/createTestValidator';
 import { createDispatchTree } from '@/schema-form/core/engine/__tests__/fixtures/createDispatchTree';
@@ -111,17 +110,6 @@ vi.mock('../../record', async (importOriginal) => {
       return actual.captureFieldNodeChange(...args);
     },
   };
-});
-
-const OUT =
-  '/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/b5781004-ec7c-4a1e-8b24-8f294a15778d/scratchpad/gb/results/';
-const observations: Record<string, unknown> = {};
-afterAll(() => {
-  if (existsSync(OUT))
-    writeFileSync(
-      `${OUT}counts-${Date.now()}.json`,
-      JSON.stringify(observations, null, 1),
-    );
 });
 
 type Node = DispatchTestNode;
@@ -303,39 +291,73 @@ describe('discriminator lane', () => {
       const observed = { load, toggle, toggled, same };
       if (lane === 'discriminator')
         expect(toggle.executions).toBeLessThanOrEqual(3);
-      observations[`C lane ${lane} ${count}`] = observed;
-      expect(observed).toEqual({
-        load: {
-          executions: lane === 'if' ? count : expect.any(Number),
-          itemSchemaRecords: expect.any(Number),
-          allSchemaRecords: expect.any(Number),
-          visits: expect.any(Number),
-          outputs: expect.any(Number),
-          arrayVisits: expect.any(Number),
-          occurrences: {
-            total: expect.any(Number),
-            evaluated: expect.any(Number),
-            decisions: expect.anything(),
-          },
-        },
-        toggle: {
-          executions: lane === 'if' ? 1 : expect.any(Number),
-          itemSchemaRecords: 1,
-          allSchemaRecords: lane === 'if' ? 1 : expect.any(Number),
-          visits: expect.any(Number),
-          outputs: expect.any(Number),
-          arrayVisits: 0,
-        },
-        toggled: 2,
-        same: {
-          executions: lane === 'if' ? 1 : 0,
-          itemSchemaRecords: 0,
-          allSchemaRecords: 0,
-          visits: expect.any(Number),
-          outputs: expect.any(Number),
-          arrayVisits: 0,
-        },
-      });
+      expect(observed).toEqual(
+        lane === 'if'
+          ? {
+              load: {
+                executions: count,
+                itemSchemaRecords: 0,
+                allSchemaRecords: 0,
+                visits: 2 * count + 1,
+                arrayVisits: count,
+                outputs: 3 * count + 3,
+                occurrences: {
+                  total: 2 * count,
+                  evaluated: 2 * count,
+                  decisions: `${count}/${count}`,
+                },
+              },
+              toggle: {
+                executions: 1,
+                itemSchemaRecords: 1,
+                allSchemaRecords: 1,
+                visits: 0,
+                arrayVisits: 0,
+                outputs: 7,
+              },
+              toggled: 2,
+              same: {
+                executions: 1,
+                itemSchemaRecords: 0,
+                allSchemaRecords: 0,
+                visits: 0,
+                arrayVisits: 0,
+                outputs: 5,
+              },
+            }
+          : {
+              load: {
+                executions: 3 * count,
+                itemSchemaRecords: count,
+                allSchemaRecords: 2 * count,
+                visits: 10 * count + 1,
+                arrayVisits: 2 * count,
+                outputs: 13 * count + 5,
+                occurrences: {
+                  total: 9 * count,
+                  evaluated: 9 * count,
+                  decisions: `${3 * count}/${3 * count}`,
+                },
+              },
+              toggle: {
+                executions: 3,
+                itemSchemaRecords: 1,
+                allSchemaRecords: 2,
+                visits: 2,
+                arrayVisits: 0,
+                outputs: 12,
+              },
+              toggled: 2,
+              same: {
+                executions: 0,
+                itemSchemaRecords: 0,
+                allSchemaRecords: 0,
+                visits: 0,
+                arrayVisits: 0,
+                outputs: 4,
+              },
+            },
+      );
     },
   );
 });
@@ -365,7 +387,7 @@ describe('plain array item gates', () => {
     ],
   ] as const)(
     '%s item: which owner evaluates, with which host, and who writes the schema',
-    (_, items) => {
+    (form, items) => {
       counters.withWriter = true;
       try {
         reset();
@@ -396,12 +418,106 @@ describe('plain array item gates', () => {
           rows: readHosts(root, '/rows'),
           item: readHosts(root, '/rows/1'),
         };
-        const schemas = ['/rows/0', '/rows/1', '/rows/1/value'].map((path) =>
-          JSON.stringify(at(root, path)?.__schema__.schema),
+        const schemas = ['/rows/0', '/rows/1', '/rows/1/value'].map(
+          (path) => at(root, path)?.__schema__.schema,
         );
-        observations[`fact 3 ${_}`] = { load, written, hosts, schemas };
         // Model case (e): the item's own gate is hosted at the item, not at a wildcard.
         expect(hosts.rows.some((host) => host.endsWith('/rows/*'))).toBe(false);
+        expect({ load, written, hosts, schemas }).toEqual(
+          form === 'discriminator'
+            ? {
+                load: {
+                  executions: [
+                    '/rows/0 #/properties/rows/items/oneOf/0',
+                    '/rows/0 #/properties/rows/items/oneOf/1',
+                    '/rows/1 #/properties/rows/items/oneOf/0',
+                    '/rows/1 #/properties/rows/items/oneOf/1',
+                  ],
+                  writes: [
+                    '/rows/0/kind selectEntryStep',
+                    '/rows/0/value selectEntryStep',
+                    '/rows/1/kind selectEntryStep',
+                    '/rows/1/value selectEntryStep',
+                    '/rows/0 selectEntryStep',
+                    '/rows/1 selectEntryStep',
+                  ],
+                },
+                written: {
+                  executions: [
+                    '/rows/1 #/properties/rows/items/oneOf/0',
+                    '/rows/1 #/properties/rows/items/oneOf/1',
+                  ],
+                  writes: [
+                    '/rows/1/kind selectEntryStep',
+                    '/rows/1/value selectEntryStep',
+                    '/rows/1 recomposeOwnSchema',
+                  ],
+                },
+                hosts: {
+                  rows: [
+                    '#/properties/rows/items/oneOf/0 @ /rows/0',
+                    '#/properties/rows/items/oneOf/1 @ /rows/0',
+                    '#/properties/rows/items/oneOf/0 @ /rows/1',
+                    '#/properties/rows/items/oneOf/1 @ /rows/1',
+                  ],
+                  item: [
+                    '#/properties/rows/items/oneOf/0 @ /rows/1',
+                    '#/properties/rows/items/oneOf/1 @ /rows/1',
+                  ],
+                },
+                schemas: [
+                  {
+                    ...items,
+                    properties: {
+                      kind: { const: 'x' },
+                      value: { minLength: 3 },
+                    },
+                    controls: undefined,
+                  },
+                  {
+                    ...items,
+                    properties: {
+                      kind: { const: 'y' },
+                      value: { minLength: 5 },
+                    },
+                    controls: undefined,
+                  },
+                  { type: 'string', minLength: 5 },
+                ],
+              }
+            : {
+                load: {
+                  executions: [
+                    '/rows/0 #/properties/rows/items/if',
+                    '/rows/1 #/properties/rows/items/if',
+                  ],
+                  writes: [],
+                },
+                written: {
+                  executions: ['/rows/1 #/properties/rows/items/if'],
+                  writes: [
+                    '/rows/1/value selectEntryStep',
+                    '/rows/1 recomposeOwnSchema',
+                  ],
+                },
+                hosts: {
+                  rows: [
+                    '#/properties/rows/items/if @ /rows/0',
+                    '#/properties/rows/items/if @ /rows/1',
+                  ],
+                  item: ['#/properties/rows/items/if @ /rows/1'],
+                },
+                schemas: [
+                  items,
+                  {
+                    ...items,
+                    properties: { value: { minLength: 5 } },
+                    minProperties: 2,
+                  },
+                  { type: 'string', minLength: 5 },
+                ],
+              },
+        );
       } finally {
         counters.withWriter = false;
       }
@@ -507,14 +623,64 @@ describe('counts per operation', () => {
     reset();
     dispatchSetValue(need(root, '/note'), 'unrelated');
     const unrelated = snapshot(rowMatch);
-    observations[`D gated ${count}`] = {
-      load,
-      write,
-      pushed,
-      flip,
-      flipNoRow,
-      unrelated,
-    };
+    expect({ load, write, pushed, flip, flipNoRow, unrelated }).toEqual({
+      load: {
+        executions: count + 2,
+        itemSchemaRecords: 0,
+        allSchemaRecords: 0,
+        visits: 6 * count + 4,
+        arrayVisits: 2 * count,
+        outputs: 7 * count + 9,
+        occurrences: {
+          total: 4 * count + 4,
+          evaluated: 4 * count + 4,
+          decisions: `${count + 2}/${count + 2}`,
+        },
+      },
+      write: {
+        executions: 1,
+        itemSchemaRecords: 1,
+        allSchemaRecords: 1,
+        visits: 2,
+        arrayVisits: 0,
+        outputs: 7,
+      },
+      pushed: {
+        executions: 1,
+        itemSchemaRecords: 1,
+        allSchemaRecords: 1,
+        visits: count + 5,
+        arrayVisits: count + 1,
+        outputs: 12,
+        outsideNewRow: 0,
+      },
+      flip: {
+        executions: 1,
+        itemSchemaRecords: 2 * count + 2,
+        allSchemaRecords: 2 * count + 4,
+        visits: 10 * count + 10,
+        arrayVisits: 2 * count + 2,
+        outputs: 32 * count + 40,
+        rowsWithRecords: count + 1,
+        targets: ['/rows/*/v', '/rows/*'],
+      },
+      flipNoRow: {
+        executions: 1,
+        itemSchemaRecords: 0,
+        allSchemaRecords: 2,
+        visits: 2,
+        arrayVisits: 0,
+        outputs: 8,
+      },
+      unrelated: {
+        executions: 0,
+        itemSchemaRecords: 0,
+        allSchemaRecords: 0,
+        visits: 0,
+        arrayVisits: 0,
+        outputs: 2,
+      },
+    });
     expect({
       pushedOutsideNewRow: pushed.outsideNewRow,
       flipRows: flip.rowsWithRecords,
@@ -567,12 +733,30 @@ describe('counts per operation', () => {
         JSON.stringify(at(root, path)?.__schema__.schema) ===
         JSON.stringify(at(fresh, path)?.__schema__.schema),
     );
-    observations[`D recursive ${count}`] = {
-      load,
-      write,
-      minLength,
-      agreesWithFresh,
-    };
+    expect({ load, write }).toEqual({
+      load: {
+        executions: count,
+        itemSchemaRecords: 0,
+        allSchemaRecords: 0,
+        visits: 4 * count,
+        arrayVisits: count,
+        outputs: 5 * count + 2,
+        occurrences: {
+          total: 3 * count,
+          evaluated: 3 * count,
+          decisions: `${count}/${count}`,
+        },
+      },
+      write: {
+        executions: 1,
+        itemSchemaRecords: 2,
+        allSchemaRecords: 2,
+        visits: 2,
+        arrayVisits: 0,
+        outputs: 11,
+        paths: [`${target}/v`, target],
+      },
+    });
     // Two affected targets in the written row: the row's own schema takes the `then`
     // contribution and its `v` takes minLength.
     expect({
@@ -593,23 +777,22 @@ describe('counts per operation', () => {
     reset();
     dispatchSetValue(need(root, '/a'), 'y');
     const write = snapshot(/.*/);
-    observations['D plain'] = { load, write };
     expect({ load, write }).toEqual({
       load: {
         executions: 0,
-        itemSchemaRecords: expect.any(Number),
-        allSchemaRecords: expect.any(Number),
-        visits: expect.any(Number),
-        outputs: expect.any(Number),
-        arrayVisits: expect.any(Number),
-        occurrences: { total: 0, evaluated: 0, decisions: expect.anything() },
+        itemSchemaRecords: 0,
+        allSchemaRecords: 0,
+        visits: 4,
+        outputs: 5,
+        arrayVisits: 0,
+        occurrences: { total: 0, evaluated: 0, decisions: 'n/a' },
       },
       write: {
         executions: 0,
         itemSchemaRecords: 0,
         allSchemaRecords: 0,
-        visits: expect.any(Number),
-        outputs: expect.any(Number),
+        visits: 0,
+        outputs: 2,
         arrayVisits: 0,
       },
     });
@@ -657,12 +840,37 @@ describe('a shared-parent read invalidates N', () => {
     reset();
     dispatchSetValue(need(root, `/rows/${count >> 1}/kind`), 'c');
     const unrelated = snapshot(/^\/rows\/\d+\/v$/);
-    observations[`step5 shared parent ${count}`] = {
-      load,
-      flip,
-      flipped,
-      unrelated,
-    };
+    expect({ load, flip, unrelated }).toEqual({
+      load: {
+        executions: count,
+        itemSchemaRecords: 0,
+        allSchemaRecords: 0,
+        visits: 7 * count + 4,
+        arrayVisits: 3 * count,
+        outputs: 6 * count + 10,
+        occurrences: {
+          total: 3 * count,
+          evaluated: 3 * count,
+          decisions: `${count}/${count}`,
+        },
+      },
+      flip: {
+        executions: count,
+        itemSchemaRecords: count,
+        allSchemaRecords: 2 * count,
+        visits: 3 * count + 2,
+        arrayVisits: 0,
+        outputs: 15 * count + 6,
+      },
+      unrelated: {
+        executions: 0,
+        itemSchemaRecords: 0,
+        allSchemaRecords: 0,
+        visits: 0,
+        arrayVisits: 0,
+        outputs: 4,
+      },
+    });
     expect({
       flipped,
       flipRecords: flip.itemSchemaRecords,

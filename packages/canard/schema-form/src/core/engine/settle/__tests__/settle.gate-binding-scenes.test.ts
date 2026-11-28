@@ -1,5 +1,4 @@
-import { existsSync, writeFileSync } from 'node:fs';
-import { afterAll, describe, expect, it } from 'vitest';
+import { describe, expect, it } from 'vitest';
 
 import { createTestValidator } from '@/schema-form/core/__tests__/fixtures/createTestValidator';
 import { createDispatchTree } from '@/schema-form/core/engine/__tests__/fixtures/createDispatchTree';
@@ -20,17 +19,6 @@ import { getGateRegistry } from '../utils/gates/getGateRegistry';
  * contribution reaches its children, a presence gate reads across references, and an item's own
  * keyword follows its own discriminator. Each case is also compared with a fresh load.
  */
-
-const OUT =
-  '/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/b5781004-ec7c-4a1e-8b24-8f294a15778d/scratchpad/gb/results/';
-const observations: Record<string, unknown> = {};
-afterAll(() => {
-  if (existsSync(OUT))
-    writeFileSync(
-      `${OUT}scenes-${Date.now()}.json`,
-      JSON.stringify(observations, null, 1),
-    );
-});
 
 type Node = DispatchTestNode;
 
@@ -181,7 +169,6 @@ describe('an item takes its own branch', () => {
       '#/$defs/item',
     );
     const observed = { mounted, writes, written, pushed, afterPush, fresh };
-    observations['B1 recursive'] = observed;
     expect(observed).toEqual({
       mounted: expectedBranches(mounted),
       writes: ['ok', 'ok'],
@@ -208,7 +195,6 @@ describe('an item takes its own branch', () => {
     const pushed = push(root, '/0/children/0/children', leaf('y'));
     const afterPush = readBranches(root, '#/$defs/item');
     const observed = { writes, written, pushed, afterPush };
-    observations['B1 grandchildren'] = observed;
     expect(observed).toEqual({
       writes: ['ok', 'ok'],
       written: expectedBranches(written),
@@ -232,7 +218,6 @@ describe('an item takes its own branch', () => {
     const pushed = push(root, '/list', { kind: 'y', value: 'a' });
     const afterPush = readBranches(root, '#/properties/list/items');
     const observed = { writes, written, pushed, afterPush };
-    observations['B1 plain'] = observed;
     expect(observed).toEqual({
       writes: ['ok', 'ok'],
       written: expectedBranches(written),
@@ -300,7 +285,6 @@ describe('an outer item contributes to its children', () => {
       const second = write(root, '/1/children/0/kind', 'loose');
       const afterInner = read();
       const observed = { mounted, first, afterOuter, second, afterInner };
-      observations[`B2 ${form}`] = observed;
       expect(observed).toEqual({
         mounted: [3, undefined, undefined, 3],
         first: 'ok',
@@ -386,7 +370,6 @@ describe('a presence gate read across references', () => {
         exceededBudget: Reflect.get(root.runtime.diagnostics, 'exceededBudget'),
       },
     };
-    observations['B3 unbounded'] = observed;
     expect(observed).toEqual({
       threw: true,
       grow: true,
@@ -428,7 +411,6 @@ describe('a presence gate read across references', () => {
       on,
       onPresent: !!at(root, third),
     };
-    observations['B3 finite'] = observed;
     expect(observed).toEqual({
       before: {
         present: true,
@@ -472,7 +454,6 @@ describe('an item keyword follows its own discriminator', () => {
     const second = write(root, '/list/0/k', 's');
     const swapped = read();
     const observed = { loaded, first, both, second, swapped };
-    observations['B4'] = observed;
     expect(observed).toEqual({
       loaded: [2, undefined],
       first: 'ok',
@@ -505,7 +486,6 @@ describe('first-occurrence templates and discarded provenance', () => {
       depth1ArrayHosts: hostsAt('/0/children'),
       depth2ArrayHosts: hostsAt('/0/children/0/children'),
     };
-    observations['fact 1'] = observed;
     // Model: the depth-2 array consumes the if introduced at its own parent item,
     // and its per-item edge references the item's own if in the item's frame.
     expect(observed).toEqual({
