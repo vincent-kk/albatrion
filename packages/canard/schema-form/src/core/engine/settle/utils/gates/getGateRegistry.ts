@@ -746,7 +746,6 @@ const EMPTY_REGISTRY: GateRegistryView = Object.freeze({
 /** Shared frozen empty occurrence list for absent relocation reads and gate-free registrations. */
 const EMPTY_OCCURRENCES: readonly RegisteredGateOccurrence[] = EMPTY_ARRAY;
 
-/** Shared empty consumer list for unchanged decisions. */
 /** Shared empty consumer list of an unflipped decision. */
 const EMPTY_CONSUMERS: readonly DecisionConsumer[] = EMPTY_ARRAY;
 /** Private read-only absence marker, replaced before any occurrence is inserted. */
