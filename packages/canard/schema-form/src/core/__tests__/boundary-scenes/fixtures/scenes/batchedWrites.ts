@@ -344,6 +344,35 @@ export const batchedWriteScenes: readonly BoundaryScene[] = [
     expected: { 'value /o': { u: 5 } },
   },
   {
+    id: 'batched-writes/null-host-kept-by-an-inactive-candidate-merge',
+    origin:
+      'batch prototype round four W3 (prototype regression, batch decision 14): a Merge that supplies only an inactive candidate keeps a null host',
+    schema: {
+      type: 'object',
+      properties: {
+        flag: { type: 'boolean' },
+        o: {
+          type: 'object',
+          nullable: true,
+          properties: {
+            a: { type: 'string' },
+            c: { type: 'string', controls: { active: '../../flag' } },
+          },
+        },
+        z: { type: 'string' },
+      },
+    },
+    load: { flag: false, o: null },
+    steps: [
+      { set: '', value: { o: { c: 'v' } }, merge: true },
+      { set: '/z', value: 'z1' },
+    ],
+    probes: ['value /o'],
+    modes: ['sequential', 'batch'],
+    state: 'expected',
+    expected: { 'value /o': null },
+  },
+  {
     id: 'batched-writes/context-change-after-marks',
     origin:
       'batch difference D22 and batch evaluation G7: a context change inside a batch overtakes the earlier marks',

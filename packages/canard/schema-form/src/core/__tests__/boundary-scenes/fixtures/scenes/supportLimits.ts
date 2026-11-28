@@ -75,6 +75,7 @@ export const supportLimitScenes: readonly BoundaryScene[] = [
       properties: {
         u: { type: ['string', 'number'] },
         d: { type: ['string', 'number'], controls: { derived: '../u' } },
+        z: { type: 'string' },
       },
       allOf: [
         {
@@ -85,13 +86,37 @@ export const supportLimitScenes: readonly BoundaryScene[] = [
     },
     load: { u: '2' },
     steps: [],
-    probes: ['thrown', 'reports', 'status', 'budget', 'source /u'],
+    probes: [
+      'thrown',
+      'reports',
+      'status',
+      'budget',
+      'source /u',
+      'names /u',
+      'names /d',
+      'names /z',
+    ],
     modes: ['sequential'],
     state: 'known',
-    expected: { ...LOAD_BUDGET_ERROR, budget: 'derive', 'source /u': '2' },
+    expected: {
+      ...LOAD_BUDGET_ERROR,
+      budget: 'derive',
+      'source /u': '2',
+      'names /u': true,
+      'names /d': true,
+      'names /z': false,
+    },
     difference:
       'under WRITE-098 the load stores the converted 2 and settles; the settlement design makes this loop without a fixed point a derive budget error (a breaking change, design section 5)',
-    known: { sequential: { ...SETTLED, 'source /u': 2 } },
+    known: {
+      sequential: {
+        ...SETTLED,
+        'source /u': 2,
+        'names /u': false,
+        'names /d': false,
+        'names /z': false,
+      },
+    },
   },
   {
     id: 'support-limits/conditions-that-negate-each-other',
@@ -106,6 +131,7 @@ export const supportLimitScenes: readonly BoundaryScene[] = [
           default: 'kg',
           controls: { active: "typeof ../amount === 'number'" },
         },
+        z: { type: 'string' },
       },
       allOf: [
         {
@@ -116,17 +142,37 @@ export const supportLimitScenes: readonly BoundaryScene[] = [
     },
     load: { amount: '5' },
     steps: [],
-    probes: ['thrown', 'reports', 'status', 'budget', 'source /amount'],
+    probes: [
+      'thrown',
+      'reports',
+      'status',
+      'budget',
+      'source /amount',
+      'names /amount',
+      'names /unit',
+      'names /z',
+    ],
     modes: ['sequential'],
     state: 'known',
     expected: {
       ...LOAD_BUDGET_ERROR,
       budget: 'hostWheel',
       'source /amount': '5',
+      'names /amount': true,
+      'names /unit': true,
+      'names /z': false,
     },
     difference:
       'under WRITE-098 the load stores the converted 5 and settles; the settlement design makes these negating conditions a host wheel budget error (a breaking change, design section 5)',
-    known: { sequential: { ...SETTLED, 'source /amount': 5 } },
+    known: {
+      sequential: {
+        ...SETTLED,
+        'source /amount': 5,
+        'names /amount': false,
+        'names /unit': false,
+        'names /z': false,
+      },
+    },
   },
   {
     id: 'support-limits/even-ring-of-typing-gates',
@@ -139,6 +185,7 @@ export const supportLimitScenes: readonly BoundaryScene[] = [
         u1: { type: ['string', 'number'] },
         u2: { type: ['string', 'number'] },
         u3: { type: ['string', 'number'] },
+        z: { type: 'string' },
       },
       allOf: [0, 1, 2, 3].map((index) => ({
         controls: { active: `typeof ./u${(index + 1) % 4} === 'string'` },
@@ -147,12 +194,42 @@ export const supportLimitScenes: readonly BoundaryScene[] = [
     },
     load: { u0: '0', u1: '0', u2: '0', u3: '0' },
     steps: [],
-    probes: ['thrown', 'reports', 'status', 'budget', 'source /u0'],
+    probes: [
+      'thrown',
+      'reports',
+      'status',
+      'budget',
+      'source /u0',
+      'names /u0',
+      'names /u1',
+      'names /u2',
+      'names /u3',
+      'names /z',
+    ],
     modes: ['sequential'],
     state: 'known',
-    expected: { ...LOAD_BUDGET_ERROR, budget: 'hostWheel', 'source /u0': '0' },
+    expected: {
+      ...LOAD_BUDGET_ERROR,
+      budget: 'hostWheel',
+      'source /u0': '0',
+      'names /u0': true,
+      'names /u1': true,
+      'names /u2': true,
+      'names /u3': true,
+      'names /z': false,
+    },
     difference:
       'under WRITE-098 the load stores converted values and settles; the settlement design makes this ring, whose fixed points the fixed start cannot reach, a host wheel budget error (a breaking change, design section 5)',
-    known: { sequential: { ...SETTLED, 'source /u0': 0 } },
+    known: {
+      sequential: {
+        ...SETTLED,
+        'source /u0': 0,
+        'names /u0': false,
+        'names /u1': false,
+        'names /u2': false,
+        'names /u3': false,
+        'names /z': false,
+      },
+    },
   },
 ];

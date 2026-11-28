@@ -45,11 +45,13 @@ const LEDGER = {
     'batched-writes/find-sees-the-last-commit',
     'support-limits/field-flips-its-own-presence',
     'settlement/presence-gate-reads-union-before-typing',
+    'batched-writes/null-host-kept-by-an-inactive-candidate-merge',
   ],
   known: [
     'settlement/gate-reads-before-default-fill',
     'settlement/root-gate-reads-value-derived-in-same-pass',
     'settlement/value-rule-write-to-middle-pass-node',
+    'settlement/derived-write-to-middle-pass-node',
     'union-reading/direct-self-reader',
     'union-reading/self-reader-switched-off-and-on',
     'union-reading/second-presented-change-in-one-settlement',

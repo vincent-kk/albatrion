@@ -272,6 +272,50 @@ export const settlementScenes: readonly BoundaryScene[] = [
     },
   },
   {
+    id: 'settlement/derived-write-to-middle-pass-node',
+    origin:
+      'acceptance line "unconfirmed" (current model section 6.2): a derived rule writes a node present only in a middle pass, which then exits',
+    schema: {
+      type: 'object',
+      properties: {
+        a: { type: 'number' },
+        d: { type: 'number', controls: { derived: '0 - ../a' } },
+        t: {
+          type: 'string',
+          controls: {
+            active: '!(../a > 0 && ../d < 0)',
+            derived: '../a > 0 ? "from-derived" : undefined',
+          },
+        },
+      },
+    },
+    load: { a: -1, t: '7' },
+    steps: [
+      { set: '/a', value: 1 },
+      { note: 'written' },
+      { set: '/a', value: -1 },
+    ],
+    probes: ['value /t', 'inactive /t'],
+    modes: ['sequential'],
+    state: 'known',
+    expected: {
+      'written: value /t': ABSENT,
+      'written: inactive /t': ['7'],
+      'value /t': '7',
+      'inactive /t': [],
+    },
+    difference:
+      'the derived write on t in the middle pass is retained when t exits, so t returns with it instead of 7',
+    known: {
+      sequential: {
+        'written: value /t': ABSENT,
+        'written: inactive /t': ['from-derived'],
+        'value /t': 'from-derived',
+        'inactive /t': [],
+      },
+    },
+  },
+  {
     id: 'settlement/item-gate-reads-later-gated-sibling-as-absent',
     origin:
       'acceptance line "X6 array" (extended generator seeds 764, 1014, 1754, 1869, 1994): X6 inside an array item',
