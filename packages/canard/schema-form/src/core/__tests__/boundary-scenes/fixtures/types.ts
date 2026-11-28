@@ -27,13 +27,12 @@ export const ABSENT = '(absent)';
  * A step that throws is recorded under the `thrown` probe and the run continues.
  */
 export type SceneStep =
-  /** `setValue`, as Merge when `merge` is set; `hidden` adds non-enumerable own keys, `throwAt` a throwing getter. */
+  /** `setValue`, as Merge when `merge` is set; `hidden` adds non-enumerable own keys. */
   | {
       set: string;
       value: unknown;
       merge?: true;
       hidden?: Readonly<Record<string, unknown>>;
-      throwAt?: string;
     }
   /** `setValue` with an updater that appends `value` to the array it receives; the received value is read by `updater`. */
   | { append: string; value: unknown }
