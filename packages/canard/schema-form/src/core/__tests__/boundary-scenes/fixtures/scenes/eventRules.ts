@@ -40,7 +40,7 @@ export const eventRuleScenes: readonly BoundaryScene[] = [
     modes: ['sequential'],
     state: 'known',
     expected: { log: [2], 'value /mark': undefined, 'refresh /osum': false },
-    defect:
+    difference:
       'the reset to the same value fires the rule again with the raw string before the typed value',
     known: {
       sequential: {
@@ -75,7 +75,7 @@ export const eventRuleScenes: readonly BoundaryScene[] = [
     modes: ['sequential', 'fresh'],
     state: 'known',
     expected: { 'value /x': ABSENT, 'value /log': undefined },
-    defect:
+    difference:
       'x fires its injectTo although it exists only in a middle pass of the settlement',
     known: {
       sequential: { 'value /x': ABSENT, 'value /log': 'x-was-here' },
@@ -103,7 +103,7 @@ export const eventRuleScenes: readonly BoundaryScene[] = [
     modes: ['sequential', 'fresh'],
     state: 'known',
     expected: { 'value /d': -1, 'value /keep': 'saved' },
-    defect: 'the unsetValue fires on the stale value of d and clears keep',
+    difference: 'the unsetValue fires on the stale value of d and clears keep',
     known: {
       sequential: { 'value /d': -1, 'value /keep': undefined },
       fresh: { 'value /d': -1, 'value /keep': undefined },
@@ -140,7 +140,7 @@ export const eventRuleScenes: readonly BoundaryScene[] = [
     modes: ['sequential'],
     state: 'known',
     expected: { 'value /x': 'v', 'value /log': '', log: [] },
-    defect:
+    difference:
       'x leaves and returns within one settlement and fires its injectTo as a new node',
     known: {
       sequential: { 'value /x': 'v', 'value /log': 'fired:v', log: ['v'] },

@@ -35,7 +35,7 @@ export const childConsistencyScenes: readonly BoundaryScene[] = [
       'load: schema.maxLength /list/0/v': 5,
       'schema.maxLength /list/0/v': undefined,
     },
-    defect:
+    difference:
       'the item keeps the schema chosen while the gate was on, unlike a fresh load of the same values',
     known: {
       sequential: {

@@ -1,3 +1,4 @@
+import { readdirSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 
 import { batchedWriteScenes } from './fixtures/scenes/batchedWrites';
@@ -5,7 +6,7 @@ import { childConsistencyScenes } from './fixtures/scenes/childConsistency';
 import { derivedOrderScenes } from './fixtures/scenes/derivedOrder';
 import { eventRuleScenes } from './fixtures/scenes/eventRules';
 import { fillScenes } from './fixtures/scenes/fills';
-import { recursiveItemGateScenes } from './fixtures/scenes/recursiveItemGates';
+import { itemGateScenes } from './fixtures/scenes/itemGates';
 import { refreshScenes } from './fixtures/scenes/refresh';
 import { settlementScenes } from './fixtures/scenes/settlement';
 import { supportLimitScenes } from './fixtures/scenes/supportLimits';
@@ -21,14 +22,14 @@ const AREAS: Readonly<Record<string, readonly BoundaryScene[]>> = {
   'event-rules': eventRuleScenes,
   refresh: refreshScenes,
   'child-consistency': childConsistencyScenes,
-  'recursive-item-gates': recursiveItemGateScenes,
+  'item-gates': itemGateScenes,
   'batched-writes': batchedWriteScenes,
   'support-limits': supportLimitScenes,
 };
 
 /**
- * The checked-in ledger: every scene id under its state. A fix moves its ids from `known` to `expected` in the
- * same pull request; an id leaves the ledger only with its scene, and a fixed scene stays as `expected`.
+ * The checked-in ledger: every scene id under its state. A change that removes a scene's difference moves its id from `known` to `expected` in the
+ * same pull request; an id leaves the ledger only with its scene, and such a scene stays as `expected`.
  */
 const LEDGER = {
   expected: [
@@ -39,10 +40,8 @@ const LEDGER = {
     'settlement/item-gate-reads-later-gated-sibling-as-absent',
     'settlement/child-gate-reads-a-primed-out-sibling',
     'event-rules/inject-source-cleared-in-same-settlement',
-    'recursive-item-gates/outer-item-declares-on-its-children',
-    'batched-writes/untouched-union-keeps-its-value',
+    'item-gates/outer-item-declares-on-its-children',
     'batched-writes/null-host-released-by-a-union-child',
-    'batched-writes/context-change-after-marks',
     'batched-writes/find-sees-the-last-commit',
     'support-limits/field-flips-its-own-presence',
   ],
@@ -65,8 +64,11 @@ const LEDGER = {
     'refresh/typed-value-cleared-by-unset-rule',
     'refresh/narrowed-union-input-keeps-typed-text',
     'child-consistency/if-turned-off-two-levels-up',
-    'recursive-item-gates/nested-item-takes-own-branch',
-    'recursive-item-gates/item-level-if-on-the-item-itself',
+    'item-gates/nested-item-takes-own-branch',
+    'item-gates/item-level-if-on-the-item-itself',
+    'item-gates/outer-item-declares-at-depth-two',
+    'batched-writes/untouched-union-keeps-its-value',
+    'batched-writes/context-change-after-marks',
     'batched-writes/untouched-omit-empty-item',
     'batched-writes/untouched-nullable-item-without-value',
     'batched-writes/untouched-trailing-empty-items',
@@ -86,10 +88,10 @@ const LEDGER = {
     'settlement/presence-gate-reads-union-before-typing',
     'fills/default-chosen-by-its-own-value',
     'derived-order/rule-dropped-by-a-later-pass',
-    'recursive-item-gates/outer-item-declares-at-depth-two',
   ],
 };
 
+/** A scene id: a kebab-case area, a slash, then a kebab-case name that may contain digits. */
 const ID_PATTERN = /^[a-z]+(?:-[a-z]+)*\/[a-z0-9]+(?:-[a-z0-9]+)*$/;
 
 describe('boundary scene ledger', () => {
@@ -120,5 +122,18 @@ describe('boundary scene ledger', () => {
         .filter((id) => !ID_PATTERN.test(id) || !id.startsWith(`${area}/`)),
     );
     expect(misplaced).toEqual([]);
+  });
+
+  it('registers every scene file of fixtures/scenes in AREAS', () => {
+    const files = readdirSync(new URL('./fixtures/scenes/', import.meta.url))
+      .filter((name) => name.endsWith('.ts'))
+      .sort();
+    const registered = Object.keys(AREAS)
+      .map((area) =>
+        area.replace(/-([a-z])/g, (_, letter: string) => letter.toUpperCase()),
+      )
+      .map((name) => `${name}.ts`)
+      .sort();
+    expect(files).toEqual(registered);
   });
 });

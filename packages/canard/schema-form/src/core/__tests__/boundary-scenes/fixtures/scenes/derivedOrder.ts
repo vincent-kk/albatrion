@@ -28,7 +28,7 @@ export const derivedOrderScenes: readonly BoundaryScene[] = [
     modes: ['sequential', 'fresh'],
     state: 'known',
     expected: { 'value /neg': undefined, 'value /d2': 1, 'refresh /d2': false },
-    defect:
+    difference:
       'the chain reads the value d1 had when the round started, so the injectTo sets neg and d2 is refreshed',
     known: {
       sequential: { 'value /neg': true, 'value /d2': 1, 'refresh /d2': true },
@@ -54,16 +54,31 @@ export const derivedOrderScenes: readonly BoundaryScene[] = [
     load: { a: 1, p: 'x' },
     steps: [
       { set: '/t', value: 99 },
+      { note: 'edited' },
       { set: '/a', value: 5 },
     ],
     probes: ['value /t', 'value /p', 'refresh /t'],
     modes: ['sequential'],
     state: 'known',
-    expected: { 'value /t': 99, 'value /p': 'x', 'refresh /t': false },
-    defect:
+    expected: {
+      'edited: value /t': 99,
+      'edited: value /p': 'x',
+      'edited: refresh /t': true,
+      'value /t': 99,
+      'value /p': 'x',
+      'refresh /t': false,
+    },
+    difference:
       'the derived rule of t runs on the shape the stale derived value decided and overwrites the edited 99',
     known: {
-      sequential: { 'value /t': 1, 'value /p': 'x', 'refresh /t': true },
+      sequential: {
+        'edited: value /t': 99,
+        'edited: value /p': 'x',
+        'edited: refresh /t': true,
+        'value /t': 1,
+        'value /p': 'x',
+        'refresh /t': true,
+      },
     },
   },
   {
@@ -91,15 +106,28 @@ export const derivedOrderScenes: readonly BoundaryScene[] = [
     load: { p: { a: 1 }, q: { a: 1 } },
     steps: [
       { set: '/t', value: 99 },
+      { note: 'edited' },
       { set: '/q/a', value: 5 },
     ],
     probes: ['value /t', 'refresh /t'],
     modes: ['sequential'],
     state: 'known',
-    expected: { 'value /t': 99, 'refresh /t': false },
-    defect:
+    expected: {
+      'edited: value /t': 99,
+      'edited: refresh /t': true,
+      'value /t': 99,
+      'refresh /t': false,
+    },
+    difference:
       'the rule reached through the aliased template runs on a stale value and overwrites the edited 99',
-    known: { sequential: { 'value /t': 10, 'refresh /t': true } },
+    known: {
+      sequential: {
+        'edited: value /t': 99,
+        'edited: refresh /t': true,
+        'value /t': 10,
+        'refresh /t': true,
+      },
+    },
   },
   {
     id: 'derived-order/rule-dropped-by-a-later-pass',

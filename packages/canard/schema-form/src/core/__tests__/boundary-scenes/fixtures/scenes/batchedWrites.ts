@@ -46,8 +46,18 @@ export const batchedWriteScenes: readonly BoundaryScene[] = [
     ],
     probes: ['source /data', 'value /data', 'refresh /data'],
     modes: ['sequential', 'batch'],
-    state: 'expected',
-    expected: { 'source /data': 2, 'value /data': 2, 'refresh /data': false },
+    state: 'known',
+    expected: { 'source /data': '2', 'value /data': 2, 'refresh /data': false },
+    difference:
+      'the load stores the converted number (WRITE-098), so the untouched union holds no raw text for a batch to rewrite',
+    known: {
+      sequential: {
+        'source /data': 2,
+        'value /data': 2,
+        'refresh /data': false,
+      },
+      batch: { 'source /data': 2, 'value /data': 2, 'refresh /data': false },
+    },
   },
   {
     id: 'batched-writes/untouched-omit-empty-item',
@@ -67,7 +77,7 @@ export const batchedWriteScenes: readonly BoundaryScene[] = [
       'value /list/1': '',
       'refresh /list/1': false,
     },
-    defect:
+    difference:
       'the batch writes null into the untouched empty item and refreshes it',
     known: {
       sequential: {
@@ -96,7 +106,7 @@ export const batchedWriteScenes: readonly BoundaryScene[] = [
     modes: ['sequential', 'batch'],
     state: 'known',
     expected: { 'source /list/0': undefined, 'value /list/0': undefined },
-    defect: 'the batch writes null into the untouched nullable item',
+    difference: 'the batch writes null into the untouched nullable item',
     known: {
       sequential: { 'source /list/0': undefined, 'value /list/0': undefined },
       batch: { 'source /list/0': null, 'value /list/0': null },
@@ -116,7 +126,7 @@ export const batchedWriteScenes: readonly BoundaryScene[] = [
     modes: ['sequential', 'batch'],
     state: 'known',
     expected: { 'value /list': ['a', null], 'find /list/1': true },
-    defect:
+    difference:
       'the batch writes the trimmed output back, so the trailing item is removed',
     known: {
       sequential: { 'value /list': ['a', null], 'find /list/1': true },
@@ -137,7 +147,7 @@ export const batchedWriteScenes: readonly BoundaryScene[] = [
     modes: ['sequential', 'batch'],
     state: 'known',
     expected: { 'value /list': [null, 'b'] },
-    defect:
+    difference:
       'the batch writes into the trimmed output, which keeps the list as an object and shows it empty',
     known: {
       sequential: { 'value /list': [null, 'b'] },
@@ -164,7 +174,7 @@ export const batchedWriteScenes: readonly BoundaryScene[] = [
       'detached item1': true,
       reports: [DETACHED_WRITE],
     },
-    defect:
+    difference:
       'the batch keeps the removed position alive, so the retired reference writes z',
     known: {
       sequential: {
@@ -200,7 +210,7 @@ export const batchedWriteScenes: readonly BoundaryScene[] = [
       'detached item1': true,
       reports: [DETACHED_WRITE],
     },
-    defect:
+    difference:
       'the reset drops the mark that retired /list/1, so the removed reference writes again',
     known: {
       sequential: {
@@ -232,7 +242,7 @@ export const batchedWriteScenes: readonly BoundaryScene[] = [
     modes: ['sequential', 'batch'],
     state: 'known',
     expected: { 'value /list': ['a', 'r'], updater: [['a']] },
-    defect:
+    difference:
       'the reset loads the snapshot tail the earlier write cut, so b comes back',
     known: {
       sequential: { 'value /list': ['a', 'r'], updater: [['a']] },
@@ -265,7 +275,7 @@ export const batchedWriteScenes: readonly BoundaryScene[] = [
     modes: ['sequential', 'batch'],
     state: 'known',
     expected: { 'value /list': [{ a: 'x' }] },
-    defect:
+    difference:
       'a sequential Merge merges the array items instead of replacing the array',
     known: {
       sequential: { 'value /list': [{ a: 'x', b: '2' }] },
@@ -298,7 +308,7 @@ export const batchedWriteScenes: readonly BoundaryScene[] = [
     modes: ['sequential', 'batch'],
     state: 'known',
     expected: { 'value /o/a': 'B', 'value /o/list': [] },
-    defect:
+    difference:
       'the batch skips the non-enumerable declared key, so the list keeps its items',
     known: {
       sequential: { 'value /o/a': 'B', 'value /o/list': [] },
@@ -336,25 +346,55 @@ export const batchedWriteScenes: readonly BoundaryScene[] = [
   {
     id: 'batched-writes/context-change-after-marks',
     origin:
-      'batch difference D22 and batch evaluation G7d: a context change re-opens a field a mark wrote',
+      'batch difference D22 and batch evaluation G7: a context change inside a batch overtakes the earlier marks',
     schema: {
       type: 'object',
       properties: {
         a: { type: 'string' },
         g: { type: 'string', controls: { active: '@.open' } },
+        list: { type: 'array', items: { type: 'string' } },
       },
     },
-    load: { a: 'a0', g: 'g0' },
-    context: { open: false },
+    load: { a: 'a0', g: 'g0', list: ['x', 'y'] },
+    context: { open: true },
     steps: [
-      { set: '', value: { g: 'g1' }, merge: true },
       { set: '/a', value: 'a1' },
-      { context: { open: true } },
+      { set: '/list', value: ['p'] },
+      { set: '/g', value: 'g1' },
+      { context: { open: false } },
+      { note: 'after' },
     ],
-    probes: ['value /g', 'value /a'],
+    probes: ['value /a', 'value /list', 'inactive /g'],
     modes: ['sequential', 'batch'],
-    state: 'expected',
-    expected: { 'value /g': 'g1', 'value /a': 'a1' },
+    state: 'known',
+    expected: {
+      'after: value /a': 'a1',
+      'after: value /list': ['p'],
+      'after: inactive /g': ['g1'],
+      'value /a': 'a1',
+      'value /list': ['p'],
+      'inactive /g': ['g1'],
+    },
+    difference:
+      'the context change settles before the earlier marks, so the reads after it miss them',
+    known: {
+      sequential: {
+        'after: value /a': 'a1',
+        'after: value /list': ['p'],
+        'after: inactive /g': ['g1'],
+        'value /a': 'a1',
+        'value /list': ['p'],
+        'inactive /g': ['g1'],
+      },
+      batch: {
+        'after: value /a': 'a0',
+        'after: value /list': ['x', 'y'],
+        'after: inactive /g': ['g0'],
+        'value /a': 'a1',
+        'value /list': ['p'],
+        'inactive /g': ['g1'],
+      },
+    },
   },
   {
     id: 'batched-writes/find-sees-the-last-commit',
@@ -412,7 +452,7 @@ export const batchedWriteScenes: readonly BoundaryScene[] = [
       'source /o/a': 'A',
       'value /o/a': 'A',
     },
-    defect:
+    difference:
       'the write stores the source x before the getter throws and never commits it, so source and value disagree',
     known: {
       sequential: {

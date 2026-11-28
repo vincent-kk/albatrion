@@ -17,15 +17,15 @@ export interface SceneRun {
   /** The mounted root, read by every path probe. */
   root: FieldNode;
   /** References taken right after the load, by name; `null` when the path had no node. */
-  held: Record<string, FieldNode | null>;
+  heldNodes: Record<string, FieldNode | null>;
   /** Paths whose node received a Refresh since the load or the last `note` step. */
-  refreshed: Set<string>;
+  refreshedPaths: Set<string>;
   /** Values the schema callbacks received after the load. */
   log: unknown[];
   /** Values the `append` updaters received. */
-  updater: unknown[];
+  updaterInputs: unknown[];
   /** `<where> <code or message>` of every thrown error. */
-  thrown: string[];
+  thrownErrors: string[];
   /** The last thrown error. */
   lastError: unknown;
   /** Every record the form delivered, the mount's included. */
@@ -67,26 +67,26 @@ export const startSceneRun = (
   });
   const run: SceneRun = {
     root,
-    held: {},
-    refreshed: new Set(),
+    heldNodes: {},
+    refreshedPaths: new Set(),
     log,
-    updater: [],
-    thrown: [],
+    updaterInputs: [],
+    thrownErrors: [],
     lastError: undefined,
     reports,
   };
   try {
     mountFieldNode(root);
   } catch (error) {
-    run.thrown.push(`load ${describeThrown(error)}`);
+    run.thrownErrors.push(`load ${describeThrown(error)}`);
     run.lastError = error;
   }
   for (const [name, path] of Object.entries(scene.hold ?? {}))
-    run.held[name] = root.find(path);
+    run.heldNodes[name] = root.find(path);
   for (const node of collectFieldNodes(root))
     node.subscribe((event) => {
       if (event.type & FieldNodeEventType.RequestRefresh)
-        run.refreshed.add(node.path);
+        run.refreshedPaths.add(node.path);
     });
   isLoaded = true;
   return run;

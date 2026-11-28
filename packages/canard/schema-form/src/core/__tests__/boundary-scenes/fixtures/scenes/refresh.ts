@@ -18,7 +18,7 @@ export const refreshScenes: readonly BoundaryScene[] = [
     modes: ['sequential'],
     state: 'known',
     expected: { 'value /x': undefined, 'refresh /x': true },
-    defect:
+    difference:
       'the unset rule clears the typed value without a Refresh, so the input keeps showing D',
     known: { sequential: { 'value /x': undefined, 'refresh /x': false } },
   },
@@ -55,7 +55,7 @@ export const refreshScenes: readonly BoundaryScene[] = [
       'source /o/u': '1.10',
       'refresh /o/u': false,
     },
-    defect:
+    difference:
       'the typed text is stored as the converted number (WRITE-098), so the input loses 1.10',
     known: {
       sequential: {

@@ -97,7 +97,7 @@
         "**/packages/canard/schema-form/src/core/__tests__/boundary-scenes/derivedOrder.test.ts",
         "**/packages/canard/schema-form/src/core/__tests__/boundary-scenes/eventRules.test.ts",
         "**/packages/canard/schema-form/src/core/__tests__/boundary-scenes/fills.test.ts",
-        "**/packages/canard/schema-form/src/core/__tests__/boundary-scenes/recursiveItemGates.test.ts",
+        "**/packages/canard/schema-form/src/core/__tests__/boundary-scenes/itemGates.test.ts",
         "**/packages/canard/schema-form/src/core/__tests__/boundary-scenes/refresh.test.ts",
         "**/packages/canard/schema-form/src/core/__tests__/boundary-scenes/settlement.test.ts",
         "**/packages/canard/schema-form/src/core/__tests__/boundary-scenes/supportLimits.test.ts",

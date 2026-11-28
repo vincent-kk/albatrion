@@ -24,7 +24,7 @@ export const applySceneStep = (
   if ('reload' in step) return reloadFieldNodeForm(run.root, step.reload);
   if ('context' in step) return setContext(run.root, step.context);
   if ('setHeld' in step)
-    return requireNode(run.held[step.setHeld], step.setHeld).setValue(
+    return requireNode(run.heldNodes[step.setHeld], step.setHeld).setValue(
       step.value,
     );
   if ('reset' in step) return findNode(run, step.reset).resetSubtree();
@@ -32,7 +32,7 @@ export const applySceneStep = (
     return writeFieldNodeInput(findNode(run, step.input), step.value);
   if ('append' in step)
     return findNode(run, step.append).setValue((previous: unknown) => {
-      run.updater.push(previous);
+      run.updaterInputs.push(previous);
       return [...(Array.isArray(previous) ? previous : []), step.value];
     });
   if ('push' in step) {

@@ -68,10 +68,10 @@ const strictAndLoose = [
   },
 ];
 
-/** Recursive item gates: a gate on a recursive item template bound to the wrong instance. */
-export const recursiveItemGateScenes: readonly BoundaryScene[] = [
+/** Item gates: a gate on an item template evaluated for the wrong instance, in plain and recursive lists. */
+export const itemGateScenes: readonly BoundaryScene[] = [
   {
-    id: 'recursive-item-gates/nested-item-takes-own-branch',
+    id: 'item-gates/nested-item-takes-own-branch',
     origin:
       'settlement evaluation E5a and design section 12: nested items take the branch of the outer item',
     schema: ownBranch,
@@ -104,8 +104,8 @@ export const recursiveItemGateScenes: readonly BoundaryScene[] = [
       'errors /0/children/0/value': [BRANCH_Y],
       'errors /0/children/2/value': [BRANCH_Y],
     },
-    defect:
-      'every nested item is validated against the gates bound to the outer item, so it reports both branches',
+    difference:
+      "every item of the recursive list, the outer item included, reports the minLength errors of both oneOf branches instead of only its own kind's branch",
     known: {
       sequential: {
         'errors /0/value': [BRANCH_X, BRANCH_Y],
@@ -115,7 +115,7 @@ export const recursiveItemGateScenes: readonly BoundaryScene[] = [
     },
   },
   {
-    id: 'recursive-item-gates/outer-item-declares-on-its-children',
+    id: 'item-gates/outer-item-declares-on-its-children',
     origin:
       'settlement evaluation E6 (if form, depth one): an outer instance declares on its child items',
     schema: childDeclaration,
@@ -135,7 +135,7 @@ export const recursiveItemGateScenes: readonly BoundaryScene[] = [
     },
   },
   {
-    id: 'recursive-item-gates/outer-item-declares-at-depth-two',
+    id: 'item-gates/outer-item-declares-at-depth-two',
     origin:
       'settlement evaluation E6 (if form, depth two): the declaration of a depth-one item on its children',
     schema: childDeclaration,
@@ -146,10 +146,16 @@ export const recursiveItemGateScenes: readonly BoundaryScene[] = [
       'schema.minLength /1/children/0/children/0/value',
     ],
     modes: ['sequential', 'fresh'],
-    state: 'open',
-    reason:
-      'the design states no binding rule for a gate hosted inside the recursive cycle at depth two (prototype round four, section 5)',
-    pinned: {
+    state: 'known',
+    expected: {
+      'mount: schema.minLength /0/children/0/children/0/value': undefined,
+      'mount: schema.minLength /1/children/0/children/0/value': 3,
+      'schema.minLength /0/children/0/children/0/value': undefined,
+      'schema.minLength /1/children/0/children/0/value': 3,
+    },
+    difference:
+      'at mount the depth-two declaration is decided by the outermost item /1 instead of /1/children/0, so the child of the strict /1/children/0 gets no minLength',
+    known: {
       sequential: {
         'mount: schema.minLength /0/children/0/children/0/value': undefined,
         'mount: schema.minLength /1/children/0/children/0/value': undefined,
@@ -163,7 +169,7 @@ export const recursiveItemGateScenes: readonly BoundaryScene[] = [
     },
   },
   {
-    id: 'recursive-item-gates/item-level-if-on-the-item-itself',
+    id: 'item-gates/item-level-if-on-the-item-itself',
     origin:
       'settlement evaluation E12b: an item-level if/then adds a keyword to the item itself',
     schema: {
@@ -189,7 +195,8 @@ export const recursiveItemGateScenes: readonly BoundaryScene[] = [
       'schema.minProperties /list/0': 2,
       'schema.minProperties /list/1': undefined,
     },
-    defect: 'the then of an item-level if is not composed into the item schema',
+    difference:
+      'the then of an item-level if is not composed into the item schema',
     known: {
       sequential: {
         'schema.minProperties /list/0': undefined,

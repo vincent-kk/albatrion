@@ -13,10 +13,10 @@ export const readSceneProbe = (run: SceneRun, token: string): unknown => {
   const space = token.indexOf(' ');
   const kind = space < 0 ? token : token.slice(0, space);
   const argument = space < 0 ? '' : token.slice(space + 1);
-  if (kind === 'refresh') return run.refreshed.has(argument);
+  if (kind === 'refresh') return run.refreshedPaths.has(argument);
   if (kind === 'detached')
-    return run.held[argument]
-      ? Reflect.get(run.held[argument], 'isDetached')
+    return run.heldNodes[argument]
+      ? Reflect.get(run.heldNodes[argument], 'isDetached')
       : ABSENT;
   if (kind === 'find') return findSceneNode(run.root, argument) !== null;
   if (kind === 'names')
@@ -50,8 +50,8 @@ const readKeyword = (node: FieldNode, keyword: string): unknown =>
 /** Probe kinds that read the run rather than a node, keyed by kind. */
 const RUN_READERS: Record<string, (run: SceneRun) => unknown> = {
   log: (run) => [...run.log],
-  updater: (run) => [...run.updater],
-  thrown: (run) => [...run.thrown],
+  updater: (run) => [...run.updaterInputs],
+  thrown: (run) => [...run.thrownErrors],
   reports: (run) =>
     run.reports.map(({ level, code, origin }) => `${level} ${code} ${origin}`),
   status: (run) => run.root.diagnostics.status,

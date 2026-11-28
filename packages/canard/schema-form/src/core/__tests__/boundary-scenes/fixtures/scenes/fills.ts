@@ -34,7 +34,7 @@ export const fillScenes: readonly BoundaryScene[] = [
     modes: ['sequential', 'fresh'],
     state: 'known',
     expected: { 'value /f': 'B', 'value /g': 'on' },
-    defect:
+    difference:
       'f takes the default chosen before g is filled and is not decided again after the fill',
     known: {
       sequential: { 'value /f': 'A', 'value /g': 'on' },
@@ -84,7 +84,7 @@ export const fillScenes: readonly BoundaryScene[] = [
     modes: ['sequential', 'fresh'],
     state: 'known',
     expected: { 'value /o/h': 'x', 'value /g': 'g2', 'value /f': 'F2' },
-    defect:
+    difference:
       'each default is chosen before the fill it depends on, so the chain keeps its first choices',
     known: {
       sequential: { 'value /o/h': 'x', 'value /g': 'g1', 'value /f': 'F0' },

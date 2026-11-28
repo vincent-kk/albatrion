@@ -91,19 +91,36 @@ export interface BoundarySceneBase {
  * A boundary scene: a place where two features meet and a wrong result was once observed.
  * Exactly one state applies:
  * - `expected`: the correct result; every mode must read `expected`.
- * - `known`: the engine is wrong today; every mode must read its `known` entry exactly, which differs from
- *   `expected` and names the defect. The change that fixes the defect turns the scene into `expected`.
+ * - `known`: the engine gives another result today, a defect or a current contract an accepted design changes;
+ *   every mode must read its `known` entry exactly, which differs from `expected`, and `difference` names the
+ *   difference. The change that removes the difference turns the scene into `expected`.
  * - `open`: the correct result is not decided; every mode must read its `pinned` entry exactly.
  * The ledger test lists the ids of each state, so a change of state shows in review.
  */
 export type BoundaryScene = BoundarySceneBase &
   (
-    | { state: 'expected'; expected: Observation }
     | {
-        state: 'known';
+        /** Marks the scene as decided: every mode reads `expected`. */
+        state: 'expected';
+        /** The correct readings, keyed by probe token. */
         expected: Observation;
-        known: ModeObservations;
-        defect: string;
       }
-    | { state: 'open'; pinned: ModeObservations; reason: string }
+    | {
+        /** Marks the scene as differing today: every mode reads its `known` entry. */
+        state: 'known';
+        /** The correct readings, keyed by probe token. */
+        expected: Observation;
+        /** The exact readings of each mode today. */
+        known: ModeObservations;
+        /** One sentence naming how the readings differ from `expected`. */
+        difference: string;
+      }
+    | {
+        /** Marks the scene as undecided: every mode reads its `pinned` entry. */
+        state: 'open';
+        /** The exact readings of each mode today. */
+        pinned: ModeObservations;
+        /** Why the correct result is not decided. */
+        reason: string;
+      }
   );

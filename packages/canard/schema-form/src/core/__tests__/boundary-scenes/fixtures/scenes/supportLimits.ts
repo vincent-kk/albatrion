@@ -26,6 +26,7 @@ const selfPresenceFlip = {
       default: 'D',
       controls: { active: '../x === undefined' },
     },
+    y: { type: 'string' },
   },
 } as const;
 
@@ -57,13 +58,13 @@ export const supportLimitScenes: readonly BoundaryScene[] = [
     schema: selfPresenceFlip,
     load: {},
     steps: [],
-    probes: ['names /x'],
+    probes: ['names /x', 'names /y'],
     modes: ['sequential'],
     state: 'known',
-    expected: { 'names /x': true },
-    defect:
+    expected: { 'names /x': true, 'names /y': false },
+    difference:
       'the budget error names only the root path, not the field whose presence kept flipping',
-    known: { sequential: { 'names /x': false } },
+    known: { sequential: { 'names /x': false, 'names /y': false } },
   },
   {
     id: 'support-limits/self-reader-through-a-derived-copy',
@@ -88,8 +89,8 @@ export const supportLimitScenes: readonly BoundaryScene[] = [
     modes: ['sequential'],
     state: 'known',
     expected: { ...LOAD_BUDGET_ERROR, budget: 'derive', 'source /u': '2' },
-    defect:
-      'the load settles on the converted 2 and keeps it, so the loop without a fixed point raises nothing',
+    difference:
+      'under WRITE-098 the load stores the converted 2 and settles; the settlement design makes this loop without a fixed point a derive budget error (a breaking change, design section 5)',
     known: { sequential: { ...SETTLED, 'source /u': 2 } },
   },
   {
@@ -123,8 +124,8 @@ export const supportLimitScenes: readonly BoundaryScene[] = [
       budget: 'hostWheel',
       'source /amount': '5',
     },
-    defect:
-      'the load settles on the converted 5 and keeps it, so the negating conditions raise nothing',
+    difference:
+      'under WRITE-098 the load stores the converted 5 and settles; the settlement design makes these negating conditions a host wheel budget error (a breaking change, design section 5)',
     known: { sequential: { ...SETTLED, 'source /amount': 5 } },
   },
   {
@@ -150,8 +151,8 @@ export const supportLimitScenes: readonly BoundaryScene[] = [
     modes: ['sequential'],
     state: 'known',
     expected: { ...LOAD_BUDGET_ERROR, budget: 'hostWheel', 'source /u0': '0' },
-    defect:
-      'the load settles on converted values and keeps them, so the ring without a fixed point raises nothing',
+    difference:
+      'under WRITE-098 the load stores converted values and settles; the settlement design makes this ring, whose fixed points the fixed start cannot reach, a host wheel budget error (a breaking change, design section 5)',
     known: { sequential: { ...SETTLED, 'source /u0': 0 } },
   },
 ];

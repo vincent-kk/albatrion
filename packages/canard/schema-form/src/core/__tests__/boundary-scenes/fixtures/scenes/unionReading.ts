@@ -29,7 +29,7 @@ export const unionReadingScenes: readonly BoundaryScene[] = [
       'types /u': ['number'],
       status: 'stable',
     },
-    defect:
+    difference:
       'the gate reads the converted number instead of the source, so the union is not narrowed',
     known: {
       sequential: {
@@ -82,7 +82,7 @@ export const unionReadingScenes: readonly BoundaryScene[] = [
       'value /data': 2,
       'types /data': ['number'],
     },
-    defect:
+    difference:
       'switching the gate on narrows the type but leaves the string, and a fresh load of it does not narrow',
     known: {
       sequential: {
@@ -140,7 +140,7 @@ export const unionReadingScenes: readonly BoundaryScene[] = [
       'value /x': ABSENT,
       'value /o/sw': false,
     },
-    defect:
+    difference:
       'the settlement keeps the first narrowing: u stays typed number while holding a string and sw stays true',
     known: {
       sequential: {

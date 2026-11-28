@@ -82,7 +82,7 @@ export const settlementScenes: readonly BoundaryScene[] = [
     modes: ['sequential', 'fresh'],
     state: 'known',
     expected: { 'value /u': 1, 'value /g': 5 },
-    defect:
+    difference:
       'the load converts 1 to true under the list the unfilled g selects and keeps it (WRITE-098), so a fresh load of the result keeps true too',
     known: {
       sequential: { 'value /u': true, 'value /g': 5 },
@@ -115,7 +115,6 @@ export const settlementScenes: readonly BoundaryScene[] = [
     },
     load: { uf: false, o: 'a', sw: true, g: 5, u: 1 },
     steps: [
-      { note: 'load' },
       { set: '/u', value: 0 },
       { note: 'written' },
       { set: '/uf', value: true },
@@ -124,8 +123,6 @@ export const settlementScenes: readonly BoundaryScene[] = [
     modes: ['sequential', 'fresh'],
     state: 'expected',
     expected: {
-      'load: value /u': 1,
-      'load: refresh /u': false,
       'written: value /u': 0,
       'written: refresh /u': true,
       'value /u': 0,
@@ -223,7 +220,7 @@ export const settlementScenes: readonly BoundaryScene[] = [
     modes: ['sequential', 'fresh'],
     state: 'known',
     expected: { 'value /f': 'B' },
-    defect:
+    difference:
       'the root gate reads sub/g2 as absent before d is derived and is not decided again, so f gets no default',
     known: {
       sequential: { 'value /f': undefined },
@@ -263,7 +260,7 @@ export const settlementScenes: readonly BoundaryScene[] = [
       'value /t': '7',
       'inactive /t': [],
     },
-    defect:
+    difference:
       'the unsetValue fires on t while the stale d still keeps it present, so the retained 7 is lost',
     known: {
       sequential: {

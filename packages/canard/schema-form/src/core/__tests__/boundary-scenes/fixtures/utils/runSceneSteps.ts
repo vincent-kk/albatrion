@@ -23,7 +23,7 @@ export const runSceneSteps = async (
         observation,
         readSceneProbes(run, scene.probes, `${step.note}: `),
       );
-      run.refreshed.clear();
+      run.refreshedPaths.clear();
     } else if ('validate' in step) await run.root.validate();
     else attempt(run, String(index), () => applySceneStep(run, step));
   };
@@ -50,7 +50,7 @@ const attempt = (run: SceneRun, where: string, operation: () => void) => {
   try {
     operation();
   } catch (error) {
-    run.thrown.push(`${where} ${describeThrown(error)}`);
+    run.thrownErrors.push(`${where} ${describeThrown(error)}`);
     run.lastError = error;
   }
 };
