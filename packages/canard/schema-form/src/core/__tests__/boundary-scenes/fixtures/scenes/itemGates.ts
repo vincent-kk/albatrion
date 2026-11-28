@@ -223,7 +223,7 @@ export const itemGateScenes: readonly BoundaryScene[] = [
       'schema.minLength /1/children/0/children/0/value': undefined,
     },
     difference:
-      'the declaration an item gives to its children also reaches its grandchildren: the child of a loose item takes minLength 3 from the strict item two levels up',
+      'the depth-two declaration follows the outermost item instead of the parent item: the child of the loose /0/children/0 takes minLength 3 from the strict /0, and the child of /1/children/0 has it only while /1 is strict, whatever /1/children/0 is',
     known: {
       sequential: {
         'mount: schema.minLength /0/children/0/children/0/value': 3,
