@@ -330,6 +330,47 @@ describe('relocated gates that disappear between two wheels', () => {
   });
 });
 
+describe('a flipped decision schedules its other consumers', () => {
+  it('two hosting ancestors turned off one after the other and back', () => {
+    const schema = {
+      type: 'object',
+      properties: {
+        k: { type: 'string' },
+        obj: {
+          type: 'object',
+          properties: {
+            j: { type: 'string' },
+            list: { type: 'array', items: { type: 'string' } },
+          },
+          if: { properties: { j: { const: '1' } }, required: ['j'] },
+          then: { properties: { list: { items: { maxLength: 5 } } } },
+        },
+      },
+      allOf: [
+        {
+          if: { properties: { k: { const: '1' } }, required: ['k'] },
+          then: {
+            properties: {
+              obj: { properties: { list: { items: { minLength: 1 } } } },
+            },
+          },
+        },
+      ],
+    };
+    const result = compareWithFreshLoad(
+      schema,
+      { k: '1', obj: { j: '1', list: ['a'] } },
+      [
+        { kind: 'set', path: '/k', value: '0' },
+        { kind: 'set', path: '/obj/j', value: '0' },
+        { kind: 'set', path: '/k', value: '1' },
+        { kind: 'set', path: '/obj/j', value: '1' },
+      ],
+    );
+    expect(result).toEqual(HOLDS);
+  });
+});
+
 describe('a prepared static host whose child a later write replaces', () => {
   it('a gate reads inside a static object whose child objects are replaced', () => {
     const schema = {

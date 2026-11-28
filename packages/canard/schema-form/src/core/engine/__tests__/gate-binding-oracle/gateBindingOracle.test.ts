@@ -26,7 +26,7 @@ const TOTAL = 3000;
  * after an array method inside a batch, an empty string item of a string array reads output `null`
  * where a fresh load reads it omitted (reduced: `{ arr: [''] }`, `root.batch(() => arr.remove(1))`).
  */
-const ONE_DIRECTION_MISMATCHES = [601, 775, 1053, 1398, 1600, 1659, 2514];
+const ONE_DIRECTION_MISMATCHES = [775, 1053, 1398, 1600, 1659, 2514];
 
 /** Cyclic seeds of the full range that differ from a fresh load; the same array item difference. */
 const CYCLIC_MISMATCHES = [394, 1755, 2841];

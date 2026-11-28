@@ -25,7 +25,9 @@ export type GateDeclaration =
   | 'omit-trailing-empty'
   | 'nullable'
   | 'extra-property'
-  | 'own-gate';
+  | 'own-gate'
+  /** A keyword on the host itself (`required: ['s']`), beside `properties`. */
+  | 'host-keyword';
 
 /** What the gate condition reads; a sibling read of an item host reads the item's own field. */
 export type GateRead = 'sibling' | 'parent' | 'presence' | 'computed';

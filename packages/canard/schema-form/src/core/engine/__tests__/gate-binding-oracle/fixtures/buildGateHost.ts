@@ -21,7 +21,12 @@ const DECLARED: Record<GateDeclaration, Record<string, unknown>> = {
       then: { properties: { r: { type: 'string', minLength: 3 } } },
     },
   },
+  'host-keyword': {},
 };
+
+/** What the selected branch declares on the host itself, beside its `properties`. */
+const HOST_KEYWORDS: Partial<Record<GateDeclaration, Record<string, unknown>>> =
+  { 'host-keyword': { required: ['s'] } };
 
 /** The field a `field-active` gate turns on for each declaration. */
 const ACTIVE_TARGET: Record<GateDeclaration, string> = {
@@ -31,6 +36,7 @@ const ACTIVE_TARGET: Record<GateDeclaration, string> = {
   nullable: 't',
   'extra-property': 'e',
   'own-gate': 'sub',
+  'host-keyword': 's',
 };
 
 /**
@@ -61,7 +67,10 @@ export const buildGateHost = (
     },
     key: { type: 'string' },
   };
-  const declared = { properties: DECLARED[declaration] };
+  const declared = {
+    properties: DECLARED[declaration],
+    ...HOST_KEYWORDS[declaration],
+  };
   if (gate === 'if-required')
     return {
       type: 'object',
@@ -82,7 +91,10 @@ export const buildGateHost = (
       properties,
       controls: { discriminator: 's' },
       oneOf: [
-        { properties: { s: { const: '1' }, ...DECLARED[declaration] } },
+        {
+          properties: { s: { const: '1' }, ...DECLARED[declaration] },
+          ...HOST_KEYWORDS[declaration],
+        },
         { properties: { s: { const: '0' } } },
       ],
     };
