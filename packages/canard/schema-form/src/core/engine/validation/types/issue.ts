@@ -15,8 +15,8 @@ export interface ValidationIssue<SourceError = unknown> {
   /**
    * Schema location of the failing keyword, using a URI fragment when available. A validator
    * may write it relative to a reference it passed through. The form hides an issue of an
-   * unselected `oneOf`/`anyOf` branch only when the union segments this location shows and
-   * `dataPath` decide the branch; an issue it cannot attribute stays visible.
+   * unselected `oneOf`/`anyOf` branch only when the union segments and definition entries
+   * this location shows and `dataPath` decide the branch; an issue it cannot attribute stays visible.
    */
   schemaPath?: string;
   /**
