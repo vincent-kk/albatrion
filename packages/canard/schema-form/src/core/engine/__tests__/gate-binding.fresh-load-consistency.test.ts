@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 
 import { nodeFromJSONSchema } from '@/schema-form/__tests__/fixtures/nodeFromJSONSchema';
 import { createTestValidator } from '@/schema-form/core/__tests__/fixtures/createTestValidator';
+import { FormErrorCode } from '@/schema-form/errors';
 
 import { type ArrayNode, isArrayNode } from '../../surface';
 import { ValidationMode } from '../types/state';
@@ -277,13 +278,14 @@ describe('deep-gate scenes agree with a fresh load', () => {
       { k: '1', obj: { list: ['a'] } },
       context,
     );
-    let thrown = '';
+    let caught: unknown;
     try {
       root.find('/k')?.setValue('0');
     } catch (error) {
-      thrown = String(error);
+      caught = error;
     }
-    expect(thrown).toContain('Gate evaluation failed');
+    expect(String(caught)).toContain('Gate evaluation failed');
+    expect(caught).toMatchObject({ code: FormErrorCode.ExpressionThrew });
     expect(schemaAt(root, '/obj/list/0')).not.toContain('maxLength');
   });
 });
