@@ -19,6 +19,8 @@ export interface UnionSegment {
   readonly moves: number;
   /** Non-moving keywords written immediately before the segment, as produced by `readComparedRun`. */
   readonly run: readonly SchemaStep[];
+  /** Whether the run reaches the start of the location, where the validator may have restarted inside an authored run. */
+  readonly isRunOpen: boolean;
   /** Canonical location as written from `#` up to and including the segment's index. */
   readonly location: string;
 }
@@ -54,17 +56,20 @@ export const readIssueLocation = (
   for (let index = steps.length - 1; index >= 0; index--) {
     const step = steps[index];
     if (step.kind === 'move') moves++;
-    else if (step.kind === 'union' && step.argument !== undefined)
+    else if (step.kind === 'union' && step.argument !== undefined) {
+      const run = readComparedRun(steps, index);
       unions.push({
         keyword: step.keyword,
         index: step.argument,
         moves,
-        run: readComparedRun(steps, index),
+        run,
+        isRunOpen: run.length === index,
         location: joinPointerWithPrefixOf(
           schemaPath,
           segments.slice(0, step.end),
         ),
       });
+    }
   }
   return {
     unions,

@@ -26,7 +26,8 @@ const BRANCH_INDEX = /^\d+$/;
 
 /**
  * Resolve one union segment among the branch fragments bound at its host. A candidate has
- * the segment's keyword and index, and its run equals the segment's run. Several candidates
+ * the segment's keyword and index, and its run equals the segment's run, or ends with it
+ * when the segment's run reaches the start of the location. Several candidates
  * resolve only when exactly one authored location equals the segment's location as written,
  * which the `schemaPath` contract (an authored location) lets the form take at its word.
  * @param segment - Union segment read from the issue's schema location.
@@ -50,7 +51,7 @@ export const resolveUnionBranch = (
       candidates.push(fragment);
   }
   candidates = candidates.filter((fragment) =>
-    isSameRun(readBranchRun(fragment), segment.run),
+    isRunMatch(readBranchRun(fragment), segment),
   );
   if (candidates.length > 1)
     candidates = candidates.filter(
@@ -87,19 +88,22 @@ const readBranchRun = (
 };
 
 /**
- * Report whether two runs hold the same keywords with the same arguments in the same order.
- * @param authored - A candidate fragment's run; undefined never matches.
- * @param visible - The issue segment's run.
- * @returns True when both runs have equal length and agree keyword by keyword.
+ * Compare a candidate's run with a segment's run, keyword by keyword and argument by argument.
+ * @param authored - The candidate fragment's run; undefined never matches.
+ * @param segment - The issue segment; an open run may have lost its start to a restart.
+ * @returns True when the runs are equal, or when the segment's run is open and ends `authored`.
  */
-const isSameRun = (
+const isRunMatch = (
   authored: readonly SchemaStep[] | undefined,
-  visible: readonly SchemaStep[],
-): boolean =>
-  authored !== undefined &&
-  authored.length === visible.length &&
-  visible.every(
+  segment: UnionSegment,
+): boolean => {
+  const visible = segment.run;
+  const offset = authored ? authored.length - visible.length : -1;
+  if (!authored || offset < 0 || (offset > 0 && !segment.isRunOpen))
+    return false;
+  return visible.every(
     (step, index) =>
-      step.keyword === authored[index].keyword &&
-      step.argument === authored[index].argument,
+      step.keyword === authored[offset + index].keyword &&
+      step.argument === authored[offset + index].argument,
   );
+};

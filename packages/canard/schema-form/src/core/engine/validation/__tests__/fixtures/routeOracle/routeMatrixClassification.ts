@@ -219,7 +219,7 @@ export const routeMatrixClassification: Readonly<
     'ajv8-2020': [A, A, A, A],
     'ajv8-2020-separate': [A, A, A, A],
   },
-  // Kept when compiled separately: two unions at the host have the branch index after an empty run, and `#/oneOf/<i>` is neither's authored location.
+  // Kept when compiled separately: two unions of the host fit the location `#/oneOf/<i>`.
   'oneOf beside $ref and inside its target': {
     ajv6: [A, A, A, A],
     'ajv6-separate': [K, A, K, A],
@@ -230,16 +230,15 @@ export const routeMatrixClassification: Readonly<
     'ajv8-2020': [A, A, A, A],
     'ajv8-2020-separate': [K, A, K, A],
   },
-  // Kept when compiled separately: the location restarts inside the authored run, so `#/oneOf/<i>` has an empty run and `allOf/0/oneOf/<i>` does not.
   'inline $ref ending in allOf index': {
     ajv6: [A, A, A, A],
-    'ajv6-separate': [K, A, K, A],
+    'ajv6-separate': [A, A, A, A],
     ajv7: [A, A, A, A],
-    'ajv7-separate': [K, A, K, A],
+    'ajv7-separate': [A, A, A, A],
     ajv8: [A, A, A, A],
-    'ajv8-separate': [K, A, K, A],
+    'ajv8-separate': [A, A, A, A],
     'ajv8-2020': [A, A, A, A],
-    'ajv8-2020-separate': [K, A, K, A],
+    'ajv8-2020-separate': [A, A, A, A],
   },
   'oneOf under dependentSchemas': {
     ajv6: [A, A, A, A],
