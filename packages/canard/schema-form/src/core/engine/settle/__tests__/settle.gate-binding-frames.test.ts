@@ -1,5 +1,4 @@
-import { existsSync, writeFileSync } from 'node:fs';
-import { afterAll, describe, expect, it } from 'vitest';
+import { describe, expect, it } from 'vitest';
 
 import { createTestValidator } from '@/schema-form/core/__tests__/fixtures/createTestValidator';
 import { createDispatchTree } from '@/schema-form/core/engine/__tests__/fixtures/createDispatchTree';
@@ -21,17 +20,6 @@ import { getGateRegistry } from '../utils/gates/getGateRegistry';
  * tuples and nested arrays, recursion edges, reads above a recursive item, aliases around a cycle,
  * moved items, convergence within one settlement and an item-local type conflict.
  */
-
-const OUT =
-  '/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/b5781004-ec7c-4a1e-8b24-8f294a15778d/scratchpad/gb/results/';
-const observations: Record<string, unknown> = {};
-afterAll(() => {
-  if (existsSync(OUT))
-    writeFileSync(
-      `${OUT}adversarial-${Date.now()}.json`,
-      JSON.stringify(observations, null, 1),
-    );
-});
 
 type Node = DispatchTestNode;
 
@@ -146,19 +134,11 @@ describe('a root fragment', () => {
     );
     const targets = rows.map((_, index) => `/rows/${index}/v`);
     const mounted = keywords(root, targets, 'minLength');
-    const referencesAt7 = references(root, '/rows/7');
     dispatchSetValue(need(root, '/flag'), true);
     const flipped = keywords(root, targets, 'minLength');
     dispatchSetValue(need(root, '/flag'), false);
     const restored = keywords(root, targets, 'minLength');
     const rootDecisions = decisions(root, '#/allOf/0/controls/active');
-    observations['(d)'] = {
-      mounted,
-      flipped,
-      restored,
-      referencesAt7,
-      rootDecisions,
-    };
     expect({ mounted, flipped, restored, rootDecisions }).toEqual({
       mounted: targets.map(() => undefined),
       flipped: targets.map(() => 2),
@@ -210,11 +190,6 @@ describe('aliases', () => {
     const leftL = read();
     dispatchSetValue(need(root, '/right/kind'), 'strict');
     const rightStrict = read();
-    const hosts = {
-      left: references(root, '/left'),
-      right: references(root, '/right'),
-    };
-    observations['(f)'] = { mounted, leftL, rightStrict, hosts };
     expect({ mounted, leftL, rightStrict }).toEqual({
       mounted: { left: [3, undefined], right: [undefined, undefined] },
       leftL: { left: [undefined, 9], right: [undefined, undefined] },
@@ -258,7 +233,6 @@ describe('tuple and nested arrays', () => {
       array: references(root, '/1/4'),
       item: references(root, '/1/4/2'),
     };
-    observations['(g)'] = { mounted, written, hosts };
     expect({
       mounted,
       written,
@@ -326,14 +300,8 @@ describe('two recursion edges', () => {
         ],
         sibling: keyword(root, `/0/${outer}/0/${inner}/0/value`, 'maxLength'),
         outer: keyword(root, `/0/${outer}/0/value`, 'maxLength'),
-        hosts: references(root, target),
       };
-      observations[`E1 ${outer}`] = observed;
-      expect({
-        value: observed.value,
-        sibling: observed.sibling,
-        outer: observed.outer,
-      }).toEqual({
+      expect(observed).toEqual({
         value: [5, maxLength],
         sibling: maxLength,
         outer: undefined,
@@ -396,7 +364,6 @@ describe('a read above a recursive item', () => {
     dispatchSetValue(need(root, '/rows/0/enabled'), false);
     const first = keywords(root, targets, 'minLength');
     const hosts = references(root, '/rows/0/children/0');
-    observations.E2 = { mounted, second, first, hosts };
     expect({
       mounted,
       second,
@@ -460,21 +427,11 @@ describe('an alias inside and outside a cycle', () => {
       forestChild: read('/forest/0/children/0/value'),
       discriminatorHosts: decisions(root, '#/$defs/item'),
     };
-    observations.E4 = {
-      ...observed,
-      hosts: {
-        standaloneChild: references(root, '/standalone/children/0'),
-        forestChild: references(root, '/forest/0/children/0'),
-      },
-    };
-    expect({
-      standaloneChild: observed.standaloneChild,
-      forestParent: observed.forestParent,
-      forestChild: observed.forestChild,
-    }).toEqual({
+    expect(observed).toEqual({
       standaloneChild: [5, 4],
       forestParent: [3, undefined],
       forestChild: [5, undefined],
+      discriminatorHosts: [],
     });
   });
 });
@@ -506,11 +463,6 @@ describe('a moved item', () => {
     const rewritten = read();
     dispatchSetValue(need(root, '/list/0/kind'), 'x');
     const firstX = read();
-    const hosts = {
-      first: references(root, '/list/0'),
-      second: references(root, '/list/1'),
-    };
-    observations.E5 = { mounted, moved, pushed, rewritten, firstX, hosts };
     expect({ mounted, moved, pushed, rewritten, firstX }).toEqual({
       mounted: [3, 5],
       moved: [5, 'absent'],
@@ -557,7 +509,6 @@ describe('convergence within one settlement', () => {
       dispatchSetValue(need(root, '/0/kind'), 'strict');
     });
     const reversed = keyword(root, '/0/children/0/value', 'minLength');
-    observations.E6 = { batched, reversed };
     expect({ batched, reversed }).toEqual({ batched: undefined, reversed: 3 });
   });
 });
@@ -645,7 +596,6 @@ describe('an item-local type conflict', () => {
       dispatchPush(need(written.root, '/list'), { k: 'y' }),
     );
     const writeThenPush = written.read();
-    observations.M1 = { viaLoad, viaWrite, loadThenPush, writeThenPush };
     const { thrown: loadThrown, reports: loadReports, ...loadState } = viaLoad;
     const {
       thrown: writeThrown,
