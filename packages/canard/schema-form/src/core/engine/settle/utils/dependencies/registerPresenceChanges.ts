@@ -172,7 +172,9 @@ export const registerPresenceChanges = <Self extends FieldNodeRecord<Self>>(
       !context.shapeDirtyPaths.has(parentOf(ancestor)) &&
       registry.mayChangeOwnDeclarationAt(ancestor, accumulated, prefixes)
     ) {
-      context.shapeDirtyPaths.add(parentOf(ancestor));
+      if (registry.mayChangeOwnSchemaOnlyAt(ancestor, accumulated, prefixes))
+        (context.ownSchemaPaths ??= new Set()).add(ancestor);
+      else context.shapeDirtyPaths.add(parentOf(ancestor));
       marked = true;
     }
     if (!ancestor) break;

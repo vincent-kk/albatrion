@@ -14,11 +14,13 @@ import { getHostWheelBudgetCap } from '../gates/getGateBudgetCap';
 import { prepareGateTableRound } from '../gates/prepareGateTableRound';
 import { verifyGateWheelConfirmation } from '../gates/verifyGateWheelConfirmation';
 import { updateOutput } from '../output/updateOutput';
+import { recomposeOwnSchema } from './childSelection/recomposeOwnSchema';
 import { selectChildren } from './childSelection/selectChildren';
 import { discardStaticHostPreparation } from './childSelection/utils/discardStaticHostPreparation';
 import { dirtyChildren } from './dirtyChildren';
 import { preserveReferences } from './preserveReferences';
 import { primeHost } from './primeHost';
+import { recordWheelStartSchemas } from './recordWheelStartSchemas';
 import { relocatedGates } from './relocatedGates';
 import { scheduleChangedRelocatedGates } from './scheduleChangedRelocatedGates';
 import { scheduleRelocatedGates } from './scheduleRelocatedGates';
@@ -168,8 +170,10 @@ const computeNodeBody = <Self extends FieldNodeRecord<Self>>(
   let wheelPlan = context.hasGates ? prepareHostWheelPlan(node) : undefined;
   let gates = wheelPlan?.gates ?? [];
   const relocatedOccurrences = wheelPlan?.relocatedOccurrences ?? [];
-  if (gates.length > 0)
-    primeHost(node, prior, context, relocatedOccurrences.length > 0);
+  const resetChildren =
+    gates.length > 0
+      ? primeHost(node, prior, context, relocatedOccurrences.length > 0)
+      : undefined;
   const initialDirty = dirtyChildren(node, context);
   for (let index = 0; index < initialDirty.length; index++)
     computeNode(initialDirty[index], context);
@@ -229,6 +233,8 @@ const computeNodeBody = <Self extends FieldNodeRecord<Self>>(
       registered,
       publication,
     );
+    if (round === 0 && resetChildren?.length)
+      recordWheelStartSchemas(node, resetChildren, context);
     const flagged = context.presenceHosts?.delete(node) === true;
     if (flagged || registered)
       registered =
@@ -330,6 +336,13 @@ export const computeNode = <Self extends FieldNodeRecord<Self>>(
   context.gateWheelFrame = undefined;
   try {
     computeNodeBody(node, context);
+    // An item recomposes its own schema after publishing the values its decisions read.
+    if (context.ownSchemaPaths?.delete(node.path)) {
+      if (!recomposeOwnSchema(node, context)) {
+        if (node.__parent__) context.shapeDirtyPaths.add(node.__parent__.path);
+      } else if (context.dirtyPaths.has(node.path))
+        computeNodeBody(node, context);
+    }
     if (node === context.root) flushPresenceTemplates(undefined, context);
     computed = true;
   } finally {

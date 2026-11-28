@@ -374,6 +374,16 @@ export interface SettlementContext<Self extends FieldNodeRecord<Self>> {
   dirtyChildrenByParent: Map<string, Map<string, string>>;
   /** Declaration-owner paths scheduled in this settlement by reverse dependencies or `@`. */
   dependencyOwnerPaths: Set<string>;
+  /** Array items whose own decisions changed; each recomposes its own schema without its parent's wheel. */
+  ownSchemaPaths?: Set<string>;
+  /**
+   * Schemas that retained children held before a host wheel reset them to its start schema.
+   * The child holds and computes under the start schema during the wheel's first round; its
+   * first selection (or, unreselected, the end of that pass) consumes the entry and records
+   * only a change in content against this schema, so a child that returns to it gets no
+   * record, schema event or reselection of its own children.
+   */
+  wheelPriorSchemas?: Map<Self, EffectiveSchema>;
   /** Hosts whose declarations or children require a new gate/shape selection. */
   shapeDirtyPaths: Set<string>;
   /** Source paths actually changed during marking. */

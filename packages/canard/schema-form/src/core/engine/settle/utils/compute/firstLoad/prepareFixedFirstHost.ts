@@ -1,28 +1,32 @@
-import { captureFieldNodeChange } from '../../../../record';
+import type { Optional } from '@aileron/declare';
+
 import type { FieldNodeRecord } from '../../../../record';
 import type { SettlementContext } from '../../../types/settlement';
-import { captureProjectionBaseline } from '../../dependencies/captureProjectionBaseline';
 import { staticIds } from '../childSelection/staticIds';
+import { resetWheelStartSchema } from '../resetWheelStartSchema';
 
 /**
- * Retain one ordinary priming baseline and restore only schemas that gates can change.
+ * Retain one ordinary priming baseline and start later wheels from it for the schemas gates can change.
+ * A child whose schema differs from its baseline is reset to it like an ungated start
+ * (`resetWheelStartSchema`): it computes under the baseline, and a restored schema is no change.
  * @param node - Object host at its original wheel priming boundary
  * @param context - Invocation-owned mount preparation and ordinary dirty bookkeeping
  * @param constructed - True after ordinary prime has built every unconditional child
- * @returns Whether an existing baseline replaced this priming pass
+ * @returns The children reset to their baseline when an existing baseline replaced this
+ * priming pass; undefined when the ordinary priming pass runs
  */
 export const prepareFixedFirstHost = <Self extends FieldNodeRecord<Self>>(
   node: Self,
   context: SettlementContext<Self>,
   constructed = false,
-): boolean => {
+): Optional<readonly Self[]> => {
   const preparation = context.fixedFirstLoad;
-  if (!preparation) return false;
+  if (!preparation) return undefined;
   const plan = preparation.plan.hosts[node.blueprintNode.id];
-  if (!plan) return false;
+  if (!plan) return undefined;
   const baseline = preparation.hosts.get(node);
   if (!baseline) {
-    if (!constructed) return false;
+    if (!constructed) return undefined;
     const affected = [];
     for (const entry of plan.entries) {
       const child = node.__childrenByName__![entry.name];
@@ -37,16 +41,13 @@ export const prepareFixedFirstHost = <Self extends FieldNodeRecord<Self>>(
         );
     }
     preparation.hosts.set(node, affected);
-    return false;
+    return undefined;
   }
+  const reset: Self[] = [];
   for (const { child, schema } of baseline) {
     if (child.__schema__ === schema) continue;
-    captureProjectionBaseline(node, child, true, context);
-    if (!context.originalSchemas.has(child.path))
-      context.originalSchemas.set(child.path, child.__schema__);
-    child.__schema__ = captureFieldNodeChange(child, '__schema__', schema);
-    context.dirtyPaths.add(child.path);
-    context.changedNodes.add(child);
+    resetWheelStartSchema(node, child, schema, context);
+    reset.push(child);
   }
-  return true;
+  return reset;
 };

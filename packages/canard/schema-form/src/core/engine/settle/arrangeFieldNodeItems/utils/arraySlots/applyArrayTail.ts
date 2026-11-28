@@ -81,8 +81,10 @@ export const applyArrayTail = <Self extends FieldNodeRecord<Self>>(
             )
           : oldExtras[removedIndex - templateCount];
   const registry = getGateRegistry(host.runtime);
-  if (context.hasGates)
+  if (context.hasGates) {
     for (const item of host.children ?? []) registry.remove(item);
+    registry.releaseSlotEdges(host, length, oldCount);
+  }
 
   const children = (host.children ?? []).slice(0, prefixCount);
   const nextSnapshot: unknown[] = new Array(prefixCount);

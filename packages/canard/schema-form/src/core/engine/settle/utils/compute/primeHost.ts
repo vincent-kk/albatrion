@@ -27,6 +27,7 @@ import { prepareStaticHost } from './childSelection/utils/prepareStaticHost';
 import { createChildNode } from './createChildNode';
 import { enterFieldNode } from './enterFieldNode';
 import { prepareFixedFirstHost } from './firstLoad/prepareFixedFirstHost';
+import { resetWheelStartSchema } from './resetWheelStartSchema';
 
 /** Annotates the lazily created `presenceSelections`; an argument-less `new Map()` would be `Map<any, any>`. */
 type PresenceSelections<Self> = Map<
@@ -48,16 +49,23 @@ const NO_ACTIVE_DECLARATION_IDS: readonly number[] = EMPTY_ARRAY;
  * @param node - Branch host starting one bounded calculation wheel
  * @param prior - Previous committed shape retained for identity reuse
  * @param context - Current write and its record factory
+ * A retained child computes under its ungated start schema without a record
+ * (`resetWheelStartSchema`); its first selection, or `recordWheelStartSchemas` when that pass
+ * does not reselect it, records only a change in content against the schema it held before.
  * @param hasRelocated - Wheel's already collected relocation evidence
- * @returns Nothing; the host now exposes the fixed baseline shape
+ * @returns Retained children reset to their start schema; the host now exposes the fixed baseline shape
  */
 export const primeHost = <Self extends FieldNodeRecord<Self>>(
   node: Self,
   prior: Dictionary<Self>,
   context: SettlementContext<Self>,
   hasRelocated = true,
-): void => {
-  if (context.fixedFirstLoad && prepareFixedFirstHost(node, context)) return;
+): readonly Self[] => {
+  const fixedFirst = context.fixedFirstLoad
+    ? prepareFixedFirstHost(node, context)
+    : undefined;
+  if (fixedFirst) return fixedFirst;
+  const reset: Self[] = [];
   const prepared = prepareStaticHost(node, prior, context, hasRelocated);
   if (prepared) {
     const selections: PresenceSelections<Self> = (context.presenceSelections ??=
@@ -77,7 +85,7 @@ export const primeHost = <Self extends FieldNodeRecord<Self>>(
       'children',
       prepared.baselineChildren,
     );
-    return;
+    return reset;
   }
   const baseline: Dictionary<Self> = {};
   Object.setPrototypeOf(baseline, null);
@@ -184,7 +192,12 @@ export const primeHost = <Self extends FieldNodeRecord<Self>>(
         isAtomic: node.runtime.blueprint?.isAtomic,
       },
     );
-    if (child.__schema__ !== schema) {
+    if (child === priorChild) {
+      if (child.__schema__ !== schema) {
+        resetWheelStartSchema(node, child, schema, context);
+        reset.push(child);
+      }
+    } else if (child.__schema__ !== schema) {
       captureProjectionBaseline(node, child, !!priorChild, context);
       if (!context.originalSchemas.has(child.path))
         context.originalSchemas.set(child.path, child.__schema__);
@@ -205,4 +218,5 @@ export const primeHost = <Self extends FieldNodeRecord<Self>>(
     isSameChildList(publishedChildren, children) ? publishedChildren : children,
   );
   if (context.fixedFirstLoad) prepareFixedFirstHost(node, context, true);
+  return reset;
 };
