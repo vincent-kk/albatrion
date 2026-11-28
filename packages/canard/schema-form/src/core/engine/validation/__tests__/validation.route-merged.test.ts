@@ -80,9 +80,7 @@ const sequentialRoute = <Self extends FieldNodeRecord<Self>>(
       if (!resolved) continue;
     }
     if (
-      isOffUnionBranchIssue(issue, runtime.blueprint, (fragment) =>
-        isActive(fragment, node),
-      )
+      isOffUnionBranchIssue(issue, node, runtime.blueprint.fragments, isActive)
     )
       continue;
     if (issue.rejectedKey) {

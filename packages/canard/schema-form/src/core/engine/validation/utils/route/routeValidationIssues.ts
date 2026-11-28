@@ -7,7 +7,7 @@ import type { ValidationIssue } from '../../types/issue';
 import { createUnionBranchActivity } from './createUnionBranchActivity';
 import { createValidationScope } from './createValidationScope';
 import { isOffUnionBranchIssue } from './isOffUnionBranchIssue';
-import type { UnionBranchAttribution } from './isOffUnionBranchIssue/resolveUnionBranchAttribution';
+import type { IssueLocation } from './isOffUnionBranchIssue/readIssueLocation';
 import { updateFieldNodeGlobalErrors } from './updateFieldNodeGlobalErrors';
 
 /** Annotates the lazily created `validationErrors`; an argument-less `new Map()` would be `Map<any, any>`. */
@@ -41,7 +41,8 @@ export const routeValidationIssues = <Self extends FieldNodeRecord<Self>>(
   const next = new Map<unknown, readonly unknown[]>(before);
   const isActive = createUnionBranchActivity(root);
   const nodesByPath = new Map<string, Self | null>();
-  const attributions = new Map<string, UnionBranchAttribution | null>();
+  const locations = new Map<string, IssueLocation | null>();
+  const fragments = runtime.blueprint.fragments;
   const inScope = createValidationScope(scopes);
   for (const node of before.keys())
     if (isOwnedNode<Self>(node, runtime) && inScope(node)) next.delete(node);
@@ -89,15 +90,7 @@ export const routeValidationIssues = <Self extends FieldNodeRecord<Self>>(
       }
       nodesByPath.set(path, node);
     }
-    const target = node;
-    if (
-      isOffUnionBranchIssue(
-        issue,
-        runtime.blueprint,
-        (fragment) => isActive(fragment, target),
-        attributions,
-      )
-    )
+    if (isOffUnionBranchIssue(issue, node, fragments, isActive, locations))
       continue;
     if (issue.rejectedKey) {
       while (node.__parent__ && node.__childrenByName__ === null)
