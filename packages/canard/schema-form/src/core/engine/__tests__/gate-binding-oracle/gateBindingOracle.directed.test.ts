@@ -7,8 +7,9 @@ import type { OracleStep } from './fixtures/types';
  * Directed scenes for gate binding paths that generated forms reach rarely. Each is driven through
  * the public write surface and, after the load and every step, compared with a fresh load of the
  * live form's stored sources by the oracle runner. Whether a scene takes the internal path it targets
- * (the read plan suffix, the wheel plan's previous gates, the prepared static host) is not observable
- * from the public surface; the scenes pin the outcome.
+ * (the read plan suffix, the wheel plan's previous gates, the gate table round, the prepared static
+ * host) is not observable from the public surface and was measured with module wrappers; the scenes
+ * pin the outcome.
  */
 
 /** Run a scene and return what the oracle comparison saw: no mismatch and no thrown error means it holds. */
@@ -161,7 +162,7 @@ describe('item gates at or beyond prefixItems.length', () => {
   });
 });
 
-describe('a discriminator changed by another rule or gate in the same round', () => {
+describe('a discriminator changed by a derived rule or a gate, general evaluation path', () => {
   it('a discriminator derived from another field', () => {
     const schema = {
       type: 'object',
@@ -232,6 +233,34 @@ describe('a discriminator changed by another rule or gate in the same round', ()
         },
       ],
     );
+    expect(result).toEqual(HOLDS);
+  });
+});
+
+describe('a watched terminal changed by a derived rule, gate table path', () => {
+  it('a derived field that the active branches read follows a write in the same settlement', () => {
+    const schema = {
+      type: 'object',
+      properties: {
+        src: { type: 'string' },
+        kind: {
+          type: 'string',
+          controls: { derived: "../src === '1' ? 'a' : 'b'" },
+        },
+        common: { type: 'string' },
+      },
+      oneOf: ['a', 'b'].map((name) => ({
+        controls: { active: `./kind === '${name}'` },
+        properties: {
+          [name]: { type: 'string', default: name.toUpperCase() },
+        },
+      })),
+    };
+    const result = compareWithFreshLoad(schema, { src: '1', common: 'c' }, [
+      { kind: 'set', path: '/src', value: '0' },
+      { kind: 'set', path: '/common', value: 'x' },
+      { kind: 'set', path: '/src', value: '1' },
+    ]);
     expect(result).toEqual(HOLDS);
   });
 });
@@ -390,7 +419,7 @@ describe('a prepared static host whose child a later write replaces', () => {
           o: { properties: { b: { properties: { c: { const: '1' } } } } },
         },
       },
-      then: { properties: { g: { type: 'string', minLength: 3 } } },
+      then: { properties: { extra: { type: 'string', minLength: 3 } } },
     };
     const result = compareWithFreshLoad(
       schema,
@@ -400,6 +429,7 @@ describe('a prepared static host whose child a later write replaces', () => {
         { kind: 'set', path: '/o', value: { a: 'y', b: { c: '0' } } },
         { kind: 'set', path: '/o/b', value: undefined },
         { kind: 'set', path: '/o', value: { b: { c: '1' } } },
+        { kind: 'set', path: '/g', value: 'q' },
       ],
     );
     expect(result).toEqual(HOLDS);
