@@ -25,9 +25,10 @@ export interface UnionBranch {
 const BRANCH_INDEX = /^\d+$/;
 
 /**
- * Resolve one union segment among the branch fragments bound at its host. When several
- * unions at the host have a branch with the segment's keyword and index, the segment's run
- * must be the tail of exactly one candidate's run; anything else stays unresolved.
+ * Resolve one union segment among the branch fragments bound at its host. A candidate has
+ * the segment's keyword and index, and its run equals the segment's run. Several candidates
+ * resolve only when exactly one authored location equals the segment's location as written,
+ * which the `schemaPath` contract (an authored location) lets the form take at its word.
  * @param segment - Union segment read from the issue's schema location.
  * @param host - Blueprint template of the host occurrence; its declarations name the fragments bound there.
  * @param fragments - The blueprint's fragment table, indexed by fragment id.
@@ -48,9 +49,12 @@ export const resolveUnionBranch = (
     )
       candidates.push(fragment);
   }
+  candidates = candidates.filter((fragment) =>
+    isSameRun(readBranchRun(fragment), segment.run),
+  );
   if (candidates.length > 1)
-    candidates = candidates.filter((fragment) =>
-      isRunTail(readBranchRun(fragment), segment.run),
+    candidates = candidates.filter(
+      (fragment) => fragment.schemaPath === segment.location,
     );
   if (candidates.length !== 1) return null;
   const fragment = candidates[0];
@@ -83,20 +87,19 @@ const readBranchRun = (
 };
 
 /**
- * Report whether one run ends with another, keyword by keyword and argument by argument.
- * @param run - A candidate fragment's run; undefined never matches.
- * @param tail - The issue segment's run.
- * @returns True when every keyword of `tail` equals the keyword at the same distance from the end of `run`.
+ * Report whether two runs hold the same keywords with the same arguments in the same order.
+ * @param authored - A candidate fragment's run; undefined never matches.
+ * @param visible - The issue segment's run.
+ * @returns True when both runs have equal length and agree keyword by keyword.
  */
-const isRunTail = (
-  run: readonly SchemaStep[] | undefined,
-  tail: readonly SchemaStep[],
-): boolean => {
-  if (!run || run.length < tail.length) return false;
-  const offset = run.length - tail.length;
-  return tail.every(
+const isSameRun = (
+  authored: readonly SchemaStep[] | undefined,
+  visible: readonly SchemaStep[],
+): boolean =>
+  authored !== undefined &&
+  authored.length === visible.length &&
+  visible.every(
     (step, index) =>
-      step.keyword === run[offset + index].keyword &&
-      step.argument === run[offset + index].argument,
+      step.keyword === authored[index].keyword &&
+      step.argument === authored[index].argument,
   );
-};

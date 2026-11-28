@@ -2,6 +2,7 @@ import type { Nullable } from '@aileron/declare';
 
 import {
   isAbsolutePointer,
+  joinPointerWithPrefixOf,
   parsePointerSegments,
 } from '@/schema-form/helpers/jsonPointer';
 
@@ -18,6 +19,8 @@ export interface UnionSegment {
   readonly moves: number;
   /** Non-moving keywords written immediately before the segment, as produced by `readComparedRun`. */
   readonly run: readonly SchemaStep[];
+  /** Canonical location as written from `#` up to and including the segment's index. */
+  readonly location: string;
 }
 
 /**
@@ -46,6 +49,10 @@ export const readUnionSegments = (
         index: step.argument,
         moves,
         run: readComparedRun(steps, index),
+        location: joinPointerWithPrefixOf(
+          schemaPath,
+          segments.slice(0, step.end),
+        ),
       });
   }
   return unions;

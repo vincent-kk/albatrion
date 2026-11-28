@@ -20,6 +20,8 @@ export interface SchemaStep {
   readonly keyword: string;
   /** Property key, definition name or decimal index consumed with the keyword. */
   readonly argument?: string;
+  /** Number of location segments up to and including this keyword and its argument. */
+  readonly end: number;
 }
 
 /** Schema-location grammar: every keyword an authored location may pass through, with its kind and argument. */
@@ -75,13 +77,13 @@ export const parseSchemaLocation = (
       (argument === 'optional-index' &&
         (typeof next !== 'string' || !INDEX.test(next)))
     ) {
-      steps.push({ kind, keyword });
+      steps.push({ kind, keyword, end: index + 1 });
       continue;
     }
     if (typeof next !== 'string') return null;
     if (argument !== 'name' && !INDEX.test(next)) return null;
-    steps.push({ kind, keyword, argument: next });
     index++;
+    steps.push({ kind, keyword, argument: next, end: index + 1 });
   }
   return steps;
 };
