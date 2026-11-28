@@ -91,6 +91,10 @@ const LEDGER = {
   ],
 };
 
+/** The file stem of an area's scene list and runner: the area id in camelCase. */
+const areaFileStem = (area: string) =>
+  area.replace(/-([a-z])/g, (_, letter: string) => letter.toUpperCase());
+
 /** A scene id: a kebab-case area, a slash, then a kebab-case name that may contain digits. */
 const ID_PATTERN = /^[a-z]+(?:-[a-z]+)*\/[a-z0-9]+(?:-[a-z0-9]+)*$/;
 
@@ -129,11 +133,20 @@ describe('boundary scene ledger', () => {
       .filter((name) => name.endsWith('.ts'))
       .sort();
     const registered = Object.keys(AREAS)
-      .map((area) =>
-        area.replace(/-([a-z])/g, (_, letter: string) => letter.toUpperCase()),
-      )
-      .map((name) => `${name}.ts`)
+      .map((area) => `${areaFileStem(area)}.ts`)
       .sort();
     expect(files).toEqual(registered);
+  });
+
+  it('gives every area a runner of its own', () => {
+    const runners = readdirSync(new URL('./', import.meta.url))
+      .filter(
+        (name) => name.endsWith('.test.ts') && name !== 'ledger.test.ts',
+      )
+      .sort();
+    const expected = Object.keys(AREAS)
+      .map((area) => `${areaFileStem(area)}.test.ts`)
+      .sort();
+    expect(runners).toEqual(expected);
   });
 });

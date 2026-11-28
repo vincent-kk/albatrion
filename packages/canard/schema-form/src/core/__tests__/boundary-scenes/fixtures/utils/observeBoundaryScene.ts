@@ -3,11 +3,11 @@ import type {
   ModeObservations,
   Observation,
   SceneMode,
-} from './types';
-import { readRawSources } from './utils/readRawSources';
-import { readSceneProbes } from './utils/readSceneProbes';
-import { runSceneSteps } from './utils/runSceneSteps';
-import { startSceneRun } from './utils/startSceneRun';
+} from '../types';
+import { readRawSources } from './readRawSources';
+import { readSceneProbes } from './readSceneProbes';
+import { runSceneSteps } from './runSceneSteps';
+import { startSceneRun } from './startSceneRun';
 
 /** Probe kinds a fresh load can answer: they read the form, not what the steps delivered. */
 const PATH_PROBES = ['value', 'types', 'source', 'inactive', 'find'];

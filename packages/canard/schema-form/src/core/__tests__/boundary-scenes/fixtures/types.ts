@@ -81,7 +81,9 @@ export interface BoundarySceneBase {
   validates?: true;
   /** References taken right after the load, by name. */
   hold?: Readonly<Record<string, string>>;
+  /** The public operations of the scene, in order (see {@link SceneStep}). */
   steps: readonly SceneStep[];
+  /** Probe tokens (listed above), read at every `note` step and at the end. */
   probes: readonly string[];
   /** Modes the scene runs in; `fresh` only where no documented class of difference applies. */
   modes: readonly SceneMode[];

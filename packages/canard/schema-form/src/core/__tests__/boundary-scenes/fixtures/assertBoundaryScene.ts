@@ -1,7 +1,7 @@
 import { isDeepStrictEqual } from 'node:util';
 import { expect } from 'vitest';
 
-import { observeBoundaryScene } from './observeBoundaryScene';
+import { observeBoundaryScene } from './utils/observeBoundaryScene';
 import type { BoundaryScene, Observation } from './types';
 
 /**
